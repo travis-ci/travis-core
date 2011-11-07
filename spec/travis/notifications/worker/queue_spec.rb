@@ -8,6 +8,7 @@ describe Travis::Notifications::Worker::Queue do
     Travis::Notifications::Worker::Queue.new(*args)
   end
 
+  let(:ruby)    { queue('ruby', nil, nil, nil) }
   let(:rails)   { queue('rails', 'rails/rails', nil) }
   let(:erlang)  { queue('erlang', nil, 'erlang', nil) }
   let(:clojure) { queue('builds', nil, nil, 'clojure') }

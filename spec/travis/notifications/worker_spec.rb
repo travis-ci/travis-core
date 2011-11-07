@@ -12,6 +12,7 @@ describe Travis::Notifications::Worker do
       { :queue => 'builds', :language => 'clojure' },
       { :queue => 'erlang', :target => 'erlang', :language => 'erlang' },
     ]
+    Travis::Notifications::Worker.instance_variable_set(:@queues, nil)
   end
 
   it 'queues returns an array of Queues for the config hash' do
