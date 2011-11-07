@@ -42,11 +42,4 @@ Gem::Specification.new do |s|
   s.add_dependency 'octokit',           '~> 0.6.5'
   s.add_dependency 'pusher',            '~> 0.8.1'
   s.add_dependency 'amqp',              '~> 0.8.2'
-
-  s.add_development_dependency 'rspec',            '~> 2.7.0'
-  s.add_development_dependency 'factory_girl',     '~> 2.1.2'
-  s.add_development_dependency 'database_cleaner', '~> 0.6.7'
-  s.add_development_dependency 'mocha',            '~> 0.10.0'
-  s.add_development_dependency 'webmock',          '~> 1.7.7'
-  s.add_development_dependency 'standalone_migrations'
 end
