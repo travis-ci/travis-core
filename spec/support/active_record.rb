@@ -25,7 +25,7 @@ module Support
     extend ActiveSupport::Concern
 
     included do
-      before :each do
+      after :each do
         DatabaseCleaner.clean
       end
     end
