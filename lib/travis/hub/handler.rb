@@ -1,7 +1,7 @@
 require 'hashr'
 
 module Travis
-  class Consumer
+  class Hub
     class Handler
       attr_reader :event, :payload
 

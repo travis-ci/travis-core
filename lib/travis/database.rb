@@ -16,7 +16,7 @@ module Travis
       end
 
       def configurations
-        @configurations ||=  YAML::load(ERB.new(File.read('config/database.yml')).result)
+        @configurations ||=  YAML::load(ERB.new(File.read('db/config.yml')).result)
       end
 
       def environment

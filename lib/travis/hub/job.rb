@@ -1,5 +1,5 @@
 module Travis
-  class Consumer
+  class Hub
     class Job < Handler
       def handle
         case event.to_sym

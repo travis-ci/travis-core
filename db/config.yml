@@ -1,7 +1,18 @@
-test:
+defaults: &defaults
   adapter: postgresql
-  database: travis_test
-  min_messages: warning
   encoding: unicode
   pool: 5
+  min_messages: warning
+
+development:
+  <<: *defaults
+  database: travis_development
+
+production:
+  <<: *defaults
+  database: travis_production
+
+test:
+  <<: *defaults
+  database: travis_test
 

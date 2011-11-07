@@ -1,10 +1,10 @@
 require 'spec_helper'
 require 'support/active_record'
 
-describe Travis::Consumer::Worker do
+describe Travis::Hub::Worker do
   include Support::ActiveRecord
 
-  let(:handler) { Travis::Consumer::Worker.new(:event, Hashr.new(payload)) }
+  let(:handler) { Travis::Hub::Worker.new(:event, Hashr.new(payload)) }
   let(:worker)  { handler.send(:worker) }
   let(:payload) { { :name => 'worker-1', :host => 'ruby-1.worker.travis-ci.org' } }
 

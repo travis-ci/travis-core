@@ -4,10 +4,10 @@ require 'hashr'
 require 'benchmark'
 
 module Travis
-  class Consumer
-    autoload :Handler, 'travis/consumer/handler'
-    autoload :Job,     'travis/consumer/job'
-    autoload :Worker,  'travis/consumer/worker'
+  class Hub
+    autoload :Handler, 'travis/hub/handler'
+    autoload :Job,     'travis/hub/job'
+    autoload :Worker,  'travis/hub/worker'
 
     include Logging
 
