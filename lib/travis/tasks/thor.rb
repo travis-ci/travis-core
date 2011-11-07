@@ -1,4 +1,4 @@
-require 'bundler/setup'
+rbequire 'bundler/setup'
 require 'travis'
 
 $stdout.sync = true
@@ -6,12 +6,12 @@ $stdout.sync = true
 module Travis
   module Tasks
     class Thor < ::Thor
-      namespace 'travis'
+      namespace 'travis:hub'
 
-      desc 'consume', 'Consume AMQP messages from the worker'
+      desc 'start', 'Consume AMQP messages from the worker'
       method_option :env, :aliases => '-e', :default => 'development'
-      def consume
-        Travis::Consumer.start(:env => options['env'])
+      def start
+        Travis::Hub.start(:env => options['env'])
       end
     end
   end

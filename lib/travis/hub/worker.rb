@@ -1,5 +1,5 @@
 module Travis
-  class Consumer
+  class Hub
     class Worker < Handler
       attr_accessor :event, :payload
 
