@@ -1,4 +1,4 @@
-rbequire 'bundler/setup'
+require 'bundler/setup'
 require 'travis'
 
 $stdout.sync = true
