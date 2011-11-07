@@ -1,0 +1,7 @@
+test:
+  adapter: postgresql
+  database: travis_test
+  min_messages: warning
+  encoding: unicode
+  pool: 5
+

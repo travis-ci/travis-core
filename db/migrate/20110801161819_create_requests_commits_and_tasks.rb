@@ -1,3 +1,5 @@
+require 'data_migrations'
+
 class CreateRequestsCommitsAndTasks < ActiveRecord::Migration
   def self.up
     change_table :builds do |t|
