@@ -1,3 +1,5 @@
 rvm: 1.9.2
+before_script:
+  - "psql -c 'create database travis_test;' -U postgres"
 notifications:
   irc: "irc.freenode.org#travis"
