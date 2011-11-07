@@ -7,6 +7,12 @@ class Job < ActiveRecord::Base
   autoload :States,     'travis/model/job/states'
   autoload :Test,       'travis/model/job/test'
 
+  class << self
+    def queued
+      where(:state => :created)
+    end
+  end
+
   include Requeueing
 
   has_one    :log, :class_name => "Artifact::Log", :conditions => { :type => "Artifact::Log" }
@@ -25,6 +31,7 @@ class Job < ActiveRecord::Base
 
   before_create do
     build_log
+    self.state = :created if self.state.nil?
   end
 
   def matrix_config?(config)

@@ -4,9 +4,23 @@ require 'support/active_record'
 describe Job do
   include Support::ActiveRecord
 
-  let!(:job) { Factory(:test) }
+  describe ".queued" do
+    let(:jobs) { [Factory.create(:test), Factory.create(:test), Factory.create(:test)] }
+
+    it "returns jobs that are created but not started or finished" do
+      jobs.first.start!
+      jobs.third.start!
+      jobs.third.finish!
+
+      Job.queued.should include(jobs.second)
+      Job.queued.should_not include(jobs.first)
+      Job.queued.should_not include(jobs.third)
+    end
+  end
 
   describe :append_log! do
+    let!(:job) { Factory(:test) }
+
     it "appends chars to the log artifact" do
       line = "$ bundle install --pa"
       Artifact::Log.any_instance.expects(:append).with(line)
