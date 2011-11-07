@@ -1,4 +1,5 @@
 require 'travis'
+require 'octokit'
 
 module Travis
   module GithubApi

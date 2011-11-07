@@ -1,3 +1,4 @@
+require 'devise'
 require 'devise/models/api_token_authenticatable'
 require 'devise/strategies/api_token_authenticatable'
 
