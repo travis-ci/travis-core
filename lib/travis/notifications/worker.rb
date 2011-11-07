@@ -52,6 +52,7 @@ module Travis
           # TODO ::Rails.logger.info("Job queued to #{queue.name.inspect}: #{payload.inspect}")
           amqp.publish(queue, payload)
         end
+        job.update_attributes(:queue => queue)
       end
     end
   end

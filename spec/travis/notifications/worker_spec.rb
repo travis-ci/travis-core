@@ -4,7 +4,8 @@ require 'support/active_record'
 describe Travis::Notifications::Worker do
   include Support::ActiveRecord
 
-  let(:worker) { Travis::Notifications::Worker.new }
+  let(:worker)  { Travis::Notifications::Worker.new }
+  let(:payload) { 'the-payload' }
 
   before do
     Travis.config.queues = [
@@ -52,7 +53,6 @@ describe Travis::Notifications::Worker do
 
   describe 'notify' do
     let(:job)     { Factory(:request).job }
-    let(:payload) { 'the-payload' }
 
     before :each do
       Travis::Notifications::Worker.stubs(:payload_for).returns(payload)
@@ -67,6 +67,22 @@ describe Travis::Notifications::Worker do
     it 'adds the payload to the given queue' do
       Travis::Amqp.expects(:publish).with('ruby', payload)
       worker.notify(:start, job)
+    end
+  end
+
+  describe "#enqueue" do
+    let(:job) { Factory.build(:test) }
+
+    before(:each) do
+      Travis::Notifications::Worker.stubs(:payload_for).returns(payload)
+      Travis::Amqp.stubs(:publish)
+    end
+
+    it "updates the given job's queue" do
+      queue = Travis::Notifications::Worker.queue_for(job)
+      worker.enqueue(job)
+
+      job.queue.should eql(queue.name)
     end
   end
 end
