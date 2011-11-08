@@ -1,1 +1,1 @@
-hub: sh script/jruby -e production
+hub: sh script/jruby -S thor travis:hub:start -e production

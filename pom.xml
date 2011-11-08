@@ -1,9 +1,9 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>au.com.mathew</groupId>
-    <artifactId>jruby-heroku</artifactId>
+    <groupId>org.travis-ci</groupId>
+    <artifactId>hub</artifactId>
     <version>1.0</version>
-    <name>webapp</name>
+    <name>travis-hub-app</name>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
