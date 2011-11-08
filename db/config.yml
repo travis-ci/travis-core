@@ -1,3 +1,6 @@
+# This is only used for standalone_migrations. In other contexts
+# Travis.config.database will be used.
+
 defaults: &defaults
   adapter: postgresql
   encoding: unicode

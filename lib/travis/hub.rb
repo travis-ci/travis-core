@@ -14,8 +14,8 @@ module Travis
     REPORTING_KEY = 'reporting.jobs'
 
     class << self
-      def start(options = {})
-        Database.connect(options)
+      def start
+        Database.connect
 
         EM.run do
           prune_workers

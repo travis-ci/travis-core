@@ -17,7 +17,7 @@ module Travis
       end
 
       def env
-       defined?(Rails) ? Rails.env : ENV['RAILS_ENV'] || 'test'
+       defined?(Rails) ? Rails.env : ENV['RAILS_ENV'] || ENV['ENV'] || 'test'
       end
     end
 

@@ -4,11 +4,7 @@ require 'erb'
 module Travis
   module Database
     class << self
-      attr_reader :options
-
-      def connect(options = {})
-        @options = options
-
+      def connect
         ActiveRecord::Base.default_timezone = :utc
         ActiveRecord::Base.logger = Travis.logger
         ActiveRecord::Base.configurations = { env => Travis.config.database }

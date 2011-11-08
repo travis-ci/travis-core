@@ -9,9 +9,10 @@ module Travis
       namespace 'travis:hub'
 
       desc 'start', 'Consume AMQP messages from the worker'
-      method_option :env, :aliases => '-e', :default => 'development'
+      method_option :env, :aliases => '-e', :default => ENV['RAILS_ENV'] || ENV['ENV'] || 'development'
       def start
-        Travis::Hub.start(:env => options['env'])
+        ENV['ENV'] = options['env']
+        Travis::Hub.start
       end
     end
   end
