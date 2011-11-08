@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'support/active_record'
 
-describe Job::Requeueing do
+describe Job::Cleanup do
   include Support::ActiveRecord
 
   let(:job) { Factory(:test) }

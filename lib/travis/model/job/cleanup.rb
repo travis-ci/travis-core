@@ -1,7 +1,7 @@
 require 'active_support/concern'
 
 class Job
-  module Requeueing
+  module Cleanup
     extend ActiveSupport::Concern
 
     FORCE_FINISH_MESSAGE = <<-msg.strip
@@ -37,7 +37,8 @@ class Job
     end
 
     def requeueable?
-      retries < Travis.config.jobs.retry.max_attempts
+      false
+      # retries < Travis.config.jobs.retry.max_attempts
     end
   end
 end
