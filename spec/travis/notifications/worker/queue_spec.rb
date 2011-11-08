@@ -34,11 +34,4 @@ describe Travis::Notifications::Worker::Queue do
       erlang.matches?('foo/bar', 'worker-on-mars', 'COBOL').should be_false
     end
   end
-
-  describe "#jobs" do
-    it "returns jobs that are matching the queue" do
-      test = Factory.create(:test)
-      ruby.jobs.should include(test)
-    end
-  end
 end

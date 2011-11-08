@@ -16,11 +16,6 @@ module Travis
           name
         end
 
-        def jobs
-          # TODO maybe notifications/helpers should know this much about model classes
-          Job.queued.select { |job| Worker.queue_for(job).try(:name) == name }
-        end
-
         protected
 
           def matches_slug?(slug)
