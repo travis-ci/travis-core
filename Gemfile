@@ -2,6 +2,15 @@ source :rubygems
 
 gemspec
 
+platform :mri do
+  gem 'pg',                '~> 0.11.0'
+  gem 'silent-postgres',   '~> 0.0.8'
+end
+
+platform :jruby do
+  gem 'activerecord-jdbcpostgresql-adapter'
+end
+
 group :test do
   gem 'rspec',            '~> 2.7.0'
   gem 'factory_girl',     '~> 2.1.2'

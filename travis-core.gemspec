@@ -25,8 +25,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'actionmailer_inline_css', '~> 1.3.0'
 
   # db
-  s.add_dependency 'pg',                '~> 0.11.0'
-  s.add_dependency 'silent-postgres',   '~> 0.0.8'
   s.add_dependency 'data_migrations',   '~> 0.0.1'
 
   # structures

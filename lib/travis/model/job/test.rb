@@ -6,7 +6,7 @@ class Job
 
     class << self
       def append_log!(id, chars)
-        job = find(id, :select => [:id, :repository_id, :owner_id, :owner_type, :state], :include => :repository)
+        job = find(id, :select => [:id, :repository_id, :owner_id, :owner_type, :state])
         job.append_log!(chars) unless job.finished?
       end
     end

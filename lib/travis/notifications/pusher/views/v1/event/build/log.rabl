@@ -1,13 +1,13 @@
-build, repository = @hash.values_at(:build, :repository)
+job, repository = @hash.values_at(:build, :repository)
 
-child build => :build do
+child job => :build do
   attributes :id
 
-  node(:parent_id) { build.owner_id } if build.is_a?(Job)
+  node(:parent_id) { job.owner_id } if job.is_a?(Job)
 end
 
-child repository => :repository do
-  attributes :id
+child job => :repository do
+  node(:id) { job.repository_id }
 end
 
 
