@@ -2,6 +2,7 @@
 
 export CLASSPATH=$HOME/.m2/repository/org/jruby/jruby-complete/1.6.5/jruby-complete-1.6.5.jar
 export GEM_HOME=$PWD/.gems
+export PATH=$PATH:$GEM_HOME/bin
 
 bundler_env=`java org.jruby.Main -S bundle exec 'echo $RUBYOPT'`
 
