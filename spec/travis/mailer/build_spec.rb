@@ -56,12 +56,12 @@ describe Travis::Mailer::Build do
       it 'escapes newlines in the commit message' do
         build.commit.message = "bar\nbaz"
         email.deliver # inline css interceptor is called before delivery.
-        email.html_part.decoded.should include("bar<br />baz")  # premailer converts <br> to <br />
+        email.html_part.decoded.should =~ %r(bar<br( /)?>baz) # nokogiri seems to convert <br> to <br /> on mri, but not jruby?
       end
 
       it 'inlines css' do
         email.deliver
-        email.html_part.decoded.should include('<div style="')
+        email.html_part.decoded.should =~ %r(<div[^>]+style=")
       end
     end
   end
