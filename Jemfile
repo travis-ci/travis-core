@@ -10,6 +10,7 @@ end
 platform :jruby do
   gem 'jruby-openssl'
   gem 'activerecord-jdbcpostgresql-adapter'
+  gem 'nokogiri', :path => 'vendor/gems/nokogiri-1.5.0-java'
 end
 
 group :test do
