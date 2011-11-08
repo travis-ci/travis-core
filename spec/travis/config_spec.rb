@@ -37,6 +37,10 @@ describe Travis::Config do
     it 'ampq.prefetch defaults to 1' do
       config.amqp.prefetch.should == 1
     end
+
+    it 'database' do
+      config.database.should == { :adapter => 'postgresql', :database => 'travis_test', :encoding => 'unicode', :min_messages => 'warning' }
+    end
   end
 
   describe 'the example config file' do

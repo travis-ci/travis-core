@@ -11,16 +11,12 @@ module Travis
 
         ActiveRecord::Base.default_timezone = :utc
         ActiveRecord::Base.logger = Travis.logger
-        ActiveRecord::Base.configurations = configurations
-        ActiveRecord::Base.establish_connection(environment)
+        ActiveRecord::Base.configurations = { env => Travis.config.database }
+        ActiveRecord::Base.establish_connection(env)
       end
 
-      def configurations
-        @configurations ||=  YAML::load(ERB.new(File.read('db/config.yml')).result)
-      end
-
-      def environment
-        @environment ||= options[:env] || ENV['ENV'] || 'production'
+      def env
+        Travis.config.env
       end
     end
   end
