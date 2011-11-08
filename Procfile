@@ -1,1 +1,1 @@
-hub: bundle exec thor travis:hub:start -e production
+hub: sh script/jruby -e production
