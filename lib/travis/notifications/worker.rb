@@ -50,7 +50,7 @@ module Travis
         queue = queue_for(job).name
         payload_for(job, :queue => queue).tap do |payload|
           amqp.publish(queue, payload)
-          job.update_attributes(:queue => queue)
+          job.update_attributes!(:queue => queue)
         end
       end
     end
