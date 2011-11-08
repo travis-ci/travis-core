@@ -9,9 +9,9 @@ describe Travis::Notifications::Worker do
 
   before do
     Travis.config.queues = [
-      { :queue => 'rails', :slug => 'rails/rails' },
-      { :queue => 'builds', :language => 'clojure' },
-      { :queue => 'erlang', :target => 'erlang', :language => 'erlang' },
+      { :queue => 'builds.rails', :slug => 'rails/rails' },
+      { :queue => 'builds.clojure', :language => 'clojure' },
+      { :queue => 'builds.erlang', :target => 'erlang', :language => 'erlang' },
     ]
     Travis::Notifications::Worker.instance_variable_set(:@queues, nil)
   end
@@ -19,30 +19,30 @@ describe Travis::Notifications::Worker do
   it 'queues returns an array of Queues for the config hash' do
     rails, clojure, erlang = Travis::Notifications::Worker.send(:queues)
 
-    rails.name.should == 'rails'
+    rails.name.should == 'builds.rails'
     rails.slug.should == 'rails/rails'
 
-    clojure.name.should == 'builds'
+    clojure.name.should == 'builds.clojure'
     clojure.language.should == 'clojure'
 
-    erlang.name.should == 'erlang'
+    erlang.name.should == 'builds.erlang'
     erlang.target.should == 'erlang'
   end
 
   describe 'queue_for' do
     it 'returns false when neither slug or target match the given configuration hash' do
       build = Factory(:build)
-      worker.send(:queue_for, build).name.should == 'ruby'
+      worker.send(:queue_for, build).name.should == 'builds.common'
     end
 
     it 'returns the queue when slug matches the given configuration hash' do
       build = Factory(:build, :repository => Factory(:repository, :owner_name => 'rails', :name => 'rails'))
-      worker.send(:queue_for, build).name.should == 'rails'
+      worker.send(:queue_for, build).name.should == 'builds.rails'
     end
 
     it 'returns the queue when target matches the given configuration hash' do
       build = Factory(:build, :repository => Factory(:repository), :config => { :language => 'clojure' })
-      worker.send(:queue_for, build).name.should == 'builds'
+      worker.send(:queue_for, build).name.should == 'builds.clojure'
     end
 
     # it 'returns the queue when language matches the given configuration hash' do
@@ -60,12 +60,12 @@ describe Travis::Notifications::Worker do
     end
 
     it 'generates a payload for the given job' do
-      Travis::Notifications::Worker.stubs(:payload_for).with(job, :queue => 'ruby')
+      Travis::Notifications::Worker.stubs(:payload_for).with(job, :queue => 'builds.common')
       worker.notify(:start, job)
     end
 
     it 'adds the payload to the given queue' do
-      Travis::Amqp.expects(:publish).with('ruby', payload)
+      Travis::Amqp.expects(:publish).with('builds.common', payload)
       worker.notify(:start, job)
     end
   end

@@ -49,7 +49,6 @@ module Travis
       def enqueue(job)
         queue = queue_for(job).name
         payload_for(job, :queue => queue).tap do |payload|
-          # TODO ::Rails.logger.info("Job queued to #{queue.name.inspect}: #{payload.inspect}")
           amqp.publish(queue, payload)
           job.update_attributes(:queue => queue)
         end
