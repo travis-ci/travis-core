@@ -20,7 +20,7 @@ module Travis
         end
 
         def default_queue
-          @default_queue ||= Queue.new('ruby')
+          @default_queue ||= Queue.new('builds.common')
         end
 
         def queues
