@@ -2,8 +2,6 @@ require 'amqp'
 
 module Travis
   module Amqp
-    QUEUE_PREFIX = 'builds'
-
     class << self
       def setup_connection
         require 'amqp/utilities/event_loop_helper'
@@ -19,7 +17,7 @@ module Travis
         body = MultiJson.encode(payload)
 
         metadata = {
-          :routing_key => "#{QUEUE_PREFIX}.#{queue}",
+          :routing_key => queue,
           :persistent  => true,
           :durable     => true,
           :auto_delete => false
