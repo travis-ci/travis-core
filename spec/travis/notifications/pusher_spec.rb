@@ -60,19 +60,19 @@ describe Travis::Notifications::Pusher do
 
   describe 'payload_for returns the payload required for client side job events' do
     it 'build:queued' do
-      receiver.payload_for('build:queued', job) == [:build, :repository]
+      receiver.payload_for('build:queued', job).keys.should == [:build, :repository]
     end
 
     it 'build:removed' do
-      receiver.payload_for('build:removed', build) == [:build, :repository]
+      receiver.payload_for('build:removed', build).keys.should == [:build, :repository]
     end
 
     it 'build:started' do
-      receiver.payload_for('build:started', build) == [:build, :repository]
+      receiver.payload_for('build:started', build).keys.should == [:build, :repository]
     end
 
     it 'build:log' do
-      receiver.payload_for('build:log', build, :log => 'foo') == [:build, :repository, :log]
+      receiver.payload_for('build:log', build, :log => 'foo').keys.should == [:build, :repository, :log]
     end
 
     it 'build:finished' do
