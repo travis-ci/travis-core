@@ -22,7 +22,7 @@ module Support
     extend ActiveSupport::Concern
 
     included do
-      after :each do
+      before :each do
         DatabaseCleaner.clean
       end
     end
