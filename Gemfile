@@ -10,7 +10,10 @@ end
 platform :jruby do
   gem 'jruby-openssl'
   gem 'activerecord-jdbcpostgresql-adapter'
-  gem 'nokogiri', :path => 'vendor/gems/nokogiri-1.5.0-java'
+end
+
+group :development do
+  gem 'standalone_migrations'
 end
 
 group :test do
@@ -19,5 +22,4 @@ group :test do
   gem 'database_cleaner',  '~> 0.6.7'
   gem 'mocha',             '~> 0.10.0'
   gem 'webmock',           '~> 1.7.7'
-  gem 'standalone_migrations'
 end
