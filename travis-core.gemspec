@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rails',             '~> 3.1.1' # why does devise require rails??
   s.add_dependency 'activerecord',      '~> 3.1.1'
   s.add_dependency 'actionmailer',      '~> 3.1.1'
-  s.add_dependency 'actionmailer_inline_css', '~> 1.3.0'
+  # s.add_dependency 'actionmailer_inline_css', '~> 1.3.0'
 
   # db
   s.add_dependency 'data_migrations',   '~> 0.0.1'
