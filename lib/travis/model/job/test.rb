@@ -12,7 +12,7 @@ class Job
     end
 
     def append_log!(chars)
-      log.append(chars)
+      Artifact::Log.append(id, chars)
       super
     end
   end

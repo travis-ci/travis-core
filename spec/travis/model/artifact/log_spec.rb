@@ -4,8 +4,8 @@ require 'support/active_record'
 describe Artifact::Log do
   include Support::ActiveRecord
 
-  describe "#append" do
-    let(:log) { Factory.create(:log, :content => '') }
+  describe ".append" do
+    let(:job) { Factory.create(:test, :log => Factory.create(:log, :content => '')) }
 
     it "appends streamed build log chunks" do
       lines = [
@@ -14,8 +14,8 @@ describe Artifact::Log do
         "$ bundle install --pa"
       ]
       0.upto(2) do |ix|
-        log.append(lines[ix])
-        lines[0, ix + 1].join.should eql(log.reload.content)
+        Artifact::Log.append(job.id, lines[ix])
+        lines[0, ix + 1].join.should eql(job.reload.log.content)
       end
     end
   end

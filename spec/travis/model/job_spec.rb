@@ -23,7 +23,7 @@ describe Job do
 
     it "appends chars to the log artifact" do
       line = "$ bundle install --pa"
-      Artifact::Log.any_instance.expects(:append).with(line)
+      Artifact::Log.expects(:append).with(job.id, line)
       job.append_log!(line)
     end
 
