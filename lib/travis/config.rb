@@ -9,19 +9,20 @@ module Travis
       end
 
       def load_file
-        YAML.load_file(filename)[environment] if File.exists?(filename)
+        YAML.load_file(filename)[env] if File.exists?(filename)
       end
 
       def filename
         @filename ||= File.expand_path('../../../config/travis.yml', __FILE__)
       end
 
-      def environment
-        defined?(Rails) ? Rails.env : 'test'
+      def env
+       ENV['ENV'] || 'test'
       end
     end
 
-    define  :amqp  => { :host => '127.0.0.1', :prefetch => 1 },
+    define  :amqp => { :host => '127.0.0.1', :prefetch => 1 },
+            :database => { :adapter => 'postgresql', :database => "travis_#{Travis::Config.env}", :encoding => 'unicode', :min_messages => 'warning' },
             :host => 'http://travis-ci.org',
             :notifications => [],
             :pusher  => { :app_id => 'app-id', :key => 'key', :secret => 'secret' },
@@ -34,6 +35,10 @@ module Travis
     def initialize(data = nil, *args)
       data ||= self.class.load_env || self.class.load_file || {}
       super
+    end
+
+    def env
+      self.class.env
     end
   end
 end
