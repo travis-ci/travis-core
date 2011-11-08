@@ -8,13 +8,13 @@ describe Travis::Notifications::Worker::Queue do
     Travis::Notifications::Worker::Queue.new(*args)
   end
 
-  let(:ruby)    { queue('ruby', nil, nil, nil) }
-  let(:rails)   { queue('rails', 'rails/rails', nil) }
-  let(:erlang)  { queue('erlang', nil, 'erlang', nil) }
-  let(:clojure) { queue('builds', nil, nil, 'clojure') }
+  let(:common)  { queue('builds.common',  nil, nil, nil) }
+  let(:rails)   { queue('builds.rails', 'rails/rails', nil) }
+  let(:erlang)  { queue('builds.erlang', nil, 'erlang', nil) }
+  let(:clojure) { queue('builds.common', nil, nil, 'clojure') }
 
   it "name still returns the actual class name for custom worker classes" do
-    rails.name.should == "rails"
+    rails.name.should == 'builds.rails'
   end
 
   describe 'matches?' do
