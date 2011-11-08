@@ -1,3 +1,5 @@
+require 'bundler'
+
 namespace :heroku do
   task :config do
     remote = ENV['REMOTE']
