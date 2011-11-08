@@ -5,12 +5,8 @@ describe ActiveRecord::Base, 'extensions' do
   describe 'floor' do
     subject { ActiveRecord::Base }
 
-    before(:each) { @adapter = subject.configurations['test']['adapter'] rescue nil }
-    after(:each)  { subject.configurations['test']['adapter'] = @adapter rescue nil }
-
     def using(adapter)
-      subject.configurations['test'] ||= {}
-      subject.configurations['test']['adapter'] = adapter
+      subject.stubs(:configurations).returns('test' => { 'adapter' => adapter})
     end
 
     it 'returns an sql snippet for postgres' do

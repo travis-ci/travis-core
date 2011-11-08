@@ -7,11 +7,8 @@ require 'support/factories'
 
 FileUtils.mkdir_p('log')
 
-config = if RUBY_PLATFORM == 'java'
-  { 'adapter' => 'jdbcpostgresql', 'database' => 'travis_test', 'username' => ENV['USER'], 'encoding' => 'unicode' }
-else
-  { 'adapter' => 'postgresql', 'database' => 'travis_test', 'encoding' => 'unicode' }
-end
+config = Travis.config.database.dup
+config.merge!('adapter' => 'jdbcpostgresql', 'username' => ENV['USER']) if RUBY_PLATFORM == 'java'
 
 ActiveRecord::Base.logger = Logger.new('log/test.db.log')
 ActiveRecord::Base.configurations = { 'test' => config }
