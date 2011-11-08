@@ -10,6 +10,7 @@ class RequestMock
   attr_accessor :state
   def save!; end
   def commit; @commit ||= stub('commit', :branch => 'master') end
+  def repository; @repository||= stub(:slug => 'foo/bar') end
   def attribute_names; %w(id repository_id state source payload) end
 end
 
@@ -174,6 +175,12 @@ describe Request::States do
         request.stubs(:config).returns(:branches => { :except => ['staging', 'feature-*'] })
         request.should_not be_approved
       end
+
+      it 'if the repository is a rails fork' do
+        request.stubs(:config).returns({})
+        request.stubs(:rails_fork?).returns(true)
+        request.should_not be_approved
+      end
     end
   end
 
@@ -181,6 +188,27 @@ describe Request::States do
     it 'discards values from the given hash that are not attributes' do
       result = request.send(:extract_attributes, { :state => :finished, :status => 1, 'source' => 'github' })
       result.should == { :state => :finished, :source => 'github' }
+    end
+  end
+
+  describe 'rails_fork?' do
+    def with_slug(slug)
+      request.stubs(:repository).returns(stub(:slug => slug))
+    end
+
+    it 'returns false for a repository slug travis-ci/travis-ci' do
+      with_slug 'travis-ci/travis-ci'
+      request.send(:rails_fork?).should be_false
+    end
+
+    it 'returns false for a repository slug rails/rails' do
+      with_slug 'rails/rails'
+      request.send(:rails_fork?).should be_false
+    end
+
+    it 'returns true for a repository slug travis-ci/rails' do
+      with_slug 'travis-ci/rails'
+      request.send(:rails_fork?).should be_true
     end
   end
 end

@@ -14,7 +14,7 @@ class Request
       event :finish,    :to => :finished
 
       def approved?
-        branch_included?(commit.branch) && !branch_excluded?(commit.branch)
+        branch_included?(commit.branch) && !branch_excluded?(commit.branch) && !rails_fork?
       end
 
       def configure(data)
@@ -26,6 +26,10 @@ class Request
 
         def extract_attributes(attributes)
           attributes.symbolize_keys.slice(*attribute_names.map(&:to_sym))
+        end
+
+        def rails_fork?
+          repository.slug != 'rails/rails' && repository.slug =~ %r(/rails$)
         end
     end
   end
