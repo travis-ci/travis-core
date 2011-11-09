@@ -6,8 +6,8 @@ require 'travis_core/version'
 Gem::Specification.new do |s|
   s.name         = "travis-core"
   s.version      = TravisCore::VERSION
-  s.authors      = ["Sven Fuchs"]
-  s.email        = "svenfuchs@artweb-design.de"
+  s.authors      = ["Travis CI"]
+  s.email        = "contact@travis-ci.org"
   s.homepage     = "https://github.com/travis-ci/travis-core"
   s.summary      = "[summary]"
   s.description  = "[description]"
