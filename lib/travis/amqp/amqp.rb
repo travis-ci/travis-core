@@ -2,7 +2,7 @@ require 'amqp'
 require 'multi_json'
 
 module Travis
-  class Amqp
+  module Amqp
     class Amqp
       DEFAULTS = {
         :persistent  => true,

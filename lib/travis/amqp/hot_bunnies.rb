@@ -2,7 +2,7 @@ require 'hot_bunnies'
 require 'multi_json'
 
 module Travis
-  class Amqp
+  module Amqp
     class HotBunnies
       def subscribe(options, &block)
         queue.subscribe(options, &block)
