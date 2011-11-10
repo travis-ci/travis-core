@@ -31,12 +31,7 @@ module Travis
         end
 
         def connection
-          @connection ||= ::HotBunnies.connect(config)
-        end
-
-        def config
-          config = Travis.config.amqp.dup
-          config.merge(:virtual_host => config.delete(:vhost))
+          @connection ||= ::HotBunnies.connect(Travis.config.amqp)
         end
     end
   end
