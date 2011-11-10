@@ -1,15 +1,11 @@
 module Travis
   module Notifications
     class Worker
-      class Payload
+      class Payload < Notifications::Payload
         attr_reader :job, :extra
 
         def initialize(job, extra = {})
           @job, @extra = job, extra
-        end
-
-        def to_hash
-          render(:hash)
         end
 
         def render(format)
