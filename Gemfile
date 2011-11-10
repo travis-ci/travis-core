@@ -10,7 +10,7 @@ end
 
 platform :jruby do
   gem 'jruby-openssl'
-  gem 'hot_bunnies',       '~> 1.2.2'
+  gem 'hot_bunnies',       '~> 1.3.1'
   gem 'activerecord-jdbcpostgresql-adapter'
 end
 
