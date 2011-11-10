@@ -1,15 +1,11 @@
 module Travis
   module Notifications
     class Webhook
-      class Payload
+      class Payload < Notifications::Payload
         attr_reader :object
 
         def initialize(object)
           @object = object
-        end
-
-        def to_hash
-          render(:hash)
         end
 
         def render(format)
