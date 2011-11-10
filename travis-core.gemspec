@@ -39,5 +39,4 @@ Gem::Specification.new do |s|
   # apis
   s.add_dependency 'octokit',           '~> 0.6.5'
   s.add_dependency 'pusher',            '~> 0.8.1'
-  s.add_dependency 'amqp',              '~> 0.8.2'
 end

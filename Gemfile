@@ -3,12 +3,14 @@ source :rubygems
 gemspec
 
 platform :mri do
+  gem 'amqp',              '~> 0.8.2'
   gem 'pg',                '~> 0.11.0'
   gem 'silent-postgres',   '~> 0.0.8'
 end
 
 platform :jruby do
   gem 'jruby-openssl'
+  gem 'hot_bunnies',       '~> 1.2.2'
   gem 'activerecord-jdbcpostgresql-adapter'
 end
 
