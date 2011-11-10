@@ -31,7 +31,7 @@ module Travis
         end
 
         def connection
-          @connection ||= HotBunnies.connect(Travis.config.amqp)
+          @connection ||= ::HotBunnies.connect(Travis.config.amqp)
         end
     end
   end
