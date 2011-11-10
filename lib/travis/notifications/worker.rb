@@ -36,7 +36,7 @@ module Travis
         end
 
         def payload_for(job, extra)
-          Travis::Notifications::Worker::Payload.new(job, extra).tap { |payload| p payload }.to_hash
+          Travis::Notifications::Worker::Payload.new(job, extra).to_hash
         end
       end
 
