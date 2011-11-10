@@ -17,7 +17,7 @@ module Travis
       protected
 
         def queue
-          @queue ||= channel.queue(REPORTING_KEY, :durable => true, :exculsive => false)
+          @queue ||= channel.queue(REPORTING_KEY, :durable => true, :exclusive => false)
         end
 
         def exchange
