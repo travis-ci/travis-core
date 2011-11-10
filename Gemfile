@@ -3,7 +3,7 @@ source :rubygems
 gemspec
 
 platform :mri do
-  gem 'amqp',              '~> 0.8.2'
+  gem 'amqp',              '~> 0.8.3'
   gem 'pg',                '~> 0.11.0'
   gem 'silent-postgres',   '~> 0.0.8'
 end
