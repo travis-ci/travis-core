@@ -14,6 +14,10 @@ module Travis
         exchange.publish(data, options)
       end
 
+      def disconnect
+        connection.close if @connection
+      end
+
       protected
 
         def queue

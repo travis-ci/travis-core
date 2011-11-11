@@ -13,6 +13,9 @@ module Travis
       def publish(queue, payload, options = {}, &block)
         adapter.publish(queue, payload, options, &block)
       end
+
+      def disconnect
+        adapter.disconnect
       end
 
       protected
