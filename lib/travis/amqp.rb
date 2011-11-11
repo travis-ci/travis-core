@@ -11,7 +11,8 @@ module Travis
       end
 
       def publish(queue, payload, options = {}, &block)
-        adapter.publish(queue, payload, options = {}, &block)
+        adapter.publish(queue, payload, options, &block)
+      end
       end
 
       protected
