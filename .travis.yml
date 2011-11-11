@@ -3,6 +3,6 @@ rvm:
   - jruby
 before_script:
   - 'psql -c "create database travis_test;" -U postgres'
-  - 'RAILS_ENV=test rake db:schema:load'
+  - 'RAILS_ENV=test bundle install rake db:schema:load'
 notifications:
   irc: "irc.freenode.org#travis"
