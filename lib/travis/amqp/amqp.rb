@@ -47,6 +47,10 @@ module Travis
         def connection
           @connection ||= AMQP.start(config)
         end
+
+        def config
+          Travis.config.amqp
+        end
     end
   end
 end
