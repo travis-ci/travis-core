@@ -37,7 +37,7 @@ module Travis
         end
 
         def exchange
-          @exchange ||= AMQP.channel.default_exchange
+          @exchange ||= AMQP::Channel.new(connection).default_exchange
         end
 
         def channel
