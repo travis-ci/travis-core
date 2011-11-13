@@ -5,8 +5,8 @@ module Travis
   module Amqp
     class HotBunnies
       class << self
-        def connect
-          ::HotBunnies.connect(Travis.config.amqp)
+        def connect(config)
+          ::HotBunnies.connect(config)
         end
       end
 

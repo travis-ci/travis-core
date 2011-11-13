@@ -11,8 +11,8 @@ module Travis
       }
 
       class << self
-        def connect
-          AMQP.start(Travis.config.amqp)
+        def connect(config)
+          AMQP.start(config)
         end
       end
 

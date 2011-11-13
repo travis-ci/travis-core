@@ -11,7 +11,7 @@ module Travis
       end
 
       def connection
-        @connection ||= HotBunnies.connect(Travis::Worker.config.amqp)
+        @connection ||= implementation.connect(Travis.config.amqp)
       end
       alias :connect :connection
 
