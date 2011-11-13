@@ -11,7 +11,10 @@ module Travis
       end
 
       def connection
-        @connection ||= implementation.connect(Travis.config.amqp)
+        @connection ||= begin
+          puts caller
+          implementation.connect(Travis.config.amqp)
+        end
       end
       alias :connect :connection
 

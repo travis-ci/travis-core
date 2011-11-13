@@ -24,6 +24,9 @@ module Travis
       def publish(queue, data, options = {})
         data = MultiJson.encode(data) if data.is_a?(Hash)
         options = options.merge(:routing_key => queue)
+        put '-' * 200
+        p exchange, data, options
+        put '-' * 200
         exchange.publish(data, options)
       end
 
