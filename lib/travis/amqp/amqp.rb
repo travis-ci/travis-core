@@ -1,4 +1,5 @@
 require 'amqp'
+require 'amqp/utilities/event_loop_helper'
 require 'multi_json'
 
 module Travis
@@ -12,6 +13,7 @@ module Travis
 
       class << self
         def connect(config)
+          AMQP::Utilities::EventLoopHelper.run
           AMQP.start(config)
         end
       end
@@ -21,9 +23,6 @@ module Travis
       def initialize(connection, name)
         @connection = connection
         @name = name
-        # TODO what does this do? is this actually correct?
-        require 'amqp/utilities/event_loop_helper'
-        AMQP::Utilities::EventLoopHelper.run
       end
 
       def subscribe(options, &block)
