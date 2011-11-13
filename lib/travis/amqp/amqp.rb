@@ -10,7 +10,17 @@ module Travis
         :auto_delete => false
       }
 
-      def initialize
+      class << self
+        def connect
+          AMQP.start(Travis.config.amqp)
+        end
+      end
+
+      attr_reader :connection, :name
+
+      def initialize(connection, name)
+        @connection = connection
+        @name = name
         # TODO what does this do? is this actually correct?
         require 'amqp/utilities/event_loop_helper'
         AMQP::Utilities::EventLoopHelper.run
@@ -26,14 +36,10 @@ module Travis
         exchange.publish(data, options)
       end
 
-      def disconnect
-        connection.close if @connection
-      end
-
       protected
 
         def queue
-          @queue ||= channel.queue(REPORTING_KEY, :durable => true, :exclusive => false)
+          @queue ||= channel.queue(name, :durable => true, :exclusive => false)
         end
 
         def exchange
@@ -41,15 +47,7 @@ module Travis
         end
 
         def channel
-          @channel ||=  AMQP::Channel.new(connection).prefetch(config.prefetch)
-        end
-
-        def connection
-          @connection ||= AMQP.start(config)
-        end
-
-        def config
-          Travis.config.amqp
+          @channel ||=  AMQP::Channel.new(connection).prefetch(Travis.config.amqp.prefetch)
         end
     end
   end

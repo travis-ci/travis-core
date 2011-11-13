@@ -6,6 +6,23 @@ module Travis
     REPORTING_KEY = 'reporting.jobs'
 
     class << self
+      def connected?
+        !!@connection
+      end
+
+      def connection
+        @connection ||= HotBunnies.connect(Travis::Worker.config.amqp)
+      end
+      alias :connect :connection
+
+      def disconnect
+        if connection
+          connection.close
+          @connection = nil
+          @adapter = nil
+        end
+      end
+
       def subscribe(options, &block)
         adapter.subscribe(options, &block)
       end
@@ -14,14 +31,14 @@ module Travis
         adapter.publish(queue, payload, options, &block)
       end
 
-      def disconnect
-        adapter.disconnect
-      end
-
       protected
 
         def adapter
-          @adapter ||= RUBY_PLATFORM == 'java' ? HotBunnies.new : Amqp.new
+          @adapter ||= implementation.new(connection, REPORTING_KEY)
+        end
+
+        def implementation
+          RUBY_PLATFORM == 'java' ? HotBunnies : Amqp
         end
     end
   end

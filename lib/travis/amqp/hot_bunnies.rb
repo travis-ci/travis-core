@@ -4,6 +4,19 @@ require 'multi_json'
 module Travis
   module Amqp
     class HotBunnies
+      class << self
+        def connect
+          ::HotBunnies.connect(Travis.config.amqp)
+        end
+      end
+
+      attr_reader :connection, :name
+
+      def initialize(connection, name)
+        @connection = connection
+        @name = name
+      end
+
       def subscribe(options, &block)
         queue.subscribe(options, &block)
       end
@@ -14,14 +27,10 @@ module Travis
         exchange.publish(data, options)
       end
 
-      def disconnect
-        connection.close if @connection
-      end
-
       protected
 
         def queue
-          @queue ||= channel.queue(REPORTING_KEY, :durable => true, :exclusive => false)
+          @queue ||= channel.queue(name, :durable => true, :exclusive => false)
         end
 
         def exchange
@@ -32,10 +41,6 @@ module Travis
           @channel ||= connection.create_channel.tap do |channel|
             channel.prefetch = 1
           end
-        end
-
-        def connection
-          @connection ||= ::HotBunnies.connect(Travis.config.amqp)
         end
     end
   end
