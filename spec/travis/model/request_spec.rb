@@ -5,7 +5,7 @@ require 'support/active_record'
 describe Request do
   include Support::ActiveRecord
 
-  let(:payload)    { GITHUB_PAYLOADS['gem-release'] }
+  let(:payload) { GITHUB_PAYLOADS['gem-release'] }
 
   describe 'create' do
     let(:request) { Factory(:request).reload }

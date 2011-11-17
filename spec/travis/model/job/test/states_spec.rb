@@ -13,8 +13,9 @@ class TestMock
 
   include Job::Test::States
 
-  attr_accessor :state, :config, :status, :log, :started_at, :finished_at
+  attr_accessor :state, :config, :status, :started_at, :finished_at
   def owner; @owner ||= stub('build', :start => nil, :finish => nil, :state => nil, :state= => nil) end
+  def log; @log ||= stub('artifact', :content => nil, :update_attributes! => nil) end
   def save!; end
   def denormalize(*); end
   def add_tags(*); end # TODO simple_states needs to be able to take multiple declarations for the same event
@@ -30,6 +31,11 @@ describe Job::Test::States do
       it 'sets the state to :started' do
         job.start(data)
         job.state.should == :started
+      end
+
+      it "resets the log artifact's content" do
+        job.log.expects(:update_attributes!).with(:content => '')
+        job.start(data)
       end
 
       it 'notifies observers' do
