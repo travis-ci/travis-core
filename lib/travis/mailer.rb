@@ -12,7 +12,9 @@ module Travis
 
     class << self
       def setup
-        ActionMailer::Base.append_view_path(base_dir.join('views').to_s)
+        base = ActionMailer::Base
+        base.smtp_settings = Travis.config.smtp
+        base.append_view_path(base_dir.join('views').to_s)
         I18n.load_path += Dir[base_dir.join('locales/**/*.yml')]
       end
 
