@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'activerecord',      '~> 3.1.1'
   s.add_dependency 'actionmailer',      '~> 3.1.1'
   # s.add_dependency 'actionmailer_inline_css', '~> 1.3.0'
+  s.add_dependency 'postmark-rails',    '~> 0.4.1'
 
   # db
   s.add_dependency 'data_migrations',   '~> 0.0.1'

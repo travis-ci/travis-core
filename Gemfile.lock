@@ -9,6 +9,7 @@ PATH
       hashr (~> 0.0.16)
       oa-oauth (~> 0.3.0)
       octokit (~> 0.6.5)
+      postmark-rails (~> 0.4.1)
       pusher (~> 0.8.1)
       rabl (~> 0.5.0)
       rails (~> 3.1.1)
@@ -62,7 +63,6 @@ GEM
       eventmachine
     arel (2.2.1)
     bcrypt-ruby (3.0.1)
-    bcrypt-ruby (3.0.1-java)
     bouncy-castle-java (1.5.0146.1)
     builder (3.0.0)
     crack (0.1.8)
@@ -88,13 +88,12 @@ GEM
     hashie (1.2.0)
     hashr (0.0.16)
     hike (1.2.1)
-    hot_bunnies (1.3.1-java)
+    hot_bunnies (1.3.3-java)
     i18n (0.6.0)
     jdbc-postgres (9.0.801)
     jruby-openssl (0.7.4)
       bouncy-castle-java
     json (1.6.1)
-    json (1.6.1-java)
     mail (2.3.0)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
@@ -127,6 +126,11 @@ GEM
     orm_adapter (0.0.5)
     pg (0.11.0)
     polyglot (0.3.3)
+    postmark (0.9.8)
+    postmark-rails (0.4.1)
+      actionmailer
+      postmark (>= 0.9.0)
+      rake
     pusher (0.8.4)
       crack (~> 0.1.0)
       multi_json (~> 1.0)
@@ -181,7 +185,7 @@ GEM
       hike (~> 1.2)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
-    standalone_migrations (1.0.4)
+    standalone_migrations (1.0.5)
       activerecord (>= 3)
       rake
     thor (0.14.6)

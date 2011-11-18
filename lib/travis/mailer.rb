@@ -1,6 +1,7 @@
 require 'action_mailer'
 require 'i18n'
 require 'pathname'
+require 'postmark-rails'
 
 module Travis
   module Mailer
@@ -12,9 +13,11 @@ module Travis
 
     class << self
       def setup
-        base = ActionMailer::Base
-        base.smtp_settings = Travis.config.smtp
-        base.append_view_path(base_dir.join('views').to_s)
+        mailer = ActionMailer::Base
+        mailer.delivery_method   = :postmark
+        mailer.postmark_settings = { :api_key => Travis.config.smtp.user_name }
+        mailer.append_view_path(base_dir.join('views').to_s)
+
         I18n.load_path += Dir[base_dir.join('locales/**/*.yml')]
       end
 
