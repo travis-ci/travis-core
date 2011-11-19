@@ -25,6 +25,7 @@ module Travis
             :database => { :adapter => 'postgresql', :database => "travis_#{Travis::Config.env}", :encoding => 'unicode', :min_messages => 'warning' },
             :host => 'http://travis-ci.org',
             :notifications => [],
+            :smtp    => { :user_name => 'should-be-api_key' },
             :pusher  => { :app_id => 'app-id', :key => 'key', :secret => 'secret' },
             :queues  => [],
             :workers => { :prune => { :after => 10, :interval => 10 } },
