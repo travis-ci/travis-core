@@ -2,6 +2,9 @@ source :rubygems
 
 gemspec
 
+# TODO remove this once pusher > 0.8.4 has been released. should be in gemspec
+gem 'pusher', :git => 'https://github.com/juno/pusher-gem.git', :ref => 'd025ccb'
+
 platform :mri do
   gem 'amqp',              '~> 0.8.3'
   gem 'pg',                '~> 0.11.0'
