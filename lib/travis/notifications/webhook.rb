@@ -7,6 +7,8 @@ module Travis
 
       EVENTS = 'build:finished'
 
+      include Logging
+
       class << self
         def payload_for(build)
           Payload.new(build).to_hash
@@ -23,6 +25,7 @@ module Travis
       def notify(event, build, *args)
         send_webhook_notifications(build.webhooks, build) if build.send_webhook_notifications?
       end
+      instrument :notify
 
       protected
 

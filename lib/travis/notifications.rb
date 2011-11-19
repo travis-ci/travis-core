@@ -20,10 +20,15 @@ module Travis
       def dispatch(event, *args)
         subscriptions.each do |subscriber, subscription|
           if matches?(subscription, event)
-            log "notifying #{subscriber.class.name} about #{event.inspect} (#{args.map { |arg| arg.inspect }.join(', ')})"
             subscriber.notify(event, *args)
           end
         end
+      end
+
+      def log_notify(channel, started_at, finished_at, hash, args)
+        subscriber, event, *args = args
+        args = args.map { |arg| arg.is_a?(ActiveRecord::Base) ? "#<#{arg.class.name} id: #{arg.id}>" : arg.inspect }
+        notice "#{channel} (#{finished_at - started_at}): #{subscriber.class.name.demodulize} => #{event}: #{args.join(', ')}"
       end
 
       protected
@@ -48,3 +53,5 @@ module Travis
       end
   end
 end
+
+ActiveSupport::Notifications.subscribe(:notify, &Travis::Notifications.method(:log_notify))

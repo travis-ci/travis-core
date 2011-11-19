@@ -5,9 +5,12 @@ module Travis
     class Irc
       EVENTS = 'build:finished'
 
+      include Logging
+
       def notify(event, build, *args)
         send_irc_notifications(build) if build.send_irc_notifications?
       end
+      instrument :notify
 
       protected
         def send_irc_notifications(build)

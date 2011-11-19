@@ -7,9 +7,12 @@ module Travis
 
       EVENTS = [/build:(started|finished)/, /job:.*:(created|started|log|finished)/]
 
+      include Logging
+
       def notify(event, object, *args)
         push(event, object, *args)
       end
+      instrument :notify
 
       protected
 

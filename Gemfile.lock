@@ -12,9 +12,7 @@ PATH
   remote: .
   specs:
     travis-core (0.0.1)
-      actionmailer (~> 3.1.2)
       actionmailer_inline_css (~> 1.3.0)
-      activerecord (~> 3.1.2)
       data_migrations (~> 0.0.1)
       devise (~> 1.5.0)
       hashr (~> 0.0.17)
@@ -76,7 +74,7 @@ GEM
     arel (2.2.1)
     bcrypt-ruby (3.0.1)
     builder (3.0.0)
-    crack (0.1.8)
+    crack (0.3.1)
     css_parser (1.2.5)
       addressable
     data_migrations (0.0.1)

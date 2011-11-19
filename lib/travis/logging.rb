@@ -1,4 +1,5 @@
 require 'logger'
+require 'active_support/notifications'
 
 STDOUT.sync = true
 
@@ -22,8 +23,35 @@ module Travis
   end
 
   module Logging
+    ANSI = {
+      :red    => 31,
+      :green  => 32,
+      :yellow => 33,
+      :cyan   => 36
+    }
+
     def self.included(base)
-      base.extend(self)
+      base.extend(ClassMethods)
+    end
+
+    module ClassMethods
+      def new(*args)
+        super(*args).tap do |instance|
+          (class << instance; self; end).send(:include, instrumentations)
+        end
+      end
+
+      def instrumentations
+        @instrumentations ||= Module.new
+      end
+
+      def instrument(name)
+        instrumentations.send(:define_method, name) do |*args|
+          ActiveSupport::Notifications.instrument(name, [self] + args) do
+            super(*args)
+          end
+        end
+      end
     end
 
     def log(*args)
@@ -36,7 +64,11 @@ module Travis
     end
 
     def notice(message)
-      "\e[33m#{message}\e[0m"
+      colorize(:yellow, message)
+    end
+
+    def colorize(color, text)
+      "\e[#{ANSI[color]}m#{text}\e[0m"
     end
   end
 end

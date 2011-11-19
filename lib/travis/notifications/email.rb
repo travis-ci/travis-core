@@ -5,9 +5,12 @@ module Travis
     class Email
       EVENTS = 'build:finished'
 
+      include Logging
+
       def notify(event, object, *args)
         send_emails(object) if object.send_email_notifications?
       end
+      instrument :notify
 
       protected
 
