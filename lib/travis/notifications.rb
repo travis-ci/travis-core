@@ -56,4 +56,4 @@ module Travis
   end
 end
 
-ActiveSupport::Notifications.subscribe(:notify, &Travis::Notifications.method(:log_notify))
+ActiveSupport::Notifications.subscribe('notify', &Travis::Notifications.method(:log_notify))
