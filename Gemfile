@@ -27,5 +27,4 @@ group :test do
   gem 'database_cleaner',  '~> 0.6.7'
   gem 'mocha',             '~> 0.10.0'
   gem 'webmock',           '~> 1.7.7'
-  gem 'hpricot',           '~> 0.8.4'
 end

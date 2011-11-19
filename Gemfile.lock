@@ -18,6 +18,7 @@ PATH
       data_migrations (~> 0.0.1)
       devise (~> 1.5.0)
       hashr (~> 0.0.17)
+      hpricot (~> 0.8.4)
       oa-oauth (~> 0.3.2)
       octokit (~> 0.6.5)
       omniauth
@@ -221,7 +222,6 @@ DEPENDENCIES
   database_cleaner (~> 0.6.7)
   factory_girl (~> 2.1.2)
   hot_bunnies (~> 1.3.3)
-  hpricot (~> 0.8.4)
   jruby-openssl (~> 0.7.4)
   mocha (~> 0.10.0)
   pg (~> 0.11.0)
