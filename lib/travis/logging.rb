@@ -64,7 +64,7 @@ module Travis
     end
 
     def notice(message)
-      colorize(:yellow, message)
+      log colorize(:yellow, message)
     end
 
     def colorize(color, text)
