@@ -13,13 +13,17 @@ module Travis
         def payload_for(build)
           Payload.new(build).to_hash
         end
-      end
 
-      cattr_accessor :http_client
+        def http_client
+          @http_client ||= Faraday.new do |f|
+            f.request :url_encoded
+            f.adapter :net_http
+          end
+        end
 
-      self.http_client = Faraday.new do |f|
-        f.request :url_encoded
-        f.adapter :net_http
+        def http_client=(http_client)
+          @http_client = http_client
+        end
       end
 
       def notify(event, build, *args)
