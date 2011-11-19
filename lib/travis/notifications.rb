@@ -1,3 +1,5 @@
+require 'active_support/core_ext/string/inflections'
+
 module Travis
   module Notifications
     autoload :Email,   'travis/notifications/email'
