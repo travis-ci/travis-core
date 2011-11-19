@@ -10,7 +10,7 @@ child build => :build do
   end
 
   code :matrix do
-    [Travis::Renderer.hash(job, :type => :event, :template => 'build/started/test', :build_dir => build_dir)]
+    [Travis::Renderer.hash(job, :type => :event, :template => 'build/started/test', :base_dir => base_dir)]
   end
 end
 
