@@ -1,4 +1,5 @@
 require 'pusher'
+require 'core_ext/module/async'
 
 module Travis
   module Notifications
@@ -20,8 +21,9 @@ module Travis
           data  = args.last.is_a?(Hash) ? args.pop : {}
           data  = payload_for(event, object, data)
           event = client_event_for(event)
-          channel(event, object).trigger_async(event, data)
+          channel(event, object).trigger(event, data)
         end
+        async :push if RUBY_PLATFORM == 'java'
 
         def config
           @config ||= Travis.config.pusher
