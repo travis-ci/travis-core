@@ -47,7 +47,7 @@ module Travis
 
       def instrument(name)
         instrumentations.send(:define_method, name) do |*args|
-          ActiveSupport::Notifications.instrument(name.to_s, [self] + args) do
+          ActiveSupport::Notifications.instrument(name.to_s, :object => self, :args => args) do
             super(*args)
           end
         end
