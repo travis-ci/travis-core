@@ -20,7 +20,7 @@ module Travis
           data  = args.last.is_a?(Hash) ? args.pop : {}
           data  = payload_for(event, object, data)
           event = client_event_for(event)
-          channel(event, object).trigger(event, data)
+          channel(event, object).trigger_async(event, data)
         end
 
         def config

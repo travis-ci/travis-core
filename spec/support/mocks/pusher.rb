@@ -10,6 +10,7 @@ module Support
       def trigger(*args)
         messages << args
       end
+      alias :trigger_async :trigger
 
       def reset!
         @messages = []
