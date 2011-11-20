@@ -13,7 +13,8 @@ module Travis
       def notify(event, object, *args)
         push(event, object, *args)
       end
-      instrument :notify
+      # instrument :notify
+      async :notify if RUBY_PLATFORM == 'java' && ENV['RAILS_ENV'] != 'test'
 
       protected
 
@@ -23,7 +24,6 @@ module Travis
           event = client_event_for(event)
           channel(event, object).trigger(event, data)
         end
-        async :push if RUBY_PLATFORM == 'java'
 
         def config
           @config ||= Travis.config.pusher

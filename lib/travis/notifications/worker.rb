@@ -1,4 +1,5 @@
 require 'active_support/core_ext/module/delegation'
+require 'core_ext/module/async'
 
 module Travis
   module Notifications
@@ -47,6 +48,7 @@ module Travis
       def notify(event, job, *args)
         enqueue(job)
       end
+      # instrument :notify
 
       def enqueue(job)
         queue = queue_for(job).name

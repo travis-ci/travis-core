@@ -1,4 +1,5 @@
 require 'irc_client'
+require 'core_ext/module/async'
 
 module Travis
   module Notifications
@@ -10,7 +11,8 @@ module Travis
       def notify(event, build, *args)
         send_irc_notifications(build) if build.send_irc_notifications?
       end
-      instrument :notify
+      # instrument :notify
+      async :notify if RUBY_PLATFORM == 'java' && ENV['RAILS_ENV'] != 'test'
 
       protected
         def send_irc_notifications(build)

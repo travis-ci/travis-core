@@ -1,4 +1,5 @@
 require 'faraday'
+require 'core_ext/module/async'
 
 module Travis
   module Notifications
@@ -29,7 +30,8 @@ module Travis
       def notify(event, build, *args)
         send_webhook_notifications(build.webhooks, build) if build.send_webhook_notifications?
       end
-      instrument :notify
+      # instrument :notify
+      async :notify if RUBY_PLATFORM == 'java' && ENV['RAILS_ENV'] != 'test'
 
       protected
 
