@@ -1,5 +1,6 @@
 require 'logger'
 require 'active_support/notifications'
+require 'core_ext/module/prepend_to'
 
 STDOUT.sync = true
 
@@ -35,20 +36,10 @@ module Travis
     end
 
     module ClassMethods
-      def new(*args)
-        super(*args).tap do |instance|
-          (class << instance; self; end).send(:include, instrumentations)
-        end
-      end
-
-      def instrumentations
-        @instrumentations ||= Module.new
-      end
-
       def instrument(name)
-        instrumentations.send(:define_method, name) do |*args|
+        prepend_to(name) do |*args, &block|
           ActiveSupport::Notifications.instrument(name.to_s, :object => self, :args => args) do
-            super(*args)
+            super(*args, &block)
           end
         end
       end

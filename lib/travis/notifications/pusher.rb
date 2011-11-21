@@ -13,7 +13,7 @@ module Travis
       def notify(event, object, *args)
         push(event, object, *args)
       end
-      # instrument :notify
+      instrument :notify
       async :notify if RUBY_PLATFORM == 'java' && ENV['RAILS_ENV'] != 'test'
 
       protected

@@ -11,7 +11,7 @@ module Travis
       def notify(event, object, *args)
         send_emails(object) if object.send_email_notifications?
       end
-      # instrument :notify
+      instrument :notify
       async :notify if RUBY_PLATFORM == 'java' && ENV['RAILS_ENV'] != 'test'
 
       protected

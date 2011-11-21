@@ -9,6 +9,8 @@ module Travis
 
       EVENTS = /job:.*:created/
 
+      include Logging
+
       class << self
         def enqueue(job)
           new.enqueue(job)
@@ -48,7 +50,7 @@ module Travis
       def notify(event, job, *args)
         enqueue(job)
       end
-      # instrument :notify
+      instrument :notify
 
       def enqueue(job)
         queue = queue_for(job).name
