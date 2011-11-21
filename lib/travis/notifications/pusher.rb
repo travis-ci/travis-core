@@ -15,7 +15,7 @@ module Travis
           push(event, object, *args)
         end
       end
-      async :notify if RUBY_PLATFORM == 'java' && ENV['RAILS_ENV'] != 'test'
+      async :notify if ENV['RAILS_ENV'] != 'test'
 
       protected
 

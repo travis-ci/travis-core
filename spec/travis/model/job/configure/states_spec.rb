@@ -5,7 +5,7 @@ class ConfigureMock
 
   class << self
     def name; 'Job::Configure'; end
-    def after_commit; end
+    def after_create; end
   end
 
   include Job::Configure::States
