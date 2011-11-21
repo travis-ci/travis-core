@@ -8,10 +8,11 @@ module Travis
 
       include Logging
 
-      def notify(event, build, *args)
-        send_irc_notifications(build) if build.send_irc_notifications?
+      def notify(event, object, *args)
+        ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, *args]) do
+          send_irc_notifications(object) if object.send_irc_notifications?
+        end
       end
-      instrument :notify
       async :notify if RUBY_PLATFORM == 'java' && ENV['RAILS_ENV'] != 'test'
 
       protected

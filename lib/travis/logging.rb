@@ -1,6 +1,5 @@
 require 'logger'
 require 'active_support/notifications'
-require 'core_ext/module/prepend_to'
 
 STDOUT.sync = true
 
@@ -30,20 +29,6 @@ module Travis
       :yellow => 33,
       :cyan   => 36
     }
-
-    def self.included(base)
-      base.extend(ClassMethods)
-    end
-
-    module ClassMethods
-      def instrument(name)
-        prepend_to(name) do |*args, &block|
-          ActiveSupport::Notifications.instrument(name.to_s, :object => self, :args => args) do
-            super(*args, &block)
-          end
-        end
-      end
-    end
 
     def log(*args)
       logger.info(*args)

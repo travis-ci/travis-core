@@ -27,10 +27,11 @@ module Travis
         end
       end
 
-      def notify(event, build, *args)
-        send_webhook_notifications(build.webhooks, build) if build.send_webhook_notifications?
+      def notify(event, object, *args)
+        ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, *args]) do
+          send_webhook_notifications(object.webhooks, object) if object.send_webhook_notifications?
+        end
       end
-      instrument :notify
       async :notify if RUBY_PLATFORM == 'java' && ENV['RAILS_ENV'] != 'test'
 
       protected

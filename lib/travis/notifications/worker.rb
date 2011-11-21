@@ -47,10 +47,11 @@ module Travis
 
       delegate :amqp, :queue_for, :payload_for, :to => :'self.class'
 
-      def notify(event, job, *args)
-        enqueue(job)
+      def notify(event, object, *args)
+        ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, *args]) do
+          enqueue(object)
+        end
       end
-      instrument :notify
 
       def enqueue(job)
         queue = queue_for(job).name

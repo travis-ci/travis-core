@@ -28,10 +28,10 @@ module Travis
       end
 
       def log_notify(channel, started_at, finished_at, hash, args)
-        subscriber, args = args.values_at(:object, :args)
+        target, args = args.values_at(:target, :args)
         event = args.shift
         args = args.map { |arg| arg.is_a?(ActiveRecord::Base) ? "#<#{arg.class.name} id: #{arg.id}>" : arg.inspect }
-        notice "#{channel} (#{finished_at - started_at}): #{subscriber.class.name.demodulize} => #{event}: #{args.join(', ')}"
+        notice "#{channel} (#{finished_at - started_at}): #{target.class.name.demodulize} => #{event}: #{args.join(', ')}"
       end
 
       protected

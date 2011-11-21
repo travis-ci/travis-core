@@ -11,9 +11,10 @@ module Travis
       include Logging
 
       def notify(event, object, *args)
-        push(event, object, *args)
+        ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, *args]) do
+          push(event, object, *args)
+        end
       end
-      instrument :notify
       async :notify if RUBY_PLATFORM == 'java' && ENV['RAILS_ENV'] != 'test'
 
       protected
