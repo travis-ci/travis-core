@@ -1,5 +1,6 @@
 require 'active_support/concern'
 require 'simple_states'
+require 'core_ext/active_record/readonly'
 
 class Job
   class Configure
@@ -16,7 +17,7 @@ class Job
         event :all, :after => :notify
 
         after_commit(:on => :create) do
-          notify(:create) if created?
+          readonly { notify(:create) }
         end
 
         def finish(data)
