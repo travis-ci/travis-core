@@ -15,6 +15,7 @@ module Travis
   autoload :GithubApi,     'travis/github_api'
   autoload :Logging,       'travis/logging'
   autoload :Mailer,        'travis/mailer'
+  autoload :Model,         'travis/model'
   autoload :Notifications, 'travis/notifications'
   autoload :Record,        'travis/record'
   autoload :Renderer,      'travis/renderer'

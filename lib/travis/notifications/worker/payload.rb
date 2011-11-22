@@ -2,14 +2,20 @@ module Travis
   module Notifications
     class Worker
       class Payload < Notifications::Payload
-        attr_reader :job, :extra
+        class << self
+          def for(job)
+            new(job).to_hash
+          end
+        end
 
-        def initialize(job, extra = {})
-          @job, @extra = job, extra
+        attr_reader :job
+
+        def initialize(job)
+          @job = job
         end
 
         def render(format)
-          Travis::Renderer.send(format, data, :type => 'worker', :template => template, :base_dir => base_dir).deep_merge(extra)
+          Travis::Renderer.send(format, data, :type => 'worker', :template => template, :base_dir => base_dir).deep_merge(:queue => job.queue)
         end
 
         def data
