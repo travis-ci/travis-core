@@ -15,7 +15,7 @@ class Job
         event :finish, :to => :finished, :after => :add_tags
         event :all, :after => [:notify, :propagate]
 
-        after_create do
+        after_commit(:on => :create) do
           notify(:create)
         end
       end

@@ -15,7 +15,7 @@ class Job
         event :finish, :to => :finished, :after => :configure_owner # TODO why not just propagate here?
         event :all, :after => :notify
 
-        after_create do
+        after_commit(:on => :create) do
           notify(:create) if created?
         end
 
