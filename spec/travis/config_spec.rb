@@ -39,7 +39,51 @@ describe Travis::Config do
     end
 
     it 'database' do
-      config.database.should == { :adapter => 'postgresql', :database => 'travis_test', :encoding => 'unicode', :min_messages => 'warning' }
+      config.database.should == {
+        :adapter => 'postgresql',
+        :database => 'travis_test',
+        :encoding => 'unicode',
+        :min_messages => 'warning'
+      }
+    end
+  end
+
+  describe 'using DATABASE_URL for database configuration if present' do
+    before :each do
+      @database_url = ENV['DATABASE_URL']
+    end
+
+    after :each do
+      ENV['DATABASE_URL'] = @database_url
+    end
+
+    it 'works when given a url with a port' do
+      ENV['DATABASE_URL'] = 'postgres://username:password@hostname:port/database'
+
+      config.database.should == {
+        :adapter => 'postgresql',
+        :host => 'hostname',
+        :port => 'port',
+        :database => 'database',
+        :username => 'username',
+        :password => 'password',
+        :encoding => 'unicode',
+        :min_messages => 'warning'
+      }
+    end
+
+    it 'works when given a url without a port' do
+      ENV['DATABASE_URL'] = 'postgres://username:password@hostname/database'
+
+      config.database.should == {
+        :adapter => 'postgresql',
+        :host => 'hostname',
+        :database => 'database',
+        :username => 'username',
+        :password => 'password',
+        :encoding => 'unicode',
+        :min_messages => 'warning'
+      }
     end
   end
 
