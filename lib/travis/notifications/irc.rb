@@ -1,13 +1,19 @@
 require 'irc_client'
+require 'core_ext/module/async'
 
 module Travis
   module Notifications
     class Irc
       EVENTS = 'build:finished'
 
-      def notify(event, build, *args)
-        send_irc_notifications(build) if build.send_irc_notifications?
+      include Logging
+
+      def notify(event, object, *args)
+        ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, *args]) do
+          send_irc_notifications(object) if object.send_irc_notifications?
+        end
       end
+      async :notify if ENV['RAILS_ENV'] != 'test'
 
       protected
         def send_irc_notifications(build)

@@ -17,7 +17,7 @@ class Job
         end
 
         def stalled
-          unfinished.where('created_at < ?', Time.now - Travis.config.jobs.retry.after)
+          unfinished.where('created_at < ?', Time.now.utc - Travis.config.jobs.retry.after)
         end
 
         def unfinished
@@ -33,7 +33,7 @@ class Job
 
     def force_finish
       append_log!("\n#{FORCE_FINISH_MESSAGE}") if respond_to?(:append_log!)
-      finish!(:status => 1, :finished_at => Time.now)
+      finish!(:status => 1, :finished_at => Time.now.utc)
     end
 
     def requeueable?

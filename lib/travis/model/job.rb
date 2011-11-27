@@ -2,9 +2,10 @@ require 'active_record'
 
 class Job < ActiveRecord::Base
   autoload :Configure, 'travis/model/job/configure'
-  autoload :Tagging,   'travis/model/job/tagging'
   autoload :Cleanup,   'travis/model/job/cleanup'
+  autoload :Queue,     'travis/model/job/queue'
   autoload :States,    'travis/model/job/states'
+  autoload :Tagging,   'travis/model/job/tagging'
   autoload :Test,      'travis/model/job/test'
 
   class << self
@@ -32,6 +33,7 @@ class Job < ActiveRecord::Base
   before_create do
     build_log
     self.state = :created if self.state.nil?
+    self.queue = Queue.for(self).name
   end
 
   def matrix_config?(config)

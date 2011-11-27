@@ -3,8 +3,8 @@ require 'active_support/core_ext/object/blank'
 class Build
   module Notifications
     DEFAULTS = {
-      :success => { :email => :change, :webhook => :always, :irc => :always },
-      :failure => { :email => :always, :webhook => :always, :irc => :always }
+      :success => { :email => :change, :webhooks => :always, :irc => :always },
+      :failure => { :email => :always, :webhooks => :always, :irc => :always }
     }
 
     def send_email_notifications?

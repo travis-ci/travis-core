@@ -2,6 +2,9 @@ source :rubygems
 
 gemspec
 
+# TODO remove this once pusher > 0.8.4 has been released. should be in gemspec
+gem 'pusher', :git => 'https://github.com/juno/pusher-gem.git', :ref => 'd025ccb'
+
 platform :mri do
   gem 'amqp',              '~> 0.8.3'
   gem 'pg',                '~> 0.11.0'
@@ -9,13 +12,13 @@ platform :mri do
 end
 
 platform :jruby do
-  gem 'jruby-openssl'
-  gem 'hot_bunnies',       '~> 1.3.1'
-  gem 'activerecord-jdbcpostgresql-adapter'
+  gem 'jruby-openssl',     '~> 0.7.4'
+  gem 'hot_bunnies',       '~> 1.3.3'
+  gem 'activerecord-jdbcpostgresql-adapter', '~> 1.2.0'
 end
 
 group :development do
-  gem 'standalone_migrations'
+  gem 'standalone_migrations', '~> 1.0.5'
 end
 
 group :test do

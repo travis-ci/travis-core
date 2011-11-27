@@ -31,7 +31,12 @@ describe Request::Payload::Github do
       payload.send(:no_commit?).should be_false
     end
 
-    it 'returns true when the payload does not contain a commit hash' do
+    it 'returns true when the payload does not contain any commits' do
+      payload.stubs(:commits).returns([])
+      payload.send(:no_commit?).should be_true
+    end
+
+    it 'returns true when last commit from the payload does not contain a commit hash' do
       payload.commits.last.stubs(:commit).returns(nil)
       payload.send(:no_commit?).should be_true
     end

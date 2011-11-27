@@ -1,11 +1,14 @@
+require 'active_support/core_ext/string/inflections'
+
 module Travis
   module Notifications
-    autoload :Email,   'travis/notifications/email'
-    autoload :Irc,     'travis/notifications/irc'
-    autoload :Payload, 'travis/notifications/payload'
-    autoload :Pusher,  'travis/notifications/pusher'
-    autoload :Webhook, 'travis/notifications/webhook'
-    autoload :Worker,  'travis/notifications/worker'
+    autoload :Email,    'travis/notifications/email'
+    autoload :Irc,      'travis/notifications/irc'
+    autoload :Payload,  'travis/notifications/payload'
+    autoload :Pusher,   'travis/notifications/pusher'
+    autoload :Webhook,  'travis/notifications/webhook'
+    autoload :Campfire, 'travis/notifications/campfire'
+    autoload :Worker,   'travis/notifications/worker'
 
     class << self
       include Logging
@@ -20,10 +23,17 @@ module Travis
       def dispatch(event, *args)
         subscriptions.each do |subscriber, subscription|
           if matches?(subscription, event)
-            log "notifying #{subscriber.class.name} about #{event.inspect} (#{args.map { |arg| arg.inspect }.join(', ')})"
             subscriber.notify(event, *args)
           end
         end
+      end
+
+      def log_notify(channel, started_at, finished_at, hash, args)
+        target, args = args.values_at(:target, :args)
+        event = args.shift
+        args = args.map { |arg| arg.is_a?(ActiveRecord::Base) ? "#<#{arg.class.name} id: #{arg.id}>" : arg.inspect }
+        message = "#{channel} (#{finished_at - started_at}): #{target.class.name.demodulize} => #{event}: #{args.join(', ')}"
+        log colorize(:green, message)
       end
 
       protected
@@ -48,3 +58,5 @@ module Travis
       end
   end
 end
+
+ActiveSupport::Notifications.subscribe('notify', &Travis::Notifications.method(:log_notify))

@@ -21,6 +21,7 @@ class Job
       end
 
       def start(data = {})
+        self.log.update_attributes!(:content => '')
         self.started_at = data[:started_at]
       end
 

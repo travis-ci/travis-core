@@ -1,4 +1,5 @@
 require 'faraday'
+require 'core_ext/module/async'
 
 module Travis
   module Notifications
@@ -7,22 +8,31 @@ module Travis
 
       EVENTS = 'build:finished'
 
+      include Logging
+
       class << self
         def payload_for(build)
           Payload.new(build).to_hash
         end
+
+        def http_client
+          @http_client ||= Faraday.new do |f|
+            f.request :url_encoded
+            f.adapter :net_http
+          end
+        end
+
+        def http_client=(http_client)
+          @http_client = http_client
+        end
       end
 
-      cattr_accessor :http_client
-
-      self.http_client = Faraday.new do |f|
-        f.request :url_encoded
-        f.adapter :net_http
+      def notify(event, object, *args)
+        ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, *args]) do
+          send_webhook_notifications(object.webhooks, object) if object.send_webhook_notifications?
+        end
       end
-
-      def notify(event, build, *args)
-        send_webhook_notifications(build.webhooks, build) if build.send_webhook_notifications?
-      end
+      async :notify if ENV['RAILS_ENV'] != 'test'
 
       protected
 

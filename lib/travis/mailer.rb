@@ -1,6 +1,9 @@
 require 'action_mailer'
 require 'i18n'
 require 'pathname'
+require 'postmark-rails'
+require 'hpricot' # so that premailer uses it
+require 'actionmailer_inline_css'
 
 module Travis
   module Mailer
@@ -12,7 +15,11 @@ module Travis
 
     class << self
       def setup
-        ActionMailer::Base.append_view_path(base_dir.join('views').to_s)
+        mailer = ActionMailer::Base
+        mailer.delivery_method   = :postmark
+        mailer.postmark_settings = { :api_key => Travis.config.smtp.user_name }
+        mailer.append_view_path(base_dir.join('views').to_s)
+
         I18n.load_path += Dir[base_dir.join('locales/**/*.yml')]
       end
 

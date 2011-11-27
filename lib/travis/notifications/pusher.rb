@@ -1,4 +1,5 @@
 require 'pusher'
+require 'core_ext/module/async'
 
 module Travis
   module Notifications
@@ -7,9 +8,14 @@ module Travis
 
       EVENTS = [/build:(started|finished)/, /job:.*:(created|started|log|finished)/]
 
+      include Logging
+
       def notify(event, object, *args)
-        push(event, object, *args)
+        ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, *args]) do
+          push(event, object, *args)
+        end
       end
+      async :notify if ENV['RAILS_ENV'] != 'test'
 
       protected
 

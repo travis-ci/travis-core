@@ -1,4 +1,5 @@
 require 'logger'
+require 'active_support/notifications'
 
 STDOUT.sync = true
 
@@ -22,9 +23,12 @@ module Travis
   end
 
   module Logging
-    def self.included(base)
-      base.extend(self)
-    end
+    ANSI = {
+      :red    => 31,
+      :green  => 32,
+      :yellow => 33,
+      :cyan   => 36
+    }
 
     def log(*args)
       logger.info(*args)
@@ -36,7 +40,11 @@ module Travis
     end
 
     def notice(message)
-      "\e[33m#{message}\e[0m"
+      log colorize(:yellow, message)
+    end
+
+    def colorize(color, text)
+      "\e[#{ANSI[color]}m#{text}\e[0m"
     end
   end
 end

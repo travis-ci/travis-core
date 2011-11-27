@@ -1,13 +1,19 @@
 require 'net/smtp'
+require 'core_ext/module/async'
 
 module Travis
   module Notifications
     class Email
       EVENTS = 'build:finished'
 
+      include Logging
+
       def notify(event, object, *args)
-        send_emails(object) if object.send_email_notifications?
+        ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, *args]) do
+          send_emails(object) if object.send_email_notifications?
+        end
       end
+      async :notify if ENV['RAILS_ENV'] != 'test'
 
       protected
 
