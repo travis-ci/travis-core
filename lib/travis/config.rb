@@ -5,20 +5,20 @@ require 'active_support/core_ext/object/blank'
 module Travis
   class Config < Hashr
     class << self
+      def env
+       defined?(Rails) ? Rails.env : ENV['RAILS_ENV'] || ENV['ENV'] || 'test'
+      end
+
       def load_env
-        YAML.load(ENV['travis_config']) if ENV['travis_config']
+        @load_env ||= YAML.load(ENV['travis_config']) if ENV['travis_config']
       end
 
       def load_file
-        YAML.load_file(filename)[env] if File.exists?(filename)
+        @load_file ||= YAML.load_file(filename)[env] if File.exists?(filename)
       end
 
       def filename
         @filename ||= File.expand_path('config/travis.yml')
-      end
-
-      def env
-       defined?(Rails) ? Rails.env : ENV['RAILS_ENV'] || ENV['ENV'] || 'test'
       end
 
       def database_from_env
