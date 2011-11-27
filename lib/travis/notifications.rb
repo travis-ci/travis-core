@@ -2,12 +2,13 @@ require 'active_support/core_ext/string/inflections'
 
 module Travis
   module Notifications
-    autoload :Email,   'travis/notifications/email'
-    autoload :Irc,     'travis/notifications/irc'
-    autoload :Payload, 'travis/notifications/payload'
-    autoload :Pusher,  'travis/notifications/pusher'
-    autoload :Webhook, 'travis/notifications/webhook'
-    autoload :Worker,  'travis/notifications/worker'
+    autoload :Email,    'travis/notifications/email'
+    autoload :Irc,      'travis/notifications/irc'
+    autoload :Payload,  'travis/notifications/payload'
+    autoload :Pusher,   'travis/notifications/pusher'
+    autoload :Webhook,  'travis/notifications/webhook'
+    autoload :Campfire, 'travis/notifications/campfire'
+    autoload :Worker,   'travis/notifications/worker'
 
     class << self
       include Logging

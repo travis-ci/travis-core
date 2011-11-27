@@ -96,6 +96,17 @@ RSpec::Matchers.define :post_webhooks_on do |event, object, options|
   end
 end
 
+RSpec::Matchers.define :post_campfire_on do |event, object, options|
+  match do |dispatch|
+    options[:to].map! do |scheme|
+      data = Travis::Notifications::Campfire.new.send(:extract_data, scheme)
+      Travis::Notifications::Campfire.new.send(:build_url, data)
+    end
+
+    post_webhooks_on(event, object, options)
+  end
+end
+
 RSpec::Matchers.define :be_queued do |*args|
   match do |job|
     @options = args.last.is_a?(Hash) ? args.pop : {}
