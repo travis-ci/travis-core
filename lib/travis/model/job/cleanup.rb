@@ -11,17 +11,17 @@ class Job
     included do
       class << self
         def cleanup
-          unfinished.stalled.each do |job|
+          stalled.each do |job|
             job.requeueable? ? job.enqueue : job.force_finish
           end
         end
 
-        def unfinished
-          where("state <> 'finished'")
+        def stalled
+          unfinished.where('created_at < ?', Time.now - Travis.config.jobs.retry.after)
         end
 
-        def stalled
-          where('created_at < ?', Time.now - Travis.config.jobs.retry.after)
+        def unfinished
+          where("state <> 'finished'")
         end
       end
     end

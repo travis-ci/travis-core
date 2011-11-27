@@ -1,7 +1,7 @@
 module Travis
   module Notifications
     class Pusher
-      class Payload
+      class Payload < Notifications::Payload
         attr_reader :event, :object, :extra
 
         def initialize(event, object, extra = {})

@@ -2,6 +2,7 @@ module Travis
   module Notifications
     autoload :Email,   'travis/notifications/email'
     autoload :Irc,     'travis/notifications/irc'
+    autoload :Payload, 'travis/notifications/payload'
     autoload :Pusher,  'travis/notifications/pusher'
     autoload :Webhook, 'travis/notifications/webhook'
     autoload :Worker,  'travis/notifications/worker'

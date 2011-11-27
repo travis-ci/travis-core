@@ -67,7 +67,7 @@ module Travis
         end
 
         def payload_for(event, object, extra = {})
-          Payload.new(client_event_for(event), object, extra).to_hash
+          Travis::Notifications::Pusher::Payload.new(client_event_for(event), object, extra).to_hash
         end
     end
   end

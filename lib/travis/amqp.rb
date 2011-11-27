@@ -1,35 +1,47 @@
-require 'amqp'
-
 module Travis
   module Amqp
-    class << self
-      def setup_connection
-        require 'amqp/utilities/event_loop_helper'
-        AMQP::Utilities::EventLoopHelper.run
+    autoload :HotBunnies, 'travis/amqp/hot_bunnies'
+    autoload :Amqp,       'travis/amqp/amqp'
 
-        AMQP.start(Travis.config.amqp) do |connection|
-          Rails.logger.info 'Connected to AMQP broker'
-          AMQP.channel = AMQP::Channel.new(connection)
+    REPORTING_KEY = 'reporting.jobs'
+
+    class << self
+      def connected?
+        !!@connection
+      end
+
+      def connection
+        @connection ||= begin
+          puts caller
+          implementation.connect(Travis.config.amqp)
+        end
+      end
+      alias :connect :connection
+
+      def disconnect
+        if connection
+          connection.close
+          @connection = nil
+          @adapter = nil
         end
       end
 
-      def publish(queue, payload)
-        body = MultiJson.encode(payload)
+      def subscribe(options, &block)
+        adapter.subscribe(options, &block)
+      end
 
-        metadata = {
-          :routing_key => queue,
-          :persistent  => true,
-          :durable     => true,
-          :auto_delete => false
-        }
-
-        exchange.publish(body, metadata)
+      def publish(queue, payload, options = {}, &block)
+        adapter.publish(queue, payload, options, &block)
       end
 
       protected
 
-        def exchange
-          @exchange ||= AMQP.channel.default_exchange
+        def adapter
+          @adapter ||= implementation.new(connection, REPORTING_KEY)
+        end
+
+        def implementation
+          RUBY_PLATFORM == 'java' ? HotBunnies : Amqp
         end
     end
   end

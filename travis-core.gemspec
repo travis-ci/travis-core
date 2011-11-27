@@ -6,8 +6,8 @@ require 'travis_core/version'
 Gem::Specification.new do |s|
   s.name         = "travis-core"
   s.version      = TravisCore::VERSION
-  s.authors      = ["Sven Fuchs"]
-  s.email        = "svenfuchs@artweb-design.de"
+  s.authors      = ["Travis CI"]
+  s.email        = "contact@travis-ci.org"
   s.homepage     = "https://github.com/travis-ci/travis-core"
   s.summary      = "[summary]"
   s.description  = "[description]"
@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rails',             '~> 3.1.1' # why does devise require rails??
   s.add_dependency 'activerecord',      '~> 3.1.1'
   s.add_dependency 'actionmailer',      '~> 3.1.1'
-  s.add_dependency 'actionmailer_inline_css', '~> 1.3.0'
+  # s.add_dependency 'actionmailer_inline_css', '~> 1.3.0'
 
   # db
   s.add_dependency 'data_migrations',   '~> 0.0.1'
@@ -34,10 +34,9 @@ Gem::Specification.new do |s|
   # app
   s.add_dependency 'devise',            '~> 1.4.2'
   s.add_dependency 'oa-oauth',          '~> 0.3.0'
-  s.add_dependency 'simple_states',     '~> 0.0.10'
+  s.add_dependency 'simple_states',     '~> 0.1.0.pre1'
 
   # apis
   s.add_dependency 'octokit',           '~> 0.6.5'
   s.add_dependency 'pusher',            '~> 0.8.1'
-  s.add_dependency 'amqp',              '~> 0.8.2'
 end

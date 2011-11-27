@@ -13,7 +13,7 @@ module Travis
       end
 
       def filename
-        @filename ||= File.expand_path('../../../config/travis.yml', __FILE__)
+        @filename ||= File.expand_path('config/travis.yml')
       end
 
       def env

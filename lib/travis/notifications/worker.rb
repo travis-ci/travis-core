@@ -1,3 +1,5 @@
+require 'active_support/core_ext/module/delegation'
+
 module Travis
   module Notifications
     class Worker
@@ -36,7 +38,7 @@ module Travis
         end
 
         def payload_for(job, extra)
-          Payload.new(job, extra).to_hash
+          Travis::Notifications::Worker::Payload.new(job, extra).to_hash
         end
       end
 

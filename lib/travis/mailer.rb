@@ -1,5 +1,4 @@
 require 'action_mailer'
-require 'actionmailer_inline_css'
 require 'i18n'
 require 'pathname'
 

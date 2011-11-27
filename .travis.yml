@@ -1,9 +1,7 @@
 rvm:
   - 1.9.2
   - jruby
-gemfile: Jemfile
 before_script:
-  - "psql -c 'create database travis_test;' -U postgres"
-  - 'RAILS_ENV=test rake db:schema:load'
+  - 'RAILS_ENV=test bundle exec rake db:create db:schema:load --trace'
 notifications:
   irc: "irc.freenode.org#travis"

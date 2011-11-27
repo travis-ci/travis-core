@@ -13,7 +13,6 @@ module Travis
   autoload :Config,        'travis/config'
   autoload :Database,      'travis/database'
   autoload :GithubApi,     'travis/github_api'
-  autoload :Hub,           'travis/hub'
   autoload :Logging,       'travis/logging'
   autoload :Mailer,        'travis/mailer'
   autoload :Notifications, 'travis/notifications'
