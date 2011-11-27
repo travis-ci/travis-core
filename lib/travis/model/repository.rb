@@ -50,8 +50,8 @@ class Repository < ActiveRecord::Base
       end
     end
 
-    def active_by_name
-      Hash[select([:active, :name]).map { |repository| [repository.name, repository.active] }]
+    def by_name
+      Hash[*all.map { |repository| [repository.name, repository] }.flatten]
     end
   end
 

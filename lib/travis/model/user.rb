@@ -39,24 +39,30 @@ class User < ActiveRecord::Base
     self.email? ? Digest::MD5.hexdigest(self.email) : '0'*32
   end
 
-  def github_repositories
-    Travis::GithubApi.repositories_for_user(login).each_with_index do |repository, ix|
-      repository.uid = [login, ix].join(':')
-      repository.active = active_repositories[repository.name] || false
-      repository.owner = repository['owner'].login
+  def github_service_hooks
+    Travis::GithubApi.repositories_for_user(login).map do |data|
+      ServiceHook.new(
+        :uid => [data.owner.login, data.name].join(':'),
+        :owner_name => data.owner.login,
+        :name => data.name,
+        :url => data.html_url,
+        :active => !!repositories[data.name],
+        :description => data.description
+      )
     end
   end
 
-  private
-  def set_as_recent
-    @recently_signed_up = true
-  end
-  
-  def create_a_token
-    self.tokens.create!
-  end
+  protected
 
-  def active_repositories
-    @repositories ||= Repository.where(:owner_name => login).active_by_name
-  end
+    def set_as_recent
+      @recently_signed_up = true
+    end
+
+    def create_a_token
+      self.tokens.create!
+    end
+
+    def repositories
+      @repositories ||= Repository.where(:owner_name => login).by_name
+    end
 end
