@@ -3,10 +3,6 @@ require 'core_ext/hash/compact'
 require 'active_record'
 
 class Repository < ActiveRecord::Base
-  autoload :ServiceHook, 'travis/model/repository/service_hook'
-
-  include ServiceHook
-
   has_many :requests, :dependent => :delete_all
   has_many :builds, :dependent => :delete_all do
     def last_status_on(params)
@@ -62,5 +58,14 @@ class Repository < ActiveRecord::Base
 
   def slug
     @slug ||= [owner_name, name].join('/')
+  end
+
+  def service_hook
+    @service_hook ||= ::ServiceHook.new(
+      :owner_name => owner_name,
+      :name => name,
+      :active => active,
+      :repository => self
+    )
   end
 end

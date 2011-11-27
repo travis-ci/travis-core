@@ -11,7 +11,7 @@ class ServiceHook
 
   def set(active, user)
     active ? activate(user) : deactivate(user)
-    repository.update_attributes!(:active => active)
+    repository.update_attribute(:active, active)
   end
 
   def repository
