@@ -138,7 +138,7 @@ GITHUB_PAYLOADS = {
 
   :oauth => {
     "uid" => "234423",
-    "user_info" => {
+    "info" => {
       "name" => "John",
       "nickname" => "john",
       "email" => "john@email.com"
@@ -147,18 +147,6 @@ GITHUB_PAYLOADS = {
       "token" => "1234567890abcdefg"
     }
   },
-
-  :oauth_updated => {
-    "uid" => "234423",
-    "user_info" => {
-      "name" => "Johnathan",
-      "nickname" => "johnathan",
-      "email" => "johnathan@email.com"
-    },
-    "credentials" => {
-      "token" => "1234567890abcdefg"
-    }
-  }
 }
 
 WORKER_PAYLOADS = {

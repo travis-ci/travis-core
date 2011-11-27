@@ -6,7 +6,6 @@ describe User do
 
   let (:user)    { FactoryGirl.build(:user) }
   let (:payload) { GITHUB_PAYLOADS[:oauth] }
-  let (:updated_payload) { GITHUB_PAYLOADS[:oauth_updated] }
 
   describe 'find_or_create_for_oauth' do
     def user(payload)
@@ -19,19 +18,18 @@ describe User do
     end
 
     it 'updates changed attributes' do
-      user(payload)
-      user(updated_payload).login.should == 'johnathan'
+      user(payload).login.should == 'john'
     end
   end
 
   describe 'user_data_from_oauth' do
     it 'returns required data' do
       User.user_data_from_oauth(payload).should == {
-        'name'  => 'John',
-        'email' => 'john@email.com',
-        'login' => 'john',
-        'github_id' => '234423',
-        'github_oauth_token' => '1234567890abcdefg'
+        "name"                => "John",
+        "email"               => "john@email.com",
+        "login"               => "john",
+        "github_id"           => "234423",
+        "github_oauth_token"  => "1234567890abcdefg"
       }
     end
   end

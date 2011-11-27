@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
 
   attr_accessible :name, :login, :email, :github_id, :github_oauth_token
 
+  before_create :set_as_recent
   after_create :create_a_token
 
   class << self
@@ -21,25 +22,21 @@ class User < ActiveRecord::Base
 
     def user_data_from_oauth(payload) # TODO move this to a OauthPayload
       {
-        'name'  => payload['user_info']['name'],
-        'email' => payload['user_info']['email'],
-        'login' => payload['user_info']['nickname'],
+        'name'  => payload['info']['name'],
+        'email' => payload['info']['email'],
+        'login' => payload['info']['nickname'],
         'github_id' => payload['uid'],
         'github_oauth_token' => payload['credentials']['token']
       }
     end
   end
 
-  before_create do
-    @recently_signed_up = true
-  end
-
   def recently_signed_up?
-    !!@recently_signed_up
+    @recently_signed_up || false
   end
 
   def profile_image_hash
-    self.email? ? Digest::MD5.hexdigest(self.email) : '00000000000000000000000000000000'
+    self.email? ? Digest::MD5.hexdigest(self.email) : '0'*32
   end
 
   def github_repositories
@@ -51,12 +48,15 @@ class User < ActiveRecord::Base
   end
 
   private
+  def set_as_recent
+    @recently_signed_up = true
+  end
+  
+  def create_a_token
+    self.tokens.create!
+  end
 
-    def create_a_token
-      self.tokens.create!
-    end
-
-    def active_repositories
-      @repositories ||= Repository.where(:owner_name => login).active_by_name
-    end
+  def active_repositories
+    @repositories ||= Repository.where(:owner_name => login).active_by_name
+  end
 end
