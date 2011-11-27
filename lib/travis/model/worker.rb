@@ -1,12 +1,12 @@
 class Worker < ActiveRecord::Base
   class << self
     def prune
-      delete_all(['last_seen_at < ?', Time.now - Travis.config.workers.prune.after])
+      delete_all(['last_seen_at < ?', Time.now.utc - Travis.config.workers.prune.after])
     end
   end
 
   before_create do
-    self.last_seen_at = Time.now
+    self.last_seen_at = Time.now.utc
   end
 
   def full_name

@@ -49,7 +49,7 @@ describe Job::Configure::States do
       end
 
       it 'notifies observers' do
-        data = { :status => 0, :config => config, :finished_at => Time.now }
+        data = { :status => 0, :config => config, :finished_at => Time.now.utc }
 
         Travis::Notifications.expects(:dispatch).with('job:configure:started', job)
         Travis::Notifications.expects(:dispatch).with('job:configure:finished', job, data)
