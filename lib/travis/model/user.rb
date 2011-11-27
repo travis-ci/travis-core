@@ -46,7 +46,7 @@ class User < ActiveRecord::Base
         :owner_name => data.owner.login,
         :name => data.name,
         :url => data.html_url,
-        :active => !!repositories[data.name],
+        :active => repositories[data.name] && repositories[data.name].active,
         :description => data.description
       )
     end

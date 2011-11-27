@@ -47,7 +47,7 @@ describe User do
   end
 
   describe 'github_service_hooks' do
-    let!(:repository) { Factory(:repository, :name => 'safemode') }
+    let!(:repository) { Factory(:repository, :name => 'safemode', :active => true) }
 
     it "contains the user's service_hooks (i.e. repository data from github)" do
       service_hook = user.github_service_hooks.first
