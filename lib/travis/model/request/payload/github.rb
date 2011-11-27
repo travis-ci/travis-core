@@ -19,7 +19,7 @@ class Request
       protected
 
         def no_commit?
-          last_commit.commit.blank?
+          last_commit.nil? || last_commit.commit.blank?
         end
 
         def skipped?
