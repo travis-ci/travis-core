@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'support/active_record'
 
-describe Repository, 'service_hook' do
+describe ServiceHook do
   include Support::ActiveRecord
 
   describe 'set' do
@@ -30,3 +30,4 @@ describe Repository, 'service_hook' do
     end
   end
 end
+

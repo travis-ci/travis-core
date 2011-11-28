@@ -1,9 +1,14 @@
 require 'spec_helper'
+require 'active_support/core_ext/hash/slice'
 
 describe Travis::Config do
   let(:config) { Travis::Config.new }
 
-  after { ENV.delete('travis_config') }
+  after :each do
+    ENV.delete('DATABASE_URL')
+    ENV.delete('travis_config')
+    Travis.instance_variable_set(:@config, nil)
+  end
 
   describe 'Hashr behaviour' do
     it 'is a Hashr instance' do
@@ -49,40 +54,28 @@ describe Travis::Config do
   end
 
   describe 'using DATABASE_URL for database configuration if present' do
-    before :each do
-      @database_url = ENV['DATABASE_URL']
-    end
-
-    after :each do
-      ENV['DATABASE_URL'] = @database_url
-    end
-
     it 'works when given a url with a port' do
       ENV['DATABASE_URL'] = 'postgres://username:password@hostname:port/database'
 
-      config.database.should == {
+      config.database.to_hash.slice(:adapter, :host, :port, :database, :username, :password).should == {
         :adapter => 'postgresql',
         :host => 'hostname',
         :port => 'port',
         :database => 'database',
         :username => 'username',
-        :password => 'password',
-        :encoding => 'unicode',
-        :min_messages => 'warning'
+        :password => 'password'
       }
     end
 
     it 'works when given a url without a port' do
       ENV['DATABASE_URL'] = 'postgres://username:password@hostname/database'
 
-      config.database.should == {
+      config.database.to_hash.slice(:adapter, :host, :port, :database, :username, :password).should == {
         :adapter => 'postgresql',
         :host => 'hostname',
         :database => 'database',
         :username => 'username',
-        :password => 'password',
-        :encoding => 'unicode',
-        :min_messages => 'warning'
+        :password => 'password'
       }
     end
   end

@@ -1,12 +1,12 @@
 require 'spec_helper'
 require 'support/active_record'
+require 'support/webmock'
 
 describe User do
-  include Support::ActiveRecord
+  include Support::ActiveRecord, Support::Webmock
 
-  let (:user)    { FactoryGirl.build(:user) }
-  let (:payload) { GITHUB_PAYLOADS[:oauth] }
-  let (:updated_payload) { GITHUB_PAYLOADS[:oauth_updated] }
+  let(:user)    { FactoryGirl.build(:user) }
+  let(:payload) { GITHUB_PAYLOADS[:oauth] }
 
   describe 'find_or_create_for_oauth' do
     def user(payload)
@@ -19,19 +19,18 @@ describe User do
     end
 
     it 'updates changed attributes' do
-      user(payload)
-      user(updated_payload).login.should == 'johnathan'
+      user(payload).login.should == 'john'
     end
   end
 
   describe 'user_data_from_oauth' do
     it 'returns required data' do
       User.user_data_from_oauth(payload).should == {
-        'name'  => 'John',
-        'email' => 'john@email.com',
-        'login' => 'john',
-        'github_id' => '234423',
-        'github_oauth_token' => '1234567890abcdefg'
+        "name"                => "John",
+        "email"               => "john@email.com",
+        "login"               => "john",
+        "github_id"           => "234423",
+        "github_oauth_token"  => "1234567890abcdefg"
       }
     end
   end
@@ -47,16 +46,17 @@ describe User do
     end
   end
 
-  xit 'github_repositories should be specified'
+  describe 'github_service_hooks' do
+    let!(:repository) { Factory(:repository, :name => 'safemode', :active => true) }
 
-  describe 'active_by_name' do
-    xit 'returns a hash of active by name attributes (can be scoped)' do
-      Factory(:repository, :active => true, :owner_name => 'svenfuchs', :name => 'minimal')
-      Factory(:repository, :active => false, :owner_name => 'svenfuchs', :name => 'gem-release')
-      Factory(:repository, :active => true, :owner_name => 'josevalim', :name => 'enginex')
-
-      result = Repository.where(:owner_name => 'svenfuchs').active_by_name
-      result.should == { 'minimal' => true, 'gem-release' => false }
+    it "contains the user's service_hooks (i.e. repository data from github)" do
+      service_hook = user.github_service_hooks.first
+      service_hook.uid.should == 'svenfuchs:safemode'
+      service_hook.owner_name.should == 'svenfuchs'
+      service_hook.name.should == 'safemode'
+      service_hook.description.should include('A library for safe evaluation of Ruby code')
+      service_hook.url.should == 'https://github.com/svenfuchs/safemode'
+      service_hook.active.should be_true
     end
   end
 end
