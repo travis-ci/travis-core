@@ -23,7 +23,7 @@ class Repository < ActiveRecord::Base
     end
 
     def recent
-      limit(20)
+      limit(25)
     end
 
     def by_owner_name(owner_name)

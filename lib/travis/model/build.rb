@@ -11,7 +11,7 @@ class Build < ActiveRecord::Base
 
   include Matrix, States, Messages
 
-  PER_PAGE = 10
+  PER_PAGE = 25
 
   belongs_to :commit
   belongs_to :request
