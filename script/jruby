@@ -1,0 +1,19 @@
+#!/bin/sh
+
+export CLASSPATH=$HOME/.m2/repository/org/jruby/jruby-complete/1.6.5/jruby-complete-1.6.5.jar
+export GEM_HOME=$PWD/.gems
+export PATH=$PATH:$GEM_HOME/bin
+export BUNDLE_GEMFILE=Jemfile
+
+bundler_env=`java org.jruby.Main -S bundle exec 'echo $RUBYOPT'`
+
+max_mem=500m
+max_stack=2048k
+
+java -Dfile.encoding=UTF-8 -Xmx$max_mem -Xss$max_stack      \
+  -Djruby.memory.max=$max_mem -Djruby.stack.max=$max_stack  \
+  -Dsun.java.command=org.jruby.Main                         \
+  -Djruby.compat.version=1.9                                \
+  org/jruby/Main                                            \
+  $bundler_env                                              \
+  "$@"
