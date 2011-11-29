@@ -47,7 +47,7 @@ module Travis
             :smtp    => { :user_name => 'should-be-api_key' },
             :pusher  => { :app_id => 'app-id', :key => 'key', :secret => 'secret' },
             :queues  => [],
-            :workers => { :prune => { :after => 10, :interval => 10 } },
+            :workers => { :prune => { :after => 15, :interval => 5 } },
             :jobs    => { :retry => { :after => 60 * 60 * 2, :max_attempts => 1, :interval => 60 * 5 } }
 
     default :_access => [:key]
