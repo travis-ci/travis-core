@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111128181116) do
+ActiveRecord::Schema.define(:version => 20111129011607) do
 
   create_table "artifacts", :force => true do |t|
     t.text     "content"
@@ -21,8 +21,7 @@ ActiveRecord::Schema.define(:version => 20111128181116) do
     t.datetime "updated_at"
   end
 
-  add_index "artifacts", ["job_id", "type"], :name => "artifacts_job_id_and_type"
-  add_index "artifacts", ["job_id"], :name => "artifacts_job_id"
+  add_index "artifacts", ["type", "job_id"], :name => "index_artifacts_on_type_and_job_id"
 
   create_table "builds", :force => true do |t|
     t.integer  "repository_id"
@@ -81,6 +80,7 @@ ActiveRecord::Schema.define(:version => 20111128181116) do
   end
 
   add_index "jobs", ["queue", "state"], :name => "index_jobs_on_queue_and_state"
+  add_index "jobs", ["repository_id"], :name => "index_jobs_on_repository_id"
 
   create_table "repositories", :force => true do |t|
     t.string   "name"
