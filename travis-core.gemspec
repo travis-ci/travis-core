@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'data_migrations',   '~> 0.0.1'
 
   # structures
-  s.add_dependency 'hashr',             '~> 0.0.17'
+  s.add_dependency 'hashr',             '~> 0.0.19'
   s.add_dependency 'rabl',              '~> 0.5.1'
 
   # app
