@@ -1,6 +1,6 @@
 require 'active_record'
 require 'erb'
-require 'travis/logging'
+require 'travis/support'
 
 module Travis
   module Database
