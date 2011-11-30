@@ -9,7 +9,6 @@ require 'support/payloads'
 require 'support/matchers'
 
 require 'travis'
-require 'travis/logging'
 require 'travis/support'
 require 'stringio'
 require 'logger'

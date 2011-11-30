@@ -34,9 +34,7 @@ module Travis
         event = args.shift
         args = args.map { |arg| arg.is_a?(ActiveRecord::Base) ? "#<#{arg.class.name} id: #{arg.id}>" : arg.inspect }
         message = "#{channel} (#{finished_at - started_at}): #{target.class.name.demodulize} => #{event}: #{args.join(', ')}"
-        # TODO
-        # log colorize(:green, message)
-        info(message, :header => 'Notfications')
+        info(colorize(:green, message), :header => 'Notfications')
       end
 
       protected
