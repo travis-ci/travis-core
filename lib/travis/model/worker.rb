@@ -18,12 +18,4 @@ class Worker < ActiveRecord::Base
   def full_name
     [host, name].join(':')
   end
-
-  def ping!
-    touch(:last_seen_at)
-  end
-
-  def set_state(state)
-    update_attribute(:state, state)
-  end
 end

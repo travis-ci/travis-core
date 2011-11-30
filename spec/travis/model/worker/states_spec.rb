@@ -1,33 +1,31 @@
 require 'spec_helper'
+require 'hashr'
 
 class WorkerMock
   class << self
     def name; 'Worker'; end
-    def after_create(*); end
   end
 
   include Worker::States
 
   attr_accessor :state
-  def save!; end
+  def update_attributes!(*); end
 end
 
 describe Worker::States do
   let(:job) { WorkerMock.new }
 
-  describe 'events' do
-    describe 'starting the worker' do
-      let(:data) { WORKER_PAYLOADS['worker:started'] }
+  describe 'ping' do
+    let(:data) { Hashr.new(:state => :started) }
 
-      it 'sets the state to :started' do
-        job.start(data)
-        job.state.should == :started
-      end
+    it 'sets the state' do
+      job.expects(:update_attributes!).with(:state => :started, :last_seen_at => Time.now.utc)
+      job.ping(data)
+    end
 
-      it 'notifies observers' do
-        Travis::Notifications.expects(:dispatch).with('worker:started', job, data)
-        job.start(data)
-      end
+    it 'notifies observers' do
+      Travis::Notifications.expects(:dispatch).with('worker:started', job, data)
+      job.ping(data)
     end
   end
 end

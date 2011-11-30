@@ -9,16 +9,11 @@ class Worker
       include SimpleStates, Travis::Notifications
 
       states :created, :starting, :ready, :working, :stopping, :stopped, :errored
+    end
 
-      event :start, :to => :started
-      event :work,  :to => :working
-      event :stop,  :to => :stopped
-      event :error, :to => :errored
-      event :all, :after => :notify
-
-      after_create do
-        notify(:create)
-      end
+    def ping(report)
+      update_attributes!(:state => report.state, :last_seen_at => Time.now.utc)
+      notify(report.state, report)
     end
   end
 end
