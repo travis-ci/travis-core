@@ -1,4 +1,10 @@
 GIT
+  remote: git://github.com/travis-ci/travis-support.git
+  revision: e6ff77e45b1395bb837b6c29e75fef63e7094f3d
+  specs:
+    travis-support (0.0.1)
+
+GIT
   remote: https://github.com/juno/pusher-gem.git
   revision: d025ccb9e72981c012d5671a52cf93004258b54f
   ref: d025ccb
@@ -26,11 +32,6 @@ PATH
       rake (~> 0.9.2.2)
       simple_states (~> 0.1.0.pre1)
       thor (~> 0.14.6)
-
-PATH
-  remote: ~/Development/projects/travis/travis-support
-  specs:
-    travis-support (0.0.1)
 
 GEM
   remote: http://rubygems.org/

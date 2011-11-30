@@ -2,8 +2,7 @@ source :rubygems
 
 gemspec
 
-# gem 'travis-support', :git => 'git://github.com/travis-ci/travis-support.git'
-gem 'travis-support', :path => '~/Development/projects/travis/travis-support'
+gem 'travis-support', :git => 'git://github.com/travis-ci/travis-support.git'
 
 # TODO remove this once crack has been removed from dependencies. should be in gemspec
 gem 'pusher', :git => 'https://github.com/juno/pusher-gem.git', :ref => 'd025ccb'
