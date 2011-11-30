@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/travis-ci/travis-support.git
-  revision: e2b3bf0ec40782949aa0706f91275dfe7a032306
+  revision: 6c21a2ab8f07e4d32e6f2b4e717e05edeca98572
   specs:
     travis-support (0.0.1)
 
@@ -93,7 +93,7 @@ GEM
       activerecord
       rake
     database_cleaner (0.6.7)
-    devise (1.5.1)
+    devise (1.5.2)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.0.3)
       warden (~> 1.1)

@@ -13,7 +13,7 @@ class Worker
 
     def ping(report)
       update_attributes!(:state => report.state, :last_seen_at => Time.now.utc)
-      notify(report.state, report)
+      notify('update', report)
     end
   end
 end
