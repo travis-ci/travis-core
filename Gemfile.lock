@@ -27,6 +27,11 @@ PATH
       simple_states (~> 0.1.0.pre1)
       thor (~> 0.14.6)
 
+PATH
+  remote: ~/Development/projects/travis/travis-support
+  specs:
+    travis-support (0.0.1)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -242,4 +247,5 @@ DEPENDENCIES
   silent-postgres (~> 0.0.8)
   standalone_migrations (~> 1.0.5)
   travis-core!
+  travis-support!
   webmock (~> 1.7.7)

@@ -2,7 +2,10 @@ source :rubygems
 
 gemspec
 
-# TODO remove this once pusher > 0.8.4 has been released. should be in gemspec
+# gem 'travis-support', :git => 'git://github.com/travis-ci/travis-support.git'
+gem 'travis-support', :path => '~/Development/projects/travis/travis-support'
+
+# TODO remove this once crack has been removed from dependencies. should be in gemspec
 gem 'pusher', :git => 'https://github.com/juno/pusher-gem.git', :ref => 'd025ccb'
 
 platform :mri do

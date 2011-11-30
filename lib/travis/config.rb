@@ -6,7 +6,7 @@ module Travis
   class Config < Hashr
     class << self
       def env
-       defined?(Rails) ? Rails.env : ENV['RAILS_ENV'] || ENV['ENV'] || 'test'
+       defined?(Rails) ? Rails.env : ENV['RAILS_ENV'] || ENV['ENV'] || 'development'
       end
 
       def load_env
@@ -21,8 +21,12 @@ module Travis
         @filename ||= File.expand_path('config/travis.yml')
       end
 
+      def database_env_url
+        ENV.values_at('DATABASE_URL', 'SHARED_DATABASE_URL').first
+      end
+
       def database_from_env
-        url = ENV.values_at('DATABASE_URL', 'SHARED_DATABASE_URL').first
+        url = database_env_url
         url ? parse_database_url(url) : {}
       end
 
@@ -54,7 +58,7 @@ module Travis
 
     def initialize(data = nil, *args)
       data ||= self.class.load_env || self.class.load_file || {}
-      data.merge! :database => self.class.database_from_env
+      data.merge! :database => self.class.database_from_env if self.class.database_env_url
       super
     end
 

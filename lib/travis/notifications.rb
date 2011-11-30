@@ -1,3 +1,4 @@
+require 'active_support/notifications'
 require 'active_support/core_ext/string/inflections'
 
 module Travis
@@ -33,7 +34,9 @@ module Travis
         event = args.shift
         args = args.map { |arg| arg.is_a?(ActiveRecord::Base) ? "#<#{arg.class.name} id: #{arg.id}>" : arg.inspect }
         message = "#{channel} (#{finished_at - started_at}): #{target.class.name.demodulize} => #{event}: #{args.join(', ')}"
-        log colorize(:green, message)
+        # TODO
+        # log colorize(:green, message)
+        info(message, :header => 'Notfications')
       end
 
       protected

@@ -1,3 +1,5 @@
+require 'travis/support'
+
 autoload :Artifact,    'travis/model/artifact'
 autoload :Build,       'travis/model/build'
 autoload :Commit,      'travis/model/commit'
@@ -10,11 +12,9 @@ autoload :User,        'travis/model/user'
 autoload :Worker,      'travis/model/worker'
 
 module Travis
-  autoload :Amqp,          'travis/amqp'
   autoload :Config,        'travis/config'
   autoload :Database,      'travis/database'
   autoload :GithubApi,     'travis/github_api'
-  autoload :Logging,       'travis/logging'
   autoload :Mailer,        'travis/mailer'
   autoload :Model,         'travis/model'
   autoload :Notifications, 'travis/notifications'

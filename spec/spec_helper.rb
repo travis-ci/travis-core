@@ -10,12 +10,14 @@ require 'support/matchers'
 
 require 'travis'
 require 'travis/logging'
+require 'travis/support'
 require 'stringio'
+require 'logger'
 require 'mocha'
 
-Travis.logger = Logger.new(StringIO.new)
-
 include Mocha::API
+
+Travis.logger = Logger.new(StringIO.new)
 
 RSpec.configure do |c|
   c.after :each do

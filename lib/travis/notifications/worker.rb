@@ -14,17 +14,9 @@ module Travis
         def enqueue(job)
           new.enqueue(job)
         end
-
-        def amqp
-          @amqp ||= Travis::Amqp
-        end
-
-        def amqp=(amqp)
-          @amqp = amqp
-        end
       end
 
-      delegate :amqp, :queue_for, :payload_for, :to => :'self.class'
+      delegate :queue_for, :payload_for, :to => :'self.class'
 
       def notify(event, object, *args)
         ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, *args]) do
@@ -33,7 +25,7 @@ module Travis
       end
 
       def enqueue(job)
-        amqp.publish(job.queue, Payload.for(job))
+        Travis::Amqp::Publisher.builds(job.queue).publish(Payload.for(job))
       end
     end
   end
