@@ -54,6 +54,13 @@ FactoryGirl.define do
     f.tokens { [Token.new] }
   end
 
+  factory :worker do |f|
+    f.host 'ruby-1.worker.travis-ci.org'
+    f.name 'ruby-1'
+    f.state :created
+    f.last_seen_at { Time.now.utc }
+  end
+
   factory :running_build, :parent => :build do |f|
     f.repository { Factory(:repository, :name => 'running_build') }
     f.state :started

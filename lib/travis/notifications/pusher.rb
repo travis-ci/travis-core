@@ -6,7 +6,7 @@ module Travis
     class Pusher
       autoload :Payload, 'travis/notifications/pusher/payload'
 
-      EVENTS = [/build:(started|finished)/, /job:.*:(created|started|log|finished)/]
+      EVENTS = [/build:(started|finished)/, /job:.*:(created|started|log|finished)/, /worker:*/]
 
       include Logging
 
@@ -65,6 +65,8 @@ module Travis
           case event
           when 'build:queued', 'build:removed'
             'jobs'
+          when /worker:*/
+            'workers'
           when 'build:log'
             "build-#{object.id}"
           else

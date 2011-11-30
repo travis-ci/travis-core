@@ -11,8 +11,9 @@ describe Travis::Notifications::Pusher do
   end
 
   let(:receiver) { Travis::Notifications::Pusher.new }
-  let(:job)      { Factory(:request).job }
   let(:build)    { Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] }) }
+  let(:job)      { Factory(:request).job }
+  let(:worker)   { Factory(:worker) }
 
   # TODO these don't actually match the full behaviour, see Notifications::Pusher#client_event_for
   describe 'sends a message to pusher' do
@@ -56,6 +57,10 @@ describe Travis::Notifications::Pusher do
       pusher.should have_message('build:removed', job)
     end
 
+    it 'worker:started' do
+      Travis::Notifications.dispatch('worker:started', worker)
+      pusher.should have_message('worker:started', worker)
+    end
   end
 
   describe 'payload_for returns the payload required for client side job events' do
@@ -78,6 +83,10 @@ describe Travis::Notifications::Pusher do
     it 'build:finished' do
       receiver.payload_for('build:finished', build).keys.should == [:build, :repository]
     end
+
+    it 'worker:started' do
+      receiver.payload_for('worker:started', worker).keys.should == [:id, :host, :name, :state]
+    end
   end
 
   describe 'queue_for' do
@@ -99,6 +108,10 @@ describe Travis::Notifications::Pusher do
 
     it 'returns "build-1" for the event "build:log"' do
       receiver.queue_for('build:log', Factory(:build, :id => 1)).should == 'build-1'
+    end
+
+    it 'returns "workers" for the event "worker:started"' do
+      receiver.queue_for('workers', Factory(:worker)).should == 'workers'
     end
   end
 end

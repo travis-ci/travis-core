@@ -17,11 +17,21 @@ module Travis
         end
 
         def data
-          { :build => object, :repository => object.repository }
+          case object
+          when ::Worker
+            { :worker => object }
+          else
+            { :build => object, :repository => object.repository }
+          end
         end
 
         def template
-          event.to_s.split(':').join('/')
+          case object
+          when ::Worker
+            event.to_s.split(':').first
+          else
+            event.to_s.split(':').join('/')
+          end
         end
 
         def base_dir
