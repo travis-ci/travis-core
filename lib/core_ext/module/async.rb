@@ -30,6 +30,7 @@ class Work < Delegator
 
   def initialize(&work)
     super(work)
+    @work = work
     @done, @lock = false, new_cond
   end
 
