@@ -12,8 +12,12 @@ class Worker
     end
 
     def ping(report)
-      update_attributes!(:state => report.state, :last_seen_at => Time.now.utc)
-      notify('update', report)
+      if state != report.state
+        update_attributes!(:state => report.state, :last_seen_at => Time.now.utc)
+        notify('update', report)
+      else
+        touch(:last_seen_at)
+      end
     end
   end
 end
