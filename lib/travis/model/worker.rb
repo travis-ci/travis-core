@@ -7,7 +7,8 @@ class Worker < ActiveRecord::Base
 
   class << self
     def prune
-      delete_all(['last_seen_at < ?', Time.now.utc - Travis.config.workers.prune.after])
+      workers = where(['last_seen_at < ?', Time.now.utc - Travis.config.workers.prune.after]).destroy_all
+      workers.each { |worker| worker.notify(:remove) }
     end
   end
 

@@ -9,6 +9,10 @@ class Worker
       include SimpleStates, Travis::Notifications
 
       states :created, :starting, :ready, :working, :stopping, :stopped, :errored
+
+      after_create do
+        notify(:create, { :name => name, :host => host })
+      end
     end
 
     def ping(report)

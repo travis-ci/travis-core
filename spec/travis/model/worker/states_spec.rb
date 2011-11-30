@@ -4,6 +4,7 @@ require 'hashr'
 class WorkerMock
   class << self
     def name; 'Worker'; end
+    def after_create; end
   end
 
   include Worker::States
