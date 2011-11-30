@@ -11,14 +11,14 @@ class Worker
       states :created, :starting, :ready, :working, :stopping, :stopped, :errored
 
       after_create do
-        notify(:create, { :name => name, :host => host })
+        notify(:add)
       end
     end
 
     def ping(report)
       if state != report.state
         update_attributes!(:state => report.state, :last_seen_at => Time.now.utc)
-        notify('update', report)
+        notify('update')
       else
         touch(:last_seen_at)
       end
