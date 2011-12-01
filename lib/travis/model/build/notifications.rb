@@ -101,7 +101,7 @@ class Build
       end
 
       def notifications
-        (config || {}).fetch(:notifications, {})
+        Travis::DecryptConfig.run((config || {}).fetch(:notifications, {}), repository)
       end
   end
 end

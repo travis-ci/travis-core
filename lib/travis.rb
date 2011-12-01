@@ -15,6 +15,7 @@ autoload :Worker,      'travis/model/worker'
 module Travis
   autoload :Config,        'travis/config'
   autoload :Database,      'travis/database'
+  autoload :DecryptConfig, 'travis/decrypt_config'
   autoload :GithubApi,     'travis/github_api'
   autoload :Mailer,        'travis/mailer'
   autoload :Model,         'travis/model'
