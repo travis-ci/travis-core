@@ -82,4 +82,23 @@ describe Repository do
       repository.last_build_status('foo' => 'bar').should be_nil
     end
   end
+
+  describe "keys" do
+    let(:repository) { Factory(:repository) }
+
+    it "should create a new key" do
+      SslKey.delete_all
+      lambda do
+        repository.key
+      end.should change(SslKey, :count).by(1)
+    end
+
+    it "should retrieve the existing key" do
+      key = repository.key
+      repository.reload # reload so the @key is reseted
+      lambda do
+        repository.key.id.should eql(key.id)
+      end.should change(SslKey, :count).by(0)
+    end
+  end
 end
