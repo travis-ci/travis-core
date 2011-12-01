@@ -1,3 +1,4 @@
+require 'openssl'
 class SslKey < ActiveRecord::Base
   belongs_to :repository
 
