@@ -164,16 +164,16 @@ QUEUE_PAYLOADS = {
   'job:configure' => {
     :build      => { :id => 1, :commit => '9854592', :branch => 'master' },
     :repository => { :id => 1, :slug => 'svenfuchs/gem-release' },
-    :queue      => 'builds'
+    :queue      => 'builds.common'
   },
   'job:test:1' => {
     :build      => { :id => 2, :number => '1.1', :commit => '9854592', :branch => 'master', :config => { :rvm => '1.8.7' } },
     :repository => { :id => 1, :slug => 'svenfuchs/gem-release' },
-    :queue      => 'builds'
+    :queue      => 'builds.common'
   },
   'job:test:2' => {
     :build      => { :id => 3, :number => '1.2', :commit => '9854592', :branch => 'master', :config => { :rvm => '1.9.2' } },
     :repository => { :id => 1, :slug => 'svenfuchs/gem-release' },
-    :queue      => 'builds'
+    :queue      => 'builds.common'
   }
 }

@@ -85,7 +85,7 @@ describe Travis::Notifications::Pusher do
     end
 
     it 'worker:started' do
-      receiver.payload_for('worker:started', worker).keys.should == [:id, :host, :name, :state]
+      receiver.payload_for('worker:started', worker).keys.should == [:id, :host, :name, :state, :payload, :last_error]
     end
   end
 
