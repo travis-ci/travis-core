@@ -11,14 +11,14 @@ module Travis
       @repository = repository
     end
 
-    def run(config, r=false)
+    def run(config)
       return decrypt(config) if config.is_a?(String)
       return config unless config.respond_to?(:inject)
       config.inject(config.class.new) do |result, element|
         key, element = element if result.is_a?(Hash)
 
         if element.is_a?(Hash) || element.is_a?(Array)
-          value = run(element, true)
+          value = run(element)
         else
           value = decrypt(element)
         end
