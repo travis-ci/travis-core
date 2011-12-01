@@ -74,7 +74,7 @@ class Repository < ActiveRecord::Base
 
   alias :old_key :key
   def key
-    @key ||= !!old_key ? old_key : SslKey.create(:repository_id => self.id)
+    @key ||= old_key || SslKey.create(:repository_id => self.id)
   end
 
 end
