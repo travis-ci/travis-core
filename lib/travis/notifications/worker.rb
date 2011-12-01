@@ -25,8 +25,14 @@ module Travis
       end
 
       def enqueue(job)
-        Travis::Amqp::Publisher.builds(job.queue).publish(Payload.for(job))
+        publisher_for(job).publish(Payload.for(job))
       end
+
+      protected
+
+        def publisher_for(job)
+          job.is_a?(Job::Configure) ? Travis::Amqp::Publisher.configure : Travis::Amqp::Publisher.builds(job.queue)
+        end
     end
   end
 end
