@@ -17,7 +17,7 @@ class Worker
 
     def ping(report)
       if state != report.state
-        update_attributes!(:state => report.state, :last_seen_at => Time.now.utc)
+        update_attributes!(report.merge(:last_seen_at => Time.now.utc).to_hash)
         notify('update')
       else
         touch(:last_seen_at)
