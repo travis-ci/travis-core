@@ -12,6 +12,7 @@ module Travis
     end
 
     def run(config, r=false)
+      return decrypt(config) if config.is_a?(String)
       return config unless config.respond_to?(:inject)
       config.inject(config.class.new) do |result, element|
         key, element = element if result.is_a?(Hash)
