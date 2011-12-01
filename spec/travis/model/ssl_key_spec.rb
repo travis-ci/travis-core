@@ -19,4 +19,24 @@ describe SslKey do
       ssl_key.reload.private_key.should_not be_nil
     end
   end
+
+  describe "encrypt" do
+    it "should encrypt something" do
+      ssl_key.encrypt("hello").should_not be_nil
+      ssl_key.encrypt("hello").should_not eql("hello")
+    end
+
+    it "should be decryptable" do
+      encrypted = ssl_key.encrypt("hello")
+      ssl_key.decrypt(encrypted).should eql("hello")
+    end
+  end
+
+  describe "decrypt" do
+    it "should decrypt something" do
+      encrypted_string = ssl_key.encrypt("hello world")
+      ssl_key.decrypt(encrypted_string).should_not be_nil
+      ssl_key.decrypt(encrypted_string).should_not eql("hello")
+    end
+  end
 end
