@@ -86,6 +86,10 @@ describe Repository do
   describe "keys" do
     let(:repository) { Factory(:repository) }
 
+    it "should return the public key" do
+      repository.public_key.should eql(repository.key.public_key)
+    end
+
     it "should create a new key" do
       SslKey.delete_all
       lambda do

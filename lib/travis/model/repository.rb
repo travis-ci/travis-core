@@ -18,6 +18,8 @@ class Repository < ActiveRecord::Base
   validates :name,       :presence => true, :uniqueness => { :scope => :owner_name }
   validates :owner_name, :presence => true
 
+  delegate  :public_key, :to => :key
+
   class << self
     def timeline
       where(arel_table[:last_build_started_at].not_eq(nil)).order(arel_table[:last_build_started_at].desc)
