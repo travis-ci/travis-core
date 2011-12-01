@@ -12,6 +12,8 @@ class Worker < ActiveRecord::Base
     end
   end
 
+  serialize :payload
+
   before_create do
     self.last_seen_at = Time.now.utc
   end
