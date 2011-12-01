@@ -37,7 +37,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'devise',            '~> 1.5.0'
   s.add_dependency 'omniauth'
   s.add_dependency 'oa-oauth',          '~> 0.3.2'
-  s.add_dependency 'simple_states',     '~> 0.1.0.pre1'
+  s.add_dependency 'simple_states',     '~> 0.1.0.pre2'
 
   # apis
   s.add_dependency 'octokit',           '~> 0.6.5'

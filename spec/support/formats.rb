@@ -23,13 +23,17 @@ module Support
     end
 
     def json_for_worker(object, extra = {})
-      normalize_json(Travis::Notifications::Worker::Payload.new(object, extra).to_hash)
+      normalize_json(Travis::Notifications::Worker::Payload.new(object).to_hash)
     end
 
     # normalizes datetime objects to strings etc. more similar to what the client would see.
     def normalize_json(json)
       json = json.to_json unless json.is_a?(String)
       JSON.parse(json)
+    end
+
+    def json_format_time(time)
+      time.strftime('%Y-%m-%dT%H:%M:%SZ')
     end
   end
 end

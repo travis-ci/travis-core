@@ -5,7 +5,10 @@ FactoryGirl.define do
     f.repository { Repository.first || Factory(:repository) }
     f.association :request
     f.association :commit
+    f.started_at { Time.now.utc }
+    f.finished_at { Time.now.utc }
     f.number 1
+    f.status 0
   end
 
   factory :commit do |f|
@@ -31,6 +34,8 @@ FactoryGirl.define do
     f.commit     { Factory(:commit) }
     f.owner      { Factory(:build) }
     f.log        { Factory(:log) }
+    f.config     { { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' } }
+    f.number     '2.1'
   end
 
   factory :log, :class => 'Artifact::Log' do |f|
@@ -47,10 +52,15 @@ FactoryGirl.define do
     f.name 'minimal'
     f.owner_name 'svenfuchs'
     f.owner_email 'svenfuchs@artweb-design.de'
-    f.url  { |r| "http://github.com/#{r.owner_name}/#{r.name}" }
+    f.url { |r| "http://github.com/#{r.owner_name}/#{r.name}" }
     f.last_duration 60
     f.created_at { |r| Time.utc(2011, 01, 30, 5, 25) }
     f.updated_at { |r| r.created_at + 5.minutes }
+    f.last_build_status 0
+    f.last_build_number '2'
+    f.last_build_id 2
+    f.last_build_started_at { Time.now.utc }
+    f.last_build_finished_at { Time.now.utc }
   end
 
   factory :user do |f|
@@ -73,7 +83,7 @@ FactoryGirl.define do
   end
 
   factory :successful_build, :parent => :build do |f|
-    f.repository { Factory(:repository, :name => 'successful_build', :last_build_status => 0) }
+    f.repository { |b| Factory(:repository, :name => 'successful_build') }
     f.status 0
     f.state :finished
     started_at { Time.now.utc }
@@ -84,7 +94,7 @@ FactoryGirl.define do
     f.repository { Factory(:repository, :name => 'broken_build', :last_build_status => 1) }
     f.status 1
     f.state :finished
-    started_at { Time.now.utc }
-    finished_at { Time.now.utc }
+    f.started_at { Time.now.utc }
+    f.finished_at { Time.now.utc }
   end
 end

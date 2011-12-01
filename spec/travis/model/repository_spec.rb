@@ -77,9 +77,5 @@ describe Repository do
       build.matrix.each_with_index { |build, ix| build.update_attribute(:status, ix == 0 ? 1 : 0) }
       repository.last_build_status('rvm' => '1.8.7').should == 1
     end
-
-    it 'returns nil when the hash is invalid' do
-      repository.last_build_status('foo' => 'bar').should be_nil
-    end
   end
 end

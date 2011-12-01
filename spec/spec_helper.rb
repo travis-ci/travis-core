@@ -13,6 +13,7 @@ require 'travis/support'
 require 'stringio'
 require 'logger'
 require 'mocha'
+require 'patches/rspec_hash_diff'
 
 include Mocha::API
 

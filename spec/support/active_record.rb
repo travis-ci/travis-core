@@ -10,6 +10,7 @@ FileUtils.mkdir_p('log')
 config = Travis.config.database.dup
 config.merge!('adapter' => 'jdbcpostgresql', 'username' => ENV['USER']) if RUBY_PLATFORM == 'java'
 
+ActiveRecord::Base.default_timezone = :utc
 ActiveRecord::Base.logger = Logger.new('log/test.db.log')
 ActiveRecord::Base.configurations = { 'test' => config }
 ActiveRecord::Base.establish_connection('test')

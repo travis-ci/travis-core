@@ -31,7 +31,7 @@ describe Travis::Mailer::Build do
         Commit : 62aae5f7 (master)
         Author : Sven Fuchs
         Message : the commit message
-        Status : Failed
+        Status : Passed
         View the changeset : https://github.com/svenfuchs/minimal/compare/master...develop
         View the full build log and details : http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}
       ))
@@ -43,7 +43,7 @@ describe Travis::Mailer::Build do
         62aae5f7 (master)
         Author
         the commit message
-        Failed
+        Passed
         View the changeset
         https://github.com/svenfuchs/minimal/compare/master...develop
         View the full build log and details
