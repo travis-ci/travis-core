@@ -18,7 +18,6 @@ module Travis
   autoload :Mailer,        'travis/mailer'
   autoload :Model,         'travis/model'
   autoload :Notifications, 'travis/notifications'
-  autoload :Record,        'travis/record'
   autoload :Renderer,      'travis/renderer'
 
   class << self
