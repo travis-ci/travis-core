@@ -44,15 +44,16 @@ module Travis
       end
     end
 
-    define  :amqp => { :host => '127.0.0.1', :prefetch => 1 },
+    define  :host     => 'http://travis-ci.org',
+            :amqp     => { :host => '127.0.0.1', :prefetch => 1 },
             :database => { :adapter => 'postgresql', :database => "travis_#{Travis::Config.env}", :encoding => 'unicode', :min_messages => 'warning' },
-            :host => 'http://travis-ci.org',
+            :airbrake => { :key => 'airbrake-api_key' },
+            :pusher   => { :app_id => 'app-id', :key => 'key', :secret => 'secret' },
+            :smtp     => { :user_name => 'postmark-api_key' },
             :notifications => [],
-            :smtp    => { :user_name => 'should-be-api_key' },
-            :pusher  => { :app_id => 'app-id', :key => 'key', :secret => 'secret' },
-            :queues  => [],
-            :workers => { :prune => { :after => 15, :interval => 5 } },
-            :jobs    => { :retry => { :after => 60 * 60 * 2, :max_attempts => 1, :interval => 60 * 5 } }
+            :queues   => [],
+            :workers  => { :prune => { :after => 15, :interval => 5 } },
+            :jobs     => { :retry => { :after => 60 * 60 * 2, :max_attempts => 1, :interval => 60 * 5 } }
 
     default :_access => [:key]
 
