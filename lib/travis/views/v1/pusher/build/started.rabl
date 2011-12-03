@@ -10,7 +10,7 @@ child build => :build do
   end
 
   code :matrix do
-    build.matrix.map { |job| Travis::Renderer.hash(job, :type => :event, :template => 'build/started/test', :base_dir => base_dir) } if build.respond_to?(:matrix)
+    build.matrix.map { |job| Travis::Renderer.hash(job, :type => :pusher, :template => 'build/started/test', :base_dir => base_dir) } if build.respond_to?(:matrix)
   end
 end
 

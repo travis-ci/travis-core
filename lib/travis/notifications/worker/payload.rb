@@ -27,7 +27,7 @@ module Travis
         end
 
         def base_dir
-          File.expand_path('../views', __FILE__)
+          File.expand_path('../../../views', __FILE__)
         end
       end
     end
