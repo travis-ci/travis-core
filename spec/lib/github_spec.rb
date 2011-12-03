@@ -36,6 +36,7 @@ describe Github do
     repository.to_hash.should == {
       :name        => 'gem-release',
       :url         => 'http://github.com/svenfuchs/gem-release',
+      :description => 'Release your gems with ease',
       :owner_name  => 'svenfuchs',
       :owner_email => 'svenfuchs@artweb-design.de'
     }

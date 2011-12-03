@@ -36,7 +36,6 @@ ActiveRecord::Schema.define(:version => 20111203002341) do
     t.integer  "commit_id"
     t.integer  "request_id"
     t.string   "state"
-    t.string   "language"
   end
 
   add_index "builds", ["repository_id"], :name => "index_builds_on_repository_id"
@@ -99,7 +98,7 @@ ActiveRecord::Schema.define(:version => 20111203002341) do
     t.text     "owner_email"
     t.boolean  "active"
     t.text     "description"
-    t.string   "last_build_language"
+    t.string   "last_language"
   end
 
   add_index "repositories", ["last_build_started_at"], :name => "index_repositories_on_last_build_started_at"

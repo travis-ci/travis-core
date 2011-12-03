@@ -5,7 +5,7 @@ class Build
     end
 
     DENORMALIZE = {
-      :start  => %w(id number status started_at finished_at),
+      :start  => %w(id language number status started_at finished_at),
       :finish => %w(status finished_at)
     }
 
