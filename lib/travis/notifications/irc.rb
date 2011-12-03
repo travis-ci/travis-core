@@ -37,6 +37,8 @@ module Travis
               leave
             end
           end
+
+          # TODO somehow log whether or not the irc message was sent successfully
         end
 
         def irc(host, nick, options, &block)

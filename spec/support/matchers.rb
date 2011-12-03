@@ -67,7 +67,7 @@ RSpec::Matchers.define :have_message do |event, object|
   end
 end
 
-RSpec::Matchers.define :post_webhooks_on do |event, object, options|
+RSpec::Matchers.define :post_webhooks_on do |http, event, object, options|
   include Support::Formats
 
   match do |dispatch|
@@ -77,7 +77,7 @@ RSpec::Matchers.define :post_webhooks_on do |event, object, options|
 
   def expect_request(url, object)
     uri = URI.parse(url)
-    $http_stub.post uri.path do |env|
+    http.post uri.path do |env|
       env[:url].host.should == uri.host
       env[:url].path.should == uri.path
       env[:request_headers]['Authorization'].should == authorization_for(object)

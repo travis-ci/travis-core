@@ -4,9 +4,17 @@ require 'support/active_record'
 describe Travis::Notifications::Webhook do
   include Support::ActiveRecord
 
+  let(:http) { Faraday::Adapter::Test::Stubs.new }
+  let(:io)   { StringIO.new }
+
   before do
+    Travis.logger = Logger.new(io)
     Travis.config.notifications = [:webhook]
-    stub_http
+
+    Travis::Notifications::Webhook.http_client = Faraday.new do |f|
+      f.request :url_encoded
+      f.adapter :test, http
+    end
   end
 
   let(:dispatch) { lambda { |event, object| Travis::Notifications.dispatch(event, object) } }
@@ -14,13 +22,13 @@ describe Travis::Notifications::Webhook do
   it 'sends webhook notifications to the urls given as an array' do
     targets = ['http://evome.fr/notifications', 'http://example.com/']
     build = Factory(:build, :config => { 'notifications' => { 'webhooks' => targets } })
-    dispatch.should post_webhooks_on('build:finished', build, :to => targets)
+    dispatch.should post_webhooks_on(http, 'build:finished', build, :to => targets)
   end
 
   it 'sends webhook notifications to a url given as a string' do
     target = 'http://evome.fr/notifications'
     build = Factory(:build, :config => { 'notifications' => { 'webhooks' => target } })
-    dispatch.should post_webhooks_on('build:finished', build, :to => ['http://evome.fr/notifications'])
+    dispatch.should post_webhooks_on(http, 'build:finished', build, :to => ['http://evome.fr/notifications'])
   end
 
   it 'sends no webhook if the given url is blank' do
@@ -29,12 +37,11 @@ describe Travis::Notifications::Webhook do
     dispatch.call('build:finished', build)
   end
 
-  def stub_http
-    $http_stub ||= Faraday::Adapter::Test::Stubs.new
-    Travis::Notifications::Webhook.http_client = Faraday.new do |f|
-      f.request :url_encoded
-      f.adapter :test, $http_stub
-    end
+  it 'logs a warning if the post request was not successful' do
+    build = Factory(:build, :config => { 'notifications' => { 'webhooks' => 'http://example.com/' } })
+    http.post('/') {[ 403, {}, 'nono.' ]}
+    dispatch.call('build:finished', build)
+    io.string.should include('[webhook] Could not notify http://example.com/. Status: 403, body: "nono."')
   end
 end
 

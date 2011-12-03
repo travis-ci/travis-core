@@ -29,20 +29,36 @@ module Travis
 
       def notify(event, object, *args)
         ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, *args]) do
-          send_webhook_notifications(object.webhooks, object) if object.send_webhook_notifications?
+          send_webhooks(object.webhooks, object) if object.send_webhook_notifications?
         end
       end
       async :notify if ENV['RAILS_ENV'] != 'test'
 
       protected
 
-        def send_webhook_notifications(targets, build)
-          targets.each do |webhook|
-            self.class.http_client.post(webhook) do |req|
-              req.body = { :payload => self.class.payload_for(build).to_json }
-              req.headers['Authorization'] = authorization(build)
-            end
+        def send_webhooks(targets, build)
+          targets.each { |target| send_webhook(target, build) }
+        end
+
+        def send_webhook(target, build)
+          response = http.post(target) do |req|
+            req.body = { :payload => self.class.payload_for(build).to_json }
+            req.headers['Authorization'] = authorization(build)
           end
+          log_webhook(build, response)
+        end
+
+        def log_webhook(build, response)
+          severity, message = if response.success?
+            [:info, "Successfully notified #{response.env[:url].to_s}."]
+          else
+            [:error, "Could not notify #{response.env[:url].to_s}. Status: #{response.status}, body: #{response.body.inspect}"]
+          end
+          send(severity, message)
+        end
+
+        def http
+          self.class.http_client
         end
 
         def authorization(build)
