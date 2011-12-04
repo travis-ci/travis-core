@@ -1,3 +1,5 @@
+require 'active_support/notifications'
+
 module Travis
   module Notifications
     module Instrumentation

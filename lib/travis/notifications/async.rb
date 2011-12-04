@@ -1,3 +1,5 @@
+require 'girl_friday'
+
 module Travis
   module Notifications
     module Async

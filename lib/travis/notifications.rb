@@ -1,4 +1,3 @@
-require 'active_support/notifications'
 require 'active_support/core_ext/string/inflections'
 
 module Travis
