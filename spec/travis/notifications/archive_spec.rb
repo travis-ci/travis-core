@@ -10,6 +10,16 @@ describe Travis::Notifications::Archive do
   let(:archiver) { Travis::Notifications::Archive.new }
   let(:build)    { Factory(:build, :created_at => Time.utc(2011, 1, 1), :config => { :rvm => ['1.9.2', 'rbx'] }) }
 
+  before do
+    Travis.config.notifications = [:archive]
+    Travis::Notifications::Pusher.send(:public, :queue_for, :payload_for)
+  end
+
+  it 'build:finish archives the build' do
+    Travis::Notifications::Archive.any_instance.expects(:archive).with(build)
+    Travis::Notifications.dispatch('build:finished', build)
+  end
+
   describe 'archive' do
     before :each do
       archiver.stubs(:store).returns(true)
