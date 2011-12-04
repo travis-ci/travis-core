@@ -10,7 +10,7 @@ gem 'pusher', :git => 'https://github.com/juno/pusher-gem.git', :ref => 'd025ccb
 platform :mri do
   gem 'amqp',              '~> 0.8.3'
   gem 'pg',                '~> 0.11.0'
-  gem 'silent-postgres',   '~> 0.0.8'
+  gem 'silent-postgres',   '~> 0.1.1'
 end
 
 platform :jruby do
@@ -26,8 +26,8 @@ end
 
 group :test do
   gem 'rspec',             '~> 2.7.0'
-  gem 'factory_girl',      '~> 2.1.2'
-  gem 'database_cleaner',  '~> 0.6.7'
+  gem 'factory_girl',      '~> 2.3.2'
+  gem 'database_cleaner',  '~> 0.7.0'
   gem 'mocha',             '~> 0.10.0'
   gem 'webmock',           '~> 1.7.7'
 end
