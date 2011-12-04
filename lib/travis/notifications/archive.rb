@@ -31,7 +31,7 @@ module Travis
           archive(object)
         end
       end
-      async :notify if ENV['RAILS_ENV'] != 'test'
+      async :notify if ENV['ENV'] != 'test'
 
       protected
 

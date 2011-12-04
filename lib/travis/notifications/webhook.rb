@@ -32,7 +32,7 @@ module Travis
           send_webhooks(object.webhooks, object) if object.send_webhook_notifications?
         end
       end
-      async :notify if ENV['RAILS_ENV'] != 'test'
+      async :notify if ENV['ENV'] != 'test'
 
       protected
 

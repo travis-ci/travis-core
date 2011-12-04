@@ -1,4 +1,4 @@
-ENV["RAILS_ENV"] ||= 'test'
+ENV['ENV'] ||= 'test'
 
 RSpec.configure do |c|
   c.mock_with :mocha
