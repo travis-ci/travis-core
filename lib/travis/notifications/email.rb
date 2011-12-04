@@ -12,6 +12,8 @@ module Travis
         ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, *args]) do
           send_emails(object) if object.send_email_notifications?
         end
+      rescue Exception => e
+        log_exception(e)
       end
       async :notify if ENV['ENV'] != 'test'
 

@@ -31,6 +31,8 @@ module Travis
         ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, *args]) do
           send_webhooks(object.webhooks, object) if object.send_webhook_notifications?
         end
+      rescue Exception => e
+        log_exception(e)
       end
       async :notify if ENV['ENV'] != 'test'
 

@@ -30,6 +30,8 @@ module Travis
         ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, *args]) do
           archive(object)
         end
+      rescue Exception => e
+        log_exception(e)
       end
       async :notify if ENV['ENV'] != 'test'
 

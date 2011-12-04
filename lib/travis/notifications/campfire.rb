@@ -13,6 +13,8 @@ module Travis
             req.headers['Authorization'] = data[:token]
           end
         end
+      rescue Exception => e
+        log_exception(e)
       end
 
       def build_message(build)
