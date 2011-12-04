@@ -3,6 +3,7 @@ require 'active_support/core_ext/string/inflections'
 
 module Travis
   module Notifications
+    autoload :Archive,  'travis/notifications/archive'
     autoload :Email,    'travis/notifications/email'
     autoload :Irc,      'travis/notifications/irc'
     autoload :Payload,  'travis/notifications/payload'

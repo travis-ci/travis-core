@@ -16,7 +16,7 @@ class Job < ActiveRecord::Base
 
   include Cleanup
 
-  has_one    :log, :class_name => "Artifact::Log", :conditions => { :type => "Artifact::Log" }
+  has_one    :log, :class_name => "Artifact::Log", :conditions => { :type => "Artifact::Log" }, :dependent => :destroy
   has_many   :artifacts
   belongs_to :repository
   belongs_to :commit

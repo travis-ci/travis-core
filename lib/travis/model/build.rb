@@ -16,7 +16,7 @@ class Build < ActiveRecord::Base
   belongs_to :commit
   belongs_to :request
   belongs_to :repository, :autosave => true
-  has_many   :matrix, :as => :owner, :order => :id, :class_name => 'Job::Test'
+  has_many   :matrix, :as => :owner, :order => :id, :class_name => 'Job::Test', :dependent => :destroy
 
   validates :repository_id, :commit_id, :request_id, :presence => true
 

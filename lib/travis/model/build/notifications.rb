@@ -51,6 +51,7 @@ class Build
 
     def irc_channels
       @irc_channels ||= notification_values(:irc, :channels).inject(Hash.new([])) do |servers, url|
+        # TODO parsing irc urls should probably happen in the client class
         server_and_port, channel = url.split('#')
         server, port = server_and_port.split(':')
         servers[[server, port]] += [channel]

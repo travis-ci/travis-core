@@ -1,11 +1,10 @@
 require 'faraday'
+require 'cgi'
 require 'core_ext/module/async'
 
 module Travis
   module Notifications
-    class Webhook
-      autoload :Payload, 'travis/notifications/webhook/payload'
-
+    class Archive
       EVENTS = 'build:finished'
 
       include Logging
@@ -29,40 +28,50 @@ module Travis
 
       def notify(event, object, *args)
         ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, *args]) do
-          send_webhooks(object.webhooks, object) if object.send_webhook_notifications?
+          archive(object)
         end
       end
       async :notify if ENV['RAILS_ENV'] != 'test'
 
       protected
 
-        def send_webhooks(targets, build)
-          targets.each { |target| send_webhook(target, build) }
+        def archive(build)
+          store(build)
+          build.update_attributes!(:archived_at => Time.now.utc)
         end
 
-        def send_webhook(target, build)
-          response = http.post(target) do |req|
-            req.body = { :payload => self.class.payload_for(build).to_json }
-            req.headers['Authorization'] = authorization(build)
-          end
+        def store(build)
+          response = http.put(url_for(build), json_for(build))
           log_request(build, response)
         end
 
-        def log_request(build, response)
-          severity, message = if response.success?
-            [:info, "Successfully notified #{response.env[:url].to_s}."]
-          else
-            [:error, "Could not notify #{response.env[:url].to_s}. Status: #{response.status} (#{response.body.inspect})"]
-          end
-          send(severity, message)
+        def config
+          Travis.config.archive
+        end
+
+        def url_for(build)
+          "http://#{config.username}:#{CGI.escape(config.password)}@#{config.host}/builds/#{build.id}"
+        end
+
+        def json_for(build)
+          Travis::Renderer.json(build, :type => :archive, :template => 'build', :base_dir => base_dir)
         end
 
         def http
           self.class.http_client
         end
 
-        def authorization(build)
-          Digest::SHA2.hexdigest(build.repository.slug + build.request.token)
+        def log_request(build, response)
+          severity, message = if response.success?
+            [:info, "Successfully archived #{response.env[:url].to_s}."]
+          else
+            [:error, "Could not notify #{response.env[:url].to_s}. Status: #{response.status} (#{response.body.inspect})"]
+          end
+          send(severity, message)
+        end
+
+        def base_dir
+          File.expand_path('../../views', __FILE__)
         end
     end
   end
