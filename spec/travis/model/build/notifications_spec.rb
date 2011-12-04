@@ -160,6 +160,30 @@ describe Build::Notifications do
   end
 
   describe :irc_channels do
+    it 'returns an array of urls when given a string' do
+      channels = 'irc.freenode.net#travis'
+      stubs(:config => { :notifications => { :irc => channels } })
+      self.irc_channels.should == { ['irc.freenode.net', nil] => ['travis'] }
+    end
+
+    it 'returns an array of urls when given an array' do
+      channels = ['irc.freenode.net#travis', 'irc.freenode.net#rails']
+      stubs(:config => { :notifications => { :irc => channels } })
+      self.irc_channels.should == { ['irc.freenode.net', nil] => ['travis', 'rails'] }
+    end
+
+    it 'returns an array of urls when given a string on the channels key' do
+      channels = 'irc.freenode.net#travis'
+      stubs(:config => { :notifications => { :irc => { :channels => channels } } })
+      self.irc_channels.should == { ['irc.freenode.net', nil] => ['travis'] }
+    end
+
+    it 'returns an array of urls when given an array on the channels key' do
+      channels = ['irc.freenode.net#travis', 'irc.freenode.net#rails']
+      stubs(:config => { :notifications => { :irc => { :channels => channels } } })
+      self.irc_channels.should == { ['irc.freenode.net', nil] => ['travis', 'rails'] }
+    end
+
     it 'groups irc channels by host & port, so notifications can be sent with one connection' do
       stubs(:config => { :notifications => { :irc => %w(
         irc.freenode.net:1234#travis
