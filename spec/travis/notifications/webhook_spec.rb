@@ -6,6 +6,7 @@ describe Travis::Notifications::Webhook do
 
   let(:http) { Faraday::Adapter::Test::Stubs.new }
   let(:io)   { StringIO.new }
+  let(:build) { Factory(:build, :config => { 'notifications' => { 'webhooks' => 'http://example.com/' } }) }
 
   before do
     Travis.logger = Logger.new(io)
@@ -19,29 +20,36 @@ describe Travis::Notifications::Webhook do
 
   let(:dispatch) { lambda { |event, object| Travis::Notifications.dispatch(event, object) } }
 
+  it 'sends webhook notifications to a url given as a string' do
+    target = 'http://evome.fr/notifications'
+    build.config[:notifications][:webhooks] = target
+    dispatch.should post_webhooks_on(http, 'build:finished', build, :to => [target])
+  end
+
   it 'sends webhook notifications to the urls given as an array' do
     targets = ['http://evome.fr/notifications', 'http://example.com/']
-    build = Factory(:build, :config => { 'notifications' => { 'webhooks' => targets } })
+    build.config[:notifications][:webhooks] = targets
     dispatch.should post_webhooks_on(http, 'build:finished', build, :to => targets)
   end
 
-  it 'sends webhook notifications to a url given as a string' do
-    target = 'http://evome.fr/notifications'
-    build = Factory(:build, :config => { 'notifications' => { 'webhooks' => target } })
-    dispatch.should post_webhooks_on(http, 'build:finished', build, :to => ['http://evome.fr/notifications'])
-  end
-
   it 'sends no webhook if the given url is blank' do
-    build = Factory(:build, :config => { 'notifications' => { 'webhooks' => '' } })
+    build.config[:notifications][:webhooks] = ''
     # No need to assert anything here as Faraday would complain about a request not being stubbed <3
     dispatch.call('build:finished', build)
   end
 
-  it 'logs a warning if the post request was not successful' do
-    build = Factory(:build, :config => { 'notifications' => { 'webhooks' => 'http://example.com/' } })
-    http.post('/') {[ 403, {}, 'nono.' ]}
-    dispatch.call('build:finished', build)
-    io.string.should include('[webhook] Could not notify http://example.com/. Status: 403, body: "nono."')
+  describe 'logging' do
+    it 'logs a successful request' do
+      http.post('/') {[ 200, {}, 'nono.' ]}
+      dispatch.call('build:finished', build)
+      io.string.should include('[webhook] Successfully notified http://example.com/')
+    end
+
+    it 'warns about a failed request' do
+      http.post('/') {[ 403, {}, 'nono.' ]}
+      dispatch.call('build:finished', build)
+      io.string.should include('[webhook] Could not notify http://example.com/. Status: 403 ("nono.")')
+    end
   end
 end
 

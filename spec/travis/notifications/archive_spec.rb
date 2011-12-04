@@ -26,7 +26,7 @@ describe Travis::Notifications::Archive do
 
     it 'sets the build to be archived' do
       archiver.send(:archive, build)
-      build.reload.archived_at.should == Time.now.utc
+      build.reload.archived_at.should_not be_nil
     end
   end
 
