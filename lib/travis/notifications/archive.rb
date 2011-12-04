@@ -67,7 +67,7 @@ module Travis
           severity, message = if response.success?
             [:info, "Successfully archived #{response.env[:url].to_s}."]
           else
-            [:error, "Could not notify #{response.env[:url].to_s}. Status: #{response.status} (#{response.body.inspect})"]
+            [:error, "Could not archive to #{response.env[:url].to_s}. Status: #{response.status} (#{response.body.inspect})"]
           end
           send(severity, message)
         end

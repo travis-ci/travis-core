@@ -6,13 +6,21 @@ require 'json'
 describe Travis::Notifications::Archive do
   include Support::Formats
 
-  let(:since)    { Time.utc(2011, 1, 2) }
+  let(:notification) { Travis::Notifications::Archive.new }
+  let(:http)     { Faraday::Adapter::Test::Stubs.new }
   let(:archiver) { Travis::Notifications::Archive.new }
   let(:build)    { Factory(:build, :created_at => Time.utc(2011, 1, 1), :config => { :rvm => ['1.9.2', 'rbx'] }) }
+  let(:io)       { StringIO.new }
 
   before do
+    Travis.logger = Logger.new(io)
     Travis.config.notifications = [:archive]
     Travis::Notifications::Pusher.send(:public, :queue_for, :payload_for)
+
+    Travis::Notifications::Archive.http_client = Faraday.new do |f|
+      f.request :url_encoded
+      f.adapter :test, http
+    end
   end
 
   it 'build:finish archives the build' do
@@ -72,6 +80,28 @@ describe Travis::Notifications::Archive do
         'id' => build.repository_id,
         'slug' => 'svenfuchs/minimal',
       }
+    end
+  end
+
+  describe 'logging' do
+    it 'logs a successful request' do
+      notification.stubs(:url_for).returns('http://example.com/builds/1')
+      http.put('/builds/1') {[ 200, {}, 'nono.' ]}
+      notification.notify('build:finished', build)
+      io.string.should include('[archive] Successfully archived http://example.com/builds/1')
+    end
+
+    it 'warns about a failed request' do
+      notification.stubs(:url_for).returns('http://example.com/builds/1')
+      http.put('/builds/1') {[ 403, {}, 'nono.' ]}
+      notification.notify('build:finished', build)
+      io.string.should include('[archive] Could not archive to http://example.com/builds/1. Status: 403 ("nono.")')
+    end
+
+    it 'logs an exception raised in #send_webhooks' do
+      notification.stubs(:archive).raises(Exception.new)
+      notification.notify('build:finished', build)
+      io.string.should include('[archive] Exception')
     end
   end
 end

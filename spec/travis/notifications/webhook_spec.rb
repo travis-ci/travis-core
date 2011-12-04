@@ -5,8 +5,8 @@ describe Travis::Notifications::Webhook do
   include Support::ActiveRecord
 
   let(:http) { Faraday::Adapter::Test::Stubs.new }
-  let(:io)   { StringIO.new }
   let(:build) { Factory(:build, :config => { 'notifications' => { 'webhooks' => 'http://example.com/' } }) }
+  let(:io)   { StringIO.new }
 
   before do
     Travis.logger = Logger.new(io)
@@ -49,6 +49,13 @@ describe Travis::Notifications::Webhook do
       http.post('/') {[ 403, {}, 'nono.' ]}
       dispatch.call('build:finished', build)
       io.string.should include('[webhook] Could not notify http://example.com/. Status: 403 ("nono.")')
+    end
+
+    it 'logs an exception raised in #send_webhooks' do
+      notification = Travis::Notifications::Webhook.new
+      notification.stubs(:send_webhooks).raises(Exception.new)
+      notification.notify('build:finished', build)
+      io.string.should include('[webhook] Exception')
     end
   end
 end
