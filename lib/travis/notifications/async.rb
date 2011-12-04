@@ -24,8 +24,12 @@ module Travis
         def queue_for(name)
           # TODO should be able to detach and use the old/overwritten #notify method instead of the block
           GirlFriday::WorkQueue.new(name, options_for(name)) do |subscriber, event, *args|
-            instrument(event, *args) do
-              subscriber.new.notify(event, *args) if matches?(event)
+            begin
+              instrument(event, *args) do
+                subscriber.new.notify(event, *args) if matches?(event)
+              end
+            rescue Exception => e
+              log_exception(e)
             end
           end
         end

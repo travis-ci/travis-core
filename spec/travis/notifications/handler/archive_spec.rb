@@ -90,6 +90,7 @@ describe Travis::Notifications::Handler::Archive do
       http.put('/builds/1') {[ 200, {}, 'nono.' ]}
       notification.notify('build:finished', build)
       io.string.should include('[archive] Successfully archived http://example.com/builds/1')
+      puts io.string
     end
 
     it 'warns about a failed request' do
