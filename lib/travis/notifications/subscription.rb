@@ -1,8 +1,6 @@
 module Travis
   module Notifications
     class Subscription
-      include Async, Instrumentation
-
       attr_reader :name, :subscriber, :patterns
 
       include Module.new {
@@ -22,6 +20,8 @@ module Travis
           patterns.any? { |patterns| patterns.is_a?(Regexp) ? patterns.match(event) : patterns == event }
         end
       }
+
+      include Async, Instrumentation
     end
   end
 end
