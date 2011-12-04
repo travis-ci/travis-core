@@ -10,13 +10,9 @@ describe Travis::Notifications::Archive do
   let(:archiver) { Travis::Notifications::Archive.new }
   let(:build)    { Factory(:build, :created_at => Time.utc(2011, 1, 1), :config => { :rvm => ['1.9.2', 'rbx'] }) }
 
-  before do
-    # Travis.config.notifications = [:archive]
-  end
-
   describe 'archive' do
     before :each do
-      archiver.stubs(:store)
+      archiver.stubs(:store).returns(true)
     end
 
     it 'stores the build to the storage' do

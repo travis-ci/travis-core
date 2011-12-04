@@ -36,13 +36,13 @@ module Travis
       protected
 
         def archive(build)
-          store(build)
-          build.update_attributes!(:archived_at => Time.now.utc)
+          build.touch(:archived_at) if store(build)
         end
 
         def store(build)
           response = http.put(url_for(build), json_for(build))
           log_request(build, response)
+          response.success?
         end
 
         def config
