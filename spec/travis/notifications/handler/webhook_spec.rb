@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'support/active_record'
 
-describe Travis::Notifications::Webhook do
+describe Travis::Notifications::Handler::Webhook do
   include Support::ActiveRecord
 
   let(:http) { Faraday::Adapter::Test::Stubs.new }
@@ -12,7 +12,7 @@ describe Travis::Notifications::Webhook do
     Travis.logger = Logger.new(io)
     Travis.config.notifications = [:webhook]
 
-    Travis::Notifications::Webhook.http_client = Faraday.new do |f|
+    Travis::Notifications::Handler::Webhook.http_client = Faraday.new do |f|
       f.request :url_encoded
       f.adapter :test, http
     end
@@ -52,7 +52,7 @@ describe Travis::Notifications::Webhook do
     end
 
     it 'logs an exception raised in #send_webhooks' do
-      notification = Travis::Notifications::Webhook.new
+      notification = Travis::Notifications::Handler::Webhook.new
       notification.stubs(:send_webhooks).raises(Exception.new)
       notification.notify('build:finished', build)
       io.string.should include('[webhook] Exception')

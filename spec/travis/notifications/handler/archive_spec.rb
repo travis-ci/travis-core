@@ -3,29 +3,30 @@ require 'support/active_record'
 require 'support/formats'
 require 'json'
 
-describe Travis::Notifications::Archive do
+describe Travis::Notifications::Handler::Archive do
   include Support::Formats
 
-  let(:notification) { Travis::Notifications::Archive.new }
+  let(:notification) { Travis::Notifications::Handler::Archive.new }
   let(:http)     { Faraday::Adapter::Test::Stubs.new }
-  let(:archiver) { Travis::Notifications::Archive.new }
+  let(:archiver) { Travis::Notifications::Handler::Archive.new }
   let(:build)    { Factory(:build, :created_at => Time.utc(2011, 1, 1), :config => { :rvm => ['1.9.2', 'rbx'] }) }
   let(:io)       { StringIO.new }
 
   before do
     Travis.logger = Logger.new(io)
     Travis.config.notifications = [:archive]
-    Travis::Notifications::Pusher.send(:public, :queue_for, :payload_for)
+    Travis::Notifications::Handler::Pusher.send(:public, :queue_for, :payload_for)
 
-    Travis::Notifications::Archive.http_client = Faraday.new do |f|
+    Travis::Notifications::Handler::Archive.http_client = Faraday.new do |f|
       f.request :url_encoded
       f.adapter :test, http
     end
   end
 
   it 'build:finish archives the build' do
-    Travis::Notifications::Archive.any_instance.expects(:archive).with(build)
+    Travis::Notifications::Handler::Archive.any_instance.expects(:archive).with(build)
     Travis::Notifications.dispatch('build:finished', build)
+    puts io.string
   end
 
   describe 'archive' do

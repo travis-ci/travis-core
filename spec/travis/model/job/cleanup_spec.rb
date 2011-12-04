@@ -31,11 +31,11 @@ describe Job::Cleanup do
 
   describe :enqueue do
     before :each do
-      Travis::Notifications::Worker.stubs(:enqueue)
+      Travis::Notifications::Handler::Worker.stubs(:enqueue)
     end
 
     it 'enqueues the job' do
-      Travis::Notifications::Worker.expects(:enqueue).with(job)
+      Travis::Notifications::Handler::Worker.expects(:enqueue).with(job)
       job.enqueue
     end
 

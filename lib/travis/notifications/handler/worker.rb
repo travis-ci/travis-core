@@ -1,0 +1,41 @@
+require 'active_support/core_ext/module/delegation'
+
+module Travis
+  module Notifications
+    module Handler
+      class Worker
+        autoload :Payload, 'travis/notifications/handler/worker/payload'
+
+        EVENTS = /job:.*:created/
+
+        include Logging
+
+        class << self
+          def enqueue(job)
+            new.enqueue(job)
+          end
+        end
+
+        delegate :queue_for, :payload_for, :to => :'self.class'
+
+        def notify(event, object, *args)
+          ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, *args]) do
+            enqueue(object)
+          end
+        rescue Exception => e
+          log_exception(e)
+        end
+
+        def enqueue(job)
+          publisher_for(job).publish(Payload.for(job))
+        end
+
+        protected
+
+          def publisher_for(job)
+            job.is_a?(Job::Configure) ? Travis::Amqp::Publisher.configure : Travis::Amqp::Publisher.builds(job.queue)
+          end
+      end
+    end
+  end
+end

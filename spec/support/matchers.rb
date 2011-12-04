@@ -82,7 +82,7 @@ RSpec::Matchers.define :post_webhooks_on do |http, event, object, options|
       env[:url].path.should == uri.path
       env[:request_headers]['Authorization'].should == authorization_for(object)
 
-      payload = normalize_json(Travis::Notifications::Webhook::Payload.new(object).to_hash)
+      payload = normalize_json(Travis::Notifications::Handler::Webhook::Payload.new(object).to_hash)
       payload_from(env).keys.sort.should == payload.keys.map(&:to_s).sort
     end
   end
@@ -92,15 +92,15 @@ RSpec::Matchers.define :post_webhooks_on do |http, event, object, options|
   end
 
   def authorization_for(object)
-    Travis::Notifications::Webhook.new.send(:authorization, object)
+    Travis::Notifications::Handler::Webhook.new.send(:authorization, object)
   end
 end
 
 RSpec::Matchers.define :post_campfire_on do |event, object, options|
   match do |dispatch|
     options[:to].map! do |scheme|
-      data = Travis::Notifications::Campfire.new.send(:extract_data, scheme)
-      Travis::Notifications::Campfire.new.send(:build_url, data)
+      data = Travis::Notifications::Handler::Campfire.new.send(:extract_data, scheme)
+      Travis::Notifications::Handler::Campfire.new.send(:build_url, data)
     end
 
     post_webhooks_on(event, object, options)

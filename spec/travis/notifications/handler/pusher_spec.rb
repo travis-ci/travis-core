@@ -2,20 +2,20 @@ require 'spec_helper'
 require 'support/active_record'
 require 'support/pusher'
 
-describe Travis::Notifications::Pusher do
+describe Travis::Notifications::Handler::Pusher do
   include Support::ActiveRecord, Support::Pusher
 
   before do
     Travis.config.notifications = [:pusher]
-    Travis::Notifications::Pusher.send(:public, :queue_for, :payload_for)
+    Travis::Notifications::Handler::Pusher.send(:public, :queue_for, :payload_for)
   end
 
-  let(:receiver) { Travis::Notifications::Pusher.new }
+  let(:receiver) { Travis::Notifications::Handler::Pusher.new }
   let(:build)    { Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] }) }
   let(:job)      { Factory(:request).job }
   let(:worker)   { Factory(:worker) }
 
-  # TODO these don't actually match the full behaviour, see Notifications::Pusher#client_event_for
+  # TODO these don't actually match the full behaviour, see Notifications::Handler::Pusher#client_event_for
   describe 'sends a message to pusher' do
     before :each do
       build

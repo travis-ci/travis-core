@@ -27,7 +27,7 @@ class Job
     end
 
     def enqueue
-      Travis::Notifications::Worker.enqueue(self)
+      Travis::Notifications::Handler::Worker.enqueue(self)
       update_attribute(:retries, retries + 1)
     end
 

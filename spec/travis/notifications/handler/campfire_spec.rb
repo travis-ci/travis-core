@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::Notifications::Campfire do
+describe Travis::Notifications::Handler::Campfire do
 
   before do
     Travis.config.notifications = [:campfire]
@@ -30,7 +30,7 @@ describe Travis::Notifications::Campfire do
 
   def stub_http
     $http_stub ||= Faraday::Adapter::Test::Stubs.new
-    Travis::Notifications::Webhook.http_client = Faraday.new do |f|
+    Travis::Notifications::Handler::Webhook.http_client = Faraday.new do |f|
       f.request :url_encoded
       f.adapter :test, $http_stub
     end

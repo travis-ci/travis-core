@@ -10,7 +10,7 @@ module Support
     included do
       before :each do
         @pusher = Support::Mocks::Pusher.new
-        Travis::Notifications::Pusher.any_instance.stubs(:channel).returns(pusher)
+        Travis::Notifications::Handler::Pusher.any_instance.stubs(:channel).returns(pusher)
       end
     end
   end

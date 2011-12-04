@@ -50,6 +50,7 @@ module Travis
             :airbrake => { :key => 'airbrake-api_key' },
             :pusher   => { :app_id => 'app-id', :key => 'key', :secret => 'secret' },
             :smtp     => { :user_name => 'postmark-api_key' },
+            :async    => {},
             :notifications => [],
             :queues   => [],
             :workers  => { :prune => { :after => 15, :interval => 5 } },

@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'support/active_record'
 require 'support/mocks/irc'
 
-describe Travis::Notifications::Irc do
+describe Travis::Notifications::Handler::Irc do
   include Support::ActiveRecord
 
   attr_reader :irc
@@ -30,7 +30,7 @@ describe Travis::Notifications::Irc do
 
     expect_irc('irc.freenode.net', { :port => '1234' })
 
-    Travis::Notifications::Irc.new.notify('build:finished', build)
+    Travis::Notifications::Handler::Irc.new.notify('build:finished', build)
 
     expected = [
       'JOIN #travis',
@@ -48,7 +48,7 @@ describe Travis::Notifications::Irc do
     expect_irc('irc.freenode.net', { :port => '1234' })
     expect_irc('irc.example.com')
 
-    Travis::Notifications::Irc.new.notify('build:finished', build)
+    Travis::Notifications::Handler::Irc.new.notify('build:finished', build)
 
     expected = [
       'JOIN #travis',
@@ -72,7 +72,7 @@ describe Travis::Notifications::Irc do
     expect_irc('irc.freenode.net', { :port => '6667' }, 1) # (Only connect once to irc.freenode.net)
     expect_irc('irc.example.com')
 
-    Travis::Notifications::Irc.new.notify('build:finished', build)
+    Travis::Notifications::Handler::Irc.new.notify('build:finished', build)
 
     expected = [
       'JOIN #travis',

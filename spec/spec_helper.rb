@@ -14,15 +14,19 @@ require 'stringio'
 require 'logger'
 require 'mocha'
 require 'patches/rspec_hash_diff'
+require 'girl_friday'
 
 include Mocha::API
 
 Travis.logger = Logger.new(StringIO.new)
 
+GirlFriday::Queue.immediate!
+
 RSpec.configure do |c|
   c.after :each do
     Travis.config.notifications.clear
+    Travis::Notifications.instance_variable_set(:@queues, nil)
     Travis::Notifications.instance_variable_set(:@subscriptions, nil)
-    Travis::Notifications::Pusher.send(:protected, :queue_for, :payload_for)
+    Travis::Notifications::Handler::Pusher.send(:protected, :queue_for, :payload_for)
   end
 end

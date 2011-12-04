@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::Notifications::Email do
+describe Travis::Notifications::Handler::Email do
   let(:build) { Travis::Models::Build.new(record) }
 
   before do

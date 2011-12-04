@@ -1,10 +1,10 @@
 require 'spec_helper'
 require 'support/active_record'
 
-describe Travis::Notifications::Worker do
+describe Travis::Notifications::Handler::Worker do
   include Support::ActiveRecord
 
-  let(:worker)    { Travis::Notifications::Worker.new }
+  let(:worker)    { Travis::Notifications::Handler::Worker.new }
   let(:payload)   { { :the => 'payload' } }
   let(:configure) { stub('configure', :publish => nil) }
   let(:builds)    { stub('builds', :publish => nil) }
@@ -14,11 +14,11 @@ describe Travis::Notifications::Worker do
     before :each do
       Travis::Amqp::Publisher.stubs(:configure).returns(configure)
       Travis::Amqp::Publisher.stubs(:builds).returns(builds)
-      Travis::Notifications::Worker::Payload.stubs(:for).with(job).returns(payload)
+      Travis::Notifications::Handler::Worker::Payload.stubs(:for).with(job).returns(payload)
     end
 
     it 'generates a payload for the given job' do
-      Travis::Notifications::Worker::Payload.stubs(:for).with(job)
+      Travis::Notifications::Handler::Worker::Payload.stubs(:for).with(job)
       worker.notify(:start, job)
     end
 
