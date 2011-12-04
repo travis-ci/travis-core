@@ -11,9 +11,9 @@ module Travis
         end
 
         def notify(event, *args)
-          instrument(event, *args) do
+          # instrument(event, *args) do
             subscriber.new.notify(event, *args) if matches?(event)
-          end
+          # end
         end
 
         def matches?(event)
@@ -21,7 +21,7 @@ module Travis
         end
       }
 
-      include Instrumentation # Async
+      # include Instrumentation # Async
     end
   end
 end
