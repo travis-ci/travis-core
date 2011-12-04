@@ -21,7 +21,7 @@ module Travis
         end
       }
 
-      include Async, Instrumentation
+      include Instrumentation # Async
     end
   end
 end
