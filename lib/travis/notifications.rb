@@ -2,7 +2,6 @@ require 'active_support/core_ext/string/inflections'
 
 module Travis
   module Notifications
-    autoload :Async,           'travis/notifications/async'
     autoload :Handler,         'travis/notifications/handler'
     autoload :Instrumentation, 'travis/notifications/instrumentation'
     autoload :Subscription,    'travis/notifications/subscription'

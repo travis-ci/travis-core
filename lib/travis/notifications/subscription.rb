@@ -11,17 +11,13 @@ module Travis
         end
 
         def notify(event, *args)
-          # instrument(event, *args) do
-            subscriber.new.notify(event, *args) if matches?(event)
-          # end
+          subscriber.new.notify(event, *args) if matches?(event)
         end
 
         def matches?(event)
           patterns.any? { |patterns| patterns.is_a?(Regexp) ? patterns.match(event) : patterns == event }
         end
       }
-
-      # include Instrumentation # Async
     end
   end
 end

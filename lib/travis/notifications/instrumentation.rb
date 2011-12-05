@@ -15,6 +15,12 @@ module Travis
         end
       end
 
+      def notify(event, *args)
+        instrument(event, *args) do
+          super
+        end
+      end
+
       %w(archive email irc pusher webhook).each do |name| # TODO where can we hook in best?
         ActiveSupport::Notifications.subscribe(name.to_s, &method(:log_notification))
       end
