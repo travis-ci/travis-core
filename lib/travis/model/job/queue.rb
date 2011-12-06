@@ -2,9 +2,13 @@ class Job
   class Queue
     class << self
       def for(job)
-        slug = job.repository.slug
-        language = job.config[:language]
-        queues.detect { |queue| queue.matches?(slug, language) } || default_queue
+        if job.is_a?(Job::Configure)
+          configure
+        else
+          slug = job.repository.slug
+          language = job.config[:language]
+          queues.detect { |queue| queue.matches?(slug, language) } || default
+        end
       end
 
       def queues
@@ -13,8 +17,12 @@ class Job
         end
       end
 
-      def default_queue
-        @default_queue ||= Queue.new('builds.common')
+      def configure
+        @configure || new('builds.configure')
+      end
+
+      def default
+        @default ||= new('builds.common')
       end
     end
 

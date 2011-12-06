@@ -18,7 +18,7 @@ describe 'JSON for worker jobs' do
         'id' => job.repository_id,
         'slug' => 'svenfuchs/minimal'
       },
-      'queue' => 'builds.common'
+      'queue' => 'builds.configure'
     }
   end
 end

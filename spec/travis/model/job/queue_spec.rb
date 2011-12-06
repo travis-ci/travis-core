@@ -25,7 +25,13 @@ describe 'Job::Queue' do
   end
 
   describe 'Queue.for' do
-    it 'returns the default queue when neither slug or language match the given configuration hash' do
+    it 'returns the build configure queue for a Configure job' do
+      job = stub('job')
+      job.stubs(:is_a?).with(Job::Configure).returns(true)
+      Job::Queue.for(job).name.should == 'builds.configure'
+    end
+
+    it 'returns the default build queue when neither slug or language match the given configuration hash' do
       job = stub('job', :config => {}, :repository => stub('repository', :slug => 'travis-ci/travis-ci'))
       Job::Queue.for(job).name.should == 'builds.common'
     end
