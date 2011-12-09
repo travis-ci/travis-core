@@ -9,6 +9,7 @@ class TestMock
   class << self
     def name; 'Job::Test'; end
     def after_create(*); end
+    def after_commit(*); end
   end
 
   include Job::Test::States

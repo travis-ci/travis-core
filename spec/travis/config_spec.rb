@@ -35,8 +35,8 @@ describe Travis::Config do
       config.queues.should == []
     end
 
-    it 'ampq.host defaults to "127.0.0.1"' do
-      config.amqp.host.should == '127.0.0.1'
+    it 'ampq.host defaults to "localhost"' do
+      config.amqp.host.should == 'localhost'
     end
 
     it 'ampq.prefetch defaults to 1' do

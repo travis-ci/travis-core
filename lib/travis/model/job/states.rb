@@ -1,8 +1,17 @@
+require 'active_support/concern'
 require 'active_support/core_ext/object/blank'
 require 'active_support/core_ext/hash/except'
 
 class Job
   module States
+    extend ActiveSupport::Concern
+
+    included do
+      after_commit :on => :create do
+        notify(:create)
+      end
+    end
+
     def propagate(*args)
       owner.send(*args)
       true

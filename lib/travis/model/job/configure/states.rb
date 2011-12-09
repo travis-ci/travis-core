@@ -15,10 +15,6 @@ class Job
         event :finish, :to => :finished, :after => :configure_owner # TODO why not just propagate here?
         event :all, :after => :notify
 
-        after_create do
-          notify(:create)
-        end
-
         def finish(data)
           [:config, :status, :finished_at].each do |key|
             send(:"#{key}=", data[key]) if data.key?(key)

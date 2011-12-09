@@ -14,10 +14,6 @@ class Job
         event :start,  :to => :started
         event :finish, :to => :finished, :after => :add_tags
         event :all, :after => [:notify, :propagate]
-
-        after_create do
-          notify(:create)
-        end
       end
 
       def start(data = {})
