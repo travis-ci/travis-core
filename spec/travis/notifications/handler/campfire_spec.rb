@@ -7,18 +7,30 @@ describe Travis::Notifications::Handler::Campfire do
     stub_http
   end
 
+  let(:http) { Faraday::Adapter::Test::Stubs.new }
   let(:dispatch) { lambda { |event, object| Travis::Notifications.dispatch(event, object) } }
+  let(:io) { StringIO.new }
+
+  before do
+    Travis.logger = Logger.new(io)
+    Travis.config.notifications = [:campfire]
+
+    Travis::Notifications::Handler::Campfire.http_client = Faraday.new do |f|
+      f.request :url_encoded
+      f.adapter :test, http
+    end
+  end
 
   it "sends campfire notifications to the rooms given as an array" do
     targets = ['evome:apitoken@42', 'rails:sometoken@69']
     build = Factory(:build, :config => { 'notifications' => { 'campfire' => targets } })
-    dispatch.should post_campfire_on('build:finished', build, :to => targets)
+    dispatch.should post_campfire_on(http, 'build:finished', build, :to => targets)
   end
 
   it "sends campfire notifications to the room given as a string" do
     target = 'evome:apitoken@42'
     build = Factory(:build, :config => { 'notifications' => { 'campfire' => target } })
-    dispatch.should post_campfire_on('build:finished', build, :to => [target])
+    dispatch.should post_campfire_on(http, 'build:finished', build, :to => [target])
   end
 
   it "sends no campfire notification if the given url is blank" do
