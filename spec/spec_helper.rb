@@ -14,13 +14,10 @@ require 'stringio'
 require 'logger'
 require 'mocha'
 require 'patches/rspec_hash_diff'
-require 'girl_friday'
 
 include Mocha::API
 
 Travis.logger = Logger.new(StringIO.new)
-
-GirlFriday::Queue.immediate!
 
 RSpec.configure do |c|
   c.after :each do

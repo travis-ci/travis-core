@@ -21,7 +21,6 @@ PATH
       actionmailer_inline_css (~> 1.4.0)
       data_migrations (~> 0.0.1)
       devise (~> 1.5.0)
-      girl_friday
       hashr (~> 0.0.19)
       hpricot (~> 0.8.4)
       oa-oauth (~> 0.3.2)
@@ -87,7 +86,6 @@ GEM
     bcrypt-ruby (3.0.1-java)
     bouncy-castle-java (1.5.0146.1)
     builder (3.0.0)
-    connection_pool (0.1.0)
     crack (0.3.1)
     css_parser (1.2.5)
       addressable
@@ -110,8 +108,6 @@ GEM
       rack (>= 1.1.0, < 2)
     faraday_middleware (0.7.0)
       faraday (~> 0.7.3)
-    girl_friday (0.9.7)
-      connection_pool (~> 0.1.0)
     hashie (1.2.0)
     hashr (0.0.19)
     hike (1.2.1)
