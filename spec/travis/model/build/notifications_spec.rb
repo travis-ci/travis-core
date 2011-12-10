@@ -127,6 +127,19 @@ describe Build::Notifications do
     end
   end
 
+  describe :send_campfire_notifications? do
+    it 'returns true if the build configuration specifies campfire channels' do
+      channels = %w(travis:apitoken@42)
+      stubs(:config => { :notifications => { :campfire => channels } })
+      send_campfire_notifications?.should be_true
+    end
+
+    it 'returns false if the build configuration does not specify any webhooks' do
+      stubs(:config => {})
+      send_campfire_notifications?.should be_false
+    end
+  end
+
   describe :webhooks do
     it 'returns an array of urls when given a string' do
       webhooks = 'http://evome.fr/notifications'
@@ -158,6 +171,33 @@ describe Build::Notifications do
       self.webhooks.should == webhooks[:urls]
     end
   end
+
+  describe :campfire_channels do
+    it 'returns an array of urls when given a string' do
+      channels = 'travis:apitoken@42'
+      stubs(:config => { :notifications => { :campfire => channels } })
+      self.campfire_channels.should == [channels]
+    end
+
+    it 'returns an array of urls when given an array' do
+      channels = ['travis:apitoken@42']
+      stubs(:config => { :notifications => { :campfire => channels } })
+      self.campfire_channels.should == channels
+    end
+
+    it 'returns an array of multiple urls when given a comma separated string' do
+      channels = 'travis:apitoken@42,evome:apitoken@44'
+      stubs(:config => { :notifications => { :campfire => channels } })
+      self.campfire_channels.should == channels.split(' ').map(&:strip)
+    end
+
+    it 'returns an array of values if the build configuration specifies an array of urls within a config hash' do
+      channels = { :channels => %w(travis:apitoken&42), :on_success => 'change' }
+      stubs(:config => { :notifications => { :campfire => channels } })
+      self.campfire_channels.should == channels[:channels]
+    end
+  end
+
 
   describe :irc_channels do
     it 'returns an array of urls when given a string' do

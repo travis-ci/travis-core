@@ -96,14 +96,31 @@ RSpec::Matchers.define :post_webhooks_on do |http, event, object, options|
   end
 end
 
-RSpec::Matchers.define :post_campfire_on do |event, object, options|
+RSpec::Matchers.define :post_campfire_on do |http, event, object, options|
   match do |dispatch|
-    options[:to].map! do |scheme|
+    options[:to].each do |scheme|
       data = Travis::Notifications::Handler::Campfire.new.send(:extract_data, scheme)
-      Travis::Notifications::Handler::Campfire.new.send(:build_url, data)
-    end
+      url = Travis::Notifications::Handler::Campfire.new.send(:extract_url, data)
 
-    post_webhooks_on(event, object, options)
+      expect_request(url, data, object)
+    end
+    dispatch.call(event, object)
+  end
+
+  def expect_request(url, data, object)
+    uri = URI.parse(url)
+    http.post uri.path do |env|
+      env[:url].host.should == uri.host
+      env[:url].path.should == uri.path
+      env[:request_headers]['Authorization'].should == data[:token]
+
+      message = Travis::Notifications::Handler::Campfire.new.send(:build_message, object)
+      payload_from(env).should == message
+    end
+  end
+
+  def payload_from(env)
+    Rack::Utils.parse_query(env[:body])['message[body]']
   end
 end
 
