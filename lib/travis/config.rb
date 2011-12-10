@@ -14,7 +14,7 @@ module Travis
       end
 
       def load_file
-        @load_file ||= YAML.load_file(filename)[env] if File.exists?(filename)
+        @load_file ||= YAML.load_file(filename)[env] if File.exists?(filename) rescue {}
       end
 
       def filename
