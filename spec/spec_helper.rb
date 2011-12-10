@@ -27,3 +27,14 @@ RSpec.configure do |c|
     Travis::Notifications::Handler::Pusher.send(:protected, :queue_for, :payload_for)
   end
 end
+
+module Kernel
+  def capture_stdout
+    out = StringIO.new
+    $stdout = out
+    yield
+    return out.string
+  ensure
+    $stdout = STDOUT
+  end
+end
