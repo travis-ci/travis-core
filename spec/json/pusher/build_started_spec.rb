@@ -26,7 +26,7 @@ describe 'JSON for pusher' do
       'committer_name' => 'Sven Fuchs',
       'committer_email' => 'svenfuchs@artweb-design.de',
       'committed_at' => '2011-11-11T11:11:11Z',
-      'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
+      'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop'
     }
     data['build']['matrix'].first.should == {
       'id' => test.id,
@@ -42,16 +42,18 @@ describe 'JSON for pusher' do
       'committer_name' => 'Sven Fuchs',
       'committer_email' => 'svenfuchs@artweb-design.de',
       'committed_at' => '2011-11-11T11:11:11Z',
-      'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
+      'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop'
     }
     data['repository'].should == {
       'id' => build.repository_id,
       'slug' => 'svenfuchs/minimal',
+      'description' => nil,
       'last_build_id' => 2,
       'last_build_number' => '2',
       'last_build_started_at' => json_format_time(Time.now.utc),
       'last_build_finished_at' => json_format_time(Time.now.utc),
-      'last_build_result' => 0
+      'last_build_result' => 0,
+      'last_build_language' => nil
     }
   end
 end
