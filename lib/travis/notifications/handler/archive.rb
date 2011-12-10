@@ -1,3 +1,4 @@
+require 'core_ext/module/include'
 require 'faraday'
 require 'cgi'
 
@@ -26,52 +27,54 @@ module Travis
           end
         end
 
-        def notify(event, object, *args)
-          archive(object)
-        rescue Exception => e
-          log_exception(e)
-        end
-
-        protected
-
-          def archive(build)
-            build.touch(:archived_at) if store(build)
+        include do
+          def notify(event, object, *args)
+            archive(object)
+          rescue Exception => e
+            log_exception(e)
           end
 
-          def store(build)
-            response = http.put(url_for(build), json_for(build))
-            log_request(build, response)
-            response.success?
-          end
+          protected
 
-          def config
-            Travis.config.archive
-          end
-
-          def url_for(build)
-            "http://#{config.username}:#{CGI.escape(config.password)}@#{config.host}/builds/#{build.id}"
-          end
-
-          def json_for(build)
-            Travis::Renderer.json(build, :type => :archive, :template => 'build', :base_dir => base_dir)
-          end
-
-          def http
-            self.class.http_client
-          end
-
-          def log_request(build, response)
-            severity, message = if response.success?
-              [:info, "Successfully archived #{response.env[:url].to_s}."]
-            else
-              [:error, "Could not archive to #{response.env[:url].to_s}. Status: #{response.status} (#{response.body.inspect})"]
+            def archive(build)
+              build.touch(:archived_at) if store(build)
             end
-            send(severity, message)
-          end
 
-          def base_dir
-            File.expand_path('../../../views', __FILE__)
-          end
+            def store(build)
+              response = http.put(url_for(build), json_for(build))
+              log_request(build, response)
+              response.success?
+            end
+
+            def config
+              Travis.config.archive
+            end
+
+            def url_for(build)
+              "http://#{config.username}:#{CGI.escape(config.password)}@#{config.host}/builds/#{build.id}"
+            end
+
+            def json_for(build)
+              Travis::Renderer.json(build, :type => :archive, :template => 'build', :base_dir => base_dir)
+            end
+
+            def http
+              self.class.http_client
+            end
+
+            def log_request(build, response)
+              severity, message = if response.success?
+                [:info, "Successfully archived #{response.env[:url].to_s}."]
+              else
+                [:error, "Could not archive to #{response.env[:url].to_s}. Status: #{response.status} (#{response.body.inspect})"]
+              end
+              send(severity, message)
+            end
+
+            def base_dir
+              File.expand_path('../../../views', __FILE__)
+            end
+        end
       end
     end
   end

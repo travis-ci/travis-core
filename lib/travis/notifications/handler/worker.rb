@@ -1,3 +1,4 @@
+require 'core_ext/module/include'
 require 'active_support/core_ext/module/delegation'
 
 module Travis
@@ -16,25 +17,27 @@ module Travis
           end
         end
 
-        delegate :queue_for, :payload_for, :to => :'self.class'
+        include do
+          delegate :queue_for, :payload_for, :to => :'self.class'
 
-        def notify(event, object, *args)
-          ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, *args]) do
-            enqueue(object)
+          def notify(event, object, *args)
+            ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, *args]) do
+              enqueue(object)
+            end
+          rescue Exception => e
+            log_exception(e)
           end
-        rescue Exception => e
-          log_exception(e)
-        end
 
-        def enqueue(job)
-          publisher_for(job).publish(Payload.for(job))
-        end
-
-        protected
-
-          def publisher_for(job)
-            job.is_a?(Job::Configure) ? Travis::Amqp::Publisher.configure : Travis::Amqp::Publisher.builds(job.queue)
+          def enqueue(job)
+            publisher_for(job).publish(Payload.for(job))
           end
+
+          protected
+
+            def publisher_for(job)
+              job.is_a?(Job::Configure) ? Travis::Amqp::Publisher.configure : Travis::Amqp::Publisher.builds(job.queue)
+            end
+        end
       end
     end
   end
