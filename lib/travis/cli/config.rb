@@ -1,47 +1,11 @@
 require 'thor'
 require 'shellwords'
+require 'fileutils'
 
 module Travis
   module Cli
     class Config < Thor
-      class Keychain
-        include Cli
-
-        attr_reader :app, :shell, :dir
-
-        def initialize(app, shell, dir = '../travis-keychain')
-          @app = app
-          @shell = shell
-          @dir = dir
-        end
-
-        def fetch
-          pull
-          read
-        end
-
-        protected
-
-          def pull
-            chdir do
-              error 'There are unstaged changes in your travis-keychain working directory.' unless clean?
-              say 'Fetching the keychain ...'
-              run 'git pull'
-            end
-          end
-
-          def read
-            File.read(File.expand_path(File.join(dir, "config/travis.#{app}.yml"))) || ''
-          end
-
-          def chdir(&block)
-            Dir.chdir(dir, &block)
-          end
-
-          def clean?
-            `git status`.include?('working directory clean')
-          end
-      end
+      autoload :Keychain, 'travis/cli/config/keychain'
 
       include Cli
 

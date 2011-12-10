@@ -10,6 +10,7 @@ describe Travis::Cli::Config::Keychain do
     keychain.stubs(:system)
     keychain.stubs(:`)
     keychain.stubs(:clean?).returns(true)
+    File.stubs(:read)
   end
 
   def fetch
@@ -20,7 +21,7 @@ describe Travis::Cli::Config::Keychain do
 
   describe 'fetch' do
     it 'changes to the keychain directory' do
-      Dir.expects(:chdir).with('../travis-keychain')
+      Dir.expects(:chdir).with { |path| path =~ %r(/travis-keychain$) }
       fetch
     end
 
