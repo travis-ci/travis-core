@@ -8,5 +8,3 @@ RSpec::Core::RakeTask.new do |t|
 end
 
 task :default => :spec
-
-
