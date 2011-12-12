@@ -15,6 +15,7 @@ module Travis
           def notify(event, object, *args)
             push(event, object, *args)
           rescue Exception => e
+            puts e.message, e.backtrace
             log_exception(e)
           end
 
@@ -44,19 +45,9 @@ module Travis
             end
 
             def client_event_for(event)
-              # gotta remap a bunch of events here. should get better with sproutcore
               case event
-              when /job:.*:created/
-                'build:queued'
-              when 'job:configure:started', # TODO doesn't seem to be sent by the worker, so we notify on finished, too
-                   'job:configure:finished'
-                'build:removed'
-              when 'job:test:started'
-                'build:removed'
-              when 'job:test:finished'
-                'build:finished'
-              when 'job:test:log'
-                'build:log'
+              when /job:.*/
+                event.gsub(/(test|configure):/, '')
               else
                 event
               end
@@ -64,14 +55,10 @@ module Travis
 
             def queue_for(event, object)
               case event
-              when 'build:queued', 'build:removed'
-                'jobs'
-              when /worker:*/
-                'workers'
-              when 'build:log'
-                "build-#{object.id}"
+              when 'job:log'
+                "job-#{object.id}"
               else
-                'builds'
+                'common'
               end
             end
 

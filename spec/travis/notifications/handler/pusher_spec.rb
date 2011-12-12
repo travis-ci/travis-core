@@ -10,10 +10,11 @@ describe Travis::Notifications::Handler::Pusher do
     Travis::Notifications::Handler::Pusher.send(:public, :queue_for, :payload_for)
   end
 
-  let(:receiver) { Travis::Notifications::Handler::Pusher.new }
-  let(:build)    { Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] }) }
-  let(:job)      { Factory(:request).job }
-  let(:worker)   { Factory(:worker) }
+  let(:receiver)  { Travis::Notifications::Handler::Pusher.new }
+  let(:build)     { Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] }) }
+  let(:configure) { Factory(:configure) }
+  let(:test)      { Factory(:test) }
+  let(:worker)    { Factory(:worker) }
 
   # TODO these don't actually match the full behaviour, see Notifications::Handler::Pusher#client_event_for
   describe 'sends a message to pusher' do
@@ -23,18 +24,33 @@ describe Travis::Notifications::Handler::Pusher do
     end
 
     it 'job:configure:created' do
-      Travis::Notifications.dispatch('job:configure:created', build)
-      pusher.should have_message('build:queued', build)
+      Travis::Notifications.dispatch('job:configure:created', configure)
+      pusher.should have_message('job:created', configure)
     end
 
     it 'job:configure:finished' do
-      Travis::Notifications.dispatch('job:configure:finished', build)
-      pusher.should have_message('build:removed', build)
+      Travis::Notifications.dispatch('job:configure:finished', configure)
+      pusher.should have_message('job:finished', configure)
     end
 
     it 'job:test:created' do
-      Travis::Notifications.dispatch('job:test:created', build)
-      pusher.should have_message('build:queued', build)
+      Travis::Notifications.dispatch('job:test:created', test)
+      pusher.should have_message('job:created', test)
+    end
+
+    it 'job:test:started' do
+      Travis::Notifications.dispatch('job:test:started', test)
+      pusher.should have_message('job:started', test)
+    end
+
+    it 'job:log' do
+      Travis::Notifications.dispatch('job:test:log', test)
+      pusher.should have_message('job:log', test)
+    end
+
+    it 'job:test:finished' do
+      Travis::Notifications.dispatch('job:test:finished', test)
+      pusher.should have_message('job:finished', test)
     end
 
     it 'build:started' do
@@ -42,19 +58,9 @@ describe Travis::Notifications::Handler::Pusher do
       pusher.should have_message('build:started', build)
     end
 
-    it 'build:log' do
-      Travis::Notifications.dispatch('job:test:log', build)
-      pusher.should have_message('build:log', build)
-    end
-
     it 'build:finished' do
       Travis::Notifications.dispatch('build:finished', build)
       pusher.should have_message('build:finished', build)
-    end
-
-    it 'job:test:started' do
-      Travis::Notifications.dispatch('job:test:started', job)
-      pusher.should have_message('build:removed', job)
     end
 
     it 'worker:started' do
@@ -64,20 +70,24 @@ describe Travis::Notifications::Handler::Pusher do
   end
 
   describe 'payload_for returns the payload required for client side job events' do
-    it 'build:queued' do
-      receiver.payload_for('build:queued', job).keys.should == [:build, :repository]
+    it 'job:created' do
+      receiver.payload_for('job:created', test).keys.should == [:id, :number, :queue, :repository_id]
     end
 
-    it 'build:removed' do
-      receiver.payload_for('build:removed', build).keys.should == [:build, :repository]
+    it 'job:started' do
+      receiver.payload_for('job:started', test).keys.should == [:id, :started_at]
+    end
+
+    it 'job:log' do
+      receiver.payload_for('job:log', test, :log => 'foo').keys.should == [:id, :log]
+    end
+
+    it 'job:finished' do
+      receiver.payload_for('job:finished', test).keys.should == [:id, :finished_at, :result]
     end
 
     it 'build:started' do
       receiver.payload_for('build:started', build).keys.should == [:build, :repository]
-    end
-
-    it 'build:log' do
-      receiver.payload_for('build:log', build, :log => 'foo').keys.should == [:build, :repository, :log]
     end
 
     it 'build:finished' do
@@ -90,28 +100,32 @@ describe Travis::Notifications::Handler::Pusher do
   end
 
   describe 'queue_for' do
-    it 'returns "jobs" for the event "build:queued"' do
-      receiver.queue_for('build:queued', Factory(:build)).should == 'jobs'
+    it 'returns "common" for the event "job:created"' do
+      receiver.queue_for('job:created', test).should == 'common'
     end
 
-    it 'returns "jobs" for the event "build:removed"' do
-      receiver.queue_for('build:removed', Factory(:build)).should == 'jobs'
+    it 'returns "common" for the event "job:started"' do
+      receiver.queue_for('job:started', test).should == 'common'
     end
 
-    it 'returns "builds" for the event "build:started"' do
-      receiver.queue_for('build:started', Factory(:build)).should == 'builds'
+    it 'returns "job-1" for the event "job:log"' do
+      receiver.queue_for('job:log', test).should == "job-#{test.id}"
     end
 
-    it 'returns "builds" for the event "build:finished"' do
-      receiver.queue_for('build:finished', Factory(:build)).should == 'builds'
+    it 'returns "common" for the event "job:finished"' do
+      receiver.queue_for('job:finished', test).should == 'common'
     end
 
-    it 'returns "build-1" for the event "build:log"' do
-      receiver.queue_for('build:log', Factory(:build, :id => 1)).should == 'build-1'
+    it 'returns "common" for the event "build:started"' do
+      receiver.queue_for('build:started', build).should == 'common'
     end
 
-    it 'returns "workers" for the event "worker:started"' do
-      receiver.queue_for('workers', Factory(:worker)).should == 'workers'
+    it 'returns "common" for the event "build:finished"' do
+      receiver.queue_for('build:finished', build).should == 'common'
+    end
+
+    it 'returns "common" for the event "worker:started"' do
+      receiver.queue_for('worker:created', build).should == 'common'
     end
   end
 end

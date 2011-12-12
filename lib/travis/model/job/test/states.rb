@@ -28,7 +28,7 @@ class Job
       end
 
       def append_log!(chars)
-        notify(:log, :build => { :_log => chars })
+        notify(:log, :_log => chars)
       end
 
       protected

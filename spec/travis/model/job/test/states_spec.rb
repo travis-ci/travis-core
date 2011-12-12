@@ -106,7 +106,7 @@ describe Job::Test::States do
       end
 
       it 'notifies observers' do
-        Travis::Notifications.expects(:dispatch).with('job:test:log', job, :build => { :_log => 'chars' })
+        Travis::Notifications.expects(:dispatch).with('job:test:log', job, :_log => 'chars')
         job.append_log!('chars')
       end
     end

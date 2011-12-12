@@ -21,6 +21,8 @@ module Travis
             case object
             when ::Worker
               { :worker => object }
+            when Job
+              { :job => object, :repository => object.repository }
             else
               { :build => object, :repository => object.repository }
             end
