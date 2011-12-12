@@ -41,6 +41,25 @@ describe Build, 'matrix' do
     end
   end
 
+  describe :matrix_duration do
+    let(:build) do
+      Build.new(:matrix => [
+        Job::Test.new(:started_at => 60.seconds.ago, :finished_at => 40.seconds.ago),
+        Job::Test.new(:started_at => 20.seconds.ago, :finished_at => 10.seconds.ago)
+      ])
+    end
+
+    it 'returns the sum of the matrix job durations if the matrix is finished' do
+      build.stubs(:matrix_finished?).returns(true)
+      build.matrix_duration.should == 30
+    end
+
+    it 'returns nil if the matrix is not finished' do
+      build.stubs(:matrix_finished?).returns(false)
+      build.matrix_duration.should be_nil
+    end
+  end
+
   describe :matrix_config do
     it 'with string values' do
       build = Factory(:build, :config => { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-2.3.x', :env => 'FOO=bar' })

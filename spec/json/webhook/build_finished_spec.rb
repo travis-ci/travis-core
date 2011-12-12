@@ -21,6 +21,8 @@ describe 'JSON for webhooks' do
       'status_message' => 'Pending',
       'started_at' => json_format_time(Time.now.utc),
       'finished_at' => json_format_time(Time.now.utc),
+      'duration' => nil,
+      'config' => {},
       'commit' => '62aae5f70ceee39123ef',
       'branch' => 'master',
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',

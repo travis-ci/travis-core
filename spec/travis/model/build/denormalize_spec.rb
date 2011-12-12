@@ -4,7 +4,7 @@ require 'support/active_record'
 describe Build, 'denormalization' do
   include Support::ActiveRecord
 
-  let(:build) { Factory(:build) }
+  let(:build) { Factory(:build, :duration => 30) }
 
   describe 'on build:started' do
     before :each do
@@ -33,6 +33,10 @@ describe Build, 'denormalization' do
 
     it 'denormalizes last_build_status to its repository' do
       build.repository.last_build_status.should == build.status
+    end
+
+    it 'denormalizes last_build_duration to its repository' do
+      build.repository.last_build_duration.should == build.duration
     end
 
     it 'denormalizes last_build_finished_at to its repository' do

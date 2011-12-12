@@ -1,7 +1,7 @@
 object @build
 repository = @build.repository
 
-attributes :id, :number, :started_at, :finished_at, :config
+attributes :id, :number, :config, :started_at, :finished_at, :duration
 
 node(:result) { @build.status }
 

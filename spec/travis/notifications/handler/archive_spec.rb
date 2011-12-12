@@ -58,6 +58,7 @@ describe Travis::Notifications::Handler::Archive do
         'number' => build.number,
         'started_at' => json_format_time(build.started_at),
         'finished_at' => json_format_time(build.finished_at),
+        'duration' => nil,
         'config' => { 'rvm' => ['1.9.2', 'rbx'] },
         'result' => 0,
         'commit' => '62aae5f70ceee39123ef',

@@ -36,6 +36,10 @@ class Job < ActiveRecord::Base
     self.queue = Queue.for(self).name
   end
 
+  def duration
+    started_at && finished_at ? finished_at - started_at : nil
+  end
+
   def matrix_config?(config)
     config = config.to_hash.symbolize_keys
     Build.matrix_keys_for(config).map do |key|

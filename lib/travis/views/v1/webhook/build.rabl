@@ -1,6 +1,6 @@
 object @build
 
-attributes :id,:number, :status, :started_at, :finished_at
+attributes :id,:number, :status, :started_at, :finished_at, :duration, :config
 
 node(:status_message) { |build| build.status_message }
 

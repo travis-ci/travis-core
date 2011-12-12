@@ -49,4 +49,21 @@ describe Job do
       job.reload.queue.should == 'builds.common'
     end
   end
+
+  describe 'duration' do
+    it 'returns nil if both started_at is not populated' do
+      job = Job.new(:finished_at => Time.now)
+      job.duration.should be_nil
+    end
+
+    it 'returns nil if both finished_at is not populated' do
+      job = Job.new(:started_at => Time.now)
+      job.duration.should be_nil
+    end
+
+    it 'returns the duration if both started_at and finished_at are populated' do
+      job = Job.new(:started_at => 20.seconds.ago, :finished_at => 10.seconds.ago)
+      job.duration.should == 10
+    end
+  end
 end

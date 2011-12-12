@@ -21,6 +21,7 @@ class Build
 
     def finish(data = {})
       self.status = matrix_status
+      self.duration = matrix_duration
       self.finished_at = data[:finished_at]
     end
 

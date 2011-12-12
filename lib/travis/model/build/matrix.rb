@@ -30,6 +30,10 @@ class Build
       matrix.all?(&:finished?)
     end
 
+    def matrix_duration
+      matrix_finished? ? matrix.inject(0) { |duration, job| duration + job.duration } : nil
+    end
+
     def matrix_status(config = {})
       tests = matrix_for(config)
       if tests.blank?
