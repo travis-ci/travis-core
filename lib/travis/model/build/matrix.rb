@@ -31,7 +31,7 @@ class Build
     end
 
     def matrix_duration
-      matrix_finished? ? matrix.inject(0) { |duration, job| duration + job.duration } : nil
+      matrix_finished? ? matrix.inject(0) { |duration, job| duration + job.duration.to_i } : nil
     end
 
     def matrix_status(config = {})
