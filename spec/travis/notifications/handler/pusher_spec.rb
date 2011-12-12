@@ -23,15 +23,15 @@ describe Travis::Notifications::Handler::Pusher do
       pusher.messages.clear # because creating the build and job will publish messages, too
     end
 
-    it 'job:configure:created' do
-      Travis::Notifications.dispatch('job:configure:created', configure)
-      pusher.should have_message('job:created', configure)
-    end
+    # it 'job:configure:created' do
+    #   Travis::Notifications.dispatch('job:configure:created', configure)
+    #   pusher.should have_message('job:created', configure)
+    # end
 
-    it 'job:configure:finished' do
-      Travis::Notifications.dispatch('job:configure:finished', configure)
-      pusher.should have_message('job:finished', configure)
-    end
+    # it 'job:configure:finished' do
+    #   Travis::Notifications.dispatch('job:configure:finished', configure)
+    #   pusher.should have_message('job:finished', configure)
+    # end
 
     it 'job:test:created' do
       Travis::Notifications.dispatch('job:test:created', test)
@@ -71,11 +71,11 @@ describe Travis::Notifications::Handler::Pusher do
 
   describe 'payload_for returns the payload required for client side job events' do
     it 'job:created' do
-      receiver.payload_for('job:created', test).keys.should == [:id, :number, :queue, :repository_id]
+      receiver.payload_for('job:created', test).keys.should == [:id, :number, :queue, :repository_id, :build_id]
     end
 
     it 'job:started' do
-      receiver.payload_for('job:started', test).keys.should == [:id, :started_at]
+      receiver.payload_for('job:started', test).keys.should == [:id, :started_at, :build_id]
     end
 
     it 'job:log' do
@@ -83,7 +83,7 @@ describe Travis::Notifications::Handler::Pusher do
     end
 
     it 'job:finished' do
-      receiver.payload_for('job:finished', test).keys.should == [:id, :finished_at, :result]
+      receiver.payload_for('job:finished', test).keys.should == [:id, :finished_at, :result, :build_id]
     end
 
     it 'build:started' do

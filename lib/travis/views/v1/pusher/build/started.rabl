@@ -1,6 +1,6 @@
 build, repository = @hash.values_at(:build, :repository)
 
-child build => :build do
+child build => :build do # TODO flatten this into the main namespace
   attributes :id, :repository_id, :number, :started_at, :config
 
   node(:result) { build.status }

@@ -3,8 +3,7 @@ build, repository = @hash.values_at(:build, :repository)
 child build => :build do
   attributes :id, :finished_at
 
-  node(:result)    { build.status }
-  node(:parent_id) { build.owner_id } if build.is_a?(Job)
+  node(:result) { build.status }
 end
 
 child repository => :repository do
