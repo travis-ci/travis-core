@@ -20,8 +20,16 @@ describe Build, 'denormalization' do
       build.reload.repository.last_build_number.should == build.number
     end
 
+    it 'denormalizes last_build_duration to its repository' do
+      build.reload.repository.last_build_duration.should == build.duration
+    end
+
     it 'denormalizes last_build_started_at to its repository' do
       build.reload.repository.last_build_started_at.should == build.started_at
+    end
+
+    it 'denormalizes last_build_finished_at to its repository' do
+      build.reload.repository.last_build_finished_at.should == build.finished_at
     end
   end
 
