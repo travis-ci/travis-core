@@ -14,19 +14,41 @@ describe Build::States do
     describe 'starting the build' do
       let(:data) { WORKER_PAYLOADS['job:test:started'] }
 
-      it 'sets the state to :started' do
-        build.start(data)
-        build.state.should == :started
+      describe 'when the build is not already started' do
+        it 'sets the state to :started' do
+          build.start(data)
+          build.state.should == :started
+        end
+
+        it 'denormalizes attributes' do
+          build.expects(:denormalize)
+          build.start(data)
+        end
+
+        it 'notifies observers' do
+          Travis::Notifications.expects(:dispatch).with('build:started', build, data)
+          build.start(data)
+        end
+
+        it 'gets skipped if the build is already started' do
+          build.stubs(:started?).returns(true)
+          build.expects(:denormalize).never
+          build.start(data)
+        end
       end
 
-      it 'denormalizes attributes' do
-        build.expects(:denormalize)
-        build.start(data)
-      end
+      describe 'when the build is already started' do
+        it 'does not denormalize attributes' do
+          build.stubs(:started?).returns(true)
+          build.expects(:denormalize).never
+          build.start(data)
+        end
 
-      it 'notifies observers' do
-        Travis::Notifications.expects(:dispatch).with('build:started', build, data)
-        build.start(data)
+        it 'does not notify observers' do
+          build.stubs(:started?).returns(true)
+          Travis::Notifications.expects(:dispatch).never
+          build.start(data)
+        end
       end
     end
 

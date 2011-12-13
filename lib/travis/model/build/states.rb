@@ -10,7 +10,7 @@ class Build
 
       states :created, :started, :finished
 
-      event :start,  :to => :started
+      event :start,  :to => :started,  :unless => :started?
       event :finish, :to => :finished, :if => :matrix_finished?
       event :all, :after => [:denormalize, :notify]
     end
