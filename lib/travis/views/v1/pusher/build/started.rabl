@@ -15,7 +15,7 @@ child build => :build do # TODO flatten this into the main namespace
 end
 
 child repository => :repository do
-  attributes :id, :description, :last_build_id, :last_build_number, :last_build_started_at, :last_build_finished_at, :last_build_language
+  attributes :id, :description, :last_build_id, :last_build_number, :last_build_started_at, :last_build_finished_at, :last_build_duration, :last_build_language
 
   node(:last_build_result) { repository.last_build_status }
   node(:slug) { repository.slug }
