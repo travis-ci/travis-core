@@ -4,8 +4,6 @@ gemspec
 
 gem 'travis-support',      :git => 'git://github.com/travis-ci/travis-support.git'
 
-gem 'pusher',              '~> 0.8.5'
-
 platform :mri do
   gem 'amqp',              '~> 0.8.3'
   gem 'pg',                '~> 0.11.0'
