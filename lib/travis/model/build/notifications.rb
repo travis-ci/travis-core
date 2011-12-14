@@ -110,7 +110,7 @@ class Build
       end
 
       def notifications
-        Travis::DecryptConfig.run((config || {}).fetch(:notifications, {}), repository)
+        Travis::Notifications::SecureConfig.decrypt((config || {}).fetch(:notifications, {}), repository.key)
       end
   end
 end

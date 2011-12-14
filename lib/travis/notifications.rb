@@ -5,6 +5,7 @@ module Travis
     autoload :Handler,         'travis/notifications/handler'
     autoload :Instrumentation, 'travis/notifications/instrumentation'
     autoload :Subscription,    'travis/notifications/subscription'
+    autoload :SecureConfig,    'travis/notifications/secure_config'
 
     class << self
       include Logging
