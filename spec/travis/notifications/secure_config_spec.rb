@@ -4,9 +4,9 @@ require 'support/active_record'
 describe Travis::Notifications::SecureConfig do
   include Support::ActiveRecord
 
-  let(:key)           { SslKey.new.tap { |key| key.generate_keys } }
-  let(:secure_config) { Travis::Notifications::SecureConfig.new(key)}
-  let(:crypted)       { key.encrypt('hello world') }
+  let(:key)            { SslKey.new.tap { |key| key.generate_keys } }
+  let(:secure_config)  { Travis::Notifications::SecureConfig.new(key)}
+  let(:crypted)        { Base64.encode64(key.encrypt('hello world')) }
 
 
   it "returns the original value if the config is not a hash" do

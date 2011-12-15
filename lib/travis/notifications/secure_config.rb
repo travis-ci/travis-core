@@ -1,3 +1,5 @@
+require 'base64'
+
 module Travis
   module Notifications
     class SecureConfig
@@ -49,7 +51,8 @@ module Travis
       end
 
       def decrypt_value(value)
-        key.decrypt(value)
+        decoded = Base64.decode64(value)
+        key.decrypt(decoded)
       rescue OpenSSL::PKey::RSAError
         value
       end
