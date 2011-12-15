@@ -102,9 +102,9 @@ describe Travis::Notifications::Handler::Archive do
     end
 
     it 'logs an exception raised in #send_webhooks' do
-      notification.stubs(:archive).raises(Exception.new)
+      notification.stubs(:archive).raises(StandardError.new)
       notification.notify('build:finished', build)
-      io.string.should include('[archive] Exception')
+      io.string.should include('[archive] StandardError')
     end
   end
 end
