@@ -1,4 +1,4 @@
-require File.expand_path 'lib/travis/github_api'
+require 'travis/github_api'
 require 'support/mocha'
 
 describe Travis::GithubApi do
