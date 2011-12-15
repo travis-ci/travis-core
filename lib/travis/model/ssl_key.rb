@@ -20,9 +20,14 @@ class SslKey < ActiveRecord::Base
   def generate_keys
     unless public_key && private_key
       keys = OpenSSL::PKey::RSA.generate(1024)
-      self.public_key = keys.public_key
+      self.public_key = keys.public_key.to_s
       self.private_key = keys.to_pem
     end
+  end
+
+  def generate_keys!
+    public_key = private_key = nil
+    generate_keys
   end
 
   private
