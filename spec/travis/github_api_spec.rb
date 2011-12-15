@@ -17,11 +17,18 @@ describe Travis::GithubApi do
       Travis::GithubApi.add_service_hook('owner', 'name', 't0k3n', {})
     end
 
-    pending "should raise an error when a service hook error occurs" do
+    it "should raise an error when an unprocessable entity error occurs" do
+      Octokit::Client.stubs(:new).raises(Octokit::UnprocessableEntity)
+      expect {
+        Travis::GithubApi.add_service_hook('owner', 'name', 't0k3n', {})
+      }.to raise_error Travis::GithubApi::ServiceHookError, 'error subscribing to the GitHub push event'
     end
 
-    pending "should raise an error when an unauthorized error occurs" do
-
+    it "should raise an error when an unauthorized error occurs" do
+      Octokit::Client.stubs(:new).raises(Octokit::Unauthorized)
+      expect {
+        Travis::GithubApi.add_service_hook('owner', 'name', 't0k3n', {})
+      }.to raise_error Travis::GithubApi::ServiceHookError, 'error authorizing with given GitHub OAuth token'
     end
 
   end
