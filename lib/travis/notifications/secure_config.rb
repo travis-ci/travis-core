@@ -28,14 +28,12 @@ module Travis
       private
 
       def decrypt_element(key, element)
-        if element.is_a?(Array)
-          value = decrypt(element)
-        elsif element.is_a?(Hash)
-          value = decrypt(element)
+        if element.is_a?(Array) || element.is_a?(Hash)
+          decrypt(element)
         elsif key == :secure
-          value = decrypt_value(element)
+          decrypt_value(element)
         else
-          value = element
+          element
         end
       end
 
