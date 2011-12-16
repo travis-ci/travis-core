@@ -71,8 +71,11 @@ module Travis
 
         def http_options
           options = {}
-          options[:ssl] = { :ca_path => Travis.config.ssl.ca_path } if Travis.config.ssl.ca_path
-          options[:ssl] = { :ca_file => Travis.config.ssl.ca_file } if Travis.config.ssl.ca_file
+
+          ssl = Travis.config.ssl
+          options[:ssl] = { :ca_path => ssl.ca_path } if ssl.ca_path
+          options[:ssl] = { :ca_file => ssl.ca_file } if ssl.ca_file
+
           options
         end
 
