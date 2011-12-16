@@ -55,7 +55,7 @@ module Travis
             :queues   => [],
             :workers  => { :prune => { :after => 15, :interval => 5 } },
             :jobs     => { :retry => { :after => 60 * 60 * 2, :max_attempts => 1, :interval => 60 * 5 } },
-            :archive  => {}
+            :archive  => {},
             :ssl      => {}
 
     default :_access => [:key]
