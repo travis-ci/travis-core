@@ -39,6 +39,16 @@ module Travis
           log_exception(e)
         end
 
+        def http_client
+          @http_client ||= Faraday.new(http_options) do |f|
+            f.adapter :net_http
+          end
+        end
+
+        def http_client=(http_client)
+          @http_client = http_client
+        end
+
         protected
 
         def send_campfire(targets, build)
@@ -48,11 +58,22 @@ module Travis
             config = campfire_config(webhook)
             url    = campfire_url(config)
 
-            self.class.http_client.post(url) do |req|
-              req.body = { :message => { :body => message }}
-              req.headers['Authorization'] = config[:token]
+            payload = MultiJson.encode({ :message => { :body => message } })
+
+            http_client.basic_auth config[:token], 'X'
+
+            http_client.post(url) do |req|
+              req.body = payload
+              req.headers['Content-Type']  = 'application/json'
             end
           end
+        end
+
+        def http_options
+          options = {}
+          options[:ssl] = { :ca_path => Travis.config.ssl.ca_path } if Travis.config.ssl.ca_path
+          options[:ssl] = { :ca_file => Travis.config.ssl.ca_file } if Travis.config.ssl.ca_file
+          options
         end
 
         def build_message(build)
