@@ -51,7 +51,7 @@ module Travis
       def decrypt_value(value)
         decoded = Base64.decode64(value)
         key.decrypt(decoded)
-      rescue OpenSSL::PKey::RSAError
+      rescue OpenSSL::PKey::RSAError => e
         value
       end
 
