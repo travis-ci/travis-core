@@ -17,7 +17,7 @@ module Travis
           end
 
           def http_client
-            @http_client ||= Faraday.new do |f|
+            @http_client ||= Faraday.new(http_options) do |f|
               f.request :url_encoded
               f.adapter :net_http
             end
@@ -25,6 +25,11 @@ module Travis
 
           def http_client=(http_client)
             @http_client = http_client
+          end
+
+          def http_options
+            options = {}
+            options[:ssl] = { :ca_path => Travis.config.ssl_ca_path } if Travis.config.ssl_ca_path
           end
         end
 
