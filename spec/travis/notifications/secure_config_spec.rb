@@ -43,6 +43,40 @@ describe Travis::Notifications::SecureConfig do
     })
   end
 
+  it "decrypts a realistic complex build config" do
+    secure_config.decrypt({
+      :script => "ruby -e \"p RUBY_VERSION\"; true && rake test",
+      :rvm => ["1.8.7", "1.9.2", "1.9.3", "rbx", "jruby"],
+      :matrix => {
+        :exclude => [{ :rvm=>"rbx" }]
+      },
+      :branches => {
+        :only=>"master"
+      },
+      :notifications => {
+        :email => false,
+        :campfire => {
+          :secure => crypted
+        }
+      },
+      :".configured" => true
+    }).should eql({
+      :script => "ruby -e \"p RUBY_VERSION\"; true && rake test",
+      :rvm => ["1.8.7", "1.9.2", "1.9.3", "rbx", "jruby"],
+      :matrix => {
+        :exclude => [{ :rvm=>"rbx" }]
+      },
+      :branches => {
+        :only=>"master"
+      },
+      :notifications => {
+        :email => false,
+        :campfire => "hello world"
+      },
+      :".configured" => true
+    })
+  end
+
   it "keeps the string similar if it couldn't be decoded" do
     secure_config.decrypt(:secure => "hello world").should eql("hello world")
   end
