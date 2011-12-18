@@ -51,9 +51,8 @@ class Build < ActiveRecord::Base
     end
 
     def paged(options)
-      # TODO should use an offset when we use limit!
-      # offset(per_page * options[:offset]).limit(options[:page])
-      limit(per_page * (options[:page] || 1).to_i)#.offset(10)
+      page = (options[:page] || 1).to_i
+      limit(per_page).offset(per_page * (page - 1))
     end
 
     def next_number
