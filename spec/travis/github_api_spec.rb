@@ -1,5 +1,4 @@
-require 'travis/github_api'
-require 'support/mocha'
+require 'spec_helper'
 
 describe Travis::GithubApi do
 
