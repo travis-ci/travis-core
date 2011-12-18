@@ -30,7 +30,7 @@ module Travis
         include do
           def notify(event, object, *args)
             archive(object)
-          rescue Exception => e
+          rescue StandardError => e
             log_exception(e)
           end
 

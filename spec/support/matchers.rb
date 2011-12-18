@@ -67,63 +67,6 @@ RSpec::Matchers.define :have_message do |event, object|
   end
 end
 
-RSpec::Matchers.define :post_webhooks_on do |http, event, object, options|
-  include Support::Formats
-
-  match do |dispatch|
-    options[:to].each { |url| expect_request(url, object) }
-    dispatch.call(event, object)
-  end
-
-  def expect_request(url, object)
-    uri = URI.parse(url)
-    http.post uri.path do |env|
-      env[:url].host.should == uri.host
-      env[:url].path.should == uri.path
-      env[:request_headers]['Authorization'].should == authorization_for(object)
-
-      payload = normalize_json(Travis::Notifications::Handler::Webhook::Payload.new(object).to_hash)
-      payload_from(env).keys.sort.should == payload.keys.map(&:to_s).sort
-    end
-  end
-
-  def payload_from(env)
-    JSON.parse(Rack::Utils.parse_query(env[:body])['payload'])
-  end
-
-  def authorization_for(object)
-    Travis::Notifications::Handler::Webhook.new.send(:authorization, object)
-  end
-end
-
-RSpec::Matchers.define :post_campfire_on do |http, event, object, options|
-  match do |dispatch|
-    options[:to].each do |scheme|
-      data = Travis::Notifications::Handler::Campfire.new.send(:extract_data, scheme)
-      url = Travis::Notifications::Handler::Campfire.new.send(:extract_url, data)
-
-      expect_request(url, data, object)
-    end
-    dispatch.call(event, object)
-  end
-
-  def expect_request(url, data, object)
-    uri = URI.parse(url)
-    http.post uri.path do |env|
-      env[:url].host.should == uri.host
-      env[:url].path.should == uri.path
-      env[:request_headers]['Authorization'].should == data[:token]
-
-      message = Travis::Notifications::Handler::Campfire.new.send(:build_message, object)
-      payload_from(env).should == message
-    end
-  end
-
-  def payload_from(env)
-    Rack::Utils.parse_query(env[:body])['message[body]']
-  end
-end
-
 RSpec::Matchers.define :be_queued do |*args|
   match do |job|
     @options = args.last.is_a?(Hash) ? args.pop : {}

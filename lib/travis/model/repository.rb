@@ -13,9 +13,12 @@ class Repository < ActiveRecord::Base
   has_one :last_build,   :class_name => 'Build', :order => 'id DESC', :conditions => { :state  => ['started', 'finished']  }
   has_one :last_success, :class_name => 'Build', :order => 'id DESC', :conditions => { :status => 0 }
   has_one :last_failure, :class_name => 'Build', :order => 'id DESC', :conditions => { :status => 1 }
+  has_one :key, :class_name => 'SslKey'
 
   validates :name,       :presence => true, :uniqueness => { :scope => :owner_name }
   validates :owner_name, :presence => true
+
+  delegate  :public_key, :to => :key
 
   class << self
     def timeline
@@ -68,4 +71,10 @@ class Repository < ActiveRecord::Base
       :repository => self
     )
   end
+
+  alias :old_key :key
+  def key
+    @key ||= old_key || SslKey.create(:repository_id => self.id)
+  end
+
 end

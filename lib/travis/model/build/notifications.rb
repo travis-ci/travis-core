@@ -3,8 +3,8 @@ require 'active_support/core_ext/object/blank'
 class Build
   module Notifications
     DEFAULTS = {
-      :success => { :email => :change, :webhooks => :always, :irc => :always },
-      :failure => { :email => :always, :webhooks => :always, :irc => :always }
+      :success => { :email => :change, :webhooks => :always, :campfire => :always, :irc => :always },
+      :failure => { :email => :always, :webhooks => :always, :campfire => :always, :irc => :always }
     }
 
     def send_email_notifications?
@@ -110,7 +110,7 @@ class Build
       end
 
       def notifications
-        (config || {}).fetch(:notifications, {})
+        Travis::Notifications::SecureConfig.decrypt((config || {}).fetch(:notifications, {}), repository.key)
       end
   end
 end

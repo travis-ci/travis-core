@@ -17,7 +17,7 @@ module Travis
           end
 
           def http_client
-            @http_client ||= Faraday.new do |f|
+            @http_client ||= Faraday.new(http_options) do |f|
               f.request :url_encoded
               f.adapter :net_http
             end
@@ -26,12 +26,17 @@ module Travis
           def http_client=(http_client)
             @http_client = http_client
           end
+
+          def http_options
+            options = {}
+            options[:ssl] = { :ca_path => Travis.config.ssl_ca_path } if Travis.config.ssl_ca_path
+          end
         end
 
         include do
           def notify(event, object, *args)
             send_webhooks(object.webhooks, object) if object.send_webhook_notifications?
-          rescue Exception => e
+          rescue StandardError => e
             log_exception(e)
           end
 

@@ -3,53 +3,93 @@ module Travis
     module Handler
       class Campfire < Webhook
 
+        class << self
+          def campfire_url(config)
+            "https://#{config[:subdomain]}.campfirenow.com/room/#{config[:room]}/speak.json"
+          end
+
+          def campfire_config(scheme)
+            scheme =~ /(\w+):(\w+)@(\w+)/
+            {
+              :subdomain => $1,
+              :token => $2,
+              :room => $3
+            }
+          end
+
+          def build_message(build)
+            commit    = build.commit
+            build_url = build_url(build)
+
+            ["[travis-ci] #{build.repository.slug}##{build.number} (#{commit.branch} - #{commit.commit[0, 7]} : #{commit.author_name}): the build has #{build.passed? ? 'passed' : 'failed' }",
+             "[travis-ci] Change view : #{commit.compare_url}",
+             "[travis-ci] Build details : #{build_url}"].join("\n")
+          end
+
+          def build_url(build)
+            host = Travis.config.host
+            repo = build.repository
+            "#{host}/#{repo.owner_name}/#{repo.name}/builds/#{build.id}"
+          end
+        end
+
         def notify(event, object, *args)
           send_campfire(object.campfire_channels, object) if object.send_campfire_notifications?
-        rescue Exception => e
+        rescue StandardError => e
           log_exception(e)
         end
 
+        def http_client
+          @http_client ||= Faraday.new(http_options) do |f|
+            f.adapter :net_http
+          end
+        end
+
+        def http_client=(http_client)
+          @http_client = http_client
+        end
+
         protected
+
         def send_campfire(targets, build)
           message = build_message(build)
 
           targets.each do |webhook|
-            data = extract_data(webhook)
-            url = extract_url(data)
+            config = campfire_config(webhook)
+            url    = campfire_url(config)
 
-            self.class.http_client.post(url) do |req|
-              req.body = { :message => { :body => build }}
-              req.headers['Authorization'] = data[:token]
+            payload = MultiJson.encode({ :message => { :body => message } })
+
+            http_client.basic_auth config[:token], 'X'
+
+            http_client.post(url) do |req|
+              req.body = payload
+              req.headers['Content-Type']  = 'application/json'
             end
           end
         end
 
+        def http_options
+          options = {}
+
+          ssl = Travis.config.ssl
+          options[:ssl] = { :ca_path => ssl.ca_path } if ssl.ca_path
+          options[:ssl] = { :ca_file => ssl.ca_file } if ssl.ca_file
+
+          options
+        end
+
         def build_message(build)
-          commit = build.commit
-          build_url = self.build_url(build)
-
-          ["[travis-ci] #{build.repository.slug}##{build.number} (#{commit.branch} - #{commit.commit[0, 7]} : #{commit.author_name}): the build has #{build.passed? ? 'passed' : 'failed' }",
-          "[travis-ci] Change view : #{commit.compare_url}",
-          "[travis-ci] Build details : #{build_url}"].join("\n")
+          self.class.build_message(build)
         end
 
-        def build_url(build)
-          [Travis.config.host, build.repository.owner_name, build.repository.name, 'builds', build.id].join('/')
+        def campfire_url(config)
+          self.class.campfire_url(config)
         end
 
-        def extract_url(data)
-          "https://#{data[:subdomain]}.campfirenow.com/room/#{data[:room]}/speak.json"
+        def campfire_config(webhook)
+          self.class.campfire_config(webhook)
         end
-
-        def extract_data(scheme)
-          scheme =~ /(\w+):(\w+)@(\w+)/
-          {
-            :subdomain => $1,
-            :token => $2,
-            :room => $3
-          }
-        end
-
       end
     end
   end

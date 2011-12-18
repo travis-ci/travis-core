@@ -5,7 +5,7 @@ describe Build::Notifications do
 
   let(:config)     { }
   let(:commit)     { stub('commit', :committer_email => 'commiter@email.org', :author_email => 'author@email.org') }
-  let(:repository) { stub('repository', :owner_email => 'owner@email.org') }
+  let(:repository) { stub('repository', :owner_email => 'owner@email.org', :key => SslKey.new.tap { |k| k.generate_keys }) }
 
   before(:each) do
     stubs(:previous_on_branch)
