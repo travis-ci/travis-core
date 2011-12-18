@@ -11,8 +11,6 @@ class Build < ActiveRecord::Base
 
   include Matrix, States, Messages
 
-  PER_PAGE = 25
-
   belongs_to :commit
   belongs_to :request
   belongs_to :repository, :autosave => true
@@ -54,8 +52,8 @@ class Build < ActiveRecord::Base
 
     def paged(options)
       # TODO should use an offset when we use limit!
-      # offset(PER_PAGE * options[:offset]).limit(options[:page])
-      limit(PER_PAGE * (options[:page] || 1).to_i)
+      # offset(per_page * options[:offset]).limit(options[:page])
+      limit(per_page * (options[:page] || 1).to_i)#.offset(10)
     end
 
     def next_number
@@ -67,6 +65,10 @@ class Build < ActiveRecord::Base
 
       def normalize_to_array(object)
         Array(object).compact.join(',').split(',')
+      end
+
+      def per_page
+        25
       end
   end
 
