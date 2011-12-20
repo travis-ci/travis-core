@@ -40,16 +40,26 @@ describe Repository do
     end
 
     describe 'search' do
-      it 'performs searches case-insensitive' do
-        repository_1 = Factory(:repository, :name => 'repository_1', :last_build_started_at => '2011-11-11')
-        repository_2 = Factory(:repository, :name => 'repository_2', :last_build_started_at => '2011-11-12')
+      before(:each) do
+        Factory(:repository, :name => 'repository_1', :last_build_started_at => '2011-11-11')
+        Factory(:repository, :name => 'repository_2', :last_build_started_at => '2011-11-12')
+      end
 
+      it 'performs searches case-insensitive' do
         Repository.search('ePoS').count.should == 2
+      end
+
+      it 'performs searches with / entered' do
+        Repository.search('fuchs/').count.should == 2
+      end
+
+      it 'performs searches with \ entered' do
+        Repository.search('fuchs\\').count.should == 2
       end
     end
   end
 
-  it 'last_build returns the most recent build' do
+  it "last_build returns the most recent build" do
     repository = Factory(:repository)
     attributes = { :repository => repository, :state => 'finished' }
     Factory(:build, attributes)

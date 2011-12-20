@@ -38,7 +38,8 @@ class Repository < ActiveRecord::Base
     end
 
     def search(query)
-      where('repositories.name ~* ? OR repositories.owner_name ~* ?', query, query)
+      query = query.gsub('\\', '\/')
+      where('(repositories.owner_name || \'/\' || repositories.name) ~* ?', query)
     end
 
     def find_by(params)
