@@ -12,7 +12,7 @@ module Support
     end
 
     URLS = %w(
-      https://api.github.com/users/svenfuchs/repos?per_page=100
+      https://api.github.com/users/svenfuchs/repos?per_page=9999
       https://github.com/api/v2/json/repos/show/svenfuchs
       http://github.com/api/v2/json/repos/show/svenfuchs/gem-release
       http://github.com/api/v2/json/repos/show/svenfuchs/minimal
