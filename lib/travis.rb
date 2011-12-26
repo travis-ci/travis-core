@@ -20,6 +20,7 @@ module Travis
   autoload :Model,         'travis/model'
   autoload :Notifications, 'travis/notifications'
   autoload :Renderer,      'travis/renderer'
+  autoload :UrlShortener,  'travis/url_shortener'
 
   class << self
     attr_accessor :pusher
