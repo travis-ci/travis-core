@@ -23,7 +23,7 @@ module Travis
 
             ["[travis-ci] #{build.repository.slug}##{build.number} (#{commit.branch} - #{commit.commit[0, 7]} : #{commit.author_name}): the build has #{build.passed? ? 'passed' : 'failed' }",
              "[travis-ci] Change view : #{commit.compare_url}",
-             "[travis-ci] Build details : #{build_url}"].join("\n")
+             "[travis-ci] Build details : #{build_url}"]
           end
 
           def build_url(build)
@@ -58,13 +58,15 @@ module Travis
             config = campfire_config(webhook)
             url    = campfire_url(config)
 
-            payload = MultiJson.encode({ :message => { :body => message } })
-
             http_client.basic_auth config[:token], 'X'
 
-            http_client.post(url) do |req|
-              req.body = payload
-              req.headers['Content-Type']  = 'application/json'
+            message.each do |line|
+              payload = MultiJson.encode({ :message => { :body => line } })
+
+              http_client.post(url) do |req|
+                req.body = payload
+                req.headers['Content-Type']  = 'application/json'
+              end
             end
           end
         end

@@ -45,16 +45,18 @@ describe Travis::Notifications::Handler::Campfire do
 
       uri = URI.parse(url)
 
-      http.post(uri.path) do |env|
-        env[:url].host.should == uri.host
-        env[:url].path.should == uri.path
+      message = Travis::Notifications::Handler::Campfire.build_message(build)
 
-        auth = Base64.encode64("#{config[:token]}:X").gsub("\n", "")
-        env[:request_headers]['authorization'].should == "Basic #{auth}"
+      message.each do |line|
+        http.post(uri.path) do |env|
+          env[:url].host.should == uri.host
+          env[:url].path.should == uri.path
 
-        message = Travis::Notifications::Handler::Campfire.build_message(build)
+          auth = Base64.encode64("#{config[:token]}:X").gsub("\n", "")
+          env[:request_headers]['authorization'].should == "Basic #{auth}"
 
-        env[:body].should == MultiJson.encode({ :message => { :body => message } })
+          env[:body].should == MultiJson.encode({ :message => { :body => line } })
+        end
       end
     end
 
