@@ -100,11 +100,5 @@ describe Travis::Notifications::Handler::Archive do
       notification.notify('build:finished', build)
       io.string.should include('[archive] Could not archive to http://example.com/builds/1. Status: 403 ("nono.")')
     end
-
-    it 'logs an exception raised in #send_webhooks' do
-      notification.stubs(:archive).raises(StandardError.new)
-      notification.notify('build:finished', build)
-      io.string.should include('[archive] StandardError')
-    end
   end
 end

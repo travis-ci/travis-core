@@ -35,8 +35,6 @@ module Travis
 
         def notify(event, object, *args)
           send_campfire(object.campfire_rooms, object) if object.send_campfire_notifications?
-        rescue StandardError => e
-          log_exception(e)
         end
 
         def http_client
