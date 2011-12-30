@@ -24,7 +24,7 @@ module Travis
       end
 
       def repositories_for_user(login)
-        Octokit.repositories(login, :page_size => 100)
+        Octokit.repositories(login, :per_page => 9999)
       end
     end
   end

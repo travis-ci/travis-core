@@ -14,9 +14,6 @@ module Travis
         include do
           def notify(event, object, *args)
             push(event, object, *args)
-          rescue StandardError => e
-            puts e.message, e.backtrace
-            log_exception(e)
           end
 
           protected

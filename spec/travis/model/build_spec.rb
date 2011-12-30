@@ -31,6 +31,22 @@ describe Build do
       Build.on_branch('master,develop').map(&:commit).map(&:branch).sort.should == ['develop', 'master']
     end
 
+    it 'paged limits the results to the `per_page` value' do
+      3.times { Factory(:build) }
+      Build.stubs(:per_page).returns(1)
+
+      Build.paged({}).should have(1).item
+    end
+
+    it 'paged uses an offset' do
+      3.times { |i| Factory(:build) }
+      Build.stubs(:per_page).returns(1)
+
+      builds = Build.paged({:page => 2})
+      builds.should have(1).item
+      builds.first.number.should == '2'
+    end
+
     it 'next_number returns the next build number' do
       1.upto(3) do |number|
         Factory(:build, :repository => repository, :number => number)

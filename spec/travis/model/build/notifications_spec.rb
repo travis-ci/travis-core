@@ -172,29 +172,29 @@ describe Build::Notifications do
     end
   end
 
-  describe :campfire_channels do
+  describe :campfire_rooms do
     it 'returns an array of urls when given a string' do
       channels = 'travis:apitoken@42'
       stubs(:config => { :notifications => { :campfire => channels } })
-      self.campfire_channels.should == [channels]
+      self.campfire_rooms.should == [channels]
     end
 
     it 'returns an array of urls when given an array' do
       channels = ['travis:apitoken@42']
       stubs(:config => { :notifications => { :campfire => channels } })
-      self.campfire_channels.should == channels
+      self.campfire_rooms.should == channels
     end
 
     it 'returns an array of multiple urls when given a comma separated string' do
       channels = 'travis:apitoken@42,evome:apitoken@44'
       stubs(:config => { :notifications => { :campfire => channels } })
-      self.campfire_channels.should == channels.split(' ').map(&:strip)
+      self.campfire_rooms.should == channels.split(' ').map(&:strip)
     end
 
     it 'returns an array of values if the build configuration specifies an array of urls within a config hash' do
-      channels = { :channels => %w(travis:apitoken&42), :on_success => 'change' }
+      channels = { :rooms => %w(travis:apitoken&42), :on_success => 'change' }
       stubs(:config => { :notifications => { :campfire => channels } })
-      self.campfire_channels.should == channels[:channels]
+      self.campfire_rooms.should == channels[:rooms]
     end
   end
 

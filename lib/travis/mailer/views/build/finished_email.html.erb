@@ -1,7 +1,7 @@
 <% content_for :header do %>
-	<div class="alert-message block-message <%= @build.passed? ? "success" : "error" %>">
-		<%= @build.human_status_message %>
-	</div>
+  <div class="alert-message block-message <%= @build.passed? ? "success" : "error" %>">
+    <%= @build.human_status_message %>
+  </div>
 <% end %>
 
 <table class="build-info">
@@ -32,6 +32,6 @@
 
 <br>
 
-View the changeset&nbsp;: <%= @commit.compare_url %><br>
+View the changeset&nbsp;: <%= link_to @commit.compare_url, @commit.compare_url %><br>
 <br>
-View the full build log and details&nbsp;: <%= repository_build_url(:slug => @build.repository.slug, :id => @build.id) %>
+View the full build log and details&nbsp;: <%= link_to repository_build_url(:slug => @build.repository.slug, :id => @build.id), repository_build_url(:slug => @build.repository.slug, :id => @build.id) %>

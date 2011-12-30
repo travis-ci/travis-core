@@ -16,7 +16,7 @@ class Build
     end
 
     def send_campfire_notifications?
-      campfire_channels.any? && send_notifications_for?(:campfire)
+      campfire_rooms.any? && send_notifications_for?(:campfire)
     end
 
     def send_irc_notifications?
@@ -50,11 +50,11 @@ class Build
     end
 
     def webhooks
-      @webhooks ||= notification_values(:webhooks, :urls).map {|webhook| webhook.split(' ') }.flatten.map(&:strip).reject(&:blank?)
+      @webhooks ||= notification_values(:webhooks, :urls).map { |webhook| webhook.split(' ') }.flatten.map(&:strip).reject(&:blank?)
     end
 
-    def campfire_channels
-      @campfire_channels ||= notification_values(:campfire, :channels).map {|channel| channel.split(' ')}.flatten.map(&:strip).reject(&:blank?)
+    def campfire_rooms
+      @campfire_rooms ||= notification_values(:campfire, :rooms).map { |room| room.split(' ') }.flatten.map(&:strip).reject(&:blank?)
     end
 
     def irc_channels
