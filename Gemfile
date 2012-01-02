@@ -5,8 +5,8 @@ gemspec
 gem 'travis-support',      :git => 'git://github.com/travis-ci/travis-support.git'
 
 platform :mri do
-  gem 'amq-client', :git => "git://github.com/ruby-amqp/amq-client.git"
-  gem 'amqp',       :git => "git://github.com/ruby-amqp/amqp.git"
+  gem 'amq-client',    '>= 0.9.0.pre2'
+  gem 'amqp',          '>= 0.9.0.pre3'
   gem 'pg',                '~> 0.11.0'
   gem 'silent-postgres',   '~> 0.1.1'
 end
