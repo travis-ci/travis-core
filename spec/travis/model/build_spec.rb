@@ -31,6 +31,25 @@ describe Build do
       Build.on_branch('master,develop').map(&:commit).map(&:branch).sort.should == ['develop', 'master']
     end
 
+    describe 'older_than' do
+
+      before do
+        3.times { |i| Factory(:build, :number => i) }
+        Build.stubs(:per_page).returns(1)
+      end
+
+      subject { Build.older_than(stub(:number => 3)) }
+
+      it "should limit the results" do
+        should have(1).item
+      end
+
+      it "should return older than the passed build" do
+        subject.map(&:number).should == ['2']
+      end
+
+    end
+
     it 'paged limits the results to the `per_page` value' do
       3.times { Factory(:build) }
       Build.stubs(:per_page).returns(1)

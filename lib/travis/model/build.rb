@@ -55,6 +55,10 @@ class Build < ActiveRecord::Base
       limit(per_page).offset(per_page * (page - 1))
     end
 
+    def older_than(build)
+      where('number::integer < ?', build.number).order('number DESC').limit(per_page)
+    end
+
     def next_number
       env = defined?(Rails) ? Rails.env : ENV['ENV'] || ENV['RAILS_ENV'] || 'test'
       maximum(floor('number')).to_i + 1
