@@ -78,4 +78,8 @@ class Repository < ActiveRecord::Base
     @key ||= old_key || SslKey.create(:repository_id => self.id)
   end
 
+  def branches
+    builds.paged({}).includes([:commit]).map{ |build| build.commit.branch }.uniq
+  end
+
 end
