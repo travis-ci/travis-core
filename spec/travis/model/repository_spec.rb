@@ -116,9 +116,9 @@ describe Repository do
     let(:repository) { Factory(:repository) }
 
     it 'retrieves branches only from last 25 builds' do
+      old_build = Factory(:build, :repository => repository, :commit => Factory(:commit, :branch => 'old-branch'))
       24.times { Factory(:build, :repository => repository) }
       Factory(:build, :repository => repository, :commit => Factory(:commit, :branch => 'production'))
-      old_build = Factory(:build, :repository => repository, :commit => Factory(:commit, :branch => 'old-branch'))
       repository.branches.size.should eql 2
       repository.branches.should include("master")
       repository.branches.should include("production")

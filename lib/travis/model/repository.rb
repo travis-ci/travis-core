@@ -79,7 +79,7 @@ class Repository < ActiveRecord::Base
   end
 
   def branches
-    builds.paged({}).includes([:commit]).map{ |build| build.commit.branch }.uniq
+    builds.descending.paged({}).includes([:commit]).map{ |build| build.commit.branch }.uniq
   end
 
 end
