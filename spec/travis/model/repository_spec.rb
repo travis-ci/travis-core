@@ -111,4 +111,22 @@ describe Repository do
       end.should change(SslKey, :count).by(0)
     end
   end
+
+  describe 'branches' do
+    let(:repository) { Factory(:repository) }
+
+    it 'retrieves branches only from last 25 builds' do
+      old_build = Factory(:build, :repository => repository, :commit => Factory(:commit, :branch => 'old-branch'))
+      24.times { Factory(:build, :repository => repository) }
+      Factory(:build, :repository => repository, :commit => Factory(:commit, :branch => 'production'))
+      repository.branches.size.should eql 2
+      repository.branches.should include("master")
+      repository.branches.should include("production")
+      repository.branches.should_not include("old-branch")
+    end
+
+    it 'is empty for empty repository' do
+      repository.branches.should eql []
+    end
+  end
 end
