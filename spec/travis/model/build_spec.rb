@@ -48,6 +48,14 @@ describe Build do
         subject.map(&:number).should == ['2']
       end
 
+      context "when not passing a build" do
+        subject { Build.older_than() }
+
+        it "should limit the results" do
+          should have(1).item
+        end
+
+      end
     end
 
     it 'paged limits the results to the `per_page` value' do

@@ -55,8 +55,9 @@ class Build < ActiveRecord::Base
       limit(per_page).offset(per_page * (page - 1))
     end
 
-    def older_than(build)
-      where('number::integer < ?', build.number).order('number DESC').limit(per_page)
+    def older_than(build = nil)
+      criteria = build ? where('number::integer < ?', build.number) : Build
+      criteria.order('number DESC').limit(per_page)
     end
 
     def next_number
