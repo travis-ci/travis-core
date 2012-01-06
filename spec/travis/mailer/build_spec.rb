@@ -76,7 +76,9 @@ describe Travis::Mailer::Build do
       it 'correctly encodes UTF-8 characters' do
         # Encode the email, then parse the encoded string as a new Mail
         h = Mail.new(email.encoded).html_part
-        h.body.to_s.force_encoding(h.charset).should include("まつもとゆきひろ a.k.a. Matz")
+        html = h.body.to_s
+        html.force_encoding(h.charset) if RUBY_VERSION == "1.9.2"
+        html.should include("まつもとゆきひろ a.k.a. Matz")
       end
     end
   end
