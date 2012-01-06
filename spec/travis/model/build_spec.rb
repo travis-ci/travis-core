@@ -32,29 +32,41 @@ describe Build do
     end
 
     describe 'older_than' do
-
       before do
-        3.times { |i| Factory(:build, :number => i) }
-        Build.stubs(:per_page).returns(1)
+        5.times { |i| Factory(:build, :number => i) }
+        Build.stubs(:per_page).returns(2)
       end
 
-      subject { Build.older_than(stub(:number => 3)) }
+      context "when a Build is passed in" do
+        subject { Build.older_than(Build.new(:number => 3)) }
 
-      it "should limit the results" do
-        should have(1).item
+        it "should limit the results" do
+          should have(2).items
+        end
+
+        it "should return older than the passed build" do
+          subject.map(&:number).should == ['2', '1']
+        end
       end
 
-      it "should return older than the passed build" do
-        subject.map(&:number).should == ['2']
+      context "when a number is passed in" do
+        subject { Build.older_than(3) }
+
+        it "should limit the results" do
+          should have(2).items
+        end
+
+        it "should return older than the passed build" do
+          subject.map(&:number).should == ['2', '1']
+        end
       end
 
       context "when not passing a build" do
         subject { Build.older_than() }
 
         it "should limit the results" do
-          should have(1).item
+          should have(2).item
         end
-
       end
     end
 

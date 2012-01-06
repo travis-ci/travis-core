@@ -56,7 +56,12 @@ class Build < ActiveRecord::Base
     end
 
     def older_than(build = nil)
-      criteria = build ? where('number::integer < ?', build.number) : Build
+      criteria = if build
+        number = build.is_a?(Build) ? build.number : build
+        where('number::integer < ?', number)
+      else
+        Build
+      end
       criteria.order('number DESC').limit(per_page)
     end
 
