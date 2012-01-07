@@ -66,7 +66,6 @@ class Build < ActiveRecord::Base
     end
 
     def next_number
-      env = defined?(Rails) ? Rails.env : ENV['ENV'] || ENV['RAILS_ENV'] || 'test'
       maximum(floor('number')).to_i + 1
     end
 
