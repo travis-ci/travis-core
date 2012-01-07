@@ -23,7 +23,7 @@ group :development do
 end
 
 group :test do
-  gem 'rspec',             '~> 2.7.0'
+  gem 'rspec',             '~> 2.8.0'
   gem 'factory_girl',      '~> 2.3.2'
   gem 'database_cleaner',  '~> 0.7.0'
   gem 'mocha',             '~> 0.10.0'
