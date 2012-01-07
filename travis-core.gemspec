@@ -19,9 +19,9 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'rake',              '~> 0.9.2.2'
   s.add_dependency 'thor',              '~> 0.14.6'
-  s.add_dependency 'rails',             '~> 3.1.2' # TODO why does devise require rails?? can we change that?
-  # s.add_dependency 'activerecord',      '~> 3.1.2'
-  # s.add_dependency 'actionmailer',      '~> 3.1.2'
+  s.add_dependency 'activerecord',      '~> 3.1.2'
+  s.add_dependency 'actionmailer',      '~> 3.1.2'
+  s.add_dependency 'railties',          '~> 3.1.2'
   s.add_dependency 'actionmailer_inline_css', '~> 1.5.1'
   s.add_dependency 'hpricot',           '~> 0.8.4'
   s.add_dependency 'postmark-rails',    '~> 0.4.1'
