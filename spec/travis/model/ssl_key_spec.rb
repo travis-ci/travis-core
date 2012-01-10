@@ -37,13 +37,13 @@ describe SslKey do
     it "generates a new public key even if one already exists" do
       public_key = ssl_key.public_key
       ssl_key.generate_keys!
-      ssl_key.public_key.should == public_key
+      ssl_key.public_key.should_not == public_key
     end
 
     it "generates a new private key even if one already exists" do
       private_key = ssl_key.private_key
       ssl_key.generate_keys!
-      ssl_key.private_key.should == private_key
+      ssl_key.private_key.should_not == private_key
     end
   end
 
