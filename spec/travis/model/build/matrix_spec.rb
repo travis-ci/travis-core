@@ -39,6 +39,20 @@ describe Build, 'matrix' do
       build.matrix[1].update_attributes!(:status => 0, :state => :finished)
       build.matrix_status.should == 0
     end
+
+    it 'returns 0 if a failed job is allowed to fail' do
+      build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] })
+      build.matrix[0].update_attributes!(:status => 0, :state => :finished)
+      build.matrix[1].update_attributes!(:status => 1, :state => :finished, :allow_failure => true)
+      build.matrix_status.should == 0
+    end
+
+    it 'returns 1 if all jobs fail and one is allowed to fail' do
+      build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] })
+      build.matrix[0].update_attributes!(:status => 1, :state => :finished)
+      build.matrix[1].update_attributes!(:status => 1, :state => :finished, :allow_failure => true)
+      build.matrix_status.should == 1
+    end
   end
 
   describe :matrix_duration do
