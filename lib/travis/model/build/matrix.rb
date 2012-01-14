@@ -38,7 +38,7 @@ class Build
       tests = matrix_for(config)
       if tests.blank?
         nil
-      elsif tests.all?(&:passed_or_failure_allowed?)
+      elsif tests.all?(&:passed_or_allowed_to_fail?)
         0
       elsif tests.any?(&:failed?)
         1

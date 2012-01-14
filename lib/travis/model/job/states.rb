@@ -29,7 +29,7 @@ class Job
       status == 0
     end
 
-    def passed_or_failure_allowed?
+    def passed_or_allowed_to_fail?
       status == 0 || allow_failure
     end
 
