@@ -55,6 +55,15 @@ class Build
           attributes.merge!(:number => "#{number}.#{ix + 1}", :config => config.merge(Hash[*row.flatten]), :log => Artifact::Log.new)
           matrix.build(attributes)
         end
+
+        matrix_allow_failures
+      end
+
+      def matrix_allow_failures
+        allow_configs = config_matrix_settings[:allow_failures] || []
+        allow_configs.each do |config|
+          matrix_for(config).each { |m| m.allow_failure = true }
+        end
       end
 
       def matrix_config

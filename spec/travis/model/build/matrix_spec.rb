@@ -169,6 +169,22 @@ describe Build, 'matrix' do
     yml
   }
 
+  let(:multiple_tests_config_with_allow_failures) {
+    YAML.load <<-yml
+      rvm:
+        - 1.8.7
+        - 1.9.2
+      gemfile:
+        - gemfiles/rails-2.3.x
+        - gemfiles/rails-3.0.x
+        - gemfiles/rails-3.1.x
+      matrix:
+        allow_failures:
+          - rvm: 1.9.2
+            gemfile: gemfiles/rails-2.3.x
+    yml
+  }
+
   describe :expand_matrix_config do
     it 'expands the build matrix configuration (single test config)' do
       build = Factory(:build, :config => single_test_config)
@@ -230,6 +246,11 @@ describe Build, 'matrix' do
         { :script => 'rake ci', :rvm => '1.9.2', :gemfile => 'gemfiles/rails-3-0-stable', :env => 'USE_GIT_REPOS=true' },
         { :script => 'rake ci', :rvm => '1.9.2', :gemfile => 'gemfiles/rails-master',     :env => 'USE_GIT_REPOS=true' }
       ]
+    end
+
+    it 'sets the config to the jobs (allow failures config)' do
+      build = Factory(:build, :config => multiple_tests_config_with_allow_failures)
+      build.matrix.map(&:allow_failure).should == [false, false, false, true, false, false]
     end
 
     it 'copies build attributes' do
