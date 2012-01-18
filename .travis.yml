@@ -1,7 +1,6 @@
 rvm:
   - 1.9.2
   - jruby-18mode
-  - jruby-19mode
 before_script:
   - 'RAILS_ENV=test bundle exec rake db:create db:schema:load --trace'
 notifications:
