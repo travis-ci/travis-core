@@ -43,7 +43,7 @@ class Repository < ActiveRecord::Base
     end
 
     def find_by(params)
-      if id = params[:id] || params[:repository_id]
+      if id = params[:repository_id] || params[:id]
         self.find(id)
       else
         self.where(params.slice(:name, :owner_name)).first
