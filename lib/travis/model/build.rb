@@ -62,7 +62,7 @@ class Build < ActiveRecord::Base
       else
         Build
       end
-      criteria.order('number::int DESC').limit(per_page)
+      criteria.includes(:commit).order('number::int DESC').limit(per_page)
     end
 
     def next_number
