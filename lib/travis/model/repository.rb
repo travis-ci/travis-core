@@ -43,7 +43,7 @@ class Repository < ActiveRecord::Base
     end
 
     def find_by(params)
-      if id = params[:id] || params[:repository_id]
+      if id = params[:repository_id] || params[:id]
         self.find(id)
       else
         self.where(params.slice(:name, :owner_name)).first
@@ -76,6 +76,10 @@ class Repository < ActiveRecord::Base
   alias :old_key :key
   def key
     @key ||= old_key || SslKey.create(:repository_id => self.id)
+  end
+
+  def branches
+    builds.descending.paged({}).includes([:commit]).map{ |build| build.commit.branch }.uniq
   end
 
 end

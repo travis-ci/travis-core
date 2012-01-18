@@ -26,7 +26,7 @@ class SslKey < ActiveRecord::Base
   end
 
   def generate_keys!
-    public_key = private_key = nil
+    self.public_key = self.private_key = nil
     generate_keys
   end
 

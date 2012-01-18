@@ -6,7 +6,7 @@ module Travis
   class Config < Hashr
     class << self
       def env
-       defined?(Rails) ? Rails.env : ENV['ENV'] || ENV['RAILS_ENV'] || 'development'
+       defined?(Rails) ? Rails.env : ENV['ENV'] || ENV['RAILS_ENV'] || ENV['RACK_ENV'] || 'development'
       end
 
       def load_env

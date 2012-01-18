@@ -12,8 +12,6 @@ module Travis
         include do
           def notify(event, object, *args)
             send_irc_notifications(object) if object.send_irc_notifications?
-          rescue StandardError => e
-            log_exception(e)
           end
 
           protected

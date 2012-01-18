@@ -20,8 +20,6 @@ module Travis
 
             def send_emails(object)
               email(object).deliver
-            rescue Errno::ECONNREFUSED, Net::SMTPError => e
-              error ["Error sending email: ", e.message, e.backtrace].join("\n")
             end
 
             def email(object)

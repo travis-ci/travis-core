@@ -24,8 +24,6 @@ module Travis
             ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, *args]) do
               enqueue(object)
             end
-          rescue StandardError => e
-            log_exception(e)
           end
 
           def enqueue(job)

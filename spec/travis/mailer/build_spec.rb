@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'spec_helper'
 require 'action_mailer'
 require 'support/active_record'
@@ -6,7 +8,14 @@ require 'support/matchers'
 describe Travis::Mailer::Build do
   include Support::ActiveRecord
 
-  let(:build)      { Factory(:build, :state => :finished, :started_at => Time.utc(2011, 6, 23, 15, 30, 45), :finished_at => Time.utc(2011, 6, 23, 16, 47, 52)) }
+  let(:build) {
+    Factory(:build,
+            :state => :finished,
+            :started_at => Time.utc(2011, 6, 23, 15, 30, 45),
+            :finished_at => Time.utc(2011, 6, 23, 16, 47, 52),
+            :commit => Factory(:commit, :author_name => "まつもとゆきひろ a.k.a. Matz"))
+  }
+
   let(:recipients) { ['owner@example.com', 'committer@example.com', 'author@example.com'] }
   let(:email)      { Travis::Mailer::Build.finished_email(build, recipients) }
 
@@ -29,7 +38,7 @@ describe Travis::Mailer::Build do
         Build : #1
         Duration : 1 hour, 17 minutes, and 7 seconds
         Commit : 62aae5f7 (master)
-        Author : Sven Fuchs
+        Author : まつもとゆきひろ a.k.a. Matz
         Message : the commit message
         Status : Passed
         View the changeset : https://github.com/svenfuchs/minimal/compare/master...develop
@@ -38,10 +47,11 @@ describe Travis::Mailer::Build do
     end
 
     it 'contains the expected html part' do
-      email.text_part.body.should include_lines(%(
+      email.html_part.body.should include_lines(%(
         1 hour, 17 minutes, and 7 seconds
         62aae5f7 (master)
         Author
+        まつもとゆきひろ a.k.a. Matz
         the commit message
         Passed
         View the changeset
@@ -61,6 +71,14 @@ describe Travis::Mailer::Build do
       it 'inlines css' do
         email.deliver
         email.html_part.decoded.should =~ %r(<div[^>]+style=")
+      end
+
+      it 'correctly encodes UTF-8 characters' do
+        # Encode the email, then parse the encoded string as a new Mail
+        h = Mail.new(email.encoded).html_part
+        html = h.body.to_s
+        html.force_encoding(h.charset) if RUBY_VERSION == "1.9.2"
+        html.should include("まつもとゆきひろ a.k.a. Matz")
       end
     end
   end

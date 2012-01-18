@@ -5,7 +5,8 @@ gemspec
 gem 'travis-support',      :git => 'git://github.com/travis-ci/travis-support.git'
 
 platform :mri do
-  gem 'amqp',              '~> 0.8.3'
+  gem 'amq-client',    '>= 0.9.0'
+  gem 'amqp',          '>= 0.9.0'
   gem 'pg',                '~> 0.11.0'
   gem 'silent-postgres',   '~> 0.1.1'
 end
@@ -22,9 +23,10 @@ group :development do
 end
 
 group :test do
-  gem 'rspec',             '~> 2.7.0'
+  gem 'rspec',             '~> 2.8.0'
   gem 'factory_girl',      '~> 2.3.2'
-  gem 'database_cleaner',  '~> 0.7.0'
+  # 0.7.1 has updated PG gem or something, breaks JRuby
+  gem 'database_cleaner',  '= 0.7.0'
   gem 'mocha',             '~> 0.10.0'
   gem 'webmock',           '~> 1.7.7'
 end

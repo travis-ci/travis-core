@@ -36,8 +36,6 @@ module Travis
         include do
           def notify(event, object, *args)
             send_webhooks(object.webhooks, object) if object.send_webhook_notifications?
-          rescue StandardError => e
-            log_exception(e)
           end
 
           protected

@@ -50,13 +50,6 @@ describe Travis::Notifications::Handler::Webhook do
       dispatch('build:finished', build)
       io.string.should include('[webhook] Could not notify http://example.com/. Status: 403 ("nono.")')
     end
-
-    it 'logs an exception raised in #send_webhooks' do
-      notification = Travis::Notifications::Handler::Webhook.new
-      notification.stubs(:send_webhooks).raises(RuntimeError.new)
-      notification.notify('build:finished', build)
-      io.string.should include('[webhook] RuntimeError')
-    end
   end
 
 
