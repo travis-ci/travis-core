@@ -7,7 +7,7 @@ module Travis
       class Pusher
         autoload :Payload, 'travis/notifications/handler/pusher/payload'
 
-        EVENTS = [/build:(started|finished)/, /job:test:(created|started|log|finished)/, /worker:*/]
+        EVENTS = [/build:(started|finished)/, /job:test:(created|started|log|finished)/, /worker:.*/]
 
         include Logging
 
