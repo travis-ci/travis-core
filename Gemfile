@@ -25,7 +25,8 @@ end
 group :test do
   gem 'rspec',             '~> 2.8.0'
   gem 'factory_girl',      '~> 2.3.2'
-  gem 'database_cleaner',  '~> 0.7.0'
+  # 0.7.1 has updated PG gem or something, breaks JRuby
+  gem 'database_cleaner',  '= 0.7.0'
   gem 'mocha',             '~> 0.10.0'
   gem 'webmock',           '~> 1.7.7'
 end
