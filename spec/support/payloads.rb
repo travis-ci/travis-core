@@ -153,7 +153,7 @@ GITHUB_PAYLOADS = {
 WORKER_PAYLOADS = {
   'job:configure:started'  => { 'id' => 1, 'state' => 'started',  'started_at'  => '2011-01-01 00:00:00 +0200' },
   'job:configure:finished' => { 'id' => 1, 'state' => 'finished', 'finished_at' => '2011-01-01 00:01:00 +0200', 'config' => { 'rvm' => ['1.8.7', '1.9.2'] } },
-  'job:test:started'       => { 'id' => 1, 'state' => 'started',  'started_at'  => '2011-01-01 00:02:00 +0200' },
+  'job:test:started'       => { 'id' => 1, 'state' => 'started',  'started_at'  => '2011-01-01 00:02:00 +0200', 'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4' },
   'job:test:log'           => { 'id' => 1, 'log' => '... appended' },
   'job:test:log:1'         => { 'id' => 1, 'log' => 'the '  },
   'job:test:log:2'         => { 'id' => 1, 'log' => 'full ' },

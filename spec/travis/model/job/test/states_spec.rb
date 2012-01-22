@@ -14,7 +14,7 @@ class TestMock
 
   include Job::Test::States
 
-  attr_accessor :state, :config, :status, :started_at, :finished_at
+  attr_accessor :state, :config, :status, :started_at, :finished_at, :worker
   def owner; @owner ||= stub('build', :start => nil, :finish => nil, :state => nil, :state= => nil) end
   def log; @log ||= stub('artifact', :content => nil, :update_attributes! => nil) end
   def save!; end
@@ -28,11 +28,16 @@ describe Job::Test::States do
 
   describe 'events' do
     describe 'starting the job' do
-      let(:data) { WORKER_PAYLOADS['job:test:started'] }
+      let(:data) { Hashr.new(WORKER_PAYLOADS['job:test:started']) }
 
       it 'sets the state to :started' do
         job.start(data)
         job.state.should == :started
+      end
+
+      it 'sets the worker from the payload' do
+        job.start(data)
+        job.worker.should == 'ruby3.worker.travis-ci.org:travis-ruby-4'
       end
 
       it "resets the log artifact's content" do
