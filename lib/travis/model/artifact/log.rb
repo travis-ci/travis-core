@@ -1,9 +1,17 @@
 class Artifact::Log < Artifact
   class << self
-    # use job_id to avoid loading a log artifact into memory
-    def append(job_id, chars)
-      update_all(["content = COALESCE(content, '') || ?", chars], ["job_id = ?", job_id])
+    def prepend(id, chars)
+      update_all(["content = ? || COALESCE(content, '')", chars], ["job_id = ?", id])
     end
+
+    # use job_id to avoid loading a log artifact into memory
+    def append(id, chars)
+      update_all(["content = COALESCE(content, '') || ?", chars], ["job_id = ?", id])
+    end
+  end
+
+  def prepend(chars)
+    persisted? ? self.class.prepend(id, chars) : self.content = "#{chars}#{content}"
   end
 
   # def append_message(severity, message)

@@ -20,6 +20,7 @@ class TestMock
   def save!; end
   def denormalize(*); end
   def add_tags(*); end # TODO simple_states needs to be able to take multiple declarations for the same event
+  def prepend_sponsor(*); end
 end
 
 describe Job::Test::States do
@@ -65,6 +66,11 @@ describe Job::Test::States do
 
       it 'propagates the event to the owner' do
         job.owner.expects(:finish).with(data)
+        job.finish(data)
+      end
+
+      it 'prepends a sponsor message to the log' do
+        job.expects(:prepend_sponsor)
         job.finish(data)
       end
     end

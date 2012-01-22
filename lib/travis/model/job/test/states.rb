@@ -12,7 +12,7 @@ class Job
         states :created, :started, :finished # :cloned, :installed, ...
 
         event :start,  :to => :started
-        event :finish, :to => :finished, :after => :add_tags
+        event :finish, :to => :finished, :after => [:add_tags, :prepend_sponsor]
         event :all, :after => [:notify, :propagate]
       end
 

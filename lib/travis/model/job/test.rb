@@ -2,7 +2,7 @@ class Job
   class Test < Job
     autoload :States, 'travis/model/job/test/states'
 
-    include Test::States, Tagging
+    include Test::States, Sponsors, Tagging
 
     class << self
       def append_log!(id, chars)
