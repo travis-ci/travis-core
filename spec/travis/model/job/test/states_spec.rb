@@ -68,11 +68,6 @@ describe Job::Test::States do
         job.owner.expects(:finish).with(data)
         job.finish(data)
       end
-
-      it 'prepends a sponsor message to the log' do
-        job.expects(:prepend_sponsor)
-        job.finish(data)
-      end
     end
 
     describe :update_attributes do
