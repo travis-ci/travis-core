@@ -30,7 +30,7 @@ class Job
     end
 
     def passed_or_allowed_to_fail?
-      status == 0 || attributes['allow_failure']
+      passed? || attributes['allow_failure']
     end
 
     def failed?
