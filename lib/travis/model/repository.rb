@@ -82,4 +82,8 @@ class Repository < ActiveRecord::Base
     builds.descending.paged({}).includes([:commit]).map{ |build| build.commit.branch }.uniq
   end
 
+  def last_finished_builds_by_branches
+    branches.map { |branch| builds.last_finished_on_branch(branch) }.compact
+  end
+
 end
