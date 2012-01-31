@@ -93,14 +93,14 @@ describe Build, 'matrix' do
       it 'with string values' do
         build = Factory(:build, :config => { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-2.3.x', :env => 'FOO=bar' })
         expected = [
-                    [[:rvm, '1.8.7']],
+                    [[:rvm,     '1.8.7']],
                     [[:gemfile, 'gemfiles/rails-2.3.x']],
-                    [[:env, 'FOO=bar']]
+                    [[:env,     'FOO=bar']]
                    ]
         build.matrix_config.should == expected
       end
 
-      it 'with just array values' do
+      it 'with two Rubies and Gemfiles' do
         build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'], :gemfile => ['gemfiles/rails-2.3.x', 'gemfiles/rails-3.0.x'] })
         expected = [
                     [[:rvm, '1.8.7'], [:rvm, '1.9.2']],
@@ -109,7 +109,7 @@ describe Build, 'matrix' do
         build.matrix_config.should == expected
       end
 
-      it 'with unjust array values' do
+      it 'with unequal number of Rubies, env variables and Gemfiles' do
         build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2', 'ree'], :gemfile => ['gemfiles/rails-3.0.x'], :env => ['FOO=bar', 'FOO=baz'] })
         build.matrix_config.should == [
                                        [[:rvm, '1.8.7'], [:rvm, '1.9.2'], [:rvm, 'ree']],
@@ -118,11 +118,39 @@ describe Build, 'matrix' do
                                       ]
       end
 
-      it 'with an array value and a non-array value' do
+      it 'with an array of Rubies and a single Gemfile' do
         build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'], :gemfile => 'gemfiles/rails-2.3.x' })
         build.matrix_config.should == [
                                        [[:rvm, '1.8.7'], [:rvm, '1.9.2']],
                                        [[:gemfile, 'gemfiles/rails-2.3.x'], [:gemfile, 'gemfiles/rails-2.3.x']]
+                                      ]
+      end
+    end
+
+
+    describe "for Scala projects" do
+      it 'with a single Scala version given as a string' do
+        build = Factory(:build, :config => { :scala => '2.8.2', :env => 'FOO=bar' })
+        expected = [
+                    [[:env, 'FOO=bar']],
+                    [[:scala, '2.8.2']]
+                   ]
+        build.matrix_config.should == expected
+      end
+
+      it 'with multiple Scala versions and no env variables' do
+        build = Factory(:build, :config => { :scala => ['2.8.2', '2.9.1']})
+        expected = [
+                    [[:scala, '2.8.2'], [:scala, '2.9.1']]
+                   ]
+        build.matrix_config.should == expected
+      end
+
+      it 'with a single Scala version passed in as array and two env variables' do
+        build = Factory(:build, :config => { :scala => ['2.8.2'], :env => ['FOO=bar', 'FOO=baz'] })
+        build.matrix_config.should == [
+                                       [[:env, 'FOO=bar'], [:env, 'FOO=baz']],
+                                       [[:scala, '2.8.2'], [:scala, '2.8.2']]
                                       ]
       end
     end
