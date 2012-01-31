@@ -89,40 +89,42 @@ describe Build, 'matrix' do
   end
 
   describe :matrix_config do
-    it 'with string values' do
-      build = Factory(:build, :config => { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-2.3.x', :env => 'FOO=bar' })
-      expected = [
-                  [[:rvm, '1.8.7']],
-                  [[:gemfile, 'gemfiles/rails-2.3.x']],
-                  [[:env, 'FOO=bar']]
-                 ]
-      build.matrix_config.should == expected
-    end
+    describe "for Ruby projects" do
+      it 'with string values' do
+        build = Factory(:build, :config => { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-2.3.x', :env => 'FOO=bar' })
+        expected = [
+                    [[:rvm, '1.8.7']],
+                    [[:gemfile, 'gemfiles/rails-2.3.x']],
+                    [[:env, 'FOO=bar']]
+                   ]
+        build.matrix_config.should == expected
+      end
 
-    it 'with just array values' do
-      build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'], :gemfile => ['gemfiles/rails-2.3.x', 'gemfiles/rails-3.0.x'] })
-      expected = [
-                  [[:rvm, '1.8.7'], [:rvm, '1.9.2']],
-                  [[:gemfile, 'gemfiles/rails-2.3.x'], [:gemfile, 'gemfiles/rails-3.0.x']]
-                 ]
-      build.matrix_config.should == expected
-    end
+      it 'with just array values' do
+        build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'], :gemfile => ['gemfiles/rails-2.3.x', 'gemfiles/rails-3.0.x'] })
+        expected = [
+                    [[:rvm, '1.8.7'], [:rvm, '1.9.2']],
+                    [[:gemfile, 'gemfiles/rails-2.3.x'], [:gemfile, 'gemfiles/rails-3.0.x']]
+                   ]
+        build.matrix_config.should == expected
+      end
 
-    it 'with unjust array values' do
-      build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2', 'ree'], :gemfile => ['gemfiles/rails-3.0.x'], :env => ['FOO=bar', 'FOO=baz'] })
-      build.matrix_config.should == [
-                                     [[:rvm, '1.8.7'], [:rvm, '1.9.2'], [:rvm, 'ree']],
-                                     [[:gemfile, 'gemfiles/rails-3.0.x'], [:gemfile, 'gemfiles/rails-3.0.x'], [:gemfile, 'gemfiles/rails-3.0.x']],
-                                     [[:env, 'FOO=bar'], [:env, 'FOO=baz'], [:env, 'FOO=baz']]
-                                    ]
-    end
+      it 'with unjust array values' do
+        build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2', 'ree'], :gemfile => ['gemfiles/rails-3.0.x'], :env => ['FOO=bar', 'FOO=baz'] })
+        build.matrix_config.should == [
+                                       [[:rvm, '1.8.7'], [:rvm, '1.9.2'], [:rvm, 'ree']],
+                                       [[:gemfile, 'gemfiles/rails-3.0.x'], [:gemfile, 'gemfiles/rails-3.0.x'], [:gemfile, 'gemfiles/rails-3.0.x']],
+                                       [[:env, 'FOO=bar'], [:env, 'FOO=baz'], [:env, 'FOO=baz']]
+                                      ]
+      end
 
-    it 'with an array value and a non-array value' do
-      build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'], :gemfile => 'gemfiles/rails-2.3.x' })
-      build.matrix_config.should == [
-                                     [[:rvm, '1.8.7'], [:rvm, '1.9.2']],
-                                     [[:gemfile, 'gemfiles/rails-2.3.x'], [:gemfile, 'gemfiles/rails-2.3.x']]
-                                    ]
+      it 'with an array value and a non-array value' do
+        build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'], :gemfile => 'gemfiles/rails-2.3.x' })
+        build.matrix_config.should == [
+                                       [[:rvm, '1.8.7'], [:rvm, '1.9.2']],
+                                       [[:gemfile, 'gemfiles/rails-2.3.x'], [:gemfile, 'gemfiles/rails-2.3.x']]
+                                      ]
+      end
     end
   end
 
