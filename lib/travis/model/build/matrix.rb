@@ -7,7 +7,7 @@ class Build
   module Matrix
     extend ActiveSupport::Concern
 
-    ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js]
+    ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala]
 
     module ClassMethods
       def matrix?(config)
