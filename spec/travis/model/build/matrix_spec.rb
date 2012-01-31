@@ -8,43 +8,53 @@ describe Build, 'matrix' do
   after  { Build.send :protected, :matrix_config, :expand_matrix_config }
 
   describe :matrix_finished? do
-    it 'returns false if at least one job has not finished' do
-      build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] })
-      build.matrix[0].update_attributes(:state => :finished)
-      build.matrix[1].update_attributes(:state => :started)
+    context "if at least one job has not finished" do
+      it 'returns false' do
+        build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] })
+        build.matrix[0].update_attributes(:state => :finished)
+        build.matrix[1].update_attributes(:state => :started)
 
-      build.matrix_finished?.should_not be_true
+        build.matrix_finished?.should_not be_true
+      end
     end
 
-    it 'returns true if all jobs have finished' do
-      build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] })
-      build.matrix[0].update_attributes!(:state => :finished)
-      build.matrix[1].update_attributes!(:state => :finished)
+    context "if all jobs have finished" do
+      it 'returns true' do
+        build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] })
+        build.matrix[0].update_attributes!(:state => :finished)
+        build.matrix[1].update_attributes!(:state => :finished)
 
-      build.matrix_finished?.should_not be_nil
+        build.matrix_finished?.should_not be_nil
+      end
     end
   end
 
   describe :matrix_status do
-    it 'returns 1 if any job has the status 1' do
-      build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] })
-      build.matrix[0].update_attributes!(:status => 1, :state => :finished)
-      build.matrix[1].update_attributes!(:status => 0, :state => :finished)
-      build.matrix_status.should == 1
+    context "if any job has the status 1" do
+      it 'returns 1 ' do
+        build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] })
+        build.matrix[0].update_attributes!(:status => 1, :state => :finished)
+        build.matrix[1].update_attributes!(:status => 0, :state => :finished)
+        build.matrix_status.should == 1
+      end
     end
 
-    it 'returns 0 if all jobs have the status 0' do
-      build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] })
-      build.matrix[0].update_attributes!(:status => 0, :state => :finished)
-      build.matrix[1].update_attributes!(:status => 0, :state => :finished)
-      build.matrix_status.should == 0
+    context "if all jobs have the status 0" do
+      it 'returns 0' do
+        build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] })
+        build.matrix[0].update_attributes!(:status => 0, :state => :finished)
+        build.matrix[1].update_attributes!(:status => 0, :state => :finished)
+        build.matrix_status.should == 0
+      end
     end
 
-    it 'returns 0 if a failed job is allowed to fail' do
-      build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] })
-      build.matrix[0].update_attributes!(:status => 0, :state => :finished)
-      build.matrix[1].update_attributes!(:status => 1, :state => :finished, :allow_failure => true)
-      build.matrix_status.should == 0
+    context "if a failed job is allowed to fail" do
+      it 'returns 0' do
+        build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] })
+        build.matrix[0].update_attributes!(:status => 0, :state => :finished)
+        build.matrix[1].update_attributes!(:status => 1, :state => :finished, :allow_failure => true)
+        build.matrix_status.should == 0
+      end
     end
 
     it 'returns 1 if all jobs fail and one is allowed to fail' do
@@ -58,19 +68,23 @@ describe Build, 'matrix' do
   describe :matrix_duration do
     let(:build) do
       Build.new(:matrix => [
-        Job::Test.new(:started_at => 60.seconds.ago, :finished_at => 40.seconds.ago),
-        Job::Test.new(:started_at => 20.seconds.ago, :finished_at => 10.seconds.ago)
-      ])
+                            Job::Test.new(:started_at => 60.seconds.ago, :finished_at => 40.seconds.ago),
+                            Job::Test.new(:started_at => 20.seconds.ago, :finished_at => 10.seconds.ago)
+                           ])
     end
 
-    it 'returns the sum of the matrix job durations if the matrix is finished' do
-      build.stubs(:matrix_finished?).returns(true)
-      build.matrix_duration.should == 30
+    context "if the matrix is finished" do
+      it 'returns the sum of the matrix job durations' do
+        build.stubs(:matrix_finished?).returns(true)
+        build.matrix_duration.should == 30
+      end
     end
 
-    it 'returns nil if the matrix is not finished' do
-      build.stubs(:matrix_finished?).returns(false)
-      build.matrix_duration.should be_nil
+    context "if the matrix is not finished" do
+      it 'returns nil' do
+        build.stubs(:matrix_finished?).returns(false)
+        build.matrix_duration.should be_nil
+      end
     end
   end
 
@@ -78,37 +92,37 @@ describe Build, 'matrix' do
     it 'with string values' do
       build = Factory(:build, :config => { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-2.3.x', :env => 'FOO=bar' })
       expected = [
-        [[:rvm, '1.8.7']],
-        [[:gemfile, 'gemfiles/rails-2.3.x']],
-        [[:env, 'FOO=bar']]
-      ]
+                  [[:rvm, '1.8.7']],
+                  [[:gemfile, 'gemfiles/rails-2.3.x']],
+                  [[:env, 'FOO=bar']]
+                 ]
       build.matrix_config.should == expected
     end
 
     it 'with just array values' do
       build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'], :gemfile => ['gemfiles/rails-2.3.x', 'gemfiles/rails-3.0.x'] })
       expected = [
-        [[:rvm, '1.8.7'], [:rvm, '1.9.2']],
-        [[:gemfile, 'gemfiles/rails-2.3.x'], [:gemfile, 'gemfiles/rails-3.0.x']]
-      ]
+                  [[:rvm, '1.8.7'], [:rvm, '1.9.2']],
+                  [[:gemfile, 'gemfiles/rails-2.3.x'], [:gemfile, 'gemfiles/rails-3.0.x']]
+                 ]
       build.matrix_config.should == expected
     end
 
     it 'with unjust array values' do
       build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2', 'ree'], :gemfile => ['gemfiles/rails-3.0.x'], :env => ['FOO=bar', 'FOO=baz'] })
       build.matrix_config.should == [
-        [[:rvm, '1.8.7'], [:rvm, '1.9.2'], [:rvm, 'ree']],
-        [[:gemfile, 'gemfiles/rails-3.0.x'], [:gemfile, 'gemfiles/rails-3.0.x'], [:gemfile, 'gemfiles/rails-3.0.x']],
-        [[:env, 'FOO=bar'], [:env, 'FOO=baz'], [:env, 'FOO=baz']]
-      ]
+                                     [[:rvm, '1.8.7'], [:rvm, '1.9.2'], [:rvm, 'ree']],
+                                     [[:gemfile, 'gemfiles/rails-3.0.x'], [:gemfile, 'gemfiles/rails-3.0.x'], [:gemfile, 'gemfiles/rails-3.0.x']],
+                                     [[:env, 'FOO=bar'], [:env, 'FOO=baz'], [:env, 'FOO=baz']]
+                                    ]
     end
 
     it 'with an array value and a non-array value' do
       build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'], :gemfile => 'gemfiles/rails-2.3.x' })
       build.matrix_config.should == [
-        [[:rvm, '1.8.7'], [:rvm, '1.9.2']],
-        [[:gemfile, 'gemfiles/rails-2.3.x'], [:gemfile, 'gemfiles/rails-2.3.x']]
-      ]
+                                     [[:rvm, '1.8.7'], [:rvm, '1.9.2']],
+                                     [[:gemfile, 'gemfiles/rails-2.3.x'], [:gemfile, 'gemfiles/rails-2.3.x']]
+                                    ]
     end
   end
 
@@ -203,26 +217,26 @@ describe Build, 'matrix' do
     it 'expands the build matrix configuration (single test config)' do
       build = Factory(:build, :config => single_test_config)
       build.expand_matrix_config(build.matrix_config.to_a).should == [
-        [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'USE_GIT_REPOS=true']],
-      ]
+                                                                      [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'USE_GIT_REPOS=true']],
+                                                                     ]
     end
 
     it 'expands the build matrix configuration (multiple tests config)' do
       build = Factory(:build, :config => multiple_tests_config)
       build.expand_matrix_config(build.matrix_config.to_a).should == [
-        [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'USE_GIT_REPOS=true']],
-        [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.7'],      [:env, 'USE_GIT_REPOS=true']],
-        [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3-0-stable'], [:env, 'USE_GIT_REPOS=true']],
-        [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-master'],     [:env, 'USE_GIT_REPOS=true']],
-        [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'USE_GIT_REPOS=true']],
-        [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-3.0.7'],      [:env, 'USE_GIT_REPOS=true']],
-        [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-3-0-stable'], [:env, 'USE_GIT_REPOS=true']],
-        [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-master'],     [:env, 'USE_GIT_REPOS=true']],
-        [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'USE_GIT_REPOS=true']],
-        [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-3.0.7'],      [:env, 'USE_GIT_REPOS=true']],
-        [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-3-0-stable'], [:env, 'USE_GIT_REPOS=true']],
-        [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-master'],     [:env, 'USE_GIT_REPOS=true']]
-      ]
+                                                                      [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'USE_GIT_REPOS=true']],
+                                                                      [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.7'],      [:env, 'USE_GIT_REPOS=true']],
+                                                                      [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3-0-stable'], [:env, 'USE_GIT_REPOS=true']],
+                                                                      [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-master'],     [:env, 'USE_GIT_REPOS=true']],
+                                                                      [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'USE_GIT_REPOS=true']],
+                                                                      [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-3.0.7'],      [:env, 'USE_GIT_REPOS=true']],
+                                                                      [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-3-0-stable'], [:env, 'USE_GIT_REPOS=true']],
+                                                                      [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-master'],     [:env, 'USE_GIT_REPOS=true']],
+                                                                      [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'USE_GIT_REPOS=true']],
+                                                                      [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-3.0.7'],      [:env, 'USE_GIT_REPOS=true']],
+                                                                      [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-3-0-stable'], [:env, 'USE_GIT_REPOS=true']],
+                                                                      [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-master'],     [:env, 'USE_GIT_REPOS=true']]
+                                                                     ]
     end
   end
 
@@ -240,26 +254,26 @@ describe Build, 'matrix' do
     it 'sets the config to the jobs (single test config)' do
       build = Factory(:build, :config => single_test_config)
       build.matrix.map(&:config).should == [
-        { :script => 'rake ci', :rvm => '1.8.7', :gemfile => 'gemfiles/rails-3.0.6', :env => 'USE_GIT_REPOS=true' }
-      ]
+                                            { :script => 'rake ci', :rvm => '1.8.7', :gemfile => 'gemfiles/rails-3.0.6', :env => 'USE_GIT_REPOS=true' }
+                                           ]
     end
 
     it 'sets the config to the jobs (multiple tests config)' do
       build = Factory(:build, :config => multiple_tests_config)
       build.matrix.map(&:config).should == [
-        { :script => 'rake ci', :rvm => '1.8.7', :gemfile => 'gemfiles/rails-3.0.6',      :env => 'USE_GIT_REPOS=true' },
-        { :script => 'rake ci', :rvm => '1.8.7', :gemfile => 'gemfiles/rails-3.0.7',      :env => 'USE_GIT_REPOS=true' },
-        { :script => 'rake ci', :rvm => '1.8.7', :gemfile => 'gemfiles/rails-3-0-stable', :env => 'USE_GIT_REPOS=true' },
-        { :script => 'rake ci', :rvm => '1.8.7', :gemfile => 'gemfiles/rails-master',     :env => 'USE_GIT_REPOS=true' },
-        { :script => 'rake ci', :rvm => '1.9.1', :gemfile => 'gemfiles/rails-3.0.6',      :env => 'USE_GIT_REPOS=true' },
-        { :script => 'rake ci', :rvm => '1.9.1', :gemfile => 'gemfiles/rails-3.0.7',      :env => 'USE_GIT_REPOS=true' },
-        { :script => 'rake ci', :rvm => '1.9.1', :gemfile => 'gemfiles/rails-3-0-stable', :env => 'USE_GIT_REPOS=true' },
-        { :script => 'rake ci', :rvm => '1.9.1', :gemfile => 'gemfiles/rails-master',     :env => 'USE_GIT_REPOS=true' },
-        { :script => 'rake ci', :rvm => '1.9.2', :gemfile => 'gemfiles/rails-3.0.6',      :env => 'USE_GIT_REPOS=true' },
-        { :script => 'rake ci', :rvm => '1.9.2', :gemfile => 'gemfiles/rails-3.0.7',      :env => 'USE_GIT_REPOS=true' },
-        { :script => 'rake ci', :rvm => '1.9.2', :gemfile => 'gemfiles/rails-3-0-stable', :env => 'USE_GIT_REPOS=true' },
-        { :script => 'rake ci', :rvm => '1.9.2', :gemfile => 'gemfiles/rails-master',     :env => 'USE_GIT_REPOS=true' }
-      ]
+                                            { :script => 'rake ci', :rvm => '1.8.7', :gemfile => 'gemfiles/rails-3.0.6',      :env => 'USE_GIT_REPOS=true' },
+                                            { :script => 'rake ci', :rvm => '1.8.7', :gemfile => 'gemfiles/rails-3.0.7',      :env => 'USE_GIT_REPOS=true' },
+                                            { :script => 'rake ci', :rvm => '1.8.7', :gemfile => 'gemfiles/rails-3-0-stable', :env => 'USE_GIT_REPOS=true' },
+                                            { :script => 'rake ci', :rvm => '1.8.7', :gemfile => 'gemfiles/rails-master',     :env => 'USE_GIT_REPOS=true' },
+                                            { :script => 'rake ci', :rvm => '1.9.1', :gemfile => 'gemfiles/rails-3.0.6',      :env => 'USE_GIT_REPOS=true' },
+                                            { :script => 'rake ci', :rvm => '1.9.1', :gemfile => 'gemfiles/rails-3.0.7',      :env => 'USE_GIT_REPOS=true' },
+                                            { :script => 'rake ci', :rvm => '1.9.1', :gemfile => 'gemfiles/rails-3-0-stable', :env => 'USE_GIT_REPOS=true' },
+                                            { :script => 'rake ci', :rvm => '1.9.1', :gemfile => 'gemfiles/rails-master',     :env => 'USE_GIT_REPOS=true' },
+                                            { :script => 'rake ci', :rvm => '1.9.2', :gemfile => 'gemfiles/rails-3.0.6',      :env => 'USE_GIT_REPOS=true' },
+                                            { :script => 'rake ci', :rvm => '1.9.2', :gemfile => 'gemfiles/rails-3.0.7',      :env => 'USE_GIT_REPOS=true' },
+                                            { :script => 'rake ci', :rvm => '1.9.2', :gemfile => 'gemfiles/rails-3-0-stable', :env => 'USE_GIT_REPOS=true' },
+                                            { :script => 'rake ci', :rvm => '1.9.2', :gemfile => 'gemfiles/rails-master',     :env => 'USE_GIT_REPOS=true' }
+                                           ]
     end
 
     it 'sets the config to the jobs (allow failures config)' do
@@ -284,17 +298,17 @@ describe Build, 'matrix' do
 
         matrix_exclusion = {
           :exclude => [
-            { :rvm => "1.8.7", :gemfile => "gemfiles/rails-3.1.x" },
-            { :rvm => "1.9.2", :gemfile => "gemfiles/rails-2.3.x" }
-          ]
+                       { :rvm => "1.8.7", :gemfile => "gemfiles/rails-3.1.x" },
+                       { :rvm => "1.9.2", :gemfile => "gemfiles/rails-2.3.x" }
+                      ]
         }
 
         build.matrix.map(&:config).should == [
-          { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-2.3.x', :matrix => matrix_exclusion },
-          { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-3.0.x', :matrix => matrix_exclusion },
-          { :rvm => '1.9.2', :gemfile => 'gemfiles/rails-3.0.x', :matrix => matrix_exclusion },
-          { :rvm => '1.9.2', :gemfile => 'gemfiles/rails-3.1.x', :matrix => matrix_exclusion }
-        ]
+                                              { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-2.3.x', :matrix => matrix_exclusion },
+                                              { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-3.0.x', :matrix => matrix_exclusion },
+                                              { :rvm => '1.9.2', :gemfile => 'gemfiles/rails-3.0.x', :matrix => matrix_exclusion },
+                                              { :rvm => '1.9.2', :gemfile => 'gemfiles/rails-3.1.x', :matrix => matrix_exclusion }
+                                             ]
       end
 
       it 'does not exclude a matrix config when the matrix exclusion definition is incomplete' do
@@ -303,15 +317,15 @@ describe Build, 'matrix' do
         matrix_exclusion = { :exclude => [{ :rvm => "1.9.2", :gemfile => "gemfiles/rails-3.0.x" }] }
 
         build.matrix.map(&:config).should == [
-          { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-3.0.x', :env => 'FOO=bar', :matrix => matrix_exclusion },
-          { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-3.0.x', :env => 'BAR=baz', :matrix => matrix_exclusion },
-          { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-3.1.x', :env => 'FOO=bar', :matrix => matrix_exclusion },
-          { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-3.1.x', :env => 'BAR=baz', :matrix => matrix_exclusion },
-          { :rvm => '1.9.2', :gemfile => 'gemfiles/rails-3.0.x', :env => 'FOO=bar', :matrix => matrix_exclusion },
-          { :rvm => '1.9.2', :gemfile => 'gemfiles/rails-3.0.x', :env => 'BAR=baz', :matrix => matrix_exclusion },
-          { :rvm => '1.9.2', :gemfile => 'gemfiles/rails-3.1.x', :env => 'FOO=bar', :matrix => matrix_exclusion },
-          { :rvm => '1.9.2', :gemfile => 'gemfiles/rails-3.1.x', :env => 'BAR=baz', :matrix => matrix_exclusion }
-        ]
+                                              { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-3.0.x', :env => 'FOO=bar', :matrix => matrix_exclusion },
+                                              { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-3.0.x', :env => 'BAR=baz', :matrix => matrix_exclusion },
+                                              { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-3.1.x', :env => 'FOO=bar', :matrix => matrix_exclusion },
+                                              { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-3.1.x', :env => 'BAR=baz', :matrix => matrix_exclusion },
+                                              { :rvm => '1.9.2', :gemfile => 'gemfiles/rails-3.0.x', :env => 'FOO=bar', :matrix => matrix_exclusion },
+                                              { :rvm => '1.9.2', :gemfile => 'gemfiles/rails-3.0.x', :env => 'BAR=baz', :matrix => matrix_exclusion },
+                                              { :rvm => '1.9.2', :gemfile => 'gemfiles/rails-3.1.x', :env => 'FOO=bar', :matrix => matrix_exclusion },
+                                              { :rvm => '1.9.2', :gemfile => 'gemfiles/rails-3.1.x', :env => 'BAR=baz', :matrix => matrix_exclusion }
+                                             ]
       end
     end
   end
