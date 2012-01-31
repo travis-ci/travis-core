@@ -110,11 +110,11 @@ describe Build, 'matrix' do
       end
 
       it 'with unequal number of Rubies, env variables and Gemfiles' do
-        build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2', 'ree'], :gemfile => ['gemfiles/rails-3.0.x'], :env => ['FOO=bar', 'FOO=baz'] })
+        build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2', 'ree'], :gemfile => ['gemfiles/rails-3.0.x'], :env => ['DB=postgresql', 'DB=mysql'] })
         build.matrix_config.should == [
                                        [[:rvm, '1.8.7'], [:rvm, '1.9.2'], [:rvm, 'ree']],
                                        [[:gemfile, 'gemfiles/rails-3.0.x'], [:gemfile, 'gemfiles/rails-3.0.x'], [:gemfile, 'gemfiles/rails-3.0.x']],
-                                       [[:env, 'FOO=bar'], [:env, 'FOO=baz'], [:env, 'FOO=baz']]
+                                       [[:env, 'DB=postgresql'], [:env, 'DB=mysql'], [:env, 'DB=mysql']]
                                       ]
       end
 
@@ -130,9 +130,9 @@ describe Build, 'matrix' do
 
     describe "for Scala projects" do
       it 'with a single Scala version given as a string' do
-        build = Factory(:build, :config => { :scala => '2.8.2', :env => 'FOO=bar' })
+        build = Factory(:build, :config => { :scala => '2.8.2', :env => 'NETWORK=false' })
         expected = [
-                    [[:env, 'FOO=bar']],
+                    [[:env, 'NETWORK=false']],
                     [[:scala, '2.8.2']]
                    ]
         build.matrix_config.should == expected
@@ -147,9 +147,9 @@ describe Build, 'matrix' do
       end
 
       it 'with a single Scala version passed in as array and two env variables' do
-        build = Factory(:build, :config => { :scala => ['2.8.2'], :env => ['FOO=bar', 'FOO=baz'] })
+        build = Factory(:build, :config => { :scala => ['2.8.2'], :env => ['STORE=postgresql', 'STORE=redis'] })
         build.matrix_config.should == [
-                                       [[:env, 'FOO=bar'], [:env, 'FOO=baz']],
+                                       [[:env, 'STORE=postgresql'], [:env, 'STORE=redis']],
                                        [[:scala, '2.8.2'], [:scala, '2.8.2']]
                                       ]
       end
