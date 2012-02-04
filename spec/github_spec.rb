@@ -42,6 +42,18 @@ describe Github do
     }
   end
 
+  describe Github::Commit do
+    it 'should parse branch name from ref' do
+      commit = Github::Commit.new({ :ref => 'refs/heads/master' }, Github::Repository.new)
+      commit.branch.should == 'master'
+    end
+
+    it 'should parse branch name with slash from ref' do
+      commit = Github::Commit.new({ :ref => 'refs/heads/feature/cookies' }, Github::Repository.new)
+      commit.branch.should == 'feature/cookies'
+    end
+  end
+
   it 'build' do
     repository = Github::Repository.new(data['repository'])
     commit = Github::Commit.new(data['commits'].first.merge('ref' => 'refs/heads/master', 'compare_url' => data['compare']), repository)
