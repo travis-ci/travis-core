@@ -21,6 +21,7 @@ describe Travis::Mailer::Build do
 
   before :each do
     Travis::Mailer.setup
+    I18n.reload!
     ActionMailer::Base.delivery_method = :test
   end
 
