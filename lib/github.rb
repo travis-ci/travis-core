@@ -110,7 +110,7 @@ module Github
     end
 
     def branch
-      (self['ref'] || '').split('/').last
+      (self['ref'] || '').gsub(/^refs\/heads\//, '')
     end
 
     def committed_at
