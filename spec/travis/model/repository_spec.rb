@@ -129,4 +129,20 @@ describe Repository do
       repository.branches.should eql []
     end
   end
+
+  describe 'last_finished_builds_by_branches' do
+    let(:repository) { Factory(:repository) }
+
+    it 'retrieves last builds on all branches' do
+      old_build = Factory(:build, :repository => repository, :state => 'finished', :commit => Factory(:commit, :branch => 'master'))
+      production_build = Factory(:build, :repository => repository, :state => 'finished', :commit => Factory(:commit, :branch => 'production'))
+      master_build = Factory(:build, :repository => repository, :state => 'finished', :commit => Factory(:commit, :branch => 'master'))
+      builds = repository.last_finished_builds_by_branches
+
+      builds.size.should == 2
+      builds.should include(master_build)
+      builds.should include(production_build)
+    end
+  end
+
 end

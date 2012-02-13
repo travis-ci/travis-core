@@ -30,7 +30,7 @@ class Job
     end
 
     def passed_or_allowed_to_fail?
-      status == 0 || allow_failure
+      passed? || allow_failure
     end
 
     def failed?

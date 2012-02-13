@@ -1,13 +1,12 @@
 require 'active_support/concern'
 require 'active_support/core_ext/hash/keys'
-require 'core_ext/array/flatten_once'
 require 'core_ext/hash/deep_symbolize_keys'
 
 class Build
   module Matrix
     extend ActiveSupport::Concern
 
-    ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js]
+    ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl]
 
     module ClassMethods
       def matrix?(config)
@@ -86,7 +85,7 @@ class Build
         matrix = lambda do |*args|
           base, result = args.shift, args.shift || []
           base = base.dup
-          base.empty? ? [result] : base.shift.map { |value| matrix.call(base, result + [value]) }.flatten_once
+          base.empty? ? [result] : base.shift.map { |value| matrix.call(base, result + [value]) }.flatten(1)
         end
         expanded = matrix.call(config).uniq
         exclude_matrix_configs(expanded)
