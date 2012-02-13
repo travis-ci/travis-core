@@ -3,8 +3,6 @@ require 'action_mailer'
 module Travis
   module Mailer
     class Build < ActionMailer::Base
-      layout 'build'
-
       default :from => 'notifications@travis-ci.org'
 
       helper Helper::Build

@@ -1,37 +1,242 @@
-<% content_for :header do %>
-  <div class="alert-message block-message <%= @build.passed? ? "success" : "error" %>">
-    <%= @build.human_status_message %>
-  </div>
-<% end %>
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link href="/email.css" media="screen" rel="stylesheet" type="text/css" />
+    <style>
+      .success h1 {
+        background: #0c901d; /* Old browsers */
+        background: -moz-linear-gradient(top,  #0ecf0b 0%, #0bbd0b 50%, #08ae0d 51%, #0c901d 100%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#0ecf0b), color-stop(50%,#0bbd0b), color-stop(51%,#08ae0d), color-stop(100%,#0c901d)); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top,  #0ecf0b 0%,#0bbd0b 50%,#08ae0d 51%,#0c901d 100%); /* Chrome10+,Safari5.1+ */
+        background: linear-gradient(top,  #0ecf0b 0%,#0bbd0b 50%,#08ae0d 51%,#0c901d 100%); /* W3C */
+      }
+      .failure h1 {
+        background: #e93a13; /* Old browsers */
+        background: -moz-linear-gradient(top,  #f76e69 0%, #f4564e 50%, #f64130 51%, #e93a13 100%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f76e69), color-stop(50%,#f4564e), color-stop(51%,#f64130), color-stop(100%,#e93a13)); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top,  #f76e69 0%,#f4564e 50%,#f64130 51%,#e93a13 100%); /* Chrome10+,Safari5.1+ */
+        background: linear-gradient(top,  #f76e69 0%,#f4564e 50%,#f64130 51%,#e93a13 100%); /* W3C */
+      }
+    </style>
+  </head>
+  <body>
+    <div id="body" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; color: #333;">
+      <div id="build" class="section <%= @build.passed? ? 'success' : 'failure' %>" style="margin-bottom: 16px; width: 720px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 16px; border: 1px solid #ccc;">
+        <h1 style="margin-top: 0; font-size: 28px; text-align: center; color: white; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3); padding: 8px 15px;" align="center"><%= @build.human_status_message %></h1>
+        <table>
+          <tr>
+            <th style="text-align: right; padding-right: 16px;" align="right">Repository</th>
+            <td><%= @build.repository.slug %></td>
+          </tr>
+          <tr>
+            <th style="text-align: right; padding-right: 16px;" align="right">Build #<%= @build.number %></th>
+            <td><%= link_to repository_build_url(:slug => @build.repository.slug, :id => @build.id), repository_build_url(:slug => @build.repository.slug, :id => @build.id) %></td>
+          </tr>
+          <tr>
+            <th style="text-align: right; padding-right: 16px;" align="right">Changeset</th>
+            <td><%= link_to @commit.compare_url, @commit.compare_url %></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <th style="text-align: right; padding-right: 16px;" align="right">Commit</th>
+            <td><%= @commit.commit[0..7] %> (<%= @commit.branch %>)</td>
+          </tr>
+          <tr>
+            <th style="text-align: right; padding-right: 16px;" align="right">Message</th>
+            <td><%= h(@commit.message).gsub("\n", "<br>").html_safe %></td>
+          </tr>
+          <tr>
+            <th style="text-align: right; padding-right: 16px;" align="right">Author</th>
+            <td><%= @commit.author_name %></td>
+          </tr>
+          <tr>
+            <th style="text-align: right; padding-right: 16px;" align="right">Duration</th>
+            <td><%= duration_in_words(@build.started_at, @build.finished_at) %></td>
+          </tr>
+        </table>
+        <table border="0" class="footer" style="background-color: #f3f4fa; -webkit-border-bottom-right-radius: 6px; -webkit-border-bottom-left-radius: 6px; -moz-border-radius-bottomright: 6px; -moz-border-radius-bottomleft: 6px; border-bottom-right-radius: 6px; border-bottom-left-radius: 6px; margin: 26px -16px -16px; padding: 16px 16px 14px;" bgcolor="#f3f4fa">
+          <tr>
+            <td style="font-size: 13px; color: #aaa; line-height: 18px;">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACYAAAAmCAMAAACf4xmcAAAAGXRFWHRTb2Z0
+d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9i
+ZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2Vo
+aUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6
+bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYx
+LjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpS
+REYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJk
+Zi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIg
+eG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxu
+czp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1s
+bnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9S
+ZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9w
+IENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6REYw
+MTY0RTU0Q0YzMTFFMTgwRDRFN0IwNTUxMjk5QzYiIHhtcE1NOkRvY3VtZW50
+SUQ9InhtcC5kaWQ6REYwMTY0RTY0Q0YzMTFFMTgwRDRFN0IwNTUxMjk5QzYi
+PiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlp
+ZDpERjAxNjRFMzRDRjMxMUUxODBENEU3QjA1NTEyOTlDNiIgc3RSZWY6ZG9j
+dW1lbnRJRD0ieG1wLmRpZDpERjAxNjRFNDRDRjMxMUUxODBENEU3QjA1NTEy
+OTlDNiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1w
+bWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgmldWEAAAAMUExUReHi5fP0+uLj
+5vL0+ZkC9OcAAAFLSURBVHjahFQLFsMgCANz/ztPSLDia521z63GED5icGBc
+B+BuDjO7wmzADQmyz0FCm+Bhd7Jh+UzSbYRYR/7IhdjA+feYJwoW56e7/eVM
+OhMsrLw7EDsLNrnx7kZsPWzzz4tCCLZcQLBhqdbKb5vR0DaUtCLACywghIVS
+xtsPWKgKbWKD/KGFgy0zO5xsE1xJB3rcksrT76Cx2OqwzEKCZ5TJ5isLOxuU
+Z5jYKiY9blkOzJm0LQvejObJja0+7dpYMYJRG5n8jJt8oFIGTFayeh9P/dTm
+xO2eurAPGw8CW/VK7MbmsommrU5iZaH4e07padzXtVTUWxZQl41s9RFH9SqU
+jAS2mPfqVV5U4ZXV7ukyarMs8rFK1VFvOG4rFKZdm056u6Gnp7ceUq1GXQua
+z6PJfQP7160Pxs3A+NNTg272Xv/TobMP/AQYAKigCcAjbJkZAAAAAElFTkSu
+QmCC
+" style="margin-right: 16px; width: 38px; height: 38px;" />
+            </td>
+            <td style="font-size: 13px; color: #aaa; line-height: 18px;">
+              You can configure recipients for build notifications in your
+              <a href="http://about.travis-ci.org/docs/user/build-configuration" style="color: #aaa;">configuration file</a>.
+              Further documentation about Travis CI can be found <a href="http://about.travis-ci.org/docs" style="color: #aaa;">here</a>.
+              For help please join our IRC channel irc.freenode.net#travis.
+            </td>
+          </tr>
+        </table>
+      </div>
 
-<table class="build-info">
-  <tr>
-    <th>Repository&nbsp;:</th><td><%= @build.repository.slug %></td>
-  </tr>
-  <tr>
-    <th>Build&nbsp;:</th><td>#<%= @build.number %></td>
-  </tr>
-  <tr><th>&nbsp;</th><td /></tr>
-  <tr>
-    <th>Duration&nbsp;:</th><td><%= duration_in_words(@build.started_at, @build.finished_at) %></td>
-  </tr>
-  <tr>
-    <th>Commit&nbsp;:</th><td><%= @commit.commit[0..7] %> (<%= @commit.branch %>)</td>
-  </tr>
-  <tr>
-    <th>Author&nbsp;:</th><td><%= @commit.author_name %></td>
-  </tr>
-  <tr>
-    <th>Message&nbsp;:</th><td><%= h(@commit.message).gsub("\n", "<br>").html_safe %></td>
-  </tr>
-  <tr><th>&nbsp;</th><td /></tr>
-  <tr>
-    <th>Status&nbsp;:</th><td><%= @build.status_message %></td>
-  </tr>
-</table>
+      <div id="please-donate" class="section" style="margin-bottom: 16px; width: 720px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 16px; border: 1px solid #ccc;">
+        <table border="0">
+          <tr>
+            <td style="font-size: 14px;">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANYAAACSCAMAAAAO9MRmAAAAGXRFWHRTb2Z0
+d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9i
+ZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2Vo
+aUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6
+bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYx
+LjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpS
+REYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJk
+Zi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIg
+eG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxu
+czp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1s
+bnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9S
+ZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9w
+IENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6REE3
+Rjg3MjQ0RDg4MTFFMTlERDRCRDE2MDlENTEwOTkiIHhtcE1NOkRvY3VtZW50
+SUQ9InhtcC5kaWQ6REE3Rjg3MjU0RDg4MTFFMTlERDRCRDE2MDlENTEwOTki
+PiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlp
+ZDo5N0M0QjNFQjREODcxMUUxOURENEJEMTYwOUQ1MTA5OSIgc3RSZWY6ZG9j
+dW1lbnRJRD0ieG1wLmRpZDo5N0M0QjNFQzREODcxMUUxOURENEJEMTYwOUQ1
+MTA5OSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1w
+bWV0YT4gPD94cGFja2V0IGVuZD0iciI/PmpCVvsAAAAwUExURf39/ScnJ8zM
+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
+p9z70QAAAABJRU5ErkJggg==
+" style="margin-right: 16px; width: 214px; height: 146px;" />
+            </td>
+            <td style="font-size: 14px;">
+              <h2 style="margin-top: 0; font-size: 24px;">We need your help!</h2>
+              <p>
+                Travis CI has run 406,714 tests for 5,442 OSS projects to date,
+                including Ruby, Rails, Rubinius, Rubygems, Bundler, Leiningen, Parrot,
+                Symfonie ...
+              </p>
+              <p>
+                If you use any of these then you benefit from Travis CI.
+              </p>
+              <p class="last-child" style="margin-bottom: 0;">
+                <a href="http://love.travis-ci.org" style="font-size: 14px; font-weight: bold; color: #118000;">Please donate so we can make Travis CI even better!</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </div>
 
-<br>
+      <div id="sponsors" style="width: 754px; margin-bottom: 16px;">
+        <table border="0">
+          <tr>
+            <% sponsors.each do |sponsor| %>
+              <td style="margin-top: 0; font-size: 14px;">
+                <table border="0" class="section" style="margin-bottom: 0; width: 373px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 16px; border: 1px solid #ccc;">
+                  <tr>
+                    <td style="margin-top: 0; font-size: 14px;">
+                      <a href="<%= sponsor.url %>">
+                        <img src="<%= encode_image("/images/mailer/logos/#{sponsor.name}-100x60.png") %>">
+                      </a>
+                    </td>
+                    <td style="margin-top: 0; font-size: 14px;">
+                      <%= sponsor.text.html_safe %>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            <% end %>
+          </tr>
+        </table>
+        <p style="margin: 0 0 0 4px;">
+          <a href="http://love.travis-ci.org/sponsors" style="font-size: 13px; color: #aaa;">See all of our sponsors &rarr;</a>
+        <p style="margin: 0 0 0 4px;">
+      </div>
 
-View the changeset&nbsp;: <%= link_to @commit.compare_url, @commit.compare_url %><br>
-<br>
-View the full build log and details&nbsp;: <%= link_to repository_build_url(:slug => @build.repository.slug, :id => @build.id), repository_build_url(:slug => @build.repository.slug, :id => @build.id) %>
+      <div id="footnote" class="section" style="margin-bottom: 16px; width: 720px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; margin-top: 0; font-size: 14px; padding: 16px; border: 1px solid #ccc;">
+        The delivery of this email was kindly sponsored by
+        <a href="http://postmarkapp.com">Postmark</a>, an
+        amazing service for transactional email delivery.
+      </div>
+    </div>
+  
+<style type="text/css">
+img { margin-right: 16px !important; }
+</style>
+</body>
+</html>
+

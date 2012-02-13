@@ -1,7 +1,24 @@
+require 'base64'
+require 'rack'
+
 module Travis
   module Mailer
     module Helper
       module Build
+        def sponsors
+          package  = [:platinum, :platinum, :gold].shuffle.first
+          count    = package == :platinum ? 1 : 2
+          sponsors = Travis.config.sponsors[package] || []
+          sponsors.shuffle[0, count].map { |sponsor| Hashr.new(sponsor) }
+        end
+
+        def encode_image(path)
+          path = "lib/travis/mailer/views/#{path}"
+          type = Rack::Mime.mime_type(File.extname(path))
+          data = Base64.encode64(File.read(path))
+          "data:#{type};base64,#{data}"
+        end
+
         def repository_build_url(options)
           [Travis.config.host, options[:slug], 'builds', options[:id]].join('/')
         end

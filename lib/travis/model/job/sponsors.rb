@@ -1,50 +1,7 @@
 class Job
   module Sponsors
-    SPONSORS = {
-      'erlang.worker.travis-ci.org' => {
-        'name' => 'TTY',
-        'url' => 'http://www.tty.nl'
-      },
-      'nodejs1.worker.travis-ci.org' => {
-        'name' => 'Shopify',
-        'url' => 'http://www.shopify.com'
-      },
-      'php1.worker.travis-ci.org' => {
-        'name' => 'ServerGrove',
-        'url' => 'http://servergrove.com'
-      },
-      'rails1.worker.travis-ci.org' => {
-        'name' => 'Engine Yard',
-        'url' => 'http://www.engineyard.com'
-      },
-      'rails2.worker.travis-ci.org' => {
-        'name' => 'Engine Yard',
-        'url' => 'http://www.engineyard.com'
-      },
-      'ruby1.worker.travis-ci.org' => {
-        'name' => 'EnterpriseRails',
-        'url' => 'http://www.enterprise-rails.com'
-      },
-      'ruby2.worker.travis-ci.org' => {
-        'name' => 'EnterpriseRails',
-        'url' => 'http://www.enterprise-rails.com'
-      },
-      'ruby3.worker.travis-ci.org' => {
-        'name' => 'Railslove',
-        'url' => 'http://railslove.de'
-      },
-      'spree.worker.travis-ci.org' => {
-        'name' => 'Spree',
-        'url' => 'http://spreecommerce.com'
-      },
-      'staging.worker.travis-ci.org' => {
-        'name' => 'EnterpriseRails',
-        'url' => 'http://www.enterprise-rails.com'
-      }
-    }
-
     def sponsor
-      Hashr.new(SPONSORS[worker.split(':').first] || {})
+      @sponsors ||= Travis.config.sponsors.workers[worker.split(':').first || ''] || Hashr.new
     end
 
     # TODO this overwrites the activerecord attribute which currently is not populated from the actual worker
@@ -61,4 +18,3 @@ class Job
       end
   end
 end
-

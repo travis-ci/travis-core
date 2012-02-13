@@ -48,16 +48,12 @@ describe Travis::Mailer::Build do
 
     it 'contains the expected html part' do
       email.html_part.body.should include_lines(%(
-        1 hour, 17 minutes, and 7 seconds
+        https://github.com/svenfuchs/minimal/compare/master...develop
+        http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}
         62aae5f7 (master)
-        Author
         まつもとゆきひろ a.k.a. Matz
         the commit message
-        Passed
-        View the changeset
-        https://github.com/svenfuchs/minimal/compare/master...develop
-        View the full build log and details
-        http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}
+        1 hour, 17 minutes, and 7 seconds
       ))
     end
 
@@ -77,13 +73,34 @@ describe Travis::Mailer::Build do
         # Encode the email, then parse the encoded string as a new Mail
         h = Mail.new(email.encoded).html_part
         html = h.body.to_s
-        html.force_encoding(h.charset) if RUBY_VERSION == "1.9.2"
+        html.force_encoding(h.charset) if RUBY_VERSION >= "1.9.2"
         html.should include("まつもとゆきひろ a.k.a. Matz")
       end
-    end
-  end
 
-  describe 'finished_email' do
+      describe 'sponsors' do
+        before :each do
+          Travis.config.sponsors = {
+            :platinum => [{ :name => 'xing', :url => 'http://xing.de', :text => '<a href="http://xing.de">XING</a>' }],
+            :gold     => [{ :name => 'xing', :url => 'http://xing.de', :text => '<a href="http://xing.de">XING</a>' }]
+          }
+        end
+
+        let(:sponsor) do
+          email.deliver
+          email.html_part.decoded =~ /<div[^>]*id="sponsors"[^>]*>(.*)<\/div>/m
+          $1
+        end
+
+        it 'adds a sponsor image' do
+          sponsor.should =~ %r(<img src="data:image/png;base64[^"]+">)
+        end
+
+        it 'does not escape tags contained in the sponsor text' do
+          sponsor.should =~ %r(<a href="http://xing.de">XING</a>)
+        end
+      end
+    end
+
     describe 'for a successful build' do
       let(:build) { Factory(:successful_build) }
 
@@ -93,7 +110,7 @@ describe Travis::Mailer::Build do
 
       it 'should have the "success" css class on alert-message' do
         email.deliver
-        email.html_part.decoded.should include('<div class="alert-message block-message success"')
+        email.html_part.decoded.should =~ /<div[^>]+class="[^"]*success[^"]*"/
       end
     end
 
@@ -104,9 +121,9 @@ describe Travis::Mailer::Build do
         email.subject.should == '[Failed] svenfuchs/broken_build#1 (master - 62aae5f)'
       end
 
-      it 'should have the "error" css class on alert-message' do
+      it 'should have the "failure" css class on alert-message' do
         email.deliver
-        email.html_part.decoded.should include('<div class="alert-message block-message error"')
+        email.html_part.decoded.should =~ /<div[^>]+class="[^"]*failure[^"]*"/
       end
     end
   end
