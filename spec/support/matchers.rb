@@ -34,7 +34,7 @@ RSpec::Matchers.define :deliver_to do |expected|
     failure_message_for_should { "expected #{email.inspect} to deliver to #{expected.inspect}, but it delivered to #{actual.inspect}" }
     failure_message_for_should_not { "expected #{email.inspect} not to deliver to #{expected.inspect}, but it did" }
 
-    actual.sort == expected.sort
+    actual.sort == Array(expected).sort
   end
 end
 
