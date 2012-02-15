@@ -29,6 +29,7 @@ class Job
       status == 0
     end
 
+    # TODO should be able to merge this with passed?. either the failure is not allowed or the build has passed.
     def passed_or_allowed_to_fail?
       passed? || allow_failure
     end

@@ -13,9 +13,9 @@ module Travis
         end
 
         def encode_image(path)
-          path = "lib/travis/mailer/views/#{path}"
+          path = File.expand_path("../../views/#{path}", __FILE__)
           type = Rack::Mime.mime_type(File.extname(path))
-          data = Base64.encode64(File.read(path))
+          data = Base64.encode64(File.read(path)) if File.exists?(path)
           "data:#{type};base64,#{data}"
         end
 
