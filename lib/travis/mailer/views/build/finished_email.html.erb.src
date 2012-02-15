@@ -81,8 +81,7 @@
               <h2>We need your help!</h2>
               <p>
                 Travis CI has run 406,714 tests for 5,442 OSS projects to date,
-                including Ruby, Rails, Rubinius, Rubygems, Bundler, Leiningen, Parrot,
-                Symfony ...
+                including Ruby, Rails, Rubinius, Rubygems, Bundler, Node.js, Leiningen, Symfony ...
               </p>
               <p>
                 If you use any of these then you benefit from Travis CI.
