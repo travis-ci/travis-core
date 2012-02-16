@@ -20,7 +20,6 @@ end
 
 group :development do
   gem 'standalone_migrations', '~> 1.0.5'
-  gem 'pry'
 end
 
 group :test do

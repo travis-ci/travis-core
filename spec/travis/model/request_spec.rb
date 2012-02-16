@@ -5,9 +5,6 @@ require 'support/active_record'
 describe Request do
   include Support::ActiveRecord
 
-
-  #let(:pull_request_payload) { GITHUB_PAYLOADS['pull-request'] }
-
   describe 'create' do
     let(:request) { Factory(:request).reload }
 
