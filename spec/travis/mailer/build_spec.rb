@@ -91,10 +91,6 @@ describe Travis::Mailer::Build do
           $1
         end
 
-        it 'adds a sponsor image' do
-          sponsor.should =~ %r(<img src="data:image/png;base64[^"]+">)
-        end
-
         it 'does not escape tags contained in the sponsor text' do
           sponsor.should =~ %r(<a href="http://xing.de">XING</a>)
         end
