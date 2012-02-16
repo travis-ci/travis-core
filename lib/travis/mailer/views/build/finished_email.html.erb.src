@@ -103,7 +103,7 @@
                   <tr>
                     <td>
                       <a href="<%= sponsor.url %>">
-                        <img src="https://travis-production.herokuapp.com/images/mailer/logos/#{sponsor.name}-100x60.png">
+                        <img src="https://travis-production.herokuapp.com/images/mailer/logos/<%= sponsor.name % >-100x60.png">
                       </a>
                     </td>
                     <td>
