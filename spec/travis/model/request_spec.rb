@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'support/payloads'
 require 'support/active_record'
+require 'webmock'
 
 describe Request do
   include Support::ActiveRecord
@@ -76,6 +77,14 @@ describe Request do
 
   context 'pull_request' do
     it_behaves_like "a github event"
+
+    before do
+      WebMock.stub_request(:get, "http://github.com/api/v2/json/user/show/rkh").
+        with(:headers => {'Accept'=>'*/*', 'User-Agent'=>'Ruby'}).
+        to_return(
+          :status => 200, :body => GITHUB_PAYLOADS['rkh'],
+          :headers => {"Content-Type" => "application/json; charset=utf-8"})
+    end
 
     let(:payload_data) { GITHUB_PAYLOADS['pull-request'] }
     let(:payload) { Request::Payload::Github::PullRequest.new(payload_data, 'token') }

@@ -302,6 +302,26 @@ GITHUB_PAYLOADS = {
     }
   }),
 
+  'rkh' => %({
+    "user": {
+      "gravatar_id":"5c2b452f6eea4a6d84c105ebd971d2a4",
+      "company":"Travis GmbH",
+      "name":"Konstantin Haase",
+      "created_at":"2008/10/22 11:56:03 -0700",
+      "location":"Potsdam, Berlin, Portland",
+      "public_repo_count":108,
+      "public_gist_count":217,
+      "blog":"http://rkh.im",
+      "following_count":477,
+      "id":30442,
+      "type":"User",
+      "permission":null,
+      "followers_count":369,
+      "login":"rkh",
+      "email":"k.haase@finn.de"
+    }
+  }),
+
   :oauth => {
     "uid" => "234423",
     "info" => {
