@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Request::Payload::Github do
-  let(:payload) { Request::Payload::Github.new(GITHUB_PAYLOADS['gem-release'], 'token') }
+  let(:payload) { Request::Payload::Github::Push.new(GITHUB_PAYLOADS['gem-release'], 'token') }
 
   describe 'reject?' do
     it 'is true when the does not contain any commit information' do

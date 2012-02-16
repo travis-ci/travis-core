@@ -2,6 +2,7 @@ require 'ostruct'
 require 'active_support/core_ext/string/inflections'
 require 'core_ext/ostruct/hash_access'
 require 'active_support/json'
+require 'net/http'
 
 # TODO: either port this to Octokit or use Hashr instead of OpenStruct
 module Github
@@ -37,7 +38,9 @@ module Github
         payload = ActiveSupport::JSON.decode(payload) if payload.is_a?(String)
         super(payload)
       end
+    end
 
+    class Push < Payload
       def repository
         @repository ||= Repository.new(super)
       end
@@ -56,6 +59,45 @@ module Github
         self['compare']
       end
     end
+
+    class PullRequest < Payload
+      def links
+        pull_request["_links"]
+      end
+
+      def comments_url
+        links["comments"]
+      end
+
+      def base_commit
+        @base_commit ||= Commit.new({'ref' => pull_request["base"]["sha"]}, repository)
+      end
+
+      def base_repository
+        @base_repository ||= Repository.new(pull_request["base"]["repo"])
+      end
+
+      def head_repository
+        @head_repository ||= Repository.new(pull_request["head"]["repo"])
+      end
+
+      alias repository head_repository
+
+      def head_commit
+        @head_commit ||= begin
+          commit = {
+            'ref'         => pull_request["head"]["ref"],
+            'id'          => pull_request["head"]["sha"],
+            'compare_url' => links["html"],
+            'message'     => pull_request["title"],
+            'timestamp'   => pull_request["head"]["repo"]["pushed_at"]
+          }
+          Commit.new(commit, repository)
+        end
+      end
+
+      alias last_commit head_commit
+    end
   end
 
   class Repository < OpenStruct
@@ -68,7 +110,7 @@ module Github
     end
 
     def owner_name
-      owner.is_a?(Hash) ? owner['name'] : owner
+      owner.is_a?(Hash) ? owner['login'] || owner['name'] : owner
     end
 
     def owner_email

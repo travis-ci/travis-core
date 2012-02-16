@@ -137,6 +137,171 @@ GITHUB_PAYLOADS = {
     "created":true
   }),
 
+  "pull-request" => %({
+    "action": "opened", 
+    "number": 1, 
+    "pull_request": {
+      "_links": {
+        "comments": {
+          "href": "https:\/\/api.github.com\/repos\/travis-repos\/test-project-1\/issues\/1\/comments"
+        }, 
+        "html": {
+          "href": "https:\/\/github.com\/travis-repos\/test-project-1\/pull\/1"
+        }, 
+        "review_comments": {
+          "href": "https:\/\/api.github.com\/repos\/travis-repos\/test-project-1\/pulls\/1\/comments"
+        }, 
+        "self": {
+          "href": "https:\/\/api.github.com\/repos\/travis-repos\/test-project-1\/pulls\/1"
+        }
+      }, 
+      "additions": 1, 
+      "base": {
+        "label": "travis-repos:master", 
+        "ref": "master", 
+        "repo": {
+          "clone_url": "https:\/\/github.com\/travis-repos\/test-project-1.git", 
+          "created_at": "2011-04-14T18:23:41Z", 
+          "description": "Test dummy repository for testing Travis CI", 
+          "fork": false, 
+          "forks": 5, 
+          "git_url": "git:\/\/github.com\/travis-repos\/test-project-1.git", 
+          "has_downloads": true, 
+          "has_issues": true, 
+          "has_wiki": true, 
+          "homepage": "http:\/\/travis-ci.org", 
+          "html_url": "https:\/\/github.com\/travis-repos\/test-project-1", 
+          "id": 1615549, 
+          "language": "Ruby", 
+          "master_branch": null, 
+          "mirror_url": null, 
+          "name": "test-project-1", 
+          "open_issues": 1, 
+          "owner": {
+            "avatar_url": "https:\/\/secure.gravatar.com\/avatar\/dad32d44d4850d2bc9485ee115ab4227?d=https:\/\/a248.e.akamai.net\/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-orgs.png", 
+            "gravatar_id": "dad32d44d4850d2bc9485ee115ab4227", 
+            "id": 864347, 
+            "login": "travis-repos", 
+            "url": "https:\/\/api.github.com\/users\/travis-repos"
+          }, 
+          "private": false, 
+          "pushed_at": "2011-12-12T06:38:20Z", 
+          "size": 128, 
+          "ssh_url": "git@github.com:travis-repos\/test-project-1.git", 
+          "svn_url": "https:\/\/github.com\/travis-repos\/test-project-1", 
+          "updated_at": "2012-02-13T15:17:57Z", 
+          "url": "https:\/\/api.github.com\/repos\/travis-repos\/test-project-1", 
+          "watchers": 6
+        }, 
+        "sha": "4a90c0ad9187c8735e1bcbf39a0291a21284994a", 
+        "user": {
+          "avatar_url": "https:\/\/secure.gravatar.com\/avatar\/dad32d44d4850d2bc9485ee115ab4227?d=https:\/\/a248.e.akamai.net\/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-orgs.png", 
+          "gravatar_id": "dad32d44d4850d2bc9485ee115ab4227", 
+          "id": 864347, 
+          "login": "travis-repos", 
+          "url": "https:\/\/api.github.com\/users\/travis-repos"
+        }
+      }, 
+      "body": "", 
+      "changed_files": 1, 
+      "closed_at": null, 
+      "comments": 0, 
+      "commits": 1, 
+      "created_at": "2012-02-14T14:00:48Z", 
+      "deletions": 1, 
+      "diff_url": "https:\/\/github.com\/travis-repos\/test-project-1\/pull\/1.diff", 
+      "head": {
+        "label": "rkh:master", 
+        "ref": "master", 
+        "repo": {
+          "clone_url": "https:\/\/github.com\/rkh\/test-project-1.git", 
+          "created_at": "2012-02-13T15:17:57Z", 
+          "description": "Test dummy repository for testing Travis CI", 
+          "fork": true, 
+          "forks": 0, 
+          "git_url": "git:\/\/github.com\/rkh\/test-project-1.git", 
+          "has_downloads": true, 
+          "has_issues": false, 
+          "has_wiki": true, 
+          "homepage": "http:\/\/travis-ci.org", 
+          "html_url": "https:\/\/github.com\/rkh\/test-project-1", 
+          "id": 3431064, 
+          "language": "Ruby", 
+          "master_branch": null, 
+          "mirror_url": null, 
+          "name": "test-project-1", 
+          "open_issues": 0, 
+          "owner": {
+            "avatar_url": "https:\/\/secure.gravatar.com\/avatar\/5c2b452f6eea4a6d84c105ebd971d2a4?d=https:\/\/a248.e.akamai.net\/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png", 
+            "gravatar_id": "5c2b452f6eea4a6d84c105ebd971d2a4", 
+            "id": 30442, 
+            "login": "rkh", 
+            "url": "https:\/\/api.github.com\/users\/rkh"
+          }, 
+          "private": false, 
+          "pushed_at": "2012-02-14T14:00:26Z", 
+          "size": 108, 
+          "ssh_url": "git@github.com:rkh\/test-project-1.git", 
+          "svn_url": "https:\/\/github.com\/rkh\/test-project-1", 
+          "updated_at": "2012-02-14T14:00:27Z", 
+          "url": "https:\/\/api.github.com\/repos\/rkh\/test-project-1", 
+          "watchers": 1
+        }, 
+        "sha": "9b00989b1a0e7d9b609ad2e28338c060f79a71ac", 
+        "user": {
+          "avatar_url": "https:\/\/secure.gravatar.com\/avatar\/5c2b452f6eea4a6d84c105ebd971d2a4?d=https:\/\/a248.e.akamai.net\/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png", 
+          "gravatar_id": "5c2b452f6eea4a6d84c105ebd971d2a4", 
+          "id": 30442, 
+          "login": "rkh", 
+          "url": "https:\/\/api.github.com\/users\/rkh"
+        }
+      }, 
+      "html_url": "https:\/\/github.com\/travis-repos\/test-project-1\/pull\/1", 
+      "id": 826379, 
+      "issue_url": "https:\/\/github.com\/travis-repos\/test-project-1\/issues\/1", 
+      "mergeable": null, 
+      "merged": false, 
+      "merged_at": null, 
+      "merged_by": null, 
+      "number": 1, 
+      "patch_url": "https:\/\/github.com\/travis-repos\/test-project-1\/pull\/1.patch", 
+      "review_comments": 0, 
+      "state": "open", 
+      "title": "You must enter a title to submit a Pull Request", 
+      "updated_at": "2012-02-14T14:00:48Z", 
+      "url": "https:\/\/api.github.com\/repos\/travis-repos\/test-project-1\/pulls\/1", 
+      "user": {
+        "avatar_url": "https:\/\/secure.gravatar.com\/avatar\/5c2b452f6eea4a6d84c105ebd971d2a4?d=https:\/\/a248.e.akamai.net\/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png", 
+        "gravatar_id": "5c2b452f6eea4a6d84c105ebd971d2a4", 
+        "id": 30442, 
+        "login": "rkh", 
+        "url": "https:\/\/api.github.com\/users\/rkh"
+      }
+    }, 
+    "repository": {
+      "created_at": "2011-04-14T18:23:41Z", 
+      "id": 1615549, 
+      "name": "test-project-1", 
+      "owner": {
+        "avatar_url": "https:\/\/secure.gravatar.com\/avatar\/dad32d44d4850d2bc9485ee115ab4227?d=https:\/\/a248.e.akamai.net\/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-orgs.png", 
+        "gravatar_id": "dad32d44d4850d2bc9485ee115ab4227", 
+        "id": 864347, 
+        "login": "travis-repos", 
+        "url": "https:\/\/api.github.com\/users\/travis-repos"
+      }, 
+      "pushed_at": "2011-12-12T06:38:20Z", 
+      "updated_at": "2012-02-13T15:17:57Z", 
+      "url": "https:\/\/api.github.com\/repos\/travis-repos\/test-project-1"
+    }, 
+    "sender": {
+      "avatar_url": "https:\/\/secure.gravatar.com\/avatar\/5c2b452f6eea4a6d84c105ebd971d2a4?d=https:\/\/a248.e.akamai.net\/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png", 
+      "gravatar_id": "5c2b452f6eea4a6d84c105ebd971d2a4", 
+      "id": 30442, 
+      "login": "rkh", 
+      "url": "https:\/\/api.github.com\/users\/rkh"
+    }
+  }),
+
   :oauth => {
     "uid" => "234423",
     "info" => {

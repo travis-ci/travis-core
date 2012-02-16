@@ -8,13 +8,22 @@ class Request < ActiveRecord::Base
   include States
 
   class << self
+    # TODO replace with registration API?
+    def payload_class_for(type)
+      case type
+      when 'push'         then Payload::Github::Push
+      when 'pull_request' then Payload::Github::PullRequest
+      else raise ArgumentError, "unsupported github event"
+      end
+    end
+
     # TODO clean this up
-    def create_from(payload, token)
-      payload = Payload::Github.new(payload, token)
+    def create_from(type, payload, token)
+      payload = payload_class_for(type).new(payload, token)
       unless payload.reject?
         repository = repository_for(payload.repository)
         commit = commit_for(payload, repository)
-        repository.requests.create!(payload.attributes.merge(:state => :created, :commit => commit))
+        repository.requests.create!(payload.attributes.merge(:state => :created, :commit => commit, :event_type => type))
       end
     end
 
@@ -32,6 +41,8 @@ class Request < ActiveRecord::Base
   has_one    :job, :as => :owner, :class_name => 'Job::Configure'
   belongs_to :commit
   belongs_to :repository
+  belongs_to :head_repository
+  belongs_to :head_commit
   has_many   :builds
 
   validates :repository_id, :commit_id, :presence => true

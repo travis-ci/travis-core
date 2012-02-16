@@ -8,12 +8,12 @@ describe Github do
   let(:data) { ActiveSupport::JSON.decode(GITHUB_PAYLOADS['gem-release']) }
 
   it 'payload repository' do
-    payload = Github::ServiceHook::Payload.new(data)
+    payload = Github::ServiceHook::Push.new(data)
     payload.repository.name.should == 'gem-release'
   end
 
   it 'payload commits' do
-    payload = Github::ServiceHook::Payload.new(data)
+    payload = Github::ServiceHook::Push.new(data)
     payload.commits.first.commit.should == '9854592'
   end
 
