@@ -14,6 +14,22 @@ module Travis
           end
         end
 
+        GRADIENTS = {
+          :success => %w(#0ecf0b #0bbd0b #08ae0d #0c901d),
+          :failure => %w(#f76e69 #f4564e #f64130 #e93a13)
+        }
+
+        def gradient_styles(build)
+          colors = GRADIENTS[build.passed? ? :success : :failure]
+          styles = <<-styles.gsub(/(^|\n)\s*/m, '')
+            background: #{colors[3]};
+            background: -moz-linear-gradient(top, #{colors[0]} 0%, #{colors[1]} 50%, #{colors[2]} 51%, #{colors[3]} 100%);
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#{colors[0]}), color-stop(50%,#{colors[1]}), color-stop(51%,#{colors[2]}), color-stop(100%,#{colors[3]}));
+            background: -webkit-linear-gradient(top, #{colors[0]} 0%,#{colors[1]} 50%,#{colors[2]} 51%,#{colors[3]} 100%);
+            background: linear-gradient(top, #{colors[0]} 0%,#{colors[1]} 50%,#{colors[2]} 51%,#{colors[3]} 100%);
+          styles
+        end
+
         def encode_image(path)
           path = File.expand_path("../../views/#{path}", __FILE__)
           type = Rack::Mime.mime_type(File.extname(path))
