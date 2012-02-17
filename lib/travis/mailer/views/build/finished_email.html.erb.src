@@ -59,7 +59,7 @@
         <table border="0" class="footer">
           <tr>
             <td>
-              <img src="https://travis-production.herokuapp.com/images/mailer/footer-logo-38x38.png">
+              <img src="https://secure.travis-ci.org/images/mailer/footer-logo-38x38.png">
             </td>
             <td>
               You can configure recipients for build notifications in your
@@ -75,7 +75,7 @@
         <table border="0">
           <tr>
             <td>
-              <img src="https://travis-production.herokuapp.com/images/mailer/please-donate.png">
+              <img src="https://secure.travis-ci.org/images/mailer/please-donate.png">
             </td>
             <td>
               <h2>We need your help!</h2>
@@ -103,7 +103,7 @@
                   <tr>
                     <td>
                       <a href="<%= sponsor.url %>">
-                        <img src="https://travis-production.herokuapp.com/images/mailer/logos/<%= sponsor.name % >-100x60.png">
+                        <img src="https://secure.travis-ci.org/images/mailer/logos/<%= sponsor.name %>-100x60.png">
                       </a>
                     </td>
                     <td>
