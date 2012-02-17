@@ -97,14 +97,14 @@ th {
   margin-bottom: 0;
 }
 #sponsors td,
-#footnote {
+.footnote {
   margin-top: 0;
   font-size: 14px;
 }
-#sponsors p {
+p.footnote {
   margin: 0 0 0 4px;
 }
-#sponsors p a {
+p.footnote a {
   font-size: 13px;
   color: #aaa;
 }
