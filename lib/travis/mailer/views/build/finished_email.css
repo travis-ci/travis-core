@@ -24,12 +24,12 @@ h1, h2 {
 h1 {
   font-size: 28px;
   text-align: center;
-  padding: 8px 15px;
   color: white;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);
+  overflow: hidden;
 }
 .success h1 {
   background: #0c901d; /* Old browsers */
@@ -49,7 +49,7 @@ th {
   text-align: right;
   padding-right: 16px;
 }
-#build .footer {
+.footer {
   background-color: #f3f4fa;
   margin: 26px -16px -16px -16px;
   padding: 16px 16px 14px 16px;
@@ -60,15 +60,15 @@ th {
   border-bottom-right-radius: 6px;
   border-bottom-left-radius: 6px;
 }
-#build .footer td {
+.footer td {
   font-size: 13px;
   color: #aaa;
   line-height: 18px;
 }
-#build .footer a {
+.footer a {
   color: #aaa;
 }
-#build .footer img {
+.footer img {
   width: 38px;
   height: 38px;
 }

@@ -22,6 +22,7 @@ module Travis
         def gradient_styles(build)
           colors = GRADIENTS[build.passed? ? :success : :failure]
           styles = <<-styles.gsub(/(^|\n)\s*/m, '')
+            padding: 8px 15px;
             background: #{colors[3]};
             background: -moz-linear-gradient(top, #{colors[0]} 0%, #{colors[1]} 50%, #{colors[2]} 51%, #{colors[3]} 100%);
             background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#{colors[0]}), color-stop(50%,#{colors[1]}), color-stop(51%,#{colors[2]}), color-stop(100%,#{colors[3]}));

@@ -5,9 +5,9 @@
   </head>
   <body>
     <div id="body">
-      <div id="build" class="section <%= @build.passed? ? 'success' : 'failure' %>">
+      <div id="build" class="section">
         <h1>
-          <div <%= %(style="#{gradient_styles(@build)}") %>>
+          <div <%= %(style="#{gradient_styles(@build)}").html_safe %>>
             <%= @build.human_status_message %>
           </div>
         </h1>

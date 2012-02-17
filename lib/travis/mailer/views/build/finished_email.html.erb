@@ -5,9 +5,9 @@
   </head>
   <body>
     <div id="body" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; color: #333;">
-      <div id="build" class="section <%= @build.passed? ? 'success' : 'failure' %>" style="margin-bottom: 16px; width: 720px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 16px; border: 1px solid #ccc;">
-        <h1 style="margin-top: 0; font-size: 28px; text-align: center; color: white; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3); padding: 8px 15px;" align="center">
-          <div <%= %(style="#{gradient_styles(@build)}") %>>
+      <div id="build" class="section" style="margin-bottom: 16px; width: 720px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 16px; border: 1px solid #ccc;">
+        <h1 style="margin-top: 0; font-size: 28px; text-align: center; color: white; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3); overflow: hidden;" align="center">
+          <div <%= %(style="#{gradient_styles(@build)}").html_safe %>>
             <%= @build.human_status_message %>
           </div>
         </h1>
@@ -44,15 +44,15 @@
             <td><%= duration_in_words(@build.started_at, @build.finished_at) %></td>
           </tr>
         </table>
-        <table border="0" class="footer">
+        <table border="0" class="footer" style="background-color: #f3f4fa; -webkit-border-bottom-right-radius: 6px; -webkit-border-bottom-left-radius: 6px; -moz-border-radius-bottomright: 6px; -moz-border-radius-bottomleft: 6px; border-bottom-right-radius: 6px; border-bottom-left-radius: 6px; margin: 26px -16px -16px; padding: 16px 16px 14px;" bgcolor="#f3f4fa">
           <tr>
-            <td>
-              <img src="https://secure.travis-ci.org/images/mailer/footer-logo-38x38.png" style="margin-right: 16px;" />
+            <td style="font-size: 13px; color: #aaa; line-height: 18px;">
+              <img src="https://secure.travis-ci.org/images/mailer/footer-logo-38x38.png" style="margin-right: 16px; width: 38px; height: 38px;" />
             </td>
-            <td>
+            <td style="font-size: 13px; color: #aaa; line-height: 18px;">
               You can configure recipients for build notifications in your
-              <a href="http://about.travis-ci.org/docs/user/build-configuration">configuration file</a>.
-              Further documentation about Travis CI can be found <a href="http://about.travis-ci.org/docs">here</a>.
+              <a href="http://about.travis-ci.org/docs/user/build-configuration" style="color: #aaa;">configuration file</a>.
+              Further documentation about Travis CI can be found <a href="http://about.travis-ci.org/docs" style="color: #aaa;">here</a>.
               For help please join our IRC channel irc.freenode.net#travis.
             </td>
           </tr>
