@@ -9,7 +9,9 @@ module Travis
           package  = [:platinum, :platinum, :gold].shuffle.first
           count    = package == :platinum ? 1 : 2
           sponsors = Travis.config.sponsors[package] || []
-          sponsors.shuffle[0, count].map { |sponsor| Hashr.new(sponsor) }
+          sponsors.shuffle[0, count].map do |sponsor|
+            Hashr.new(sponsor.merge(:package => package))
+          end
         end
 
         def encode_image(path)

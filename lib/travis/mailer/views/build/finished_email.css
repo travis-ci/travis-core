@@ -88,14 +88,13 @@ th {
   height: 146px;
 }
 #sponsors {
-  width: 754px;
+  width: 756px;
   margin-bottom: 16px;
+  position: relative;
 }
 #sponsors .section {
+  width: auto;
   margin-bottom: 0;
-}
-#sponsors .section.gold {
-  width: 373px;
 }
 #sponsors td,
 #footnote {

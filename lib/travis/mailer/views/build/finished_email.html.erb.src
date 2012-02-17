@@ -99,7 +99,7 @@
           <tr>
             <% sponsors.each do |sponsor| %>
               <td>
-                <table border="0" class="section <%= sponsor.package %>">
+                <table border="0" class="section" <%= sponsor.package == :platinum ? 'style="width: 100%"' : 'style="width: 50%"' %>">
                   <tr>
                     <td>
                       <a href="<%= sponsor.url %>">

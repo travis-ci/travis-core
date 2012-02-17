@@ -94,12 +94,12 @@
         </table>
       </div>
 
-      <div id="sponsors" style="width: 754px; margin-bottom: 16px;">
+      <div id="sponsors" style="width: 756px; margin-bottom: 16px; position: relative;">
         <table border="0">
           <tr>
             <% sponsors.each do |sponsor| %>
               <td style="margin-top: 0; font-size: 14px;">
-                <table border="0" class="section <%= sponsor.package %>" style="margin-bottom: 0; width: 720px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 16px; border: 1px solid #ccc;">
+                <table border="0" class="section" <%= sponsor.package == :platinum ? 'style="width: 100%"' : 'style="width: 50%"' %>">
                   <tr>
                     <td style="margin-top: 0; font-size: 14px;">
                       <a href="<%= sponsor.url %>">
@@ -126,7 +126,7 @@
         amazing service for transactional email delivery.
       </div>
     </div>
-  
+
 <style type="text/css">
 img { margin-right: 16px !important; }
 </style>
