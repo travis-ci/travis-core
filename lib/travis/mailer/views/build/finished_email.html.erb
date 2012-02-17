@@ -7,7 +7,7 @@
     <div id="body" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; color: #333;">
       <div id="build" class="section <%= @build.passed? ? 'success' : 'failure' %>" style="margin-bottom: 16px; width: 720px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 16px; border: 1px solid #ccc;">
         <h1 style="margin-top: 0; font-size: 28px; text-align: center; color: white; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3); padding: 8px 15px;" align="center">
-          <div <%= %(style="#{gradient_styles(@build)}").html_safe %>>
+          <div <%= %(style="#{gradient_styles(@build)}") %>>
             <%= @build.human_status_message %>
           </div>
         </h1>
@@ -87,25 +87,27 @@
           <tr>
             <% sponsors.each do |sponsor| %>
               <td style="margin-top: 0; font-size: 14px;">
-                <table border="0" class="section" <%= sponsor.package == :platinum ? 'style="width: 100%"' : 'style="width: 50%"' %>">
-                  <tr>
-                    <td style="margin-top: 0; font-size: 14px;">
-                      <a href="<%= sponsor.url %>">
-                        <img src="https://secure.travis-ci.org/images/sponsors/<%= sponsor.name %>-100x60.png" style="margin-right: 16px; width: 100px; height: 60px; margin-top: -5px; border: 0;" />
-                      </a>
-                    </td>
-                    <td style="margin-top: 0; font-size: 14px;">
-                      <%= sponsor.text.html_safe %>
-                    </td>
-                  </tr>
-                </table>
+                <div class="section" style="margin-bottom: 0; width: auto; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 16px; border: 1px solid #ccc;">
+                  <table border="0" <%= (sponsor.package == :platinum ? 'style="width: 100%"' : 'style="width: 50%"').html_safe %>>
+                    <tr>
+                      <td style="margin-top: 0; font-size: 14px;">
+                        <a href="<%= sponsor.url %>">
+                          <img src="https://secure.travis-ci.org/images/sponsors/<%= sponsor.name %>-100x60.png" style="margin-right: 16px; width: 100px; height: 60px; margin-top: -5px; border: 0;" />
+                        </a>
+                      </td>
+                      <td style="margin-top: 0; font-size: 14px;">
+                        <%= sponsor.text.html_safe %>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
               </td>
             <% end %>
           </tr>
         </table>
-        <p style="margin: 0 0 0 4px;">
-          <a href="http://love.travis-ci.org/sponsors" style="font-size: 13px; color: #aaa;">See all of our sponsors &rarr;</a>
-        <p style="margin: 0 0 0 4px;">
+        <p>
+          <a href="http://love.travis-ci.org/sponsors">See all of our sponsors &rarr;</a>
+        <p>
       </div>
 
       <div id="footnote" class="section" style="margin-bottom: 16px; width: 720px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; margin-top: 0; font-size: 14px; padding: 16px; border: 1px solid #ccc;">
@@ -114,7 +116,7 @@
         amazing service for transactional email delivery.
       </div>
     </div>
-
+  
 <style type="text/css">
 img { margin-right: 16px !important; }
 </style>

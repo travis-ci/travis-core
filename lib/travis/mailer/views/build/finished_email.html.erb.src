@@ -87,18 +87,20 @@
           <tr>
             <% sponsors.each do |sponsor| %>
               <td>
-                <table border="0" class="section" <%= sponsor.package == :platinum ? 'style="width: 100%"' : 'style="width: 50%"' %>">
-                  <tr>
-                    <td>
-                      <a href="<%= sponsor.url %>">
-                        <img src="https://secure.travis-ci.org/images/sponsors/<%= sponsor.name %>-100x60.png">
-                      </a>
-                    </td>
-                    <td>
-                      <%= sponsor.text.html_safe %>
-                    </td>
-                  </tr>
-                </table>
+                <div class="section">
+                  <table border="0" <%= (sponsor.package == :platinum ? 'style="width: 100%"' : 'style="width: 50%"').html_safe %>>
+                    <tr>
+                      <td>
+                        <a href="<%= sponsor.url %>">
+                          <img src="https://secure.travis-ci.org/images/sponsors/<%= sponsor.name %>-100x60.png">
+                        </a>
+                      </td>
+                      <td>
+                        <%= sponsor.text.html_safe %>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
               </td>
             <% end %>
           </tr>
