@@ -107,11 +107,6 @@ describe Travis::Mailer::Build do
       it 'subject' do
         email.subject.should == '[Passed] svenfuchs/successful_build#1 (master - 62aae5f)'
       end
-
-      it 'should have the "success" css class on alert-message' do
-        email.deliver
-        email.html_part.decoded.should =~ /<div[^>]+class="[^"]*success[^"]*"/
-      end
     end
 
     describe 'for a broken build' do
@@ -119,11 +114,6 @@ describe Travis::Mailer::Build do
 
       it 'subject' do
         email.subject.should == '[Failed] svenfuchs/broken_build#1 (master - 62aae5f)'
-      end
-
-      it 'should have the "failure" css class on alert-message' do
-        email.deliver
-        email.html_part.decoded.should =~ /<div[^>]+class="[^"]*failure[^"]*"/
       end
     end
   end
