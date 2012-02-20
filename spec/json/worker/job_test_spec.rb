@@ -9,6 +9,7 @@ describe 'JSON for worker jobs' do
 
   it 'Job::Test' do
     json_for_worker(job).should == {
+      'type' => 'test',
       'build' => {
         'id' => job.id,
         'number' => '2.1',

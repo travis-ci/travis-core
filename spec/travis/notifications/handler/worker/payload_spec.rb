@@ -9,11 +9,11 @@ describe Travis::Notifications::Handler::Worker::Payload do
 
   describe 'for returns the payload required for worker jobs' do
     it 'Job::Configure' do
-      Payload.for(configure).keys.should == [:build, :repository, :queue]
+      Payload.for(configure).keys.should == [:type, :build, :repository, :queue]
     end
 
     it 'Job::Test' do
-      Payload.for(test).keys.should == [:build, :repository, :config, :queue]
+      Payload.for(test).keys.should == [:type, :build, :repository, :config, :queue]
     end
   end
 end
