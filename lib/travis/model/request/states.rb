@@ -13,10 +13,7 @@ class Request
       event :configure, :to => :configured, :after => :finish
       event :finish,    :to => :finished
 
-      def approved?
-        branch_included?(commit.branch) && !branch_excluded?(commit.branch) && !rails_fork?
-      end
-
+      # save the configuration and create a build if approved
       def configure(data)
         update_attributes!(extract_attributes(data))
         create_build! if approved?
@@ -24,12 +21,20 @@ class Request
 
       protected
 
+        def approved?
+          branch_included?(commit.branch) && !branch_excluded?(commit.branch) && !rails_fork?
+        end
+
         def extract_attributes(attributes)
           attributes.symbolize_keys.slice(*attribute_names.map(&:to_sym))
         end
 
         def rails_fork?
           repository.slug != 'rails/rails' && repository.slug =~ %r(/rails$)
+        end
+
+        def create_build!
+          build = builds.create!(:repository => repository, :commit => commit, :config => config)
         end
     end
   end

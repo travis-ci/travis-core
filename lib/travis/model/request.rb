@@ -39,10 +39,7 @@ class Request < ActiveRecord::Base
   serialize :config
 
   before_create do
+    # create the initial configure job
     build_job(:repository => repository, :commit => commit)
-  end
-
-  def create_build!
-    build = builds.create!(:repository => repository, :commit => commit, :config => config)
   end
 end

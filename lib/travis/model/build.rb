@@ -84,6 +84,7 @@ class Build < ActiveRecord::Base
     self.config = {} if config.nil?
   end
 
+  # set the build number and expand the matrix
   before_create do
     self.number = repository.builds.next_number
     expand_matrix
