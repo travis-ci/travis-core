@@ -22,7 +22,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'activerecord',      '~> 3.1.2'
   s.add_dependency 'actionmailer',      '~> 3.1.2'
   s.add_dependency 'railties',          '~> 3.1.2'
-  s.add_dependency 'hpricot',           '~> 0.8.4'
   s.add_dependency 'postmark-rails',    '~> 0.4.1'
 
   # db

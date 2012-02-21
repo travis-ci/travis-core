@@ -1,4 +1,5 @@
 require 'premailer'
+require 'hpricot' # so that premailer uses it
 require 'base64'
 require 'rack'
 

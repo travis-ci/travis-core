@@ -2,7 +2,6 @@ require 'action_mailer'
 require 'i18n'
 require 'pathname'
 require 'postmark-rails'
-require 'hpricot' # so that premailer uses it
 
 module Travis
   module Mailer
