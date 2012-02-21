@@ -36,7 +36,6 @@ require 'core_ext/hash/deep_symbolize_keys'
 #  * Notifications - helpers that are used by notification handlers (and that
 #                    TODO probably should be cleaned up and moved to
 #                    travis/notification)
-
 class Build < ActiveRecord::Base
   autoload :Denormalize,   'travis/model/build/denormalize'
   autoload :Matrix,        'travis/model/build/matrix'

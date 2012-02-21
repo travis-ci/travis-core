@@ -2,6 +2,7 @@ require 'active_support/concern'
 require 'simple_states'
 
 class Build
+
   # A Build goes through the following lifecycle:
   #
   #  * A newly created Build is in the `created` state.

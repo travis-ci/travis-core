@@ -1,6 +1,20 @@
 require 'active_support/concern'
 
 class Job
+
+  # Provides an `add_tags` method which will match regular expressions
+  # (defined in `config/tagging.yml`) against both the configuration and
+  # log and add the given tags to the Job.
+  #
+  # This is supposed to make it easy to tag builds automatically based
+  # on recurring log patterns (e.g. add the tag "gemfile-misses-rake") and
+  # then later use these tags to provide guidance to users or simply make
+  # it easier for the community to find particular builds. E.g. a note
+  # "Please add rake to your Gemfile and find addtional info here ..."
+  # could be added to build notification emails.
+  #
+  # TODO This functionality is currently not used at all but could easily
+  # be # enabled and levaraged.
   module Tagging
     class << self
       def rules

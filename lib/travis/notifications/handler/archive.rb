@@ -5,6 +5,9 @@ require 'cgi'
 module Travis
   module Notifications
     module Handler
+
+      # Archives a Build to a couchdb once it is finished so we can purge old
+      # build data at any time.
       class Archive
         EVENTS = 'build:finished'
 

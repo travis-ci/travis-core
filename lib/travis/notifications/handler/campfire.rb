@@ -1,6 +1,11 @@
 module Travis
   module Notifications
     module Handler
+
+      # Publishes a build notification to campfire rooms as defined in the
+      # configuration (`.travis.yml`).
+      #
+      # Campfire credentials are encrypted using the repository's ssl key.
       class Campfire < Webhook
 
         class << self
@@ -10,11 +15,7 @@ module Travis
 
           def campfire_config(scheme)
             scheme =~ /(\w+):(\w+)@(\w+)/
-            {
-              :subdomain => $1,
-              :token => $2,
-              :room => $3
-            }
+            { :subdomain => $1, :token => $2, :room => $3 }
           end
 
           def build_message(build)
@@ -49,47 +50,47 @@ module Travis
 
         protected
 
-        def send_campfire(targets, build)
-          message = build_message(build)
+          def send_campfire(targets, build)
+            message = build_message(build)
 
-          targets.each do |webhook|
-            config = campfire_config(webhook)
-            url    = campfire_url(config)
+            targets.each do |webhook|
+              config = campfire_config(webhook)
+              url    = campfire_url(config)
 
-            http_client.basic_auth config[:token], 'X'
+              http_client.basic_auth config[:token], 'X'
 
-            message.each do |line|
-              payload = MultiJson.encode({ :message => { :body => line } })
+              message.each do |line|
+                payload = MultiJson.encode({ :message => { :body => line } })
 
-              http_client.post(url) do |req|
-                req.body = payload
-                req.headers['Content-Type']  = 'application/json'
+                http_client.post(url) do |req|
+                  req.body = payload
+                  req.headers['Content-Type']  = 'application/json'
+                end
               end
             end
           end
-        end
 
-        def http_options
-          options = {}
+          def http_options
+            options = {}
 
-          ssl = Travis.config.ssl
-          options[:ssl] = { :ca_path => ssl.ca_path } if ssl.ca_path
-          options[:ssl] = { :ca_file => ssl.ca_file } if ssl.ca_file
+            ssl = Travis.config.ssl
+            options[:ssl] = { :ca_path => ssl.ca_path } if ssl.ca_path
+            options[:ssl] = { :ca_file => ssl.ca_file } if ssl.ca_file
 
-          options
-        end
+            options
+          end
 
-        def build_message(build)
-          self.class.build_message(build)
-        end
+          def build_message(build)
+            self.class.build_message(build)
+          end
 
-        def campfire_url(config)
-          self.class.campfire_url(config)
-        end
+          def campfire_url(config)
+            self.class.campfire_url(config)
+          end
 
-        def campfire_config(webhook)
-          self.class.campfire_config(webhook)
-        end
+          def campfire_config(webhook)
+            self.class.campfire_config(webhook)
+          end
       end
     end
   end

@@ -15,7 +15,6 @@ require 'active_support/json'
 #    emails).
 #
 # TODO: either port this to Octokit or use Hashr instead of OpenStruct
-
 module Github
   module Api
     class << self

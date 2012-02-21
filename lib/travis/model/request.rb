@@ -1,5 +1,10 @@
 require 'active_record'
 
+# Models an incoming request. The only supported source for requests currently is Github.
+#
+# The Request will be configured by fetching `.travis.yml` from the Github API
+# and needs to be approved based on the configuration. Once approved the
+# Request creates a Build.
 class Request < ActiveRecord::Base
   autoload :Branches, 'travis/model/request/branches'
   autoload :Payload,  'travis/model/request/payload'

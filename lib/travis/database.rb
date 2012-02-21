@@ -4,7 +4,6 @@ require 'travis/support'
 
 # Encapsulates setting up ActiveRecord and connecting to the database as
 # required for travis-hub, which is a non-rails app.
-
 module Travis
   module Database
     class << self

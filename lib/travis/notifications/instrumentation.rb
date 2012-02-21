@@ -2,6 +2,9 @@ require 'active_support/notifications'
 
 module Travis
   module Notifications
+
+    # Subscribes to the ActiveSupport::Notification API so we can use it for
+    # logging and instruments calls to `notify` (i.e. logs events).
     module Instrumentation
       class << self
         include Travis::Logging

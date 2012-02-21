@@ -1,4 +1,11 @@
 class Request
+
+  # Logic that figures out whether a branch is in- or excluded (white- or
+  # blacklisted) by the configuration (`.travis.yml`)
+  #
+  # TODO somehow feels wrong. maybe this should rather be on a Request::Approval
+  # or Request::Vetting as we might vet based on other things than just the
+  # branch?
   module Branches
     def branch_included?(branch)
       !included_branches || included_branches.include?(branch)

@@ -1,5 +1,14 @@
 module Travis
   module Notifications
+
+    # Notification handlers subscribe to events issued from core models (such
+    # as Build, Job::Configure and Job::Test).
+    #
+    # Subscriptions are defined in Travis.config so they can easily be
+    # added/removed for an environment.
+    #
+    # Subscribing classes are supposed to define an EVENTS constant which holds
+    # a regular expression which will be matched against the event name.
     class Subscription
       attr_reader :name, :subscriber, :patterns
 

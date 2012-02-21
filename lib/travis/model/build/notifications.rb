@@ -1,6 +1,7 @@
 require 'active_support/core_ext/object/blank'
 
 class Build
+
   # Helpers that are used in various Travis::Notification handlers
   # and should probably be cleaned up and moved there TODO
   module Notifications

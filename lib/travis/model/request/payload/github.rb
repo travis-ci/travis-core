@@ -2,6 +2,8 @@ require 'github'
 
 class Request
   module Payload
+    # Adds `attributes` and `reject?` methods to a github servicehook payload.
+    # These are used in `Request.create_from`.
     class Github < ::Github::ServiceHook::Payload
       def initialize(data, token)
         super(data)

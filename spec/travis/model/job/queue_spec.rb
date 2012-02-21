@@ -14,16 +14,6 @@ describe 'Job::Queue' do
     Job::Queue.instance_variable_set(:@queues, nil)
   end
 
-  it 'queues returns an array of Queues for the config hash' do
-    rails, clojure, erlang = Job::Queue.queues
-
-    rails.name.should == 'builds.rails'
-    rails.slug.should == 'rails/rails'
-
-    clojure.name.should == 'builds.clojure'
-    clojure.language.should == 'clojure'
-  end
-
   describe 'Queue.for' do
     it 'returns the build configure queue for a Configure job' do
       job = stub('job')
@@ -47,20 +37,32 @@ describe 'Job::Queue' do
     end
   end
 
+  describe 'Queue.queues' do
+    it 'returns an array of Queues for the config hash' do
+      rails, clojure, erlang = Job::Queue.send(:queues)
+
+      rails.name.should == 'builds.rails'
+      rails.slug.should == 'rails/rails'
+
+      clojure.name.should == 'builds.clojure'
+      clojure.language.should == 'clojure'
+    end
+  end
+
   describe 'matches?' do
     it "returns false when neither of slug or language match" do
       queue = queue('builds.common',  nil, nil)
-      queue.matches?('foo/bar', 'COBOL').should be_false
+      queue.send(:matches?, 'foo/bar', 'COBOL').should be_false
     end
 
     it "returns true when the given slug matches" do
       queue = queue('builds.rails', 'rails/rails')
-      queue.matches?('rails/rails', nil).should be_true
+      queue.send(:matches?, 'rails/rails', nil).should be_true
     end
 
     it "returns true when the given language matches" do
       queue = queue('builds.common', nil, 'clojure')
-      queue.matches?(nil, 'clojure').should be_true
+      queue.send(:matches?, nil, 'clojure').should be_true
     end
   end
 end

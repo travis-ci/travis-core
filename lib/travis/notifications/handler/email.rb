@@ -4,6 +4,8 @@ require 'net/smtp'
 module Travis
   module Notifications
     module Handler
+
+      # Sends out build notification emails using ActionMailer.
       class Email
         EVENTS = 'build:finished'
 

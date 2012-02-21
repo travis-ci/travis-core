@@ -4,6 +4,9 @@ require 'irc_client'
 module Travis
   module Notifications
     module Handler
+
+      # Publishes a build notification to IRC channels as defined in the
+      # configuration (`.travis.yml`).
       class Irc
         EVENTS = 'build:finished'
 

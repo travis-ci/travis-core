@@ -4,6 +4,9 @@ require 'faraday'
 module Travis
   module Notifications
     module Handler
+
+      # Sends build notifications to webhooks as defined in the configuration
+      # (`.travis.yml`).
       class Webhook
         autoload :Payload, 'travis/notifications/handler/webhook/payload'
 

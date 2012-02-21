@@ -3,6 +3,17 @@ require 'simple_states'
 
 class Job
   class Test
+
+    # A Job::Test goes through the following lifecycle:
+    #
+    #  * A newly created instance is in the `created` state.
+    #  * When started it sets attributes from the payload and clears its log
+    #    (relevant for re-started jobs).
+    #  * When finished it sets attributes from the payload and adds tags.
+    #  * On both events it notifies event handlers and then propagates the even
+    #    to the build it belongs to.
+    #  * It also notifies event handlers of the `log` event whenever something
+    #    is appended to the log.
     module States
       extend ActiveSupport::Concern
 

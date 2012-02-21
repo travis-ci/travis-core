@@ -1,4 +1,5 @@
 class Build
+
   # The build's start and finish events (state changes) trigger denormalization
   # of certain attributes to the repository in order to disburden the db a bit.
   #
@@ -8,7 +9,6 @@ class Build
   # `last_status` on the repository.
   #
   # These attributes are used in the repositories list and thus read frequently.
-
   module Denormalize
     def denormalize(event, *args)
       repository.update_attributes!(denormalize_attributes_for(event)) if denormalize?(event)

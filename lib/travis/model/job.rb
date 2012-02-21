@@ -9,7 +9,6 @@ require 'active_record'
 #  * Job::Test belongs to a Build (one or many Job::Test instances make up a
 #    build matrix) and executes a test suite with parameters defined in the
 #    configuration.
-
 class Job < ActiveRecord::Base
   autoload :Configure, 'travis/model/job/configure'
   autoload :Cleanup,   'travis/model/job/cleanup'

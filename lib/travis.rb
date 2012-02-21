@@ -37,7 +37,6 @@ autoload :Worker,      'travis/model/worker'
 # travis-core also contains some helper classes and modules like Travis::Database
 # (needed in travis-hub in order to connect to the database) and Travis::Renderer
 # (our inferior layer on top of Rabl).
-
 module Travis
   autoload :Config,        'travis/config'
   autoload :Database,      'travis/database'

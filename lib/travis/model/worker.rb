@@ -1,5 +1,10 @@
 require 'active_record'
 
+# Models a worker so they can be exposed to clients through the JSON API.
+#
+# Workers have a simple heartbeat mechanism that pings every 10 seconds (unless
+# configured otherwise) while travis-hub will purge records that are older than
+# 15 seconds at an interval of 5 seconds (unless configured otherwise).
 class Worker < ActiveRecord::Base
   autoload :States, 'travis/model/worker/states'
 

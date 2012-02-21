@@ -4,6 +4,8 @@ require 'pusher'
 module Travis
   module Notifications
     module Handler
+
+      # Notifies registered clients about various state changes through Pusher.
       class Pusher
         autoload :Payload, 'travis/notifications/handler/pusher/payload'
 

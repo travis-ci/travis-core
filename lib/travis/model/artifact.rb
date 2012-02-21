@@ -9,7 +9,6 @@ require 'active_record'
 # Aggregating the log instead of storing it on the jobs table also makes
 # it easier to prevent from accidentally loading it to memory which happens
 # quite easily with # ActiveRecord.
-
 class Artifact < ActiveRecord::Base
   autoload :Log, 'travis/model/artifact/log'
 

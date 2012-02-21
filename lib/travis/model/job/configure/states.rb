@@ -3,6 +3,13 @@ require 'simple_states'
 
 class Job
   class Configure
+
+    # A Job::Configure goes through the following lifecycle:
+    #
+    #  * A newly created instance is in the `created` state.
+    #  * When started it propagates the event to the Request it belongs to.
+    #  * When finished it sets the configuration to the Request.
+    #  * After both `start` and `finish` events listeners will be notified.
     module States
       extend ActiveSupport::Concern
 

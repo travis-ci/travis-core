@@ -7,6 +7,13 @@ Rabl.configure do |config|
 end
 
 module Travis
+
+  # Renders objects to hashes, json and xml using a Rabl view.
+  #
+  # Now go away. Don't look at it. and better do not touch it.
+  # AND DON'T ASK ABOUT IT ANY MOAR!
+  #
+  # ;)
   class Renderer
     class << self
       def hash(object, options = {})

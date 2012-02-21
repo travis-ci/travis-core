@@ -2,6 +2,19 @@ require 'active_support/concern'
 require 'simple_states'
 
 class Request
+
+  # A Request goes through the following lifecycle:
+  #
+  #  * A newly created instance is in the `created` state.
+  #  * Its `start` and `configure` events are triggered by the request's
+  #    configure job. The `configure` event then triggers the `finish` event
+  #    TODO: why is that? why not rename `configure` to `finish`?
+  #
+  # Once configured a Request will be approved if the given branch is included
+  # and not excluded and the repository is not a Rails fork.
+  #
+  # When the Request is approved then it creates a Build.
+  # TODO: why does creating the Build not happen on `finish`?
   module States
     extend ActiveSupport::Concern
 

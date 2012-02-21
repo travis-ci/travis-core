@@ -15,7 +15,6 @@ require 'active_support/core_ext/object/blank'
 #
 # On top of that the database configuration can be overloaded by setting a database URL
 # to ENV['DATABASE_URL'] or ENV['SHARED_DATABASE_URL'] (which is something Heroku does).
-
 module Travis
   class Config < Hashr
     class << self

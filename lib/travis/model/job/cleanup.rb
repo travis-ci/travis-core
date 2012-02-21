@@ -1,12 +1,12 @@
 require 'active_support/concern'
 
 class Job
+
   # Cleanup contains logic that is supposed to re-enqueue stalled jobs
   # and finally finish them forcefully.
   #
   # This stuff is currently not used except when we occasionally
   # re-enqueue jobs manually from the console.
-
   module Cleanup
     extend ActiveSupport::Concern
 

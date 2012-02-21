@@ -5,7 +5,6 @@ require 'octokit'
 # given user.
 #
 # TODO can this be joined with lib/github.rb?
-#
 module Travis
   module GithubApi
     class ServiceHookError < StandardError; end
