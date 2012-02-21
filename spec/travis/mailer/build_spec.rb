@@ -21,6 +21,7 @@ describe Travis::Mailer::Build do
 
   before :each do
     Travis::Mailer.setup
+    I18n.reload!
     ActionMailer::Base.delivery_method = :test
   end
 
@@ -73,7 +74,7 @@ describe Travis::Mailer::Build do
         # Encode the email, then parse the encoded string as a new Mail
         h = Mail.new(email.encoded).html_part
         html = h.body.to_s
-        html.force_encoding(h.charset) if RUBY_VERSION >= "1.9.2"
+        html.force_encoding(h.charset) if html.respond_to?(:force_encoding)
         html.should include("まつもとゆきひろ a.k.a. Matz")
       end
 
