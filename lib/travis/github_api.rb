@@ -1,5 +1,11 @@
 require 'octokit'
 
+# Hides a few ugly bits of logic on top of Octokit required for adding and
+# removing service hooks on Github as well as fetching repositories for a
+# given user.
+#
+# TODO can this be joined with lib/github.rb?
+#
 module Travis
   module GithubApi
     class ServiceHookError < StandardError; end

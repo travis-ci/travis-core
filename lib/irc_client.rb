@@ -1,12 +1,14 @@
-# based on :
+# Very (maybe too) simple IRC client that is used for IRC notifications.
+#
+# based on:
 # https://github.com/sr/shout-bot
 #
-# libs to take note of :
+# other libs to take note of:
 # https://github.com/tbuehlmann/ponder
 # https://github.com/cinchrb/cinch
 # https://github.com/cho45/net-irc
 
-require "socket"
+require 'socket'
 
 class IrcClient
   attr_accessor :channel, :socket
@@ -36,7 +38,7 @@ class IrcClient
   end
 
   def quit
-    socket.puts "QUIT"
+    socket.puts 'QUIT'
     socket.gets until socket.eof?
   end
 end

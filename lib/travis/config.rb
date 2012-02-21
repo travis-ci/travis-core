@@ -2,6 +2,20 @@ require 'hashr'
 require 'yaml'
 require 'active_support/core_ext/object/blank'
 
+# Encapsulates the configuration necessary for travis-core.
+#
+# Configuration values will be read from
+#
+#  * either ENV['travis_config'] (this variable is set on Heroku by `travis config [env]`,
+#    see travis-cli) or
+#  * a local file config/travis.yml which contains the current env key (e.g. development,
+#    production, test)
+#
+# The env key can be set through various ENV variables, see Travis::Config.env.
+#
+# On top of that the database configuration can be overloaded by setting a database URL
+# to ENV['DATABASE_URL'] or ENV['SHARED_DATABASE_URL'] (which is something Heroku does).
+
 module Travis
   class Config < Hashr
     class << self

@@ -3,6 +3,20 @@ require 'active_support/core_ext/hash/keys'
 require 'core_ext/hash/deep_symbolize_keys'
 
 class Build
+  # A Build contains a number of Job::Test instances that make up the build
+  # matrix.
+  #
+  # The matrix is defined in the build configuration (`.travis.yml`) and
+  # expanded (evaluated and instantiated) when the Build is created.
+  #
+  # A build matrix has 1 to 3 dimensions and can be defined by specifying
+  # multiple values for either of:
+  #
+  #  * a language/vm variant (e.g. 1.9.2, rbx, jruby for a Ruby build)
+  #  * a dependency definition (e.g. a Gemfile for a Ruby build)
+  #  * an arbitrary env key that can be used from within the test suite in
+  #    order to branch out specific variations of the test run
+
   module Matrix
     extend ActiveSupport::Concern
 

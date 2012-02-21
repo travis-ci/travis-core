@@ -3,7 +3,19 @@ require 'active_support/core_ext/string/inflections'
 require 'core_ext/ostruct/hash_access'
 require 'active_support/json'
 
+# Github::Api wraps some parts of the Github API for
+#
+#  * easier access (e.g.  Github::Commit#branch parses the `ref` value
+#    contained in the Github payload and returns just the branch name) as
+#    well as
+#
+#  * adding some Travis CI specific logic (e.g. Github::Repository#owner_email
+#    either returns the given value from the Github payload OR fetches the
+#    owner OR fetches all owners of an organization and returns the respective
+#    emails).
+#
 # TODO: either port this to Octokit or use Hashr instead of OpenStruct
+
 module Github
   module Api
     class << self

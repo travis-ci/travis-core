@@ -2,11 +2,46 @@ require 'active_record'
 require 'core_ext/active_record/base'
 require 'core_ext/hash/deep_symbolize_keys'
 
+# Build currently models a central but rather abstract domain entity: the thing
+# that is triggered by a Github request (service hook ping).
+#
+# Build groups a matrix of Job::Test instances, and belongs to a Request (and
+# thus Commit as well as a Repository).
+#
+# A Build is created when its Request was configured (by fetching .travis.yml)
+# and approved (e.g. not excluded by the configuration). Once a Build is
+# created it will expand its matrix according to the given configuration and
+# create the according Job::Test instances.  Each Job::Test instance will
+# trigger a test run remotely (on the worker). Once all Job::Test instances
+# have finished the Build will be finished as well.
+#
+# Each of these state changes (build:created, job:started, job:finished, ...)
+# will issue events that are listened for by the event handlers contained in
+# travis/notification. These event handlers then send out various notifications
+# of various types through email, pusher and irc, archive builds and queue
+# jobs for the workers.
+#
+# Build is split up to several modules:
+#
+#  * Build         - ActiveRecord structure, validations and scopes
+#  * States        - state definitions and events
+#  * Denormalize   - some state changes denormalize attributes to the build's
+#                    repository (e.g. Build#started_at gets propagated to
+#                    Repository#last_started_at)
+#  * Matrix        - logic related to expanding the build matrix, normalizing
+#                    configuration for Job::Test instances, evaluating the
+#                    final build result etc.
+#  * Messages      - helpers for evaluating human readable status messages
+#                    (e.g. "Still Failing")
+#  * Notifications - helpers that are used by notification handlers (and that
+#                    TODO probably should be cleaned up and moved to
+#                    travis/notification)
+
 class Build < ActiveRecord::Base
-  autoload :Notifications, 'travis/model/build/notifications'
+  autoload :Denormalize,   'travis/model/build/denormalize'
   autoload :Matrix,        'travis/model/build/matrix'
   autoload :Messages,      'travis/model/build/messages'
-  autoload :Denormalize,   'travis/model/build/denormalize'
+  autoload :Notifications, 'travis/model/build/notifications'
   autoload :States,        'travis/model/build/states'
 
   include Matrix, States, Messages

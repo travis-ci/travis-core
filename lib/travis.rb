@@ -12,6 +12,32 @@ autoload :Token,       'travis/model/token'
 autoload :User,        'travis/model/user'
 autoload :Worker,      'travis/model/worker'
 
+# travis-core holds the central parts of the model layer used in both travis-ci
+# (i.e. the web application) as well as travis-hub (a non-rails ui-less JRuby
+# application that receives, processes and distributes messages from/to the
+# workers and issues various events like email, pusher, irc notifications and
+# so on).
+#
+# travis/model         - contains ActiveRecord models that and model the main
+#                        parts of the domain logic (e.g. repository, build, job
+#                        etc.) and issue events on state changes (e.g.
+#                        build:created, job:test:finished etc.)
+# travis/notifications - contains event handlers that register for certain
+#                        events and send out such things as email, pusher, irc
+#                        notifications, archive builds or queue jobs for the
+#                        workers.
+# travis/mailer        - contains ActionMailers for sending out email
+#                        notifications
+# travis/views         - contains Rabl views for creating JSON payloads used
+#                        for pusher and webhook notifications, build archiving
+#                        and worker job payloads. (TODO This should be replaced
+#                        with some saner sort of JSON generation, like, just
+#                        plain Ruby?)
+#
+# travis-core also contains some helper classes and modules like Travis::Database
+# (needed in travis-hub in order to connect to the database) and Travis::Renderer
+# (our inferior layer on top of Rabl).
+
 module Travis
   autoload :Config,        'travis/config'
   autoload :Database,      'travis/database'
