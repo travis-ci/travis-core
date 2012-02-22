@@ -37,6 +37,9 @@ class User < ActiveRecord::Base
   end
 
   def profile_image_hash
+    # TODO:
+    #   If Github always sends valid gravatar_id in oauth payload (need to check that)
+    #   then these fallbacks (email hash and zeros) are superfluous and can be removed.
     gravatar_id.presence || (email? && Digest::MD5.hexdigest(email)) || '0' * 32
   end
 
