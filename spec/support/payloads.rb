@@ -146,8 +146,22 @@ GITHUB_PAYLOADS = {
     },
     "credentials" => {
       "token" => "1234567890abcdefg"
+    },
+    "extra" => {
+      "raw_info" => {
+        "gravatar_id" => "41193cdbffbf06be0cdf231b28c54b18"
+      }
     }
   },
+}
+
+GITHUB_OAUTH_DATA = {
+  'name'               => 'John',
+  'email'              => 'john@email.com',
+  'login'              => 'john',
+  'github_id'          => 234423,
+  'github_oauth_token' => '1234567890abcdefg',
+  'gravatar_id'        => '41193cdbffbf06be0cdf231b28c54b18'
 }
 
 WORKER_PAYLOADS = {

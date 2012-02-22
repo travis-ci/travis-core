@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
 
   has_many :tokens
 
-  attr_accessible :name, :login, :email, :github_id, :github_oauth_token
+  attr_accessible :name, :login, :email, :github_id, :github_oauth_token, :gravatar_id
 
   before_create :set_as_recent
   after_create :create_a_token
@@ -22,11 +22,12 @@ class User < ActiveRecord::Base
 
     def user_data_from_oauth(payload) # TODO move this to a OauthPayload
       {
-        'name'  => payload['info']['name'],
-        'email' => payload['info']['email'],
-        'login' => payload['info']['nickname'],
-        'github_id' => payload['uid'],
-        'github_oauth_token' => payload['credentials']['token']
+          'name'               => payload['info']['name'],
+          'email'              => payload['info']['email'],
+          'login'              => payload['info']['nickname'],
+          'github_id'          => payload['uid'].to_i,
+          'github_oauth_token' => payload['credentials']['token'],
+          'gravatar_id'        => payload['extra']['raw_info']['gravatar_id']
       }
     end
   end
@@ -36,7 +37,10 @@ class User < ActiveRecord::Base
   end
 
   def profile_image_hash
-    self.email? ? Digest::MD5.hexdigest(self.email) : '0'*32
+    # TODO:
+    #   If Github always sends valid gravatar_id in oauth payload (need to check that)
+    #   then these fallbacks (email hash and zeros) are superfluous and can be removed.
+    gravatar_id.presence || (email? && Digest::MD5.hexdigest(email)) || '0' * 32
   end
 
   def github_service_hooks

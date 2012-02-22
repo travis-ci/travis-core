@@ -19,28 +19,29 @@ describe User do
     end
 
     it 'updates changed attributes' do
-      user(payload).login.should == 'john'
+      user(payload).attributes.slice(*GITHUB_OAUTH_DATA.keys).should == GITHUB_OAUTH_DATA
     end
   end
 
   describe 'user_data_from_oauth' do
     it 'returns required data' do
-      User.user_data_from_oauth(payload).should == {
-        "name"                => "John",
-        "email"               => "john@email.com",
-        "login"               => "john",
-        "github_id"           => "234423",
-        "github_oauth_token"  => "1234567890abcdefg"
-      }
+      User.user_data_from_oauth(payload).should == GITHUB_OAUTH_DATA
     end
   end
 
   describe 'profile_image_hash' do
-    it 'returns a MD5 hash of the email if an email is set' do
+    it "returns gravatar_id if it's present" do
+      user.gravatar_id = '41193cdbffbf06be0cdf231b28c54b18'
+      user.profile_image_hash.should == '41193cdbffbf06be0cdf231b28c54b18'
+    end
+
+    it 'returns a MD5 hash of the email if no gravatar_id and an email is set' do
+      user.gravatar_id = nil
       user.profile_image_hash.should == Digest::MD5.hexdigest(user.email)
     end
 
-    it 'returns 32 zeros if no email is set' do
+    it 'returns 32 zeros if no gravatar_id or email is set' do
+      user.gravatar_id = nil
       user.email = nil
       user.profile_image_hash.should == '0' * 32
     end
