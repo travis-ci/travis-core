@@ -16,10 +16,10 @@ class Request < ActiveRecord::Base
   class << self
     # TODO clean this up
     def create_from(payload, token)
-      Metriks.counter("github:requests").increment
+      Metriks.meter("github:requests", "api").increment
       payload = Payload::Github.new(payload, token)
       unless payload.reject?
-        Metriks.counter("github:requests:accepted").increment
+        Metriks.meter("github:requests:accepted", "api").increment
         repository = repository_for(payload.repository)
         commit = commit_for(payload, repository)
         repository.requests.create!(payload.attributes.merge(:state => :created, :commit => commit))
