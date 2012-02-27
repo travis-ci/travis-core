@@ -19,9 +19,9 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'rake',              '~> 0.9.2.2'
   s.add_dependency 'thor',              '~> 0.14.6'
-  s.add_dependency 'activerecord',      '~> 3.1.2'
-  s.add_dependency 'actionmailer',      '~> 3.1.2'
-  s.add_dependency 'railties',          '~> 3.1.2'
+  s.add_dependency 'activerecord',      '~> 3.2.1'
+  s.add_dependency 'actionmailer',      '~> 3.2.1'
+  s.add_dependency 'railties',          '~> 3.2.1'
   s.add_dependency 'postmark-rails',    '~> 0.4.1'
 
   # db
