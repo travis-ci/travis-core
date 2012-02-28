@@ -12,6 +12,13 @@
   -moz-border-radius: 6px;
   border-radius: 6px;
 }
+#build {
+  padding: 0;
+  width: 752px;
+}
+#build .content {
+  padding: 16px 16px 0;
+}
 p.last-child {
   margin-bottom: 0;
 }
@@ -51,7 +58,7 @@ th {
 }
 .footer {
   background-color: #f3f4fa;
-  margin: 26px -16px -16px -16px;
+  margin: 26px 0 0;
   padding: 16px 16px 14px 16px;
   -webkit-border-bottom-right-radius: 6px;
   -webkit-border-bottom-left-radius: 6px;
