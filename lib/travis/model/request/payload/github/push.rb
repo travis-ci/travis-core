@@ -1,19 +1,19 @@
-require 'github'
-
 class Request
   module Payload
     module Github
-      class Push < ::Github::ServiceHook::Push
-        include Base
+      class Push < GenericEvent
+        def pull_request
+          @push ||= Travis::Github::Push.new data
+        end
 
         def reject?
-          no_commit? || super
+          no_commit? or super
         end
 
         protected
 
           def no_commit?
-            last_commit.nil? || last_commit.commit.blank?
+            commit.nil? or commit.sha.blank?
           end
       end
     end
