@@ -81,19 +81,10 @@ module Github
         @head_repository ||= Repository.new(pull_request["head"]["repo"])
       end
 
-      alias repository head_repository
+      alias repository base_repository
 
       def head_commit
-        @head_commit ||= begin
-          commit = {
-            'ref'         => pull_request["head"]["ref"],
-            'id'          => pull_request["head"]["sha"],
-            'compare_url' => links["html"],
-            'message'     => pull_request["title"],
-            'timestamp'   => pull_request["head"]["repo"]["pushed_at"]
-          }
-          Commit.new(commit, repository)
-        end
+        @head_commit ||= Commit.new(commit, repository)
       end
 
       alias last_commit head_commit
