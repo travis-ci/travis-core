@@ -5,46 +5,48 @@
   </head>
   <body>
     <div id="body" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; color: #333;">
-      <div id="build" class="section" style="margin-bottom: 16px; width: 720px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 16px; border: 1px solid #ccc;">
-        <h1 style="margin-top: 0; font-size: 28px; text-align: center; color: white; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3); overflow: hidden;" align="center">
-          <div <%= %(style="#{gradient_styles(@build)}").html_safe %>>
-            <%= @build.human_status_message %>
-          </div>
-        </h1>
-        <table>
-          <tr>
-            <th style="text-align: right; padding-right: 16px;" align="right">Repository</th>
-            <td><%= @build.repository.slug %></td>
-          </tr>
-          <tr>
-            <th style="text-align: right; padding-right: 16px;" align="right">Build #<%= @build.number %></th>
-            <td><%= link_to repository_build_url(:slug => @build.repository.slug, :id => @build.id), repository_build_url(:slug => @build.repository.slug, :id => @build.id) %></td>
-          </tr>
-          <tr>
-            <th style="text-align: right; padding-right: 16px;" align="right">Changeset</th>
-            <td><%= link_to @commit.compare_url, @commit.compare_url %></td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
-            <th style="text-align: right; padding-right: 16px;" align="right">Commit</th>
-            <td><%= @commit.commit[0..7] %> (<%= @commit.branch %>)</td>
-          </tr>
-          <tr>
-            <th style="text-align: right; padding-right: 16px;" align="right">Message</th>
-            <td><%= h(@commit.message).gsub("\n", "<br>").html_safe %></td>
-          </tr>
-          <tr>
-            <th style="text-align: right; padding-right: 16px;" align="right">Author</th>
-            <td><%= @commit.author_name %></td>
-          </tr>
-          <tr>
-            <th style="text-align: right; padding-right: 16px;" align="right">Duration</th>
-            <td><%= duration_in_words(@build.started_at, @build.finished_at) %></td>
-          </tr>
-        </table>
-        <table border="0" class="footer" style="background-color: #f3f4fa; -webkit-border-bottom-right-radius: 6px; -webkit-border-bottom-left-radius: 6px; -moz-border-radius-bottomright: 6px; -moz-border-radius-bottomleft: 6px; border-bottom-right-radius: 6px; border-bottom-left-radius: 6px; margin: 26px -16px -16px; padding: 16px 16px 14px;" bgcolor="#f3f4fa">
+      <div id="build" class="section" style="margin-bottom: 16px; width: 752px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 0px; border: 1px solid #ccc;">
+        <div class="content" style="padding: 16px 16px 0">
+          <h1 style="margin-top: 0; font-size: 28px; text-align: center; color: white; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3); overflow: hidden;" align="center">
+            <div <%= %(style="#{gradient_styles(@build)}").html_safe %>>
+              <%= @build.human_status_message %>
+            </div>
+          </h1>
+          <table>
+            <tr>
+              <th style="text-align: right; padding-right: 16px;" align="right">Repository</th>
+              <td><%= @build.repository.slug %></td>
+            </tr>
+            <tr>
+              <th style="text-align: right; padding-right: 16px;" align="right">Build #<%= @build.number %></th>
+              <td><%= link_to repository_build_url(:slug => @build.repository.slug, :id => @build.id), repository_build_url(:slug => @build.repository.slug, :id => @build.id) %></td>
+            </tr>
+            <tr>
+              <th style="text-align: right; padding-right: 16px;" align="right">Changeset</th>
+              <td><%= link_to @commit.compare_url, @commit.compare_url %></td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <th style="text-align: right; padding-right: 16px;" align="right">Commit</th>
+              <td><%= @commit.commit[0..7] %> (<%= @commit.branch %>)</td>
+            </tr>
+            <tr>
+              <th style="text-align: right; padding-right: 16px;" align="right">Message</th>
+              <td><%= h(@commit.message).gsub("\n", "<br>").html_safe %></td>
+            </tr>
+            <tr>
+              <th style="text-align: right; padding-right: 16px;" align="right">Author</th>
+              <td><%= @commit.author_name %></td>
+            </tr>
+            <tr>
+              <th style="text-align: right; padding-right: 16px;" align="right">Duration</th>
+              <td><%= duration_in_words(@build.started_at, @build.finished_at) %></td>
+            </tr>
+          </table>
+        </div>
+        <table border="0" class="footer" style="background-color: #f3f4fa; -webkit-border-bottom-right-radius: 6px; -webkit-border-bottom-left-radius: 6px; -moz-border-radius-bottomright: 6px; -moz-border-radius-bottomleft: 6px; border-bottom-right-radius: 6px; border-bottom-left-radius: 6px; margin: 26px 0 0; padding: 16px 16px 14px;" bgcolor="#f3f4fa">
           <tr>
             <td style="font-size: 13px; color: #aaa; line-height: 18px;">
               <img src="https://secure.travis-ci.org/images/mailer/footer-logo-38x38.png" style="margin-right: 16px; width: 38px; height: 38px;" />
