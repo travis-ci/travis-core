@@ -8,8 +8,7 @@ gem 'metriks',             :git => 'git://github.com/mattmatt/metriks.git', :ref
 platform :mri do
   gem 'amq-client',    '>= 0.9.1'
   gem 'amqp',          '>= 0.9.2'
-  gem 'pg',                '~> 0.11.0'
-  gem 'silent-postgres',   '~> 0.1.1'
+  gem 'pg',                '~> 0.13.2'
 end
 
 platform :jruby do
