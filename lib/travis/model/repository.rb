@@ -90,6 +90,7 @@ class Repository < ActiveRecord::Base
   end
 
   def last_finished_builds_by_branches
-    branches.map { |branch| builds.last_finished_on_branch(branch) }.compact
+    n = branches.map { |branch| builds.last_finished_on_branch(branch) }.compact
+    n.sort { |a, b| b.finished_at <=> a.finished_at }
   end
 end
