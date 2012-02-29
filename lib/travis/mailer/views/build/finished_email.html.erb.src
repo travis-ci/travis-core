@@ -6,44 +6,46 @@
   <body>
     <div id="body">
       <div id="build" class="section">
-        <h1>
-          <div <%= %(style="#{gradient_styles(@build)}").html_safe %>>
-            <%= @build.human_status_message %>
-          </div>
-        </h1>
-        <table>
-          <tr>
-            <th>Repository</th>
-            <td><%= @build.repository.slug %></td>
-          </tr>
-          <tr>
-            <th>Build #<%= @build.number %></th>
-            <td><%= link_to repository_build_url(:slug => @build.repository.slug, :id => @build.id), repository_build_url(:slug => @build.repository.slug, :id => @build.id) %></td>
-          </tr>
-          <tr>
-            <th>Changeset</th>
-            <td><%= link_to @commit.compare_url, @commit.compare_url %></td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
-            <th>Commit</th>
-            <td><%= @commit.commit[0..7] %> (<%= @commit.branch %>)</td>
-          </tr>
-          <tr>
-            <th>Message</th>
-            <td><%= h(@commit.message).gsub("\n", "<br>").html_safe %></td>
-          </tr>
-          <tr>
-            <th>Author</th>
-            <td><%= @commit.author_name %></td>
-          </tr>
-          <tr>
-            <th>Duration</th>
-            <td><%= duration_in_words(@build.started_at, @build.finished_at) %></td>
-          </tr>
-        </table>
+        <div class="content">
+          <h1>
+            <div <%= %(style="#{gradient_styles(@build)}").html_safe %>>
+              <%= @build.human_status_message %>
+            </div>
+          </h1>
+          <table>
+            <tr>
+              <th>Repository</th>
+              <td><%= @build.repository.slug %></td>
+            </tr>
+            <tr>
+              <th>Build #<%= @build.number %></th>
+              <td><%= link_to repository_build_url(:slug => @build.repository.slug, :id => @build.id), repository_build_url(:slug => @build.repository.slug, :id => @build.id) %></td>
+            </tr>
+            <tr>
+              <th>Changeset</th>
+              <td><%= link_to @commit.compare_url, @commit.compare_url %></td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <th>Commit</th>
+              <td><%= @commit.commit[0..7] %> (<%= @commit.branch %>)</td>
+            </tr>
+            <tr>
+              <th>Message</th>
+              <td><%= h(@commit.message).gsub("\n", "<br>").html_safe %></td>
+            </tr>
+            <tr>
+              <th>Author</th>
+              <td><%= @commit.author_name %></td>
+            </tr>
+            <tr>
+              <th>Duration</th>
+              <td><%= duration_in_words(@build.started_at, @build.finished_at) %></td>
+            </tr>
+          </table>
+        </div>
         <table border="0" class="footer">
           <tr>
             <td>
