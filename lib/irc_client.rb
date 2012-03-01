@@ -10,10 +10,13 @@
 require 'socket'
 
 class IrcClient
-  attr_accessor :socket
+  attr_accessor :socket, :ping_thread
 
   def initialize(server, nick, options = {})
     @socket = TCPSocket.open(server, options[:port] || 6667)
+
+    @ping_thread = start_ping_thread
+
     socket.puts "PASS #{options[:password]}" if options[:password]
     socket.puts "NICK #{nick}"
     socket.puts "USER #{nick} #{nick} #{nick} :#{nick}"
@@ -39,6 +42,17 @@ class IrcClient
   def quit
     socket.puts 'QUIT'
     socket.gets until socket.eof?
+    ping_thread.exit
+  end
+
+  private
+
+  def start_ping_thread
+    Thread.new(socket) do |s|
+      loop do
+        s.puts "PONG #{$1}" if s.gets =~ /^PING (.*)/
+      end
+    end.run
   end
 end
 
