@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.authors      = ["Travis CI"]
   s.email        = "contact@travis-ci.org"
   s.homepage     = "https://github.com/travis-ci/travis-core"
+  s.summary      = "The heart of Travis"
 
   s.files        = Dir['{lib/**/*,spec/**/*,[A-Z]*}']
   s.platform     = Gem::Platform::RUBY
