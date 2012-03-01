@@ -8,13 +8,15 @@ require 'support/matchers'
 describe Travis::Mailer::Build do
   include Support::ActiveRecord
 
-  let(:build) {
-    Factory(:build,
-            :state => :finished,
-            :started_at => Time.utc(2011, 6, 23, 15, 30, 45),
-            :finished_at => Time.utc(2011, 6, 23, 16, 47, 52),
-            :commit => Factory(:commit, :author_name => "まつもとゆきひろ a.k.a. Matz"))
-  }
+  let(:build) do
+    Factory(
+      :build,
+      :state => :finished,
+      :started_at => Time.utc(2011, 6, 23, 15, 30, 45),
+      :finished_at => Time.utc(2011, 6, 23, 16, 47, 52),
+      :commit => Factory(:commit, :author_name => "まつもとゆきひろ a.k.a. Matz")
+    )
+  end
 
   let(:recipients) { ['owner@example.com', 'committer@example.com', 'author@example.com'] }
   let(:email)      { Travis::Mailer::Build.finished_email(build, recipients) }
