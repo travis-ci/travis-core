@@ -9,8 +9,6 @@ Gem::Specification.new do |s|
   s.authors      = ["Travis CI"]
   s.email        = "contact@travis-ci.org"
   s.homepage     = "https://github.com/travis-ci/travis-core"
-  s.summary      = "[summary]"
-  s.description  = "[description]"
 
   s.files        = Dir['{lib/**/*,spec/**/*,[A-Z]*}']
   s.platform     = Gem::Platform::RUBY
@@ -29,7 +27,7 @@ Gem::Specification.new do |s|
 
   # structures
   s.add_dependency 'hashr',             '~> 0.0.19'
-  s.add_dependency 'rabl',              '~> 0.5.1'
+  s.add_dependency 'rabl',              '~> 0.6.0'
 
   # app
   s.add_dependency 'devise',            '~> 1.5.0'
@@ -39,5 +37,5 @@ Gem::Specification.new do |s|
 
   # apis
   s.add_dependency 'octokit',           '~> 0.6.5'
-  s.add_dependency 'pusher',            '~> 0.8.5'
+  s.add_dependency 'pusher',            '~> 0.9.2'
 end
