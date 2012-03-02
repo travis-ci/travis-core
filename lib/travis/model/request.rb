@@ -27,9 +27,10 @@ class Request < ActiveRecord::Base
       end
     end
 
-    def repository_for(payload)
-      Repository.find_or_create_by_owner_name_and_name(payload.owner_name, payload.name).tap do |repository|
-        repository.update_attributes!(payload.to_hash)
+    def repository_for(repository)
+      owner = repository.owner
+      Repository.find_or_create_by_owner_name_and_name(owner.login, repository.name).tap do |repository|
+        repository.update_attributes! :owner_email => owner.email, :description => repository.description
       end
     end
 
