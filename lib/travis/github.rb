@@ -182,13 +182,13 @@ module Travis
     end
 
     class Repository < Resource
-      attribute :name
-      attribute :owner
+      attribute(:name)
+      attribute(:owner) { |o| User.new(o) }
 
       def initialize(data = {})
         if data.respond_to? :to_str
-          login, name = data.split('/')
-          data = { :url => "/repos/#{data}", :owner => { :login => login }, :name => name }
+          login, name = data.to_str.split('/')
+          data = { :api_url => "/repos/#{data.to_str}", :owner => { :login => login }, :name => name }
         end
 
         super data
