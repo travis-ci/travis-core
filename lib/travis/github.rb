@@ -166,6 +166,18 @@ module Travis
         set data
       end
     end
+    class User < Resource
+      attribute(:login, :email)
+      alias name login
+      alias name= login
+
+      def initialize(data = {})
+        data = {:login => data.to_str} if data.respond_to? :to_str
+        super data
+      end
+
+      def default_url
+        "/users/#{login}"
       end
     end
 
