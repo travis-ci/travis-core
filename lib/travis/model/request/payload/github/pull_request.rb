@@ -3,11 +3,11 @@ class Request
     module Github
       class PullRequest < GenericEvent
         def action
-          data[:action]
+          data["action"]
         end
 
-        def pull_request
-          @pull_request ||= Travis::Github::PullRequest.new data[:pull_request]
+        def event
+          @event ||= Travis::Github::PullRequest.new data["pull_request"]
         end
 
         def attributes
@@ -16,6 +16,10 @@ class Request
 
         def reject?
           no_commit_change? or super
+        end
+
+        def commit
+          event.merge_commit
         end
 
         private
