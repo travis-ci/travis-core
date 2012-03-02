@@ -166,6 +166,15 @@ module Travis
         set data
       end
     end
+
+    class Event < Resource
+    end
+
+    class Push < Event
+      attribute(:repository) { |r| Repository.new(r) }
+      attribute(:commits) { |list| list.map { |c| Commit.new(c, repository) } }
+    end
+
     class User < Resource
       attribute(:login, :email)
       alias name login
