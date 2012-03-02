@@ -20,15 +20,15 @@ class Request
         end
 
         def commit
-          raise NotImplementedError, "subclass responsibility"
+          event.commit
         end
 
         def repository
-          raise NotImplementedError, "subclass responsibility"
+          event.repository
         end
 
         def reject?
-          private_repository? or github_pages? or skipped?
+          github_pages? or skipped?
         end
 
         protected
