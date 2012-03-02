@@ -127,8 +127,26 @@ module Travis
       end
 
       def load!
-        self.payload = session.get(url)
-        @loaded      = true
+        fail "resource URL unkown for #{inspect}" unless api_url
+        @loaded = true
+        self.payload = session.get(api_url)
+      end
+
+      private
+
+        def default_url
+          return _links['self']['href'] if _links and _links['self']
+          url if url and session.api_url?
+        end
+
+        def raw_attributes
+          @raw_attributes ||= {}
+        end
+
+        def attributes
+          @attributes ||= {}
+        end
+    end
       end
     end
 
