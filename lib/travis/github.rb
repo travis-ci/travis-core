@@ -167,7 +167,23 @@ module Travis
       end
     end
 
+    class Label < Resource
+      attribute(:repo) { |r| Repository.new(r) }
+      attribute :ref
+
+      alias repository repo
+      alias repository= repo=
+    end
+
     class Event < Resource
+    end
+
+    class PullRequest < Event
+      attribute(:base, :head) { |l| Label.new(l) }
+
+      def repository
+        base.repository
+      end
     end
 
     class Push < Event
