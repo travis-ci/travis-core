@@ -29,14 +29,14 @@ module Travis
 
     class Session
       include Travis::EventLogger
-      attr_accessor :connection, :headers
+      attr_accessor :connection, :headers, :api_host
 
       def initialize(options = {})
-        token    = options[:token]
-        username = options[:username]
-        password = options[:password]
-        api_host = options[:api_host] || 'https://api.github.com'
-        @headers = options[:headers].try(:dup)  || {
+        token     = options[:token]
+        username  = options[:username]
+        password  = options[:password]
+        @api_host = options[:api_host] || 'https://api.github.com'
+        @headers  = options[:headers].try(:dup)  || {
           "Origin"          => options[:origin] || "http://travis-ci.org",
           "Accept"          => "application/vnd.github.v3.raw+json," \
                                "application/vnd.github.beta.raw+json;q=0.5," \
