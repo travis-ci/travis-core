@@ -147,6 +147,25 @@ module Travis
           @attributes ||= {}
         end
     end
+
+    class Commit < Resource
+      attribute :sha
+      attribute(:repository) { |r| Repository.new(r) }
+
+      def initialize(data = {}, repository = nil)
+        data = {:sha => data.to_str} if data.respond_to? :to_str
+        self.repository = repository if repository
+        super data
+      end
+
+      def default_url
+        "#{repository.url}/commits/#{sha}"
+      end
+
+      def commit=(data)
+        set data
+      end
+    end
       end
     end
 
