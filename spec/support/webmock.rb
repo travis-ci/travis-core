@@ -20,6 +20,7 @@ module Support
       http://github.com/api/v2/json/user/show/svenfuchs
       http://github.com/api/v2/json/organizations/travis-ci/public_members
       http://github.com/api/v2/json/user/show/LTe
+      https://api.github.com/users/travis-repos
     )
 
     class Request

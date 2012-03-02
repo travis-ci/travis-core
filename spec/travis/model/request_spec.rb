@@ -1,10 +1,12 @@
 require 'spec_helper'
 require 'support/payloads'
 require 'support/active_record'
+require 'support/webmock'
 require 'webmock'
 
 describe Request do
   include Support::ActiveRecord
+  include Support::Webmock
 
   describe 'create' do
     let(:request) { Factory(:request).reload }
@@ -23,7 +25,7 @@ describe Request do
         request.token.should == 'token'
       end
     end
-    
+
     describe 'repository_for' do
       it 'creates a repository if it does not exist' do
         lambda { Request.repository_for(payload.repository) }.should change(Repository, :count).by(1)
@@ -33,7 +35,6 @@ describe Request do
         Request.repository_for(payload.repository)
         lambda { Request.repository_for(payload.repository) }.should_not change(Repository, :count)
       end
-      
     end
   end
 
