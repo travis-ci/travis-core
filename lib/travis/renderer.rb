@@ -34,7 +34,7 @@ module Travis
     def initialize(format, object, options = {})
       @format, @object, @options = format, object, options
 
-      @base_dir = options.fetch(:base_dir, 'app/views')
+      @base_dir = options.fetch(:base_dir, root.join('app/views'))
       @version  = options.fetch(:version, :v1)
       @type     = options.fetch(:type, :default)
       @template_name = options.fetch(:template, model_name)
@@ -49,6 +49,10 @@ module Travis
     end
 
     protected
+
+      def root
+        Rails.root || Pathname.new('.')
+      end
 
       def set_instance_variable
         instance_variable_set(:"@#{model_name.split('/').first}", object)
