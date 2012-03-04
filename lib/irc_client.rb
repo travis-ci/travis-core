@@ -32,8 +32,9 @@ class IrcClient
     socket.puts "PART ##{channel}"
   end
 
-  def say(message)
-    socket.puts "PRIVMSG ##{channel} :#{message}" if channel
+  def say(message, use_notice = false)
+    message_type = use_notice ? "NOTICE" : "PRIVMSG"
+    socket.puts "#{message_type} ##{channel} :#{message}" if channel
   end
 
   def quit

@@ -82,17 +82,23 @@ describe IrcClient do
         socket.expects(:puts).with("PRIVMSG ##{channel} :hello")
         @client.say 'hello'
       end
+      it 'can notice the channel' do
+        socket.expects(:puts).with("NOTICE ##{channel} :hello")
+        @client.say 'hello', true
+      end
     end
 
     it 'can run a series of commands' do
       socket.expects(:puts).with("JOIN #travis")
       socket.expects(:puts).with("PRIVMSG #travis :hello")
+      socket.expects(:puts).with("NOTICE #travis :hi")
       socket.expects(:puts).with("PRIVMSG #travis :goodbye")
       socket.expects(:puts).with("PART #travis")
 
       @client.run do
         join 'travis'
         say 'hello'
+        say 'hi', true
         say 'goodbye'
         leave
       end

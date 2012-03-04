@@ -8,12 +8,15 @@ module Travis
       # Publishes a build notification to IRC channels as defined in the
       # configuration (`.travis.yml`).
       class Irc
+        attr_reader :build
+
         EVENTS = 'build:finished'
 
         include Logging
 
         include do
           def notify(event, object, *args)
+            @build = object
             send_irc_notifications(object) if object.send_irc_notifications?
           end
 
@@ -30,12 +33,14 @@ module Travis
               commit = build.commit
               build_url = self.build_url(build)
 
+              use_notice = notice?
+
               irc(host, nick, :port => port) do |irc|
                 channels.each do |channel|
                   join(channel)
-                  say "[travis-ci] #{build.repository.slug}##{build.number} (#{commit.branch} - #{commit.commit[0, 7]} : #{commit.author_name}): #{build.human_status_message}"
-                  say "[travis-ci] Change view : #{commit.compare_url}"
-                  say "[travis-ci] Build details : #{build_url}"
+                  say "[travis-ci] #{build.repository.slug}##{build.number} (#{commit.branch} - #{commit.commit[0, 7]} : #{commit.author_name}): #{build.human_status_message}", use_notice
+                  say "[travis-ci] Change view : #{commit.compare_url}", use_notice
+                  say "[travis-ci] Build details : #{build_url}", use_notice
                   leave
                 end
               end
@@ -56,6 +61,18 @@ module Travis
 
             def build_url(build)
               [Travis.config.host, build.repository.owner_name, build.repository.name, 'builds', build.id].join('/')
+            end
+
+            def irc_config
+              build.config[:notifications][:irc]
+            end
+
+            def notice?
+              if irc_config.is_a?(Hash)
+                irc_config[:use_notice] || false
+              else
+                false
+              end
             end
         end
       end
