@@ -35,7 +35,7 @@ class Request < ActiveRecord::Base
     end
   end
 
-  has_one    :job, :as => :owner, :class_name => 'Job::Configure'
+  has_one    :job, :as => :source, :class_name => 'Job::Configure'
   belongs_to :commit
   belongs_to :repository
   has_many   :builds

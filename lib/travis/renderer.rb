@@ -51,7 +51,7 @@ module Travis
     protected
 
       def root
-        Rails.root || Pathname.new('.')
+        defined?(Rails) && Rails.root || Pathname.new('.')
       end
 
       def set_instance_variable

@@ -15,7 +15,7 @@ class Job
         if job.is_a?(Job::Configure)
           configure
         else
-          slug = job.repository.slug
+          slug = job.repository.try(:slug)
           language = job.config[:language]
           queues.detect { |queue| queue.send(:matches?, slug, language) } || default
         end

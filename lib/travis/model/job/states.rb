@@ -21,7 +21,7 @@ class Job
     end
 
     def propagate(*args)
-      owner.send(*args)
+      source.send(*args)
       true
     end
 

@@ -35,17 +35,17 @@ describe Job do
 
   describe 'before_create' do
     it 'instantiates the log artifact' do
-      job = Job::Test.create!(:repository => Factory(:repository), :commit => Factory(:commit), :owner => Factory(:build))
+      job = Job::Test.create!(:repository => Factory(:repository), :commit => Factory(:commit), :source => Factory(:build))
       job.reload.log.should be_instance_of(Artifact::Log)
     end
 
     it 'sets the state attribute' do
-      job = Job::Test.create!(:repository => Factory(:repository), :commit => Factory(:commit), :owner => Factory(:build))
+      job = Job::Test.create!(:repository => Factory(:repository), :commit => Factory(:commit), :source => Factory(:build))
       job.reload.should be_created
     end
 
     it 'sets the queue attribute' do
-      job = Job::Test.create!(:repository => Factory(:repository), :commit => Factory(:commit), :owner => Factory(:build))
+      job = Job::Test.create!(:repository => Factory(:repository), :commit => Factory(:commit), :source => Factory(:build))
       job.reload.queue.should == 'builds.common'
     end
   end
