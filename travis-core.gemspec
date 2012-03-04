@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
 
   # structures
   s.add_dependency 'hashr',             '~> 0.0.19'
-  s.add_dependency 'rabl',              '~> 0.6.0'
+  s.add_dependency 'rabl',              '~> 0.5.1'
 
   # app
   s.add_dependency 'devise',            '~> 1.5.0'
