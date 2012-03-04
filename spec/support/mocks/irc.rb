@@ -9,7 +9,7 @@ module Support
         @channel = "##{channel}"
         password = password && " #{password}" || ""
 
-        say "JOIN #{@channel}#{password}"
+        out "JOIN #{@channel}#{password}"
 
         instance_eval(&block) and leave if block_given?
       end
@@ -19,18 +19,19 @@ module Support
       end
 
       def leave
-        say "PART #{@channel}"
+        out "PART #{@channel}"
       end
 
-      def say(message)
-        say "PRIVMSG #{@channel} :#{message}" if @channel
+      def say(message, use_notice = false)
+        message_type = use_notice ? "NOTICE" : "PRIVMSG"
+        out "#{message_type} #{@channel} :#{message}" if @channel
       end
 
       def quit
-        say "QUIT"
+        out "QUIT"
       end
 
-      def say(output)
+      def out(output)
         @output << output
       end
 
