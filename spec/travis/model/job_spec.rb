@@ -66,4 +66,16 @@ describe Job do
       job.duration.should == 10
     end
   end
+
+  describe 'tagging' do
+    let(:job) { Factory.create(:test) }
+
+    it 'should tag a job its log contains a particular string' do
+      job.start!
+      job.reload.append_log!('rake is not part of the bundle')
+      job.finish!
+
+      job.reload.tags.should == "rake_not_bundled"
+    end
+  end
 end

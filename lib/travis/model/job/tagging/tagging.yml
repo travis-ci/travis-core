@@ -1,0 +1,9 @@
+- tag: rake_not_bundled
+  pattern: rake is not part of the bundle
+  message: Your Gemfile is missing Rake.
+- tag: database_missing
+  pattern: database "[^"]*" does not exist
+  message: Your should create a test database.
+- tag: log_limit_exceeded
+  message: Your test suite has output more than 4194304 Bytes.
+  pattern: The log length has exceeded the limit
