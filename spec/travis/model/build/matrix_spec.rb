@@ -397,4 +397,11 @@ describe Build, 'matrix' do
       end
     end
   end
+
+  describe :matrix_uniq_tags do
+    it "returns a list of all jobs tags without duplicates" do
+      build = Factory(:build, :matrix => [Factory(:test, :tags => "rake_not_bundled,database_missing"), Factory(:test, :tags => "database_missing,log_limit_exceeded")])
+      build.matrix_uniq_tags.should == ["rake_not_bundled" , "database_missing", "log_limit_exceeded"]
+    end
+  end
 end

@@ -81,6 +81,25 @@ module Travis
         def seconds_part(diff)
           diff % ONE_MINUTE
         end
+
+        def notes(build)
+          rules = Job::Tagging.rules
+          messages = build.matrix_uniq_tags.map do |tag|
+             if message = rules[rules.index {|rule| rule["tag"] == tag}]["message"]
+               jobs_list = build.matrix.map do |job|
+                 link_to job.job_id, job_url(:slug => build.repository.slug, :id => job.id) if job.tags =~ /#{tag}/
+               end
+               jobs_list = jobs_list.compact.to_sentence
+               "* #{message} (#{jobs_list})<br />"
+             end
+          end
+
+          "\n" + messages.join("\n")
+        end
+
+        def job_url(options)
+          [Travis.config.host, options[:slug], 'jobs', options[:id]].join('/')
+        end
       end
     end
   end

@@ -119,5 +119,22 @@ describe Travis::Mailer::Build do
         email.subject.should == '[Failed] svenfuchs/broken_build#1 (master - 62aae5f)'
       end
     end
+
+    describe 'for a broken build with tags' do
+      let(:build)      { Factory(:broken_build_with_tags) }
+
+      it 'subject' do
+        email.subject.should == '[Failed] svenfuchs/broken_build_with_tags#3 (master - 62aae5f)'
+      end
+
+      it 'contains the expected text part' do
+        email.text_part.body.should include_lines(%(
+          Notes :
+          * Your should create a test database. (<a href="http://travis-ci.org/svenfuchs/broken_build_with_tags/jobs/4">1.1</a> and <a href="http://travis-ci.org/svenfuchs/broken_build_with_tags/jobs/7">1.2</a>)<br />
+          * Your Gemfile is missing Rake. (<a href="http://travis-ci.org/svenfuchs/broken_build_with_tags/jobs/4">1.1</a>)<br />
+          * Your test suite has output more than 4194304 Bytes. (<a href="http://travis-ci.org/svenfuchs/broken_build_with_tags/jobs/7">1.2</a>)<br />
+        #))
+      end
+    end
   end
 end
