@@ -6,25 +6,20 @@ module Support
       end
 
       def join(channel, password = nil, &block)
-        @channel = "##{channel}"
-        password = password && " #{password}" || ""
-
-        out "JOIN #{@channel}#{password}"
-
-        instance_eval(&block) and leave if block_given?
+        out "JOIN ##{channel} #{password}".strip
       end
 
       def run(&block)
         instance_eval(&block) if block_given?
       end
 
-      def leave
-        out "PART #{@channel}"
+      def leave(channel)
+        out "PART ##{channel}"
       end
 
-      def say(message, use_notice = false)
+      def say(message, channel, use_notice = false)
         message_type = use_notice ? "NOTICE" : "PRIVMSG"
-        out "#{message_type} #{@channel} :#{message}" if @channel
+        out "#{message_type} ##{channel} :#{message}"
       end
 
       def quit
