@@ -10,7 +10,7 @@
 require 'socket'
 
 class IrcClient
-  attr_accessor :channel, :socket
+  attr_accessor :socket
 
   def initialize(server, nick, options = {})
     @socket = TCPSocket.open(server, options[:port] || 6667)
@@ -20,21 +20,20 @@ class IrcClient
   end
 
   def join(channel, key = nil)
-    self.channel = channel
-    socket.puts "JOIN ##{self.channel} #{key}".strip
+    socket.puts "JOIN ##{channel} #{key}".strip
   end
 
   def run(&block)
     instance_eval(&block) if block_given?
   end
 
-  def leave
+  def leave(channel)
     socket.puts "PART ##{channel}"
   end
 
-  def say(message, use_notice = false)
+  def say(message, channel, use_notice = false)
     message_type = use_notice ? "NOTICE" : "PRIVMSG"
-    socket.puts "#{message_type} ##{channel} :#{message}" if channel
+    socket.puts "#{message_type} ##{channel} :#{message}"
   end
 
   def quit

@@ -34,14 +34,15 @@ module Travis
               build_url = self.build_url(build)
 
               use_notice = notice?
+              join_channel = join?
 
               irc(host, nick, :port => port) do |irc|
                 channels.each do |channel|
-                  join(channel)
-                  say "[travis-ci] #{build.repository.slug}##{build.number} (#{commit.branch} - #{commit.commit[0, 7]} : #{commit.author_name}): #{build.human_status_message}", use_notice
-                  say "[travis-ci] Change view : #{commit.compare_url}", use_notice
-                  say "[travis-ci] Build details : #{build_url}", use_notice
-                  leave
+                  join(channel) if join_channel
+                  say "[travis-ci] #{build.repository.slug}##{build.number} (#{commit.branch} - #{commit.commit[0, 7]} : #{commit.author_name}): #{build.human_status_message}", channel, use_notice
+                  say "[travis-ci] Change view : #{commit.compare_url}", channel, use_notice
+                  say "[travis-ci] Build details : #{build_url}", channel, use_notice
+                  leave(channel) if join_channel
                 end
               end
 
@@ -72,6 +73,14 @@ module Travis
                 irc_config[:use_notice] || false
               else
                 false
+              end
+            end
+
+            def join?
+              if irc_config.is_a?(Hash)
+                !irc_config[:skip_join]
+              else
+                true
               end
             end
         end

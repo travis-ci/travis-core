@@ -60,6 +60,16 @@ describe IrcClient do
       @client = IrcClient.new(server, nick)
     end
 
+    it 'can message a channel before joining' do
+      socket.expects(:puts).with("PRIVMSG #travis :hello")
+      @client.say 'hello', 'travis'
+    end
+
+    it 'can notice a channel before joining' do
+      socket.expects(:puts).with("NOTICE #travis :hello")
+      @client.say 'hello', 'travis', true
+    end
+
     it 'can join a channel' do
       socket.expects(:puts).with("JOIN ##{channel}")
       @client.join(channel)
@@ -76,15 +86,15 @@ describe IrcClient do
       end
       it 'can leave the channel' do
         socket.expects(:puts).with("PART ##{channel}")
-        @client.leave
+        @client.leave(channel)
       end
       it 'can message the channel' do
         socket.expects(:puts).with("PRIVMSG ##{channel} :hello")
-        @client.say 'hello'
+        @client.say 'hello', channel
       end
       it 'can notice the channel' do
         socket.expects(:puts).with("NOTICE ##{channel} :hello")
-        @client.say 'hello', true
+        @client.say 'hello', channel, true
       end
     end
 
@@ -97,10 +107,10 @@ describe IrcClient do
 
       @client.run do
         join 'travis'
-        say 'hello'
-        say 'hi', true
-        say 'goodbye'
-        leave
+        say 'hello', 'travis'
+        say 'hi', 'travis', true
+        say 'goodbye', 'travis'
+        leave 'travis'
       end
     end
 

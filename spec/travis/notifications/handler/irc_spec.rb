@@ -37,6 +37,7 @@ describe Travis::Notifications::Handler::Irc do
       'PRIVMSG #travis :[travis-ci] svenfuchs/successful_build#1 (master - 62aae5f : Sven Fuchs): The build passed.',
       'PRIVMSG #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
       "PRIVMSG #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}",
+      'PART #travis',
     ]
     expected.size.times { |ix| irc.output[ix].should == expected[ix] }
   end
@@ -53,12 +54,28 @@ describe Travis::Notifications::Handler::Irc do
       'NOTICE #travis :[travis-ci] svenfuchs/successful_build#1 (master - 62aae5f : Sven Fuchs): The build passed.',
       'NOTICE #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
       "NOTICE #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}",
+      'PART #travis',
+    ]
+    expected.size.times { |ix| irc.output[ix].should == expected[ix] }
+  end
+
+  it "one irc notification without joining the channel" do
+    build = Factory(:successful_build, :config => { 'notifications' => { 'irc' => { 'skip_join' => true, 'channels' => ["irc.freenode.net:1234#travis"] } } })
+
+    expect_irc('irc.freenode.net', { :port => '1234' })
+
+    Travis::Notifications::Handler::Irc.new.notify('build:finished', build)
+
+    expected = [
+      'PRIVMSG #travis :[travis-ci] svenfuchs/successful_build#1 (master - 62aae5f : Sven Fuchs): The build passed.',
+      'PRIVMSG #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
+      "PRIVMSG #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}",
     ]
     expected.size.times { |ix| irc.output[ix].should == expected[ix] }
   end
 
   it "two irc notifications to different hosts, using config with notification rules" do
-    config = { 'notifications' => { 'irc' => { 'on_success' => "always", 'channels' => ["irc.freenode.net:1234#travis", "irc.example.com#example"] } } }
+    config = { 'notifications' => { 'irc' => { 'skip_join' => false, 'on_success' => "always", 'channels' => ["irc.freenode.net:1234#travis", "irc.example.com#example"] } } }
     build  = Factory(:successful_build, :config => config)
 
     expect_irc('irc.freenode.net', { :port => '1234' })
@@ -74,6 +91,28 @@ describe Travis::Notifications::Handler::Irc do
       "PART #travis",
       "QUIT",
       'JOIN #example',
+      'PRIVMSG #example :[travis-ci] svenfuchs/successful_build#1 (master - 62aae5f : Sven Fuchs): The build passed.',
+      'PRIVMSG #example :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
+      "PRIVMSG #example :[travis-ci] Build details : http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}",
+      'PART #example',
+    ]
+    expected.size.times { |ix| irc.output[ix].should == expected[ix] }
+  end
+
+  it "two irc notifications to different hosts, using config with notification rules, without joining channel" do
+    config = { 'notifications' => { 'irc' => { 'skip_join' => true, 'on_success' => "always", 'channels' => ["irc.freenode.net:1234#travis", "irc.example.com#example"] } } }
+    build  = Factory(:successful_build, :config => config)
+
+    expect_irc('irc.freenode.net', { :port => '1234' })
+    expect_irc('irc.example.com')
+
+    Travis::Notifications::Handler::Irc.new.notify('build:finished', build)
+
+    expected = [
+      'PRIVMSG #travis :[travis-ci] svenfuchs/successful_build#1 (master - 62aae5f : Sven Fuchs): The build passed.',
+      'PRIVMSG #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
+      "PRIVMSG #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}",
+      "QUIT",
       'PRIVMSG #example :[travis-ci] svenfuchs/successful_build#1 (master - 62aae5f : Sven Fuchs): The build passed.',
       'PRIVMSG #example :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
       "PRIVMSG #example :[travis-ci] Build details : http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}",
@@ -106,8 +145,8 @@ describe Travis::Notifications::Handler::Irc do
       'PRIVMSG #example :[travis-ci] svenfuchs/broken_build#1 (master - 62aae5f : Sven Fuchs): The build failed.',
       'PRIVMSG #example :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
       "PRIVMSG #example :[travis-ci] Build details : http://travis-ci.org/svenfuchs/broken_build/builds/#{build.id}",
+      'PART #example',
     ]
     expected.size.times { |ix| irc.output[ix].should == expected[ix] }
   end
 end
-
