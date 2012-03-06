@@ -8,7 +8,7 @@ Commit : <%= @commit.commit[0..7] %> (<%= @commit.branch %>)
 Author : <%= @commit.author_name %>
 Message : <%= @commit.message %>
 <% unless @build.passed? or @build.matrix_uniq_tags.blank? %>
-Notes : <%= notes(@build).html_safe %>
+Notes : <%= notes(@build, "text").html_safe %>
 <% end %>
 
 Status : <%= @build.status_message %>

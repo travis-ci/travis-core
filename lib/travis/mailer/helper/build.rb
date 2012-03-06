@@ -82,23 +82,26 @@ module Travis
           diff % ONE_MINUTE
         end
 
-        def notes(build)
+        def notes(build, format)
           rules = Job::Tagging.rules
           messages = build.matrix_uniq_tags.map do |tag|
              if message = rules[rules.index {|rule| rule["tag"] == tag}]["message"]
                jobs_list = build.matrix.map do |job|
-                 link_to job.job_id, job_url(:slug => build.repository.slug, :id => job.id) if job.tags =~ /#{tag}/
+                 job.job_id if job.tags =~ /#{tag}/
                end
                jobs_list = jobs_list.compact.to_sentence
-               "* #{message} (#{jobs_list})<br />"
+               formated_note(format, message, jobs_list)
              end
           end
 
           "\n" + messages.join("\n")
         end
 
-        def job_url(options)
-          [Travis.config.host, options[:slug], 'jobs', options[:id]].join('/')
+        def formated_note(format, message, jobs_list)
+          case format
+            when "text" then "* #{message} (#{jobs_list}) <br />"
+            when "html" then "<li>#{message} (#{jobs_list})</li>"
+          end
         end
       end
     end

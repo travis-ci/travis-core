@@ -15,7 +15,7 @@ class Job
   module Tagging
     class << self
       def rules
-        @@rules ||= YAML.load_file(File.join("lib", "travis", "model", "job","tagging","tagging.yml")) rescue []
+        @@rules ||= YAML.load_file(File.join("../travis-ci", "config", "tagging.yml")) rescue []
       end
     end
 

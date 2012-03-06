@@ -130,10 +130,23 @@ describe Travis::Mailer::Build do
       it 'contains the expected text part' do
         email.text_part.body.should include_lines(%(
           Notes :
-          * Your should create a test database. (<a href="http://travis-ci.org/svenfuchs/broken_build_with_tags/jobs/4">1.1</a> and <a href="http://travis-ci.org/svenfuchs/broken_build_with_tags/jobs/7">1.2</a>)<br />
-          * Your Gemfile is missing Rake. (<a href="http://travis-ci.org/svenfuchs/broken_build_with_tags/jobs/4">1.1</a>)<br />
-          * Your test suite has output more than 4194304 Bytes. (<a href="http://travis-ci.org/svenfuchs/broken_build_with_tags/jobs/7">1.2</a>)<br />
-        #))
+          * Your should create a test database. (1.1 and 1.2) <br />
+          * Your Gemfile is missing Rake. (1.1) <br />
+          * Your test suite has output more than 4194304 Bytes. (1.2) <br />
+        ))
+      end
+
+      it 'contains the expected html part' do
+        email.html_part.body.should include_lines(%(
+          <th>Notes</th>
+          <td>
+          <ul>
+          <li>Your should create a test database. (1.1 and 1.2)</li>
+          <li>Your Gemfile is missing Rake. (1.1)</li>
+          <li>Your test suite has output more than 4194304 Bytes. (1.2)</li>
+          </ul>
+          </td>
+        ))
       end
     end
   end

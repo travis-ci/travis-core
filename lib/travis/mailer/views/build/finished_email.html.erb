@@ -47,7 +47,9 @@
             <% unless @build.passed? or @build.matrix_uniq_tags.blank? %>
               <tr>
                 <th>Notes</th>
-                <td><%= notes(@build).html_safe %></td>
+                <td>
+                  <ul><%= notes(@build, "html").html_safe %></ul>
+                </td>
               <tr>
             <% end %>
           </table>
