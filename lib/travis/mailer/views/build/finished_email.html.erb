@@ -1,127 +1,127 @@
 <!DOCTYPE HTML>
 <html>
-  <head>
-    <link href="/email.css" media="screen" rel="stylesheet" type="text/css" />
-  </head>
-  <body>
-    <div id="body" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; color: #333;">
-      <div id="build" class="section" style="margin-bottom: 16px; width: 752px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 0; border: 1px solid #ccc;">
-        <div class="content" style="padding: 16px 16px 0;">
-          <h1 style="margin-top: 0; font-size: 28px; text-align: center; color: white; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3); overflow: hidden;" align="center">
-            <div <%= %(style="#{gradient_styles(@build)}").html_safe %>>
-              <%= @build.human_status_message %>
-            </div>
-          </h1>
-          <table>
-            <tr>
-              <th style="text-align: right; padding-right: 16px;" align="right">Repository</th>
-              <td><%= @build.repository.slug %></td>
-            </tr>
-            <tr>
-              <th style="text-align: right; padding-right: 16px;" align="right">Build #<%= @build.number %></th>
-              <td><%= link_to repository_build_url(:slug => @build.repository.slug, :id => @build.id), repository_build_url(:slug => @build.repository.slug, :id => @build.id) %></td>
-            </tr>
-            <tr>
-              <th style="text-align: right; padding-right: 16px;" align="right">Changeset</th>
-              <td><%= link_to @commit.compare_url, @commit.compare_url %></td>
-            </tr>
-            <tr>
-              <td>&nbsp;</td>
-            </tr>
-            <tr>
-              <th style="text-align: right; padding-right: 16px;" align="right">Commit</th>
-              <td><%= @commit.commit[0..7] %> (<%= @commit.branch %>)</td>
-            </tr>
-            <tr>
-              <th style="text-align: right; padding-right: 16px;" align="right">Message</th>
-              <td><%= h(@commit.message).gsub("\n", "<br>").html_safe %></td>
-            </tr>
-            <tr>
-              <th style="text-align: right; padding-right: 16px;" align="right">Author</th>
-              <td><%= @commit.author_name %></td>
-            </tr>
-            <tr>
-              <th style="text-align: right; padding-right: 16px;" align="right">Duration</th>
-              <td><%= duration_in_words(@build.started_at, @build.finished_at) %></td>
-            </tr>
-          </table>
+<head>
+  <link href="/email.css" media="screen" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="body" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; color: #333;">
+  <div id="build" class="section" style="margin-bottom: 16px; width: 752px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 0; border: 1px solid #ccc;">
+    <div class="content" style="padding: 16px 16px 0;">
+      <h1 style="margin-top: 0; font-size: 28px; text-align: center; color: white; overflow: hidden; padding: 8px 15px; background: url('<%= header_background(@build) %>');" align="center">
+        <div style="text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);">
+          <%= @build.human_status_message %>
         </div>
-        <table border="0" class="footer" style="background-color: #f3f4fa; -webkit-border-bottom-right-radius: 6px; -webkit-border-bottom-left-radius: 6px; -moz-border-radius-bottomright: 6px; -moz-border-radius-bottomleft: 6px; border-bottom-right-radius: 6px; border-bottom-left-radius: 6px; margin: 26px 0 0; padding: 16px 16px 14px;" bgcolor="#f3f4fa">
-          <tr>
-            <td style="font-size: 13px; color: #aaa; line-height: 18px;">
-              <img src="https://secure.travis-ci.org/images/mailer/footer-logo-38x38.png" style="margin-right: 16px; width: 38px; height: 38px;" />
-            </td>
-            <td style="font-size: 13px; color: #aaa; line-height: 18px;">
-              You can configure recipients for build notifications in your
-              <a href="http://about.travis-ci.org/docs/user/build-configuration" style="color: #aaa;">configuration file</a>.
-              Further documentation about Travis CI can be found <a href="http://about.travis-ci.org/docs" style="color: #aaa;">here</a>.
-              For help please join our IRC channel irc.freenode.net#travis.
-            </td>
-          </tr>
-        </table>
-      </div>
-
-      <div id="please-donate" class="section" style="margin-bottom: 16px; width: 720px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 16px; border: 1px solid #ccc;">
-        <table border="0">
-          <tr>
-            <td style="font-size: 14px;">
-              <img src="https://secure.travis-ci.org/images/mailer/please-donate.png" style="margin-right: 16px; width: 214px; height: 146px;" />
-            </td>
-            <td style="font-size: 14px;">
-              <h2 style="margin-top: 0; font-size: 24px;">We need your help!</h2>
-              <p>
-                Travis CI has run 406,714 tests for 5,442 OSS projects to date,
-                including Ruby, Rails, Rubinius, Rubygems, Bundler, Node.js, Leiningen, Symfony ...
-              </p>
-              <p>
-                If you use any of these then you benefit from Travis CI.
-              </p>
-              <p class="last-child" style="margin-bottom: 0;">
-                <a href="http://love.travis-ci.org" style="font-size: 14px; font-weight: bold; color: #118000;">Please donate so we can make Travis CI even better!</a>
-              </p>
-            </td>
-          </tr>
-        </table>
-      </div>
-
-      <div id="sponsors" style="width: 756px; margin-bottom: 16px; position: relative;">
-        <table border="0">
-          <tr>
-            <% sponsors.each do |sponsor| %>
-              <td style="margin-top: 0; font-size: 14px;">
-                <div class="section" style="margin-bottom: 0; width: auto; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 16px; border: 1px solid #ccc;">
-                  <table border="0" <%= (sponsor.package == :platinum ? 'style="width: 717px"' : 'style="width: 339px"').html_safe %>>
-                    <tr>
-                      <td style="margin-top: 0; font-size: 14px;">
-                        <a href="<%= sponsor.url %>">
-                          <img src="https://secure.travis-ci.org/images/sponsors/<%= sponsor.name %>-100x60.png" style="margin-right: 16px; width: 100px; height: 60px; margin-top: -5px; border: 0;" />
-                        </a>
-                      </td>
-                      <td style="margin-top: 0; font-size: 14px;">
-                        <%= sponsor.text.html_safe %>
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-              </td>
-            <% end %>
-          </tr>
-        </table>
-      </div>
-
-      <div class="section footnote" style="margin-bottom: 16px; width: 720px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; margin-top: 0; font-size: 14px; padding: 16px; border: 1px solid #ccc;">
-        The delivery of this email was kindly sponsored by
-        <a href="http://postmarkapp.com">Postmark</a>, an
-        amazing service for transactional email delivery.
-      </div>
-
-      <p class="footnote" style="font-size: 14px; margin: 0 0 0 4px;">
-        <a href="http://love.travis-ci.org/sponsors" style="font-size: 13px; color: #aaa;">See all of our sponsors &rarr;</a>
-      <p>
+      </h1>
+      <table>
+        <tr>
+          <th style="text-align: right; padding-right: 16px;" align="right">Repository</th>
+          <td><%= @build.repository.slug %></td>
+        </tr>
+        <tr>
+          <th style="text-align: right; padding-right: 16px;" align="right">Build #<%= @build.number %></th>
+          <td><%= link_to repository_build_url(:slug => @build.repository.slug, :id => @build.id), repository_build_url(:slug => @build.repository.slug, :id => @build.id) %></td>
+        </tr>
+        <tr>
+          <th style="text-align: right; padding-right: 16px;" align="right">Changeset</th>
+          <td><%= link_to @commit.compare_url, @commit.compare_url %></td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <th style="text-align: right; padding-right: 16px;" align="right">Commit</th>
+          <td><%= @commit.commit[0..7] %> (<%= @commit.branch %>)</td>
+        </tr>
+        <tr>
+          <th style="text-align: right; padding-right: 16px;" align="right">Message</th>
+          <td><%= h(@commit.message).gsub("\n", "<br>").html_safe %></td>
+        </tr>
+        <tr>
+          <th style="text-align: right; padding-right: 16px;" align="right">Author</th>
+          <td><%= @commit.author_name %></td>
+        </tr>
+        <tr>
+          <th style="text-align: right; padding-right: 16px;" align="right">Duration</th>
+          <td><%= duration_in_words(@build.started_at, @build.finished_at) %></td>
+        </tr>
+      </table>
     </div>
-  
+    <table border="0" class="footer" style="background-color: #f3f4fa; -webkit-border-bottom-right-radius: 6px; -webkit-border-bottom-left-radius: 6px; -moz-border-radius-bottomright: 6px; -moz-border-radius-bottomleft: 6px; border-bottom-right-radius: 6px; border-bottom-left-radius: 6px; margin: 26px 0 0; padding: 16px 16px 14px;" bgcolor="#f3f4fa">
+      <tr>
+        <td style="font-size: 13px; color: #aaa; line-height: 18px;">
+          <img src="https://secure.travis-ci.org/images/mailer/footer-logo-38x38.png" style="margin-right: 16px; width: 38px; height: 38px;" />
+        </td>
+        <td style="font-size: 13px; color: #aaa; line-height: 18px;">
+          You can configure recipients for build notifications in your
+          <a href="http://about.travis-ci.org/docs/user/build-configuration" style="color: #aaa;">configuration file</a>.
+          Further documentation about Travis CI can be found <a href="http://about.travis-ci.org/docs" style="color: #aaa;">here</a>.
+          For help please join our IRC channel irc.freenode.net#travis.
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="please-donate" class="section" style="margin-bottom: 16px; width: 720px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 16px; border: 1px solid #ccc;">
+    <table border="0">
+      <tr>
+        <td style="font-size: 14px;">
+          <img src="https://secure.travis-ci.org/images/mailer/please-donate.png" style="margin-right: 16px; width: 214px; height: 146px;" />
+        </td>
+        <td style="font-size: 14px;">
+          <h2 style="margin-top: 0; font-size: 24px;">We need your help!</h2>
+          <p>
+            Travis CI has run 406,714 tests for 5,442 OSS projects to date,
+            including Ruby, Rails, Rubinius, Rubygems, Bundler, Node.js, Leiningen, Symfony ...
+          </p>
+          <p>
+            If you use any of these then you benefit from Travis CI.
+          </p>
+          <p class="last-child" style="margin-bottom: 0;">
+            <a href="http://love.travis-ci.org" style="font-size: 14px; font-weight: bold; color: #118000;">Please donate so we can make Travis CI even better!</a>
+          </p>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="sponsors" style="width: 756px; margin-bottom: 16px; position: relative;">
+    <table border="0">
+      <tr>
+        <% sponsors.each do |sponsor| %>
+            <td style="margin-top: 0; font-size: 14px;">
+              <div class="section" style="margin-bottom: 0; width: auto; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 16px; border: 1px solid #ccc;">
+                <table border="0" <%= (sponsor.package == :platinum ? 'style="width: 717px"' : 'style="width: 339px"').html_safe %>>
+                  <tr>
+                    <td style="margin-top: 0; font-size: 14px;">
+                      <a href="<%= sponsor.url %>">
+                        <img src="https://secure.travis-ci.org/images/sponsors/<%= sponsor.name %>-100x60.png" style="margin-right: 16px; width: 100px; height: 60px; margin-top: -5px; border: 0;" />
+                      </a>
+                    </td>
+                    <td style="margin-top: 0; font-size: 14px;">
+                      <%= sponsor.text.html_safe %>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </td>
+        <% end %>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section footnote" style="margin-bottom: 16px; width: 720px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; margin-top: 0; font-size: 14px; padding: 16px; border: 1px solid #ccc;">
+    The delivery of this email was kindly sponsored by
+    <a href="http://postmarkapp.com">Postmark</a>, an
+    amazing service for transactional email delivery.
+  </div>
+
+  <p class="footnote" style="font-size: 14px; margin: 0 0 0 4px;">
+    <a href="http://love.travis-ci.org/sponsors" style="font-size: 13px; color: #aaa;">See all of our sponsors &rarr;</a>
+  <p>
+</div>
+
 <style type="text/css">
-img { margin-right: 16px !important; }
+    img { margin-right: 16px !important; }
 </style>
 </body>
 </html>

@@ -32,26 +32,10 @@ h1 {
   font-size: 28px;
   text-align: center;
   color: white;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);
   overflow: hidden;
 }
-.success h1 {
-  background: #0c901d; /* Old browsers */
-  background: -moz-linear-gradient(top,  #0ecf0b 0%, #0bbd0b 50%, #08ae0d 51%, #0c901d 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#0ecf0b), color-stop(50%,#0bbd0b), color-stop(51%,#08ae0d), color-stop(100%,#0c901d)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top,  #0ecf0b 0%,#0bbd0b 50%,#08ae0d 51%,#0c901d 100%); /* Chrome10+,Safari5.1+ */
-  background: linear-gradient(top,  #0ecf0b 0%,#0bbd0b 50%,#08ae0d 51%,#0c901d 100%); /* W3C */
-}
-.failure h1 {
-  background: #e93a13; /* Old browsers */
-  background: -moz-linear-gradient(top,  #f76e69 0%, #f4564e 50%, #f64130 51%, #e93a13 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f76e69), color-stop(50%,#f4564e), color-stop(51%,#f64130), color-stop(100%,#e93a13)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top,  #f76e69 0%,#f4564e 50%,#f64130 51%,#e93a13 100%); /* Chrome10+,Safari5.1+ */
-  background: linear-gradient(top,  #f76e69 0%,#f4564e 50%,#f64130 51%,#e93a13 100%); /* W3C */
-}
+
 th {
   text-align: right;
   padding-right: 16px;
