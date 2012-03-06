@@ -7,9 +7,9 @@
     <div id="body" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; color: #333;">
       <div id="build" class="section" style="margin-bottom: 16px; width: 752px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 0; border: 1px solid #ccc;">
         <div class="content" style="padding: 16px 16px 0;">
-          <h1 style="margin-top: 0; font-size: 28px; text-align: center; color: white; overflow: hidden;" align="center">
+          <h1 style="margin-top: 0; margin-bottom: 18px; font-size: 28px; text-align: center; color: white; overflow: hidden;" align="center">
             <div <%= raw header_background_style(@build) %>>
-              <%= @build.human_status_message %>
+              <span class="shadow" style="text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);"><%= @build.human_status_message %></span>
             </div>
           </h1>
           <table>
@@ -119,7 +119,7 @@
         <a href="http://love.travis-ci.org/sponsors" style="font-size: 13px; color: #aaa;">See all of our sponsors &rarr;</a>
       <p>
     </div>
-
+  
 <style type="text/css">
 img { margin-right: 16px !important; }
 </style>

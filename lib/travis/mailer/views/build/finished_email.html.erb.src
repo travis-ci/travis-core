@@ -9,7 +9,7 @@
         <div class="content">
           <h1>
             <div <%= raw header_background_style(@build) %>>
-              <%= @build.human_status_message %>
+              <span class="shadow"><%= @build.human_status_message %></span>
             </div>
           </h1>
           <table>

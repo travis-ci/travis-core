@@ -29,10 +29,14 @@ h1, h2 {
   margin-top: 0;
 }
 h1 {
+  margin-bottom: 18px;
   font-size: 28px;
   text-align: center;
   color: white;
   overflow: hidden;
+}
+h1 .shadow {
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);
 }
 th {
   text-align: right;
