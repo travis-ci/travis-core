@@ -4,42 +4,36 @@ require 'support/active_record'
 describe Travis::Mailer::Helper::Build do
   include Travis::Mailer::Helper::Build
 
-  let(:build) { Factory(:successful_build) }
+  let(:build) { Factory(:running_build) }
+
+  let(:successful_build) { Factory(:build, :status => 0) }
+  let(:failed_build)     { Factory(:build, :status => 1) }
 
   it '#title returns title for the build' do
-    title(build).should == 'Build Update for svenfuchs/successful_build'
+    title(build).should == 'Build Update for svenfuchs/running_build'
   end
 
-  describe 'gradient_styles' do
-    let(:build)  { Factory.build(:build, :status => status) }
-    let(:styles) { gradient_styles(build) }
-
-    describe 'given a successful build' do
-      let(:status) { 0 }
-
-      it 'returns gradiant styles' do
-        styles.should =~ /background: .*-moz-linear-gradient.*-webkit-gradient.*-webkit-linear-gradient.*linear-gradient/
-      end
-
-      it 'returns green styles for a successful build' do
-        Travis::Mailer::Helper::Build::GRADIENTS[:success].each do |color|
-          styles.should include(color)
-        end
-      end
+  describe 'header_status' do
+    it 'returns failure header class for a failed build' do
+      header_status(failed_build).should == 'failure'
     end
 
-    describe 'given a failed build' do
-      let(:status) { 1 }
+    it 'returns success header class for a successful build' do
+      header_status(successful_build).should == 'success'
+    end
+  end
 
-      it 'returns gradiant styles' do
-        styles.should =~ /background: .*-moz-linear-gradient.*-webkit-gradient.*-webkit-linear-gradient.*linear-gradient/
-      end
+  describe 'header_background_style' do
+    it 'returns success background image style for successful build' do
+      header_background_style(successful_build).should == <<-style.strip
+        style="background: url('https://secure.travis-ci.org/images/mailer/success-header-bg.png') no-repeat scroll 0 0 transparent; padding: 8px 15px;"
+      style
+    end
 
-      it 'returns red styles for a failed build' do
-        Travis::Mailer::Helper::Build::GRADIENTS[:failure].each do |color|
-          styles.should include(color)
-        end
-      end
+    it 'returns failure background image style for failed build' do
+      header_background_style(failed_build).should == <<-style.strip
+        style="background: url('https://secure.travis-ci.org/images/mailer/failure-header-bg.png') no-repeat scroll 0 0 transparent; padding: 8px 15px;"
+      style
     end
   end
 end

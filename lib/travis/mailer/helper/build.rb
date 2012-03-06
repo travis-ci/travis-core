@@ -14,8 +14,13 @@ module Travis
           end
         end
 
-        def header_background(build)
-          "https://secure.travis-ci.org/images/mailer/#{build.passed? ? 'success' : 'failure'}-header-bg.png"
+        def header_status(build)
+          build.passed? ? 'success' : 'failure'
+        end
+
+        def header_background_style(build)
+          image_url = "https://secure.travis-ci.org/images/mailer/#{header_status(build)}-header-bg.png"
+          %(style="background: url('#{image_url}') no-repeat scroll 0 0 transparent; padding: 8px 15px;")
         end
 
         def encode_image(path)
