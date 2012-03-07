@@ -22,7 +22,7 @@ module Travis
       end
 
       def base_dir
-        @base_dir = Pathname.new(File.expand_path('../mailer', __FILE__))
+        @base_dir ||= Pathname.new(File.expand_path('../mailer', __FILE__))
       end
     end
   end
