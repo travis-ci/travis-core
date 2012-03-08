@@ -22,19 +22,5 @@ describe Travis::Mailer::Helper::Build do
       header_status(successful_build).should == 'success'
     end
   end
-
-  describe 'header_background_style' do
-    it 'returns success background image style for successful build' do
-      header_background_style(successful_build).should == <<-style.strip
-        style="background: url('https://secure.travis-ci.org/images/mailer/success-header-bg.png') no-repeat scroll 0 0 transparent; padding: 8px 15px;"
-      style
-    end
-
-    it 'returns failure background image style for failed build' do
-      header_background_style(failed_build).should == <<-style.strip
-        style="background: url('https://secure.travis-ci.org/images/mailer/failure-header-bg.png') no-repeat scroll 0 0 transparent; padding: 8px 15px;"
-      style
-    end
-  end
 end
 

@@ -30,15 +30,24 @@ img {
 h1, h2 {
   margin-top: 0;
 }
-h1 {
-  margin-bottom: 18px;
+.status {
   font-size: 28px;
-  text-align: center;
+  font-weight: bold;
   color: white;
-  overflow: hidden;
+  width: 720px;
+  height: 52px;
+  margin-bottom: 18px;
+  text-align: center;
+  vertical-align: middle;
+  border-collapse: collapse;
+  background-repeat: no-repeat;
 }
-h1 .shadow {
+.status tr {
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+.status td {
+  padding: 8px 0;
+  line-height: 36px;
 }
 th {
   text-align: right;

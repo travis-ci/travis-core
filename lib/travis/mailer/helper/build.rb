@@ -18,11 +18,6 @@ module Travis
           build.passed? ? 'success' : 'failure'
         end
 
-        def header_background_style(build)
-          image_url = "https://secure.travis-ci.org/images/mailer/#{header_status(build)}-header-bg.png"
-          %(style="background: url('#{image_url}') no-repeat scroll 0 0 transparent; padding: 8px 15px;")
-        end
-
         def encode_image(path)
           path = File.expand_path("../../views/#{path}", __FILE__)
           type = Rack::Mime.mime_type(File.extname(path))
