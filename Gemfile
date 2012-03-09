@@ -2,8 +2,8 @@ source :rubygems
 
 gemspec
 
-gem 'travis-support', github: 'travis-ci/travis-support'
-gem 'metriks',        github: 'mattmatt/metriks', :ref => "source"
+gem 'travis-support', git: 'git://github.com/travis-ci/travis-support.git'
+gem 'metriks',        git: 'git://github.com/mattmatt/metriks.git', :ref => 'source'
 
 platform :mri do
   gem 'amq-client',    '>= 0.9.1'
