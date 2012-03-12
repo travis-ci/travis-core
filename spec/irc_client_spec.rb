@@ -7,6 +7,7 @@ describe IrcClient do
   let(:nick)     { 'travis_bot' }
   let(:channel)  { 'travis' }
   let(:password) { 'secret' }
+  let(:ping)     { 'testping' }
 
   describe 'on initialization' do
     describe 'with no port specified' do
@@ -48,6 +49,30 @@ describe IrcClient do
           IrcClient.new(server, nick, :password => password)
         end
       end
+    end
+
+    describe 'should connect to a server which requires ping/pong' do
+      before do
+        @socket = mock
+        TCPSocket.stubs(:open).returns @socket
+        @socket.stubs(:gets).returns("PING #{ping}").then.returns ""
+      end
+
+      def expect_standard_sequence
+        @socket.expects(:puts).with("NICK #{nick}")
+        @socket.expects(:puts).with("USER #{nick} #{nick} #{nick} :#{nick}")
+        @socket.expects(:puts).with("PONG #{ping}")
+      end
+
+      describe "without a password" do
+        it 'by sending NICK then USER' do
+          expect_standard_sequence
+          IrcClient.new(server, nick)
+          # this sleep is here so that the ping thread has a chance to run
+          sleep 0.5
+        end
+      end
+
     end
   end
 
