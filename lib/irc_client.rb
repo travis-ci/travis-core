@@ -52,7 +52,7 @@ class IrcClient
       loop do
         s.puts "PONG #{$1}" if s.gets =~ /^PING (.*)/
       end
-    end.run
+    end
   end
 end
 
