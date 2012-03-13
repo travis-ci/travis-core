@@ -3,6 +3,7 @@ source :rubygems
 gemspec
 
 gem 'travis-support',      :git => 'git://github.com/travis-ci/travis-support.git'
+gem 'gh',                  :git => 'git://github.com/rkh/gh'
 
 platform :mri do
   gem 'amq-client',    '>= 0.9.1'
