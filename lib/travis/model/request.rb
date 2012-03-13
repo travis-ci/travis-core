@@ -6,15 +6,12 @@ class Request < ActiveRecord::Base
   autoload :States,   'travis/model/request/states'
 
   include States
+  EVENT_TYPES = {'push' => Payload::Github::Push, 'pull_request' => Payload::Github::PullRequest}
 
   class << self
     # TODO replace with registration API?
     def payload_class_for(type)
-      case type
-      when 'push'         then Payload::Github::Push
-      when 'pull_request' then Payload::Github::PullRequest
-      else raise ArgumentError, "unsupported github event"
-      end
+      EVENT_TYPES[type] or raise ArgumentError, "unsupported github event"
     end
 
     # TODO clean this up
