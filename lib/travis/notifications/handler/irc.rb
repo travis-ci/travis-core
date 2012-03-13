@@ -1,11 +1,10 @@
+require 'travis/notifications/handler/template'
 require 'core_ext/module/include'
 require 'irc_client'
 
 module Travis
   module Notifications
     module Handler
-      autoload :Template, 'travis/notifications/handler/template'
-
       # Publishes a build notification to IRC channels as defined in the
       # configuration (`.travis.yml`).
       class Irc
@@ -18,30 +17,29 @@ module Travis
         include do
           def notify(event, object, *args)
             @build = object
-            send_irc_notifications(object) if object.send_irc_notifications?
+            send_irc_notifications if object.send_irc_notifications?
           end
 
           protected
-            def send_irc_notifications(build)
+            def send_irc_notifications
               # Notifications to the same host are grouped so that they can be sent with a single connection
               build.irc_channels.each do |server, channels|
                 host, port = *server
-                send_notifications(host, port, channels, build)
+                send_notifications(host, port, channels)
               end
             end
 
-            def send_notifications(host, port, channels, build)
+            def send_notifications(host, port, channels)
               use_notice = notice?
               join_channel = join?
 
-              templates = (build.config[:notifications] && build.config[:notifications][:messages]) || default_templates
-              messages  = templates.map{|message| Template.new(message, build).template.rstrip}
+              messages = template.map { |message| Template.new(message, build).interpolate }
 
               irc(host, nick, :port => port) do |irc|
                 channels.each do |channel|
                   join(channel) if join_channel
                   messages.each do |message|
-                    say "[travis-ci] #{message}", channel, use_notice
+                    say("[travis-ci] #{message}", channel, use_notice)
                   end
                   leave(channel) if join_channel
                 end
@@ -80,7 +78,13 @@ module Travis
               end
             end
 
-            def default_templates
+            def template
+              @template ||= begin
+                (build.config[:notifications] && build.config[:notifications][:template]) || default_template
+              end
+            end
+
+            def default_template
               ["%{repository_url}#%{build_number} (%{branch} - %{commit_short} : %{author}): %{message}",
                 "Change view : %{compare_url}",
                 "Build details : %{build_url}"]

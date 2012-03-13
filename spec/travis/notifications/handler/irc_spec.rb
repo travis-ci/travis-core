@@ -14,7 +14,7 @@ describe Travis::Notifications::Handler::Irc do
   end
 
   let(:repository) { Factory(:repository, :owner_email => 'owner@example.com') }
-  let(:config_with_customized_message) {{ 'notifications' => { 'irc' => "irc.freenode.net:1234#travis", 'messages' => ["%{repository_url} (%{commit}): %{message} %{foo} "] } }}
+  let(:config_with_customized_template) {{ 'notifications' => { 'irc' => "irc.freenode.net:1234#travis", 'template' => ["%{repository_url} (%{commit}): %{message} %{foo} "] } }}
 
   def expect_irc(host, options = {}, count = 1)
     IrcClient.expects(:new).times(count).with(host, 'travis-ci', { :port => nil }.merge(options)).returns(irc)
@@ -76,7 +76,7 @@ describe Travis::Notifications::Handler::Irc do
   end
 
   it "wiil post the irc notification with a customized message" do
-    build = Factory(:successful_build, :config => config_with_customized_message)
+    build = Factory(:successful_build, :config => config_with_customized_template)
 
     expect_irc('irc.freenode.net', { :port => '1234' })
 
