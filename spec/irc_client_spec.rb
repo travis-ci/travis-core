@@ -141,7 +141,7 @@ describe IrcClient do
 
     it 'can abandon the connection' do
       socket.expects(:puts).with("QUIT")
-      socket.expects(:eof?).returns true
+      socket.expects(:close)
       @client.quit
     end
   end
