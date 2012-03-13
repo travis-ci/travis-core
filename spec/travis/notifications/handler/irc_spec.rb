@@ -40,7 +40,7 @@ describe Travis::Notifications::Handler::Irc do
       "PRIVMSG #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}",
       'PART #travis',
     ]
-    expected.size.times { |ix| irc.output[ix].should == expected[ix] }
+    expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
   end
 
   it "one irc notification using notice" do
@@ -57,7 +57,7 @@ describe Travis::Notifications::Handler::Irc do
       "NOTICE #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}",
       'PART #travis',
     ]
-    expected.size.times { |ix| irc.output[ix].should == expected[ix] }
+    expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
   end
 
   it "one irc notification without joining the channel" do
@@ -72,7 +72,7 @@ describe Travis::Notifications::Handler::Irc do
       'PRIVMSG #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
       "PRIVMSG #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}",
     ]
-    expected.size.times { |ix| irc.output[ix].should == expected[ix] }
+    expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
   end
 
   it "wiil post the irc notification with a customized message" do
@@ -111,7 +111,7 @@ describe Travis::Notifications::Handler::Irc do
       "PRIVMSG #example :[travis-ci] Build details : http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}",
       'PART #example',
     ]
-    expected.size.times { |ix| irc.output[ix].should == expected[ix] }
+    expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
   end
 
   it "two irc notifications to different hosts, using config with notification rules, without joining channel" do
@@ -132,7 +132,7 @@ describe Travis::Notifications::Handler::Irc do
       'PRIVMSG #example :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
       "PRIVMSG #example :[travis-ci] Build details : http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}",
     ]
-    expected.size.times { |ix| irc.output[ix].should == expected[ix] }
+    expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
   end
 
   it "irc notifications to the same host should not disconnect between notifications" do
@@ -162,6 +162,6 @@ describe Travis::Notifications::Handler::Irc do
       "PRIVMSG #example :[travis-ci] Build details : http://travis-ci.org/svenfuchs/broken_build/builds/#{build.id}",
       'PART #example',
     ]
-    expected.size.times { |ix| irc.output[ix].should == expected[ix] }
+    expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
   end
 end
