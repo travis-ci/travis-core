@@ -14,6 +14,7 @@ describe Travis::Notifications::Handler::Irc do
   end
 
   let(:repository) { Factory(:repository, :owner_email => 'owner@example.com') }
+  let(:config_with_customized_message) {{ 'notifications' => { 'irc' => "irc.freenode.net:1234#travis", 'messages' => ["%{repository_url} (%{commit}): %{message} %{foo} "] } }}
 
   def expect_irc(host, options = {}, count = 1)
     IrcClient.expects(:new).times(count).with(host, 'travis-ci', { :port => nil }.merge(options)).returns(irc)
@@ -72,6 +73,20 @@ describe Travis::Notifications::Handler::Irc do
       "PRIVMSG #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}",
     ]
     expected.size.times { |ix| irc.output[ix].should == expected[ix] }
+  end
+
+  it "wiil post the irc notification with a customized message" do
+    build = Factory(:successful_build, :config => config_with_customized_message)
+
+    expect_irc('irc.freenode.net', { :port => '1234' })
+
+    Travis::Notifications::Handler::Irc.new.notify('build:finished', build)
+
+    expected = [
+      'JOIN #travis',
+      'PRIVMSG #travis :[travis-ci] svenfuchs/successful_build (62aae5f70ceee39123ef): The build passed.',
+    ]
+    expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
   end
 
   it "two irc notifications to different hosts, using config with notification rules" do

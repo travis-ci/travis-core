@@ -4,6 +4,7 @@ require 'irc_client'
 module Travis
   module Notifications
     module Handler
+      autoload :Template, 'travis/notifications/handler/template'
 
       # Publishes a build notification to IRC channels as defined in the
       # configuration (`.travis.yml`).
@@ -30,22 +31,21 @@ module Travis
             end
 
             def send_notifications(host, port, channels, build)
-              commit = build.commit
-              build_url = self.build_url(build)
-
               use_notice = notice?
               join_channel = join?
+
+              templates = (build.config[:notifications] && build.config[:notifications][:messages]) || default_templates
+              messages  = templates.map{|message| Template.new(message, build).template.rstrip}
 
               irc(host, nick, :port => port) do |irc|
                 channels.each do |channel|
                   join(channel) if join_channel
-                  say "[travis-ci] #{build.repository.slug}##{build.number} (#{commit.branch} - #{commit.commit[0, 7]} : #{commit.author_name}): #{build.human_status_message}", channel, use_notice
-                  say "[travis-ci] Change view : #{commit.compare_url}", channel, use_notice
-                  say "[travis-ci] Build details : #{build_url}", channel, use_notice
+                  messages.each do |message|
+                    say "[travis-ci] #{message}", channel, use_notice
+                  end
                   leave(channel) if join_channel
                 end
               end
-
               # TODO somehow log whether or not the irc message was sent successfully
             end
 
@@ -58,10 +58,6 @@ module Travis
 
             def nick
               Travis.config.irc.try(:nick) || 'travis-ci'
-            end
-
-            def build_url(build)
-              [Travis.config.host, build.repository.owner_name, build.repository.name, 'builds', build.id].join('/')
             end
 
             def irc_config
@@ -82,6 +78,12 @@ module Travis
               else
                 true
               end
+            end
+
+            def default_templates
+              ["%{repository_url}#%{build_number} (%{branch} - %{commit_short} : %{author}): %{message}",
+                "Change view : %{compare_url}",
+                "Build details : %{build_url}"]
             end
         end
       end
