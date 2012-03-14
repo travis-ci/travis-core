@@ -80,7 +80,8 @@ module Travis
 
             def template
               @template ||= begin
-                (build.config[:notifications] && build.config[:notifications][:template]) || default_template
+                template = (build.config[:notifications] && build.config[:notifications][:irc].is_a?(Hash) && build.config[:notifications][:irc][:template]) 
+                Array(template || default_template)
               end
             end
 

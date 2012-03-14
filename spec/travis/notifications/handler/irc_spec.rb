@@ -14,7 +14,11 @@ describe Travis::Notifications::Handler::Irc do
   end
 
   let(:repository) { Factory(:repository, :owner_email => 'owner@example.com') }
-  let(:config_with_customized_template) {{ 'notifications' => { 'irc' => "irc.freenode.net:1234#travis", 'template' => ["%{repository_url} (%{commit}): %{message} %{foo} "] } }}
+  let(:common_irc_config) { { 'notifications' => { 'irc' => "irc.freenode.net:1234#travis" } } }
+
+  def custom_irc_config(config)
+    common_irc_config.merge('notifications' => { 'irc' => config })
+  end
 
   def expect_irc(host, options = {}, count = 1)
     IrcClient.expects(:new).times(count).with(host, 'travis-ci', { :port => nil }.merge(options)).returns(irc)
@@ -27,7 +31,7 @@ describe Travis::Notifications::Handler::Irc do
   end
 
   it "one irc notification" do
-    build = Factory(:successful_build, :config => { 'notifications' => { 'irc' => "irc.freenode.net:1234#travis" } })
+    build = Factory(:successful_build, :config => common_irc_config)
 
     expect_irc('irc.freenode.net', { :port => '1234' })
 
@@ -44,7 +48,7 @@ describe Travis::Notifications::Handler::Irc do
   end
 
   it "one irc notification using notice" do
-    build = Factory(:successful_build, :config => { 'notifications' => { 'irc' => { 'use_notice' => true, 'channels' => ["irc.freenode.net:1234#travis"] } } })
+    build = Factory(:successful_build, :config => custom_irc_config({ 'use_notice' => true, 'channels' => ["irc.freenode.net:1234#travis"] }))
 
     expect_irc('irc.freenode.net', { :port => '1234' })
 
@@ -61,7 +65,7 @@ describe Travis::Notifications::Handler::Irc do
   end
 
   it "one irc notification without joining the channel" do
-    build = Factory(:successful_build, :config => { 'notifications' => { 'irc' => { 'skip_join' => true, 'channels' => ["irc.freenode.net:1234#travis"] } } })
+    build = Factory(:successful_build, :config => custom_irc_config({ 'skip_join' => true, 'channels' => ["irc.freenode.net:1234#travis"] }))
 
     expect_irc('irc.freenode.net', { :port => '1234' })
 
@@ -75,22 +79,47 @@ describe Travis::Notifications::Handler::Irc do
     expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
   end
 
-  it "wiil post the irc notification with a customized message" do
-    build = Factory(:successful_build, :config => config_with_customized_template)
+  context 'customized template message' do
+    
+    let(:simple_template) do
+      custom_irc_config({ 'channels' => ["irc.freenode.net:1234#travis"], 'template' => "%{repository_url} (%{commit}): %{message} %{foo} " })
+    end
+    let(:multiple_template) do
+      custom_irc_config({ 'channels' => ["irc.freenode.net:1234#travis"] , 'template' => ["%{repository_url} (%{commit}) : %{message} %{foo} ", "Build details: %{build_url}"] })
+    end
 
-    expect_irc('irc.freenode.net', { :port => '1234' })
+    it "should print a multiple line messages" do
+      build = Factory(:successful_build, :config => multiple_template)
 
-    Travis::Notifications::Handler::Irc.new.notify('build:finished', build)
+      expect_irc('irc.freenode.net', { :port => '1234' })
 
-    expected = [
-      'JOIN #travis',
-      'PRIVMSG #travis :[travis-ci] svenfuchs/successful_build (62aae5f70ceee39123ef): The build passed.',
-    ]
-    expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
+      Travis::Notifications::Handler::Irc.new.notify('build:finished', build)
+
+      expected = [
+        "JOIN #travis",
+        "PRIVMSG #travis :[travis-ci] svenfuchs/successful_build (62aae5f70ceee39123ef) : The build passed.",
+        "PRIVMSG #travis :[travis-ci] Build details: http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}"
+      ]
+      expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
+    end
+
+    it "should print a single line messages" do
+      build = Factory(:successful_build, :config => simple_template)
+
+      expect_irc('irc.freenode.net', { :port => '1234' })
+
+      Travis::Notifications::Handler::Irc.new.notify('build:finished', build)
+
+      expected = [
+        'JOIN #travis',
+        'PRIVMSG #travis :[travis-ci] svenfuchs/successful_build (62aae5f70ceee39123ef): The build passed.',
+      ]
+      expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
+    end
   end
 
   it "two irc notifications to different hosts, using config with notification rules" do
-    config = { 'notifications' => { 'irc' => { 'skip_join' => false, 'on_success' => "always", 'channels' => ["irc.freenode.net:1234#travis", "irc.example.com#example"] } } }
+    config = custom_irc_config({ 'skip_join' => false, 'on_success' => "always", 'channels' => ["irc.freenode.net:1234#travis", "irc.example.com#example"] })
     build  = Factory(:successful_build, :config => config)
 
     expect_irc('irc.freenode.net', { :port => '1234' })
@@ -115,7 +144,7 @@ describe Travis::Notifications::Handler::Irc do
   end
 
   it "two irc notifications to different hosts, using config with notification rules, without joining channel" do
-    config = { 'notifications' => { 'irc' => { 'skip_join' => true, 'on_success' => "always", 'channels' => ["irc.freenode.net:1234#travis", "irc.example.com#example"] } } }
+    config = custom_irc_config({ 'skip_join' => true, 'on_success' => "always", 'channels' => ["irc.freenode.net:1234#travis", "irc.example.com#example"] })
     build  = Factory(:successful_build, :config => config)
 
     expect_irc('irc.freenode.net', { :port => '1234' })
@@ -136,8 +165,7 @@ describe Travis::Notifications::Handler::Irc do
   end
 
   it "irc notifications to the same host should not disconnect between notifications" do
-    config = { 'notifications' => { 'irc' => ["irc.freenode.net:6667#travis", "irc.freenode.net:6667#rails", "irc.example.com#example"] } }
-    build  = Factory(:broken_build, :config => config)
+    build = Factory(:broken_build, :config => custom_irc_config(["irc.freenode.net:6667#travis", "irc.freenode.net:6667#rails", "irc.example.com#example"]))
 
     expect_irc('irc.freenode.net', { :port => '6667' }, 1) # (Only connect once to irc.freenode.net)
     expect_irc('irc.example.com')
