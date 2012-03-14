@@ -4,6 +4,7 @@ require 'support/formats'
 require 'json'
 
 describe Travis::Notifications::Handler::Archive do
+  include Support::ActiveRecord
   include Support::Formats
 
   let(:notification) { Travis::Notifications::Handler::Archive.new }
