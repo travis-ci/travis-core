@@ -15,8 +15,8 @@ ActiveRecord::Base.logger = Logger.new('log/test.db.log')
 ActiveRecord::Base.configurations = { 'test' => config }
 ActiveRecord::Base.establish_connection('test')
 
-DatabaseCleaner.strategy = :truncation
 DatabaseCleaner.clean_with :truncation
+DatabaseCleaner.strategy = :transaction
 
 module Support
   module ActiveRecord
@@ -24,6 +24,10 @@ module Support
 
     included do
       before :each do
+        DatabaseCleaner.start
+      end
+
+      after :each do
         DatabaseCleaner.clean
       end
     end

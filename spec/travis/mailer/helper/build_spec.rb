@@ -3,6 +3,7 @@ require 'support/active_record'
 
 describe Travis::Mailer::Helper::Build do
   include Travis::Mailer::Helper::Build
+  include Support::ActiveRecord
 
   let(:build) { Factory(:running_build) }
 
