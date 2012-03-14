@@ -28,12 +28,8 @@ module Travis
           build.commit.branch
         end
 
-        def commit_short
-          build.commit.commit[0, 7]
-        end
-
         def commit
-          build.commit.commit
+          build.commit.commit[0, 7]
         end
 
         def author
