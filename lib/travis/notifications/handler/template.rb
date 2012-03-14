@@ -12,7 +12,7 @@ module Travis
 
         def interpolate
           template.gsub(/%{(#{ACCEPTED_KEYWORDS.join("|")}|.*)}/) do
-            send($1) if $1 && self.respond_to?($1.to_sym)
+            send($1) if $1 && self.respond_to?($1)
           end.strip
         end
 
