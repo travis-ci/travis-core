@@ -41,6 +41,7 @@ class IrcClient
 
   def quit
     socket.puts 'QUIT'
+    socket.gets until socket.eof?
     socket.close
     ping_thread.exit
   end
@@ -51,7 +52,7 @@ class IrcClient
     Thread.new(socket) do |s|
       loop do
         s.puts "PONG #{$1}" if s.gets =~ /^PING (.*)/
-        sleep 1
+        sleep 0.2
       end
     end
   end
