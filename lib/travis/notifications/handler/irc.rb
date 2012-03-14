@@ -30,21 +30,26 @@ module Travis
             end
 
             def send_notifications(host, port, channels)
-              use_notice = notice?
-              join_channel = join?
-
-              messages = template.map { |message| Template.new(message, build).interpolate }
-
-              irc(host, nick, :port => port) do |irc|
+              irc(host, nick, :port => port) do |irc_client|
                 channels.each do |channel|
-                  join(channel) if join_channel
-                  messages.each do |message|
-                    say("[travis-ci] #{message}", channel, use_notice)
+                  begin
+                    send_notification(irc_client, channel, interpolated_messages)
+                    info("Successfully notified #{host}:#{port}##{channel}")
+                  rescue StandardError => e
+                    error("Could not notify #{host}:#{port}##{channel} : #{e.inspect}")
                   end
-                  leave(channel) if join_channel
                 end
               end
-              # TODO somehow log whether or not the irc message was sent successfully
+            end
+
+            def send_notification(irc_client, channel, messages)
+              irc_client.join(channel) if join?
+
+              messages.each do |message|
+                irc_client.say("[travis-ci] #{message}", channel, notice?)
+              end
+
+              irc_client.leave(channel) if join?
             end
 
             def irc(host, nick, options, &block)
@@ -78,9 +83,15 @@ module Travis
               end
             end
 
+            def interpolated_messages
+              @interpolated_messages ||= template.map do |message|
+                Template.new(message, build).interpolate
+              end
+            end
+
             def template
               @template ||= begin
-                template = (build.config[:notifications] && build.config[:notifications][:irc].is_a?(Hash) && build.config[:notifications][:irc][:template]) 
+                template = (build.config[:notifications] && build.config[:notifications][:irc].is_a?(Hash) && build.config[:notifications][:irc][:template])
                 Array(template || default_template)
               end
             end

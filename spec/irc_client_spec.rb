@@ -130,12 +130,12 @@ describe IrcClient do
       socket.expects(:puts).with("PRIVMSG #travis :goodbye")
       socket.expects(:puts).with("PART #travis")
 
-      @client.run do
-        join 'travis'
-        say 'hello', 'travis'
-        say 'hi', 'travis', true
-        say 'goodbye', 'travis'
-        leave 'travis'
+      @client.run do |client|
+        client.join 'travis'
+        client.say 'hello', 'travis'
+        client.say 'hi', 'travis', true
+        client.say 'goodbye', 'travis'
+        client.leave 'travis'
       end
     end
 

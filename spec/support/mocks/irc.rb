@@ -10,7 +10,7 @@ module Support
       end
 
       def run(&block)
-        instance_eval(&block) if block_given?
+        yield(self) if block_given?
       end
 
       def leave(channel)
