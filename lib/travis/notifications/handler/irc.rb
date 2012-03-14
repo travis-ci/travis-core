@@ -97,7 +97,7 @@ module Travis
             end
 
             def default_template
-              ["%{repository_url}#%{build_number} (%{branch} - %{commit_short} : %{author}): %{message}",
+              ["%{repository_url}#%{build_number} (%{branch} - %{commit} : %{author}): %{message}",
                 "Change view : %{compare_url}",
                 "Build details : %{build_url}"]
             end

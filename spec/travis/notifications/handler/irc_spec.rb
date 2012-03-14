@@ -80,7 +80,7 @@ describe Travis::Notifications::Handler::Irc do
   end
 
   context 'customized template message' do
-    
+
     let(:simple_template) do
       custom_irc_config({ 'channels' => ["irc.freenode.net:1234#travis"], 'template' => "%{repository_url} (%{commit}): %{message} %{foo} " })
     end
@@ -97,7 +97,7 @@ describe Travis::Notifications::Handler::Irc do
 
       expected = [
         "JOIN #travis",
-        "PRIVMSG #travis :[travis-ci] svenfuchs/successful_build (62aae5f70ceee39123ef) : The build passed.",
+        "PRIVMSG #travis :[travis-ci] svenfuchs/successful_build (62aae5f) : The build passed.",
         "PRIVMSG #travis :[travis-ci] Build details: http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}"
       ]
       expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
@@ -112,7 +112,7 @@ describe Travis::Notifications::Handler::Irc do
 
       expected = [
         'JOIN #travis',
-        'PRIVMSG #travis :[travis-ci] svenfuchs/successful_build (62aae5f70ceee39123ef): The build passed.',
+        'PRIVMSG #travis :[travis-ci] svenfuchs/successful_build (62aae5f): The build passed.',
       ]
       expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
     end
