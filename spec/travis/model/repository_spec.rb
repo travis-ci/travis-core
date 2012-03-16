@@ -26,6 +26,12 @@ describe Repository do
         repository.owner_name.should == minimal.owner_name
         repository.name.should == minimal.name
       end
+
+      it "should raise an error when a repository couldn't be found using params" do
+        expect {
+          Repository.find_by(:name => 'emptiness')
+        }.to raise_error(ActiveRecord::RecordNotFound)
+      end
     end
 
     describe 'timeline' do
