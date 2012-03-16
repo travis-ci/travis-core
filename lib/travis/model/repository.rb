@@ -53,7 +53,7 @@ class Repository < ActiveRecord::Base
       if id = params[:repository_id] || params[:id]
         self.find(id)
       else
-        self.where(params.slice(:name, :owner_name)).first
+        self.where(params.slice(:name, :owner_name)).first || raise(ActiveRecord::RecordNotFound)
       end
     end
 
