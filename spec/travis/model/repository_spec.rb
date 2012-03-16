@@ -102,11 +102,8 @@ describe Repository do
       repository.public_key.should eql(repository.key.public_key)
     end
 
-    it "should create a new key" do
-      SslKey.delete_all
-      lambda do
-        repository.key
-      end.should change(SslKey, :count).by(1)
+    it "should create a new key when the repository is created" do
+      repository.key.should_not == nil
     end
 
     it "should retrieve the existing key" do
