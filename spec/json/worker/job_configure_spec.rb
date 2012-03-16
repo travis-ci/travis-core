@@ -17,7 +17,8 @@ describe 'JSON for worker jobs' do
       },
       'repository' => {
         'id' => job.repository_id,
-        'slug' => 'svenfuchs/minimal'
+        'slug' => 'svenfuchs/minimal',
+        'config_url' => 'https://raw.github.com/svenfuchs/minimal/62aae5f70ceee39123ef/.travis.yml'
       },
       'queue' => 'builds.configure'
     }
