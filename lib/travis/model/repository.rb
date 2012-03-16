@@ -26,6 +26,10 @@ class Repository < ActiveRecord::Base
   validates :name,       :presence => true, :uniqueness => { :scope => :owner_name }
   validates :owner_name, :presence => true
 
+  before_create do
+    self.key = SslKey.new(:repository_id => self.id)
+  end
+
   delegate  :public_key, :to => :key
 
   class << self
@@ -73,11 +77,6 @@ class Repository < ActiveRecord::Base
       :active => active,
       :repository => self
     )
-  end
-
-  alias :associated_key :key
-  def key
-    @key ||= associated_key || SslKey.create!(:repository_id => self.id)
   end
 
   def branches
