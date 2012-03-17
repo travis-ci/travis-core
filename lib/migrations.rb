@@ -7,9 +7,7 @@ require 'active_record/railtie'
 
 Bundler.require
 
-Class.new(Rails::Application) do
-  config.active_support.deprecation = :log
-  initialize!
-  load_tasks
-end
-
+app = Class.new(Rails::Application)
+app.config.active_support.deprecation = :log
+app.initialize!
+app.load_tasks
