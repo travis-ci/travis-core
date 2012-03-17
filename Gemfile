@@ -18,6 +18,10 @@ platform :jruby do
   gem 'activerecord-jdbc-adapter',           '1.2.2'
 end
 
+group :development, :test do
+  gem 'micro_migrations', :git => 'git@gist.github.com:33e9f92c229eb808a4fa.git'
+end
+
 group :test do
   gem 'rspec',            '~> 2.8.0'
   gem 'factory_girl',     '~> 2.6.0'

@@ -1,7 +1,8 @@
 # need to add this path for stand-alone migrations that use models
 
 require 'rspec/core/rake_task'
-require File.expand_path('lib/migrations')
+require 'bundler/setup'
+require 'micro_migrations'
 require 'travis'
 
 desc 'Run specs'
