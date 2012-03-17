@@ -1,6 +1,3 @@
-$: << 'lib/travis/model'
-require 'user'
-
 class AddAdminFlagToUser < ActiveRecord::Migration
   def self.up
     change_table(:users) do |t|

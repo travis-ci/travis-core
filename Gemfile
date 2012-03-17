@@ -18,10 +18,6 @@ platform :jruby do
   gem 'activerecord-jdbc-adapter',           '1.2.2'
 end
 
-group :development do
-  gem 'standalone_migrations', '~> 1.0.5'
-end
-
 group :test do
   gem 'rspec',            '~> 2.8.0'
   gem 'factory_girl',     '~> 2.6.0'

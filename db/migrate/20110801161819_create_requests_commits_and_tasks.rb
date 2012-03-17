@@ -1,5 +1,4 @@
 require 'data_migrations'
-require 'build'
 
 class CreateRequestsCommitsAndTasks < ActiveRecord::Migration
   def self.up
