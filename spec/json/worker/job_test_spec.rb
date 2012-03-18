@@ -19,7 +19,7 @@ describe 'JSON for worker jobs' do
       'repository' => {
         'id' => job.repository_id,
         'slug' => 'svenfuchs/minimal',
-        'git_url' => 'git://github.com/svenfuchs/minimal.git'
+        'source_url' => 'git://github.com/svenfuchs/minimal.git'
       },
       'config' => {
         'rvm' => '1.8.7',
