@@ -127,8 +127,9 @@ class Build < ActiveRecord::Base
   # sometimes the config is not deserialized and is returned
   # as a string, this is a work around for now :(
   def config
-    deserialized = super
+    deserialized = self['config']
     if deserialized.is_a?(String)
+      logger.warn "Attribute config isn't YAML. Current serialized attributes: #{Build.serialized_attributes}"
       deserialized = YAML.load(deserialized)
     end
     deserialized

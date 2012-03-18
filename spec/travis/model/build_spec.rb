@@ -107,7 +107,8 @@ describe Build do
 
       fit 'tries to deserialize the config itself if a String is returned' do
         build = Factory(:build)
-        build.expects(:read_attribute).with('config').returns("---\nfoo:\n  bar: bar")
+        build.stubs(:read_attribute).returns("---\n:foo:\n  :bar: bar")
+        Build.logger.expects(:warn)
         build.config[:foo][:bar].should == 'bar'
       end
     end
