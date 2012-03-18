@@ -10,7 +10,7 @@ describe Request do
   describe 'create' do
     let(:request) { Factory(:request).reload }
 
-    it "also creates the request's configure job" do
+    it "creates the request's configure job" do
       request.job.should be_instance_of(Job::Configure)
     end
   end
@@ -53,14 +53,14 @@ describe Request do
     it 'creates a commit for the given payload' do
       commit = Request.commit_for(payload, repository)
 
-      commit.commit.should == '9854592'
+      commit.commit.should  == '9854592'
       commit.message.should == 'Bump to 0.0.15'
-      commit.branch.should == 'master'
+      commit.branch.should  == 'master'
       commit.committed_at.strftime("%Y-%m-%d %H:%M:%S").should == '2010-10-27 04:32:37'
 
-      commit.committer_name.should == 'Sven Fuchs'
+      commit.committer_name.should  == 'Sven Fuchs'
       commit.committer_email.should == 'svenfuchs@artweb-design.de'
-      commit.author_name.should == 'Christopher Floess'
+      commit.author_name.should  == 'Christopher Floess'
       commit.author_email.should == 'chris@flooose.de'
     end
   end
