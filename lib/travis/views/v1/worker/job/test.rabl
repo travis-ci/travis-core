@@ -10,7 +10,7 @@ end
 child repository => :repository do
   attributes :id
   node(:slug) { |repository| repository.slug }
-  node(:git_url) { "git://github.com/#{repository.slug}.git" }
+  node(:source_url) { "git://github.com/#{repository.slug}.git" }
 end
 
 glue(job) { attribute :config }
