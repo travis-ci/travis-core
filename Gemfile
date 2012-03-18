@@ -1,3 +1,5 @@
+source :rubygems
+
 gemspec
 
 # see https://gist.github.com/2063855
