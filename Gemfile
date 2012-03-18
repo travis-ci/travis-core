@@ -1,8 +1,10 @@
-source :rubygems
-
 gemspec
 
-gem 'travis-support', :git => 'git://github.com/travis-ci/travis-support.git'
+# see https://gist.github.com/2063855
+base ||= 'git://github.com/travis-ci'
+type = base[0, 2] == '..' ? :path : :git
+
+gem 'travis-support', type => "#{base}/travis-support"
 gem 'metriks',        :git => 'git://github.com/mattmatt/metriks.git', :ref => 'source'
 
 platform :mri do
