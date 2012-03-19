@@ -93,7 +93,7 @@ class Repository < ActiveRecord::Base
     n.sort { |a, b| b.finished_at <=> a.finished_at }
   end
 
-  alias :associated_key :key
+  alias_method :associated_key, :key
   def key
     @key ||= associated_key || SslKey.new(:repository => self).tap do |key|
       begin
