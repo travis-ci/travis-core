@@ -1,4 +1,5 @@
 require 'travis'
+require 'rails/engine'
 
 module Travis
   class Engine < Rails::Engine
