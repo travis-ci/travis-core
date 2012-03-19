@@ -95,14 +95,13 @@ class Repository < ActiveRecord::Base
 
   alias :associated_key :key
   def key
-    @key ||= associated_key || SslKey.new(:repository => self)
-    if @key.new_record?
+    @key ||= associated_key || SslKey.new(:repository => self).tap do |key|
       begin
-        @key.save!
-      rescue ActiveRecord::ValidationError => e
+        key.save!
+      rescue ActiveRecord::RecordInvalid => e
         logger.warn "Error lazily creating an SSL key for repository #{slug}. Someone else probably created it just now."
+        associated_key.reload
       end
     end
-    @key
   end
 end

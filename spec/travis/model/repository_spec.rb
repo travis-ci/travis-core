@@ -121,10 +121,17 @@ describe Repository do
     end
 
     it "shouldn't fail when fail when creating a new ssl key failed" do
-      repository.expects(:associated_key).returns nil
+      key = repository.key
+      repository.stubs(:associated_key).returns(nil).then.returns(key)
       expect {
         repository.key
       }.to_not raise_error
+    end
+
+    it "should return the other key when a validation error is raised" do
+      key = repository.key
+      repository.stubs(:associated_key).returns(nil).then.returns(key)
+      repository.key.should == key
     end
   end
 
