@@ -124,6 +124,17 @@ class Build < ActiveRecord::Base
     expand_matrix
   end
 
+  # sometimes the config is not deserialized and is returned
+  # as a string, this is a work around for now :(
+  def config
+    deserialized = self['config']
+    if deserialized.is_a?(String)
+      logger.warn "Attribute config isn't YAML. Current serialized attributes: #{Build.serialized_attributes}"
+      deserialized = YAML.load(deserialized)
+    end
+    deserialized
+  end
+
   def previous_on_branch
     Build.on_branch(commit.branch).previous(self)
   end

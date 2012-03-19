@@ -104,6 +104,13 @@ describe Build do
         build = Factory(:build, :config => { 'foo' => { 'bar' => 'bar' } })
         build.config[:foo][:bar].should == 'bar'
       end
+
+      fit 'tries to deserialize the config itself if a String is returned' do
+        build = Factory(:build)
+        build.stubs(:read_attribute).returns("---\n:foo:\n  :bar: bar")
+        Build.logger.expects(:warn)
+        build.config[:foo][:bar].should == 'bar'
+      end
     end
 
     it 'sets its number to the next build number on creation' do
