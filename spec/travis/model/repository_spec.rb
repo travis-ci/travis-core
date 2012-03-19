@@ -113,6 +113,19 @@ describe Repository do
         repository.key.id.should eql(key.id)
       end.should change(SslKey, :count).by(0)
     end
+
+    it "should check if a key exists and create a new one on access" do
+      repository.key.destroy
+      repository.reload
+      repository.key.should_not == nil
+    end
+
+    it "shouldn't fail when fail when creating a new ssl key failed" do
+      repository.expects(:associated_key).returns nil
+      expect {
+        repository.key
+      }.to_not raise_error
+    end
   end
 
   describe 'branches' do
