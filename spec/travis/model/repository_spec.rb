@@ -113,6 +113,26 @@ describe Repository do
         repository.key.id.should eql(key.id)
       end.should change(SslKey, :count).by(0)
     end
+
+    it "should check if a key exists and create a new one on access" do
+      repository.key.destroy
+      repository.reload
+      repository.key.should_not == nil
+    end
+
+    it "shouldn't fail when fail when creating a new ssl key failed" do
+      key = repository.key
+      repository.stubs(:associated_key).returns(nil).then.returns(key)
+      expect {
+        repository.key
+      }.to_not raise_error
+    end
+
+    it "should return the other key when a validation error is raised" do
+      key = repository.key
+      repository.stubs(:associated_key).returns(nil).then.returns(key)
+      repository.key.should == key
+    end
   end
 
   describe 'branches' do

@@ -92,4 +92,16 @@ class Repository < ActiveRecord::Base
     n = branches.map { |branch| builds.last_finished_on_branch(branch) }.compact
     n.sort { |a, b| b.finished_at <=> a.finished_at }
   end
+
+  alias_method :associated_key, :key
+  def key
+    @key ||= associated_key || SslKey.new(:repository => self).tap do |key|
+      begin
+        key.save!
+      rescue ActiveRecord::RecordInvalid => e
+        logger.warn "Error lazily creating an SSL key for repository #{slug}. Someone else probably created it just now."
+        associated_key.reload
+      end
+    end
+  end
 end
