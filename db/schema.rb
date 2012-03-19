@@ -91,8 +91,8 @@ ActiveRecord::Schema.define(:version => 20120311234933) do
     t.string   "name"
     t.string   "url"
     t.integer  "last_duration"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
     t.integer  "last_build_id"
     t.string   "last_build_number"
     t.integer  "last_build_status"
@@ -104,6 +104,7 @@ ActiveRecord::Schema.define(:version => 20120311234933) do
     t.text     "description"
     t.string   "last_build_language"
     t.integer  "last_build_duration"
+    t.boolean  "private",                :default => false
   end
 
   add_index "repositories", ["last_build_started_at"], :name => "index_repositories_on_last_build_started_at"

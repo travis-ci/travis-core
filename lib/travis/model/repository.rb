@@ -104,4 +104,8 @@ class Repository < ActiveRecord::Base
       end
     end
   end
+
+  def rails_fork?
+    slug != 'rails/rails' && slug =~ %r(/rails$)
+  end
 end

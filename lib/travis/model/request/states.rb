@@ -35,15 +35,11 @@ class Request
       protected
 
         def approved?
-          branch_included?(commit.branch) && !branch_excluded?(commit.branch) && !rails_fork?
+          branch_included?(commit.branch) && !branch_excluded?(commit.branch)
         end
 
         def extract_attributes(attributes)
           attributes.symbolize_keys.slice(*attribute_names.map(&:to_sym))
-        end
-
-        def rails_fork?
-          repository.slug != 'rails/rails' && repository.slug =~ %r(/rails$)
         end
 
         def create_build!

@@ -5,4 +5,12 @@ require 'active_record'
 class Commit < ActiveRecord::Base
   belongs_to :repository
   validates :commit, :branch, :message, :committed_at, :presence => true
+
+  def skipped?
+    message.to_s =~ /\[ci(?: |:)([\w ]*)\]/i && $1.downcase == 'skip'
+  end
+
+  def github_pages?
+    ref =~ /gh[-_]pages/i
+  end
 end

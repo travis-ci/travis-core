@@ -168,4 +168,22 @@ describe Repository do
     end
   end
 
+  describe 'rails_fork?' do
+    let(:repository) { Repository.new }
+
+    it 'returns true if the repository is a rails fork' do
+      repository.owner_name, repository.name = 'josh', 'rails'
+      repository.rails_fork?.should be_true
+    end
+
+    it 'returns false if the repository is rails/rails' do
+      repository.owner_name, repository.name = 'rails', 'rails'
+      repository.rails_fork?.should be_false
+    end
+
+    it 'returns false if the repository is not owned by the rails org' do
+      repository.owner_name, repository.name = 'josh', 'completeness-fu'
+      repository.rails_fork?.should be_false
+    end
+  end
 end
