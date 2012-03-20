@@ -10,7 +10,7 @@ describe 'JSON for pusher' do
   it 'job:created' do
     json_for_pusher('job:created', test).should == {
       'id' => test.id,
-      'build_id' => test.owner_id,
+      'build_id' => test.source_id,
       'repository_id' => test.repository_id,
       'number' => '2.1',
       'queue' => 'builds.common',

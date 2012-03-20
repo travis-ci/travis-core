@@ -17,7 +17,7 @@ class Job
 
     class << self
       def append_log!(id, chars)
-        job = find(id, :select => [:id, :repository_id, :owner_id, :owner_type, :state, :config])
+        job = find(id, :select => [:id, :repository_id, :source_id, :source_type, :state, :config]) # is this still needed? we introduced this as an optimization when the log was still on the jobs table
         job.append_log!(chars) unless job.finished?
       end
     end

@@ -15,7 +15,7 @@ class TestMock
   include Job::Test::States
 
   attr_accessor :state, :config, :status, :started_at, :finished_at, :worker
-  def owner; @owner ||= stub('build', :start => nil, :finish => nil, :state => nil, :state= => nil) end
+  def source; @source ||= stub('build', :start => nil, :finish => nil, :state => nil, :state= => nil) end
   def log; @log ||= stub('artifact', :content => nil, :update_attributes! => nil) end
   def save!; end
   def denormalize(*); end
@@ -50,8 +50,8 @@ describe Job::Test::States do
         job.start(data)
       end
 
-      it 'propagates the event to the owner' do
-        job.owner.expects(:start)
+      it 'propagates the event to the source' do
+        job.source.expects(:start)
         job.start(data)
       end
     end
@@ -69,8 +69,8 @@ describe Job::Test::States do
         job.finish(data)
       end
 
-      it 'propagates the event to the owner' do
-        job.owner.expects(:finish).with(data)
+      it 'propagates the event to the source' do
+        job.source.expects(:finish).with(data)
         job.finish(data)
       end
     end

@@ -4,7 +4,11 @@ rvm:
   - jruby-18mode
   - jruby-19mode
   - jruby-head
+matrix:
+  allow_failures:
+    - rvm: jruby-19mode
+    - rvm: jruby-head
 before_script:
-  - 'RAILS_ENV=test bundle exec rake db:create db:schema:load --trace'
+  - 'RAILS_ENV=test rake db:create db:schema:load --trace'
 notifications:
   irc: "irc.freenode.org#travis"

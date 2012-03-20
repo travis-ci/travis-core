@@ -2,24 +2,29 @@ source :rubygems
 
 gemspec
 
-gem 'travis-support',     :git => 'git://github.com/travis-ci/travis-support.git'
-gem 'metriks',            :git => 'git://github.com/mattmatt/metriks.git', :ref => "source"
+# see https://gist.github.com/2063855
+base ||= 'git://github.com/travis-ci'
+type = base[0, 2] == '..' ? :path : :git
+
+gem 'travis-support', type => "#{base}/travis-support"
+gem 'metriks',        :git => 'git://github.com/mattmatt/metriks.git', :ref => 'source'
 
 platform :mri do
-  gem 'amq-client',       '>= 0.9.1'
-  gem 'amqp',             '>= 0.9.2'
-  gem 'pg',               '~> 0.13.2'
+  gem 'amq-client',    '>= 0.9.1'
+  gem 'amqp',          '>= 0.9.2'
+  gem 'pg',            '~> 0.13.2'
 end
 
 platform :jruby do
-  gem 'jruby-openssl',    '~> 0.7.4'
-  gem 'hot_bunnies',      '~> 1.3.3'
+  gem 'jruby-openssl', '~> 0.7.4'
+  gem 'hot_bunnies',   '~> 1.3.3'
   gem 'activerecord-jdbcpostgresql-adapter', '1.2.2' # see https://github.com/bmabey/database_cleaner/pull/83
   gem 'activerecord-jdbc-adapter',           '1.2.2'
 end
 
-group :development do
-  gem 'standalone_migrations', '~> 1.0.5'
+group :development, :test do
+  gem 'micro_migrations', :git => 'git://gist.github.com/2087829.git'
+  gem 'data_migrations',  '~> 0.0.1'
 end
 
 group :test do

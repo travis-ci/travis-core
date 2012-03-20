@@ -26,13 +26,13 @@ FactoryGirl.define do
   factory :configure, :class => 'Job::Configure' do
     repository { Repository.first || Factory(:repository) }
     commit     { Factory(:commit) }
-    owner      { Factory(:request) }
+    source     { Factory(:request) }
   end
 
   factory :test, :class => 'Job::Test' do
     repository { Repository.first || Factory(:repository) }
     commit     { Factory(:commit) }
-    owner      { Factory(:build) }
+    source     { Factory(:build) }
     log        { Factory(:log) }
     config     { { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' } }
     number     '2.1'

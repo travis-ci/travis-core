@@ -104,7 +104,7 @@ module Github
   end
 
   class Commit < OpenStruct
-    ATTR_NAMES = [:commit, :message, :branch, :committed_at, :committer_name, :committer_email, :author_name, :author_email, :compare_url]
+    ATTR_NAMES = [:commit, :message, :branch, :ref, :committed_at, :committer_name, :committer_email, :author_name, :author_email, :compare_url]
 
     def initialize(data, repository)
       data['author'] ||= {}

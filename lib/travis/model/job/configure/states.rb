@@ -19,7 +19,7 @@ class Job
         states :created, :started, :finished
 
         event :start,  :to => :started,  :after => :propagate
-        event :finish, :to => :finished, :after => :configure_owner # TODO why not just propagate here?
+        event :finish, :to => :finished, :after => :configure_source # TODO why not just propagate here?
         event :all, :after => :notify
 
         def finish(data)
@@ -28,8 +28,8 @@ class Job
           end
         end
 
-        def configure_owner(event, data)
-          owner.configure!(data)
+        def configure_source(event, data)
+          source.configure!(data)
         end
 
         protected

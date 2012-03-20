@@ -30,9 +30,9 @@ class Job < ActiveRecord::Base
   has_many   :artifacts
   belongs_to :repository
   belongs_to :commit
-  belongs_to :owner, :polymorphic => true, :autosave => true
+  belongs_to :source, :polymorphic => true, :autosave => true
 
-  validates :repository_id, :commit_id, :owner_id, :owner_type, :presence => true
+  validates :repository_id, :commit_id, :source_id, :source_type, :presence => true
 
   serialize :config
 

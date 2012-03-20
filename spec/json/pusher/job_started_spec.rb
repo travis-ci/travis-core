@@ -19,7 +19,7 @@ describe 'JSON for pusher' do
   it 'job:started' do
     json_for_pusher('job:started', test).should == {
       'id' => test.id,
-      'build_id' => test.owner_id,
+      'build_id' => test.source_id,
       'started_at' => nil,
       'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4',
       'sponsor' => { 'name' => 'Railslove', 'url' => 'http://railslove.de' }
