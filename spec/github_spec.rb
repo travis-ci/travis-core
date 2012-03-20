@@ -75,6 +75,7 @@ describe Github do
     commit.to_hash.should == {
       :commit => '9854592',
       :branch => 'master',
+      :ref => 'refs/heads/master',
       :message => 'Bump to 0.0.15',
       :committed_at => '2010-10-27 04:32:37',
       :committer_name => 'Sven Fuchs',
