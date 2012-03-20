@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120304000502) do
+ActiveRecord::Schema.define(:version => 20120319170001) do
 
   create_table "artifacts", :force => true do |t|
     t.text     "content"
@@ -91,8 +91,8 @@ ActiveRecord::Schema.define(:version => 20120304000502) do
     t.string   "name"
     t.string   "url"
     t.integer  "last_duration"
-    t.datetime "created_at",             :null => false
-    t.datetime "updated_at",             :null => false
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
     t.integer  "last_build_id"
     t.string   "last_build_number"
     t.integer  "last_build_status"
