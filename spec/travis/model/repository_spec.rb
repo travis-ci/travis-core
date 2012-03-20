@@ -65,6 +65,20 @@ describe Repository do
     end
   end
 
+  describe 'source_url' do
+    let(:repository) { Repository.new(:owner_name => 'travis-ci', :name => 'travis-ci') }
+
+    it 'returns the public git source url for a public repository' do
+      repository.private = false
+      repository.source_url.should == 'git://github.com/travis-ci/travis-ci.git'
+    end
+
+    it 'returns the private git source url for a private repository' do
+      repository.private = true
+      repository.source_url.should == 'git@github.com:travis-ci/travis-ci.git'
+    end
+  end
+
   it "last_build returns the most recent build" do
     repository = Factory(:repository)
     attributes = { :repository => repository, :state => 'finished' }
@@ -168,4 +182,22 @@ describe Repository do
     end
   end
 
+  describe 'rails_fork?' do
+    let(:repository) { Repository.new }
+
+    it 'returns true if the repository is a rails fork' do
+      repository.owner_name, repository.name = 'josh', 'rails'
+      repository.rails_fork?.should be_true
+    end
+
+    it 'returns false if the repository is rails/rails' do
+      repository.owner_name, repository.name = 'rails', 'rails'
+      repository.rails_fork?.should be_false
+    end
+
+    it 'returns false if the repository is not owned by the rails org' do
+      repository.owner_name, repository.name = 'josh', 'completeness-fu'
+      repository.rails_fork?.should be_false
+    end
+  end
 end

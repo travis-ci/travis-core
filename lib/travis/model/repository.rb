@@ -70,6 +70,10 @@ class Repository < ActiveRecord::Base
     @slug ||= [owner_name, name].join('/')
   end
 
+  def source_url
+    private? ? "git@github.com:#{slug}.git": "git://github.com/#{slug}.git"
+  end
+
   def service_hook
     @service_hook ||= ::ServiceHook.new(
       :owner_name => owner_name,
@@ -103,5 +107,9 @@ class Repository < ActiveRecord::Base
         associated_key.reload
       end
     end
+  end
+
+  def rails_fork?
+    slug != 'rails/rails' && slug =~ %r(/rails$)
   end
 end

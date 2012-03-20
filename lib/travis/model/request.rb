@@ -7,23 +7,21 @@ require 'metriks'
 # and needs to be approved based on the configuration. Once approved the
 # Request creates a Build.
 class Request < ActiveRecord::Base
+  autoload :Approval, 'travis/model/request/approval'
   autoload :Branches, 'travis/model/request/branches'
   autoload :Payload,  'travis/model/request/payload'
   autoload :States,   'travis/model/request/states'
 
-  include States
+  include Approval, States
 
   class << self
     # TODO clean this up
     def create_from(payload, token)
-      ActiveSupport::Notifications.publish("github.requests", "received", payload)
+      ActiveSupport::Notifications.publish('github.requests', 'received', payload)
       payload = Payload::Github.new(payload, token)
-      unless payload.reject?
-        ActiveSupport::Notifications.publish("github.requests", "accepted", payload)
-        repository = repository_for(payload.repository)
-        commit = commit_for(payload, repository)
-        repository.requests.create!(payload.attributes.merge(:state => :created, :commit => commit))
-      end
+      repository = repository_for(payload.repository)
+      commit = commit_for(payload, repository)
+      repository.requests.create!(payload.attributes.merge(:state => :created, :commit => commit))
     end
 
     def repository_for(payload)
@@ -47,7 +45,12 @@ class Request < ActiveRecord::Base
   serialize :config
 
   before_create do
-    # create the initial configure job
-    build_job(:repository => repository, :commit => commit)
+    if accept?
+      ActiveSupport::Notifications.publish('github.requests', 'accepted', payload)
+      build_job(:repository => repository, :commit => commit) # create the initial configure job
+    else
+      ActiveSupport::Notifications.publish('github.requests', 'rejected', payload)
+      self.state = :finished
+    end
   end
 end

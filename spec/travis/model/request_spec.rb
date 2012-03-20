@@ -18,7 +18,6 @@ describe Request do
   describe 'create_from' do
     it 'creates a request for the given payload' do
       request = Request.create_from(payload, 'token')
-
       request.payload.should == payload
       request.token.should == 'token'
     end

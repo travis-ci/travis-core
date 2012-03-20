@@ -3,7 +3,7 @@
 # which is used in
 #   https://github.com/travis-ci/travis-hub/blob/master/lib/travis/hub/cli.rb#L15
 module Travis
-  class Model
+  module Model
     autoload :Artifact,    'travis/model/artifact'
     autoload :Build,       'travis/model/build'
     autoload :Commit,      'travis/model/commit'
