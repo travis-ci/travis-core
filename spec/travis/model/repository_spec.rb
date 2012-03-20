@@ -65,6 +65,20 @@ describe Repository do
     end
   end
 
+  describe 'source_url' do
+    let(:repository) { Repository.new(:owner_name => 'travis-ci', :name => 'travis-ci') }
+
+    it 'returns the public git source url for a public repository' do
+      repository.private = false
+      repository.source_url.should == 'git://github.com/travis-ci/travis-ci.git'
+    end
+
+    it 'returns the private git source url for a private repository' do
+      repository.private = true
+      repository.source_url.should == 'git@github.com:travis-ci/travis-ci.git'
+    end
+  end
+
   it "last_build returns the most recent build" do
     repository = Factory(:repository)
     attributes = { :repository => repository, :state => 'finished' }

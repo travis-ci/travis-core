@@ -5,7 +5,7 @@ node(:type) { job.class.name.demodulize.underscore }
 child job => :build do
   attributes :id
   glue(job.commit) { attributes :commit, :branch }
-  node(:config_url) { "https://raw.github.com/#{repository.slug}/#{job.commit.commit}/.travis.yml" }
+  node(:config_url) { job.commit.config_url }
 end
 
 child repository => :repository do

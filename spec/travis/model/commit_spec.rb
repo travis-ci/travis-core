@@ -4,7 +4,14 @@ require 'support/active_record'
 describe Commit do
   include Support::ActiveRecord
 
-  let(:commit) { Commit.new }
+  let(:commit) { Commit.new(:commit => '12345678') }
+
+  describe 'config_url' do
+    it 'returns the raw url to the .travis.yml file on github' do
+      commit.repository = Repository.new(:owner_name => 'travis-ci', :name => 'travis-ci')
+      commit.config_url.should == 'https://raw.github.com/travis-ci/travis-ci/12345678/.travis.yml'
+    end
+  end
 
   describe 'skipped?' do
     it 'returns true when the commit message contains [ci skip]' do

@@ -13,4 +13,8 @@ class Commit < ActiveRecord::Base
   def github_pages?
     ref =~ /gh[-_]pages/i
   end
+
+  def config_url
+    "https://raw.github.com/#{repository.slug}/#{commit}/.travis.yml"
+  end
 end

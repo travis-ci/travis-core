@@ -5,7 +5,9 @@ require 'support/formats'
 describe 'JSON for worker jobs' do
   include Support::ActiveRecord, Support::Formats
 
-  let(:job) { Factory(:configure) }
+  let(:repository) { Repository.new(:owner_name => 'svenfuchs', :name => 'minimal') }
+  let(:commit)     { Factory(:commit, :repository => repository) }
+  let(:job)        { Factory(:configure, :commit => commit) }
 
   it 'Job::Configure' do
     json_for_worker(job).should == {
