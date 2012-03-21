@@ -8,6 +8,7 @@ type = base[0, 2] == '..' ? :path : :git
 
 gem 'travis-support', type => "#{base}/travis-support"
 gem 'metriks',        :git => 'git://github.com/mattmatt/metriks.git', :ref => 'source'
+gem 'gh',             :git => 'git://github.com/rkh/gh.git'
 
 platform :mri do
   gem 'amq-client',    '>= 0.9.1'
