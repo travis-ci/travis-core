@@ -72,7 +72,7 @@ module Github
   class Repository < OpenStruct
     include Api
 
-    ATTR_NAMES = [:name, :description, :url, :owner_name, :owner_email]
+    ATTR_NAMES = [:name, :description, :url, :owner_name, :owner_email, :private]
 
     def to_hash
       ATTR_NAMES.inject({}) { |result, name| result.merge(name => self.send(name)) }
@@ -98,9 +98,10 @@ module Github
       "repos/show/#{owner_name}/#{name}"
     end
 
-    def private?
-      self['private']
+    def private
+      !!self['private']
     end
+    alias_method :private?, :private
   end
 
   class Commit < OpenStruct
