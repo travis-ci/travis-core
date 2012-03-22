@@ -47,6 +47,22 @@ describe User do
     end
   end
 
+  describe 'authenticated_on_github' do
+    let(:user) { User.find_or_create_for_oauth(payload) }
+
+    before do
+      WebMock.stub_request(:get, "https://api.github.com/user").
+        with(:headers => {'Authorization' => "token #{payload["credentials"]["token"]}"}).
+        to_return(:status => 200, :body => payload.to_json, :headers => {})
+    end
+
+    it 'should log the user in' do
+      user.authenticated_on_github do
+        GH['/user']["name"].should be == payload["name"]
+      end
+    end
+  end
+
   describe 'github_service_hooks' do
     let!(:repository) { Factory(:repository, :name => 'safemode', :active => true) }
 

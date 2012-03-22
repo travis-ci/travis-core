@@ -17,4 +17,8 @@ class Commit < ActiveRecord::Base
   def config_url
     "https://raw.github.com/#{repository.slug}/#{commit}/.travis.yml"
   end
+
+  def pull_request?
+    ref =~ %r(^refs/pull/\d+/merge$)
+  end
 end

@@ -2,6 +2,7 @@ require 'active_record'
 require 'devise'
 require 'devise/orm/active_record'
 require 'devise/api_token_authenticatable'
+require 'gh'
 
 class User < ActiveRecord::Base
   devise :omniauthable, :api_token_authenticatable
@@ -54,6 +55,12 @@ class User < ActiveRecord::Base
         :description => data.description
       )
     end
+  end
+
+  # TODO: We don't use the GH library yet (used in pull-requests branch)
+  def authenticated_on_github(&block)
+    fail "we don't have a github token for #{inspect}" if github_oauth_token.blank?
+    GH.with(:token => github_oauth_token, &block)
   end
 
   protected

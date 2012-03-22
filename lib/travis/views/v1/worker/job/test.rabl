@@ -5,6 +5,7 @@ node(:type) { job.class.name.demodulize.underscore }
 child job => :build do
   attributes :id, :number
   glue(job.commit) { attributes :commit, :branch }
+  node(:ref) { job.commit.ref } if job.commit.pull_request?
 end
 
 child repository => :repository do
