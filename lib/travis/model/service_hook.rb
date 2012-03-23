@@ -23,11 +23,14 @@ class ServiceHook
   protected
 
     def activate(user)
-      Travis::GithubApi.add_service_hook(owner_name, name, user.github_oauth_token,
+      hook_details = {
         :token  => user.tokens.first.token,
-        :user   => user.login,
-        :domain => Travis.config.domain
-      )
+        :user   => user.login
+      }
+
+      hook_details[:domain] = Travis.config.service_hook_url if Travis.config.service_hook_url
+
+      Travis::GithubApi.add_service_hook(owner_name, name, user.github_oauth_token, hook_details)
     end
 
     def deactivate(user)
