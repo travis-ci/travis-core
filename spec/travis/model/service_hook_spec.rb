@@ -11,7 +11,7 @@ describe ServiceHook do
     it 'activates a service hook' do
       Travis::GithubApi.expects(:add_service_hook).with('svenfuchs', 'minimal', 'oauth_token',
         :user   => 'login',
-        :token  => 'user_token',
+        :token  => 'user_token'
       )
 
       repository.service_hook.set(true, user)
