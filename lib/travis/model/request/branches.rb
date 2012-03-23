@@ -8,11 +8,11 @@ class Request
   # branch?
   module Branches
     def branch_included?(branch)
-      !included_branches || included_branches.include?(branch)
+      !included_branches || includes_match?(included_branches, branch)
     end
 
     def branch_excluded?(branch)
-      excluded_branches && excluded_branches.include?(branch)
+      excluded_branches && includes_match?(excluded_branches, branch)
     end
 
     def included_branches
@@ -35,5 +35,15 @@ class Request
         {}
       end
     end
+
+    protected
+
+      def includes_match?(list, str)
+        list.any? { |item| regexp_or_string(item) === str }
+      end
+
+      def regexp_or_string(str)
+        str =~ %r{^/(.*)/$} ? Regexp.new($1) : str
+      end
   end
 end

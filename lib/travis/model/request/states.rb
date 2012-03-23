@@ -43,7 +43,7 @@ class Request
         end
 
         def create_build!
-          build = builds.create!(:repository => repository, :commit => commit, :config => config)
+          builds.create!(:repository => repository, :commit => commit, :config => config)
         end
     end
   end
