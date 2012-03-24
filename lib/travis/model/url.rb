@@ -14,6 +14,6 @@ class Url < ActiveRecord::Base
 
   private
   def set_code
-    self.code = Base64.urlsafe_encode64([Digest::MD5.hexdigest(url).to_i(16)].pack("N")).sub(/==\n?$/, '')
+    self.code = [[Digest::MD5.hexdigest(url).to_i(13)].pack("N")].pack("m0").tr("+/", "-_").sub(/==\n?$/, '')
   end
 end
