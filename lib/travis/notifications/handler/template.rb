@@ -5,6 +5,7 @@ module Travis
         attr_reader :template, :build
 
         ACCEPTED_KEYWORDS = %w{repository_url build_number branch commit_short commit author message compare_url build_url}
+        URI_REGEX = /(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/ix
 
         def initialize(template, build)
           @template, @build = template, build
@@ -53,7 +54,7 @@ module Travis
         end
 
         def minify_uris(content)
-          content.gsub /(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/ix do |url|
+          content.gsub URI_REGEX do |url|
             [Travis.config.shorten_host, Url.find_or_create_by_url(url).code].join('/')
           end
         end
