@@ -35,13 +35,16 @@ describe Travis::Notifications::Handler::Irc do
 
     expect_irc('irc.freenode.net', { :port => '1234' })
 
+    expect_change_code = Url.find_or_create_by_url("https://github.com/svenfuchs/minimal/compare/master...develop").code
+    expect_build_code = Url.find_or_create_by_url("http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}").code
+
     Travis::Notifications::Handler::Irc.new.notify('build:finished', build)
 
     expected = [
       'JOIN #travis',
       'PRIVMSG #travis :[travis-ci] svenfuchs/successful_build#1 (master - 62aae5f : Sven Fuchs): The build passed.',
-      'PRIVMSG #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
-      "PRIVMSG #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}",
+      "PRIVMSG #travis :[travis-ci] Change view : http://trvs.io/#{expect_change_code}",
+      "PRIVMSG #travis :[travis-ci] Build details : http://trvs.io/#{expect_build_code}",
       'PART #travis',
     ]
     expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
@@ -52,13 +55,16 @@ describe Travis::Notifications::Handler::Irc do
 
     expect_irc('irc.freenode.net', { :port => '1234' })
 
+    expect_change_code = Url.find_or_create_by_url("https://github.com/svenfuchs/minimal/compare/master...develop").code
+    expect_build_code = Url.find_or_create_by_url("http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}").code
+
     Travis::Notifications::Handler::Irc.new.notify('build:finished', build)
 
     expected = [
       'JOIN #travis',
       'NOTICE #travis :[travis-ci] svenfuchs/successful_build#1 (master - 62aae5f : Sven Fuchs): The build passed.',
-      'NOTICE #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
-      "NOTICE #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}",
+      "NOTICE #travis :[travis-ci] Change view : http://trvs.io/#{expect_change_code}",
+      "NOTICE #travis :[travis-ci] Build details : http://trvs.io/#{expect_build_code}",
       'PART #travis',
     ]
     expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
@@ -69,12 +75,15 @@ describe Travis::Notifications::Handler::Irc do
 
     expect_irc('irc.freenode.net', { :port => '1234' })
 
+    expect_change_code = Url.find_or_create_by_url("https://github.com/svenfuchs/minimal/compare/master...develop").code
+    expect_build_code = Url.find_or_create_by_url("http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}").code
+
     Travis::Notifications::Handler::Irc.new.notify('build:finished', build)
 
     expected = [
       'PRIVMSG #travis :[travis-ci] svenfuchs/successful_build#1 (master - 62aae5f : Sven Fuchs): The build passed.',
-      'PRIVMSG #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
-      "PRIVMSG #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}",
+      "PRIVMSG #travis :[travis-ci] Change view : http://trvs.io/#{expect_change_code}",
+      "PRIVMSG #travis :[travis-ci] Build details : http://trvs.io/#{expect_build_code}"
     ]
     expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
   end
@@ -92,13 +101,14 @@ describe Travis::Notifications::Handler::Irc do
       build = Factory(:successful_build, :config => multiple_template)
 
       expect_irc('irc.freenode.net', { :port => '1234' })
+      expect_code = Url.find_or_create_by_url("http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}").code
 
       Travis::Notifications::Handler::Irc.new.notify('build:finished', build)
 
       expected = [
         "JOIN #travis",
         "PRIVMSG #travis :[travis-ci] svenfuchs/successful_build (62aae5f) : The build passed.",
-        "PRIVMSG #travis :[travis-ci] Build details: http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}"
+        "PRIVMSG #travis :[travis-ci] Build details: http://trvs.io/#{expect_code}"
       ]
       expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
     end
@@ -125,19 +135,22 @@ describe Travis::Notifications::Handler::Irc do
     expect_irc('irc.freenode.net', { :port => '1234' })
     expect_irc('irc.example.com')
 
+    expect_change_code = Url.find_or_create_by_url("https://github.com/svenfuchs/minimal/compare/master...develop").code
+    expect_build_code = Url.find_or_create_by_url("http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}").code
+
     Travis::Notifications::Handler::Irc.new.notify('build:finished', build)
 
     expected = [
       'JOIN #travis',
       'PRIVMSG #travis :[travis-ci] svenfuchs/successful_build#1 (master - 62aae5f : Sven Fuchs): The build passed.',
-      'PRIVMSG #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
-      "PRIVMSG #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}",
+      "PRIVMSG #travis :[travis-ci] Change view : http://trvs.io/#{expect_change_code}",
+      "PRIVMSG #travis :[travis-ci] Build details : http://trvs.io/#{expect_build_code}",
       "PART #travis",
       "QUIT",
       'JOIN #example',
       'PRIVMSG #example :[travis-ci] svenfuchs/successful_build#1 (master - 62aae5f : Sven Fuchs): The build passed.',
-      'PRIVMSG #example :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
-      "PRIVMSG #example :[travis-ci] Build details : http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}",
+      "PRIVMSG #example :[travis-ci] Change view : http://trvs.io/#{expect_change_code}",
+      "PRIVMSG #example :[travis-ci] Build details : http://trvs.io/#{expect_build_code}",
       'PART #example',
     ]
     expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
@@ -150,16 +163,19 @@ describe Travis::Notifications::Handler::Irc do
     expect_irc('irc.freenode.net', { :port => '1234' })
     expect_irc('irc.example.com')
 
+    expect_change_code = Url.find_or_create_by_url("https://github.com/svenfuchs/minimal/compare/master...develop").code
+    expect_build_code = Url.find_or_create_by_url("http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}").code
+
     Travis::Notifications::Handler::Irc.new.notify('build:finished', build)
 
     expected = [
       'PRIVMSG #travis :[travis-ci] svenfuchs/successful_build#1 (master - 62aae5f : Sven Fuchs): The build passed.',
-      'PRIVMSG #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
-      "PRIVMSG #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}",
+      "PRIVMSG #travis :[travis-ci] Change view : http://trvs.io/#{expect_change_code}",
+      "PRIVMSG #travis :[travis-ci] Build details : http://trvs.io/#{expect_build_code}",
       "QUIT",
       'PRIVMSG #example :[travis-ci] svenfuchs/successful_build#1 (master - 62aae5f : Sven Fuchs): The build passed.',
-      'PRIVMSG #example :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
-      "PRIVMSG #example :[travis-ci] Build details : http://travis-ci.org/svenfuchs/successful_build/builds/#{build.id}",
+      "PRIVMSG #example :[travis-ci] Change view : http://trvs.io/#{expect_change_code}",
+      "PRIVMSG #example :[travis-ci] Build details : http://trvs.io/#{expect_build_code}",
     ]
     expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
   end
@@ -170,24 +186,27 @@ describe Travis::Notifications::Handler::Irc do
     expect_irc('irc.freenode.net', { :port => '6667' }, 1) # (Only connect once to irc.freenode.net)
     expect_irc('irc.example.com')
 
+    expect_change_code = Url.find_or_create_by_url("https://github.com/svenfuchs/minimal/compare/master...develop").code
+    expect_build_code = Url.find_or_create_by_url("http://travis-ci.org/svenfuchs/broken_build/builds/#{build.id}").code
+
     Travis::Notifications::Handler::Irc.new.notify('build:finished', build)
 
     expected = [
       'JOIN #travis',
       'PRIVMSG #travis :[travis-ci] svenfuchs/broken_build#1 (master - 62aae5f : Sven Fuchs): The build failed.',
-      'PRIVMSG #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
-      "PRIVMSG #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/broken_build/builds/#{build.id}",
+      "PRIVMSG #travis :[travis-ci] Change view : http://trvs.io/#{expect_change_code}",
+      "PRIVMSG #travis :[travis-ci] Build details : http://trvs.io/#{expect_build_code}",
       "PART #travis",
       'JOIN #rails',
       'PRIVMSG #rails :[travis-ci] svenfuchs/broken_build#1 (master - 62aae5f : Sven Fuchs): The build failed.',
-      'PRIVMSG #rails :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
-      "PRIVMSG #rails :[travis-ci] Build details : http://travis-ci.org/svenfuchs/broken_build/builds/#{build.id}",
+      "PRIVMSG #rails :[travis-ci] Change view : http://trvs.io/#{expect_change_code}",
+      "PRIVMSG #rails :[travis-ci] Build details : http://trvs.io/#{expect_build_code}",
       "PART #rails",
       "QUIT",
       'JOIN #example',
       'PRIVMSG #example :[travis-ci] svenfuchs/broken_build#1 (master - 62aae5f : Sven Fuchs): The build failed.',
-      'PRIVMSG #example :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
-      "PRIVMSG #example :[travis-ci] Build details : http://travis-ci.org/svenfuchs/broken_build/builds/#{build.id}",
+      "PRIVMSG #example :[travis-ci] Change view : http://trvs.io/#{expect_change_code}",
+      "PRIVMSG #example :[travis-ci] Build details : http://trvs.io/#{expect_build_code}",
       'PART #example',
     ]
     expected.each_with_index { |expected, ix| irc.output[ix].should == expected }

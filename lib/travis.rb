@@ -10,6 +10,7 @@ autoload :ServiceHook, 'travis/model/service_hook'
 autoload :SslKey,      'travis/model/ssl_key'
 autoload :Token,       'travis/model/token'
 autoload :User,        'travis/model/user'
+autoload :Url,         'travis/model/url'
 autoload :Worker,      'travis/model/worker'
 
 # travis-core holds the central parts of the model layer used in both travis-ci

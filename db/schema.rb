@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120319170001) do
+ActiveRecord::Schema.define(:version => 20120324104051) do
 
   create_table "artifacts", :force => true do |t|
     t.text     "content"
@@ -137,6 +137,13 @@ ActiveRecord::Schema.define(:version => 20120319170001) do
   create_table "tokens", :force => true do |t|
     t.integer  "user_id"
     t.string   "token"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "urls", :force => true do |t|
+    t.string   "url"
+    t.string   "code"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
