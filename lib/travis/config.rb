@@ -57,20 +57,21 @@ module Travis
       end
     end
 
-    define  :host     => 'http://travis-ci.org',
-            :amqp     => { :username => 'guest', :password => 'guest', :host => 'localhost', :prefetch => 1 },
-            :database => { :adapter => 'postgresql', :database => "travis_#{Travis::Config.env}", :encoding => 'unicode', :min_messages => 'warning' },
-            :airbrake => { :key => 'airbrake-api_key' },
-            :pusher   => { :app_id => 'app-id', :key => 'key', :secret => 'secret' },
-            :smtp     => { :user_name => 'postmark-api_key' },
-            :async    => {},
+    define  :host          => 'http://travis-ci.org',
+            :shorten_host  => 'http://trvs.io',
+            :amqp          => { :username => 'guest', :password => 'guest', :host => 'localhost', :prefetch => 1 },
+            :database      => { :adapter => 'postgresql', :database => "travis_#{Travis::Config.env}", :encoding => 'unicode', :min_messages => 'warning' },
+            :airbrake      => { :key => 'airbrake-api_key' },
+            :pusher        => { :app_id => 'app-id', :key => 'key', :secret => 'secret' },
+            :smtp          => { :user_name => 'postmark-api_key' },
+            :async         => {},
             :notifications => [],
-            :queues   => [],
-            :workers  => { :prune => { :after => 15, :interval => 5 } },
-            :jobs     => { :retry => { :after => 60 * 60 * 2, :max_attempts => 1, :interval => 60 * 5 } },
-            :archive  => {},
-            :ssl      => {},
-            :sponsors => { :platinum => [], :gold => [], :workers => {} }
+            :queues        => [],
+            :workers       => { :prune => { :after => 15, :interval => 5 } },
+            :jobs          => { :retry => { :after => 60 * 60 * 2, :max_attempts => 1, :interval => 60 * 5 } },
+            :archive       => {},
+            :ssl           => {},
+            :sponsors      => { :platinum => [], :gold => [], :workers => {} }
 
     default :_access => [:key]
 

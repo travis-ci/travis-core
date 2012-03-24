@@ -11,9 +11,7 @@ module Travis
         end
 
         def interpolate
-          template.gsub(/%{(#{ACCEPTED_KEYWORDS.join("|")}|.*)}/) do
-            send($1) if $1 && self.respond_to?($1)
-          end.strip
+          minify_uris(replace_keywords(template)).strip
         end
 
         def repository_url
@@ -46,6 +44,18 @@ module Travis
 
         def build_url
           [Travis.config.host, build.repository.owner_name, build.repository.name, 'builds', build.id].join('/')
+        end
+
+        def replace_keywords(content)
+          content.gsub(/%{(#{ACCEPTED_KEYWORDS.join("|")}|.*)}/) do
+            send($1) if $1 && self.respond_to?($1)
+          end
+        end
+
+        def minify_uris(content)
+          content.gsub /(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?/ix do |url|
+            [Travis.config.shorten_host, Url.find_or_create_by_url(url).code].join('/')
+          end
         end
       end
     end
