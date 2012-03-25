@@ -12,7 +12,7 @@ class Url < ActiveRecord::Base
   end
 
   def short_url
-    [Travis.config.shorten_host, code].join('/')
+    [Travis.config.http_shorten_host, code].join('/')
   end
 
   private

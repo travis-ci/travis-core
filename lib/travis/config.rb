@@ -57,8 +57,8 @@ module Travis
       end
     end
 
-    define  :host          => 'http://travis-ci.org',
-            :shorten_host  => 'http://trvs.io',
+    define  :host          => 'travis-ci.org',
+            :shorten_host  => 'trvs.io',
             :amqp          => { :username => 'guest', :password => 'guest', :host => 'localhost', :prefetch => 1 },
             :database      => { :adapter => 'postgresql', :database => "travis_#{Travis::Config.env}", :encoding => 'unicode', :min_messages => 'warning' },
             :airbrake      => { :key => 'airbrake-api_key' },
@@ -83,6 +83,14 @@ module Travis
 
     def env
       self.class.env
+    end
+
+    def http_host
+      "http://#{host}"
+    end
+
+    def http_shorten_host
+      "http://#{shorten_host}"
     end
   end
 end
