@@ -44,7 +44,7 @@ module Travis
 
         def build_url
           repo = build.repository
-          url  = [Travis.config.host, repo.owner_name, repo.name, 'builds', build.id].join('/')
+          url  = [Travis.config.http_host, repo.owner_name, repo.name, 'builds', build.id].join('/')
           shorten_url(url)
         end
 
