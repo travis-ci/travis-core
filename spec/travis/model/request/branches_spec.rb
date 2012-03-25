@@ -91,6 +91,31 @@ describe Request::Branches do
       stubs(:config).returns(:branches => 'foo, bar')
       branches_config.should == { :only => ['foo', 'bar']}
     end
+
+    it 'returns an array of string if the :branches value is a hash with :only key and string value' do
+      stubs(:config).returns(:branches => { :only => 'foo, bar' })
+      branches_config.should == { :only => ['foo', 'bar'] }
+    end
+
+    it 'returns an array of string if the :branches value is a hash with :except key and string value' do
+      stubs(:config).returns(:branches => { :except => 'foo, bar' })
+      branches_config.should == { :except => ['foo', 'bar'] }
+    end
+  end
+
+  describe '#split_branches' do
+    it "returns object unchanged if it's not a String" do
+      obj = Object.new
+      split_branches(obj).should == obj
+    end
+
+    it 'returns splitted at commas array of branches if the argument is a String' do
+      split_branches('foo, bar, /^baz$/').should == ['foo', 'bar', '/^baz$/']
+    end
+
+    it 'strips branches names if a String is passed' do
+      split_branches(' foo ,  bar  , /^baz$/ ').should == ['foo', 'bar', '/^baz$/']
+    end
   end
 
   describe '#regexp_or_string' do

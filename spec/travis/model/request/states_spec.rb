@@ -117,8 +117,18 @@ describe Request::States do
         request.should be_approved
       end
 
+      it 'if the branch is matched by the branches option given as a string' do
+        request.stubs(:config).returns(:branches => '/^mast.*$/, develop')
+        request.should be_approved
+      end
+
       it 'if the branch is included in the branches option given as an array' do
         request.stubs(:config).returns(:branches => ['master', 'develop'])
+        request.should be_approved
+      end
+
+      it 'if the branch is matched by the branches option given as an array' do
+        request.stubs(:config).returns(:branches => ['/^mast.*$/', 'develop'])
         request.should be_approved
       end
 
@@ -127,18 +137,38 @@ describe Request::States do
         request.should be_approved
       end
 
+      it 'if the branch is matched by the branches :only option given as a string' do
+        request.stubs(:config).returns(:branches => { :only => '/^mast.*$/, develop' })
+        request.should be_approved
+      end
+
       it 'if the branch is included in the branches :only option given as an array' do
         request.stubs(:config).returns(:branches => { :only => ['master', 'develop'] })
         request.should be_approved
       end
 
+      it 'if the branch is matched by the branches :only option given as an array' do
+        request.stubs(:config).returns(:branches => { :only => ['/^mast.*$/', 'develop'] })
+        request.should be_approved
+      end
+
       it 'if the branch is not included in the branches :except option given as a string' do
-        request.stubs(:config).returns(:branches => { :except => 'github-pages, feature-*' })
+        request.stubs(:config).returns(:branches => { :except => 'github-pages, feature' })
+        request.should be_approved
+      end
+
+      it 'if the branch is not matched by the branches :except option given as a string' do
+        request.stubs(:config).returns(:branches => { :except => '/^master-foo$/, feature' })
         request.should be_approved
       end
 
       it 'if the branch is not included in the branches :except option given as an array' do
-        request.stubs(:config).returns(:branches => { :except => ['github-pages', 'feature-*'] })
+        request.stubs(:config).returns(:branches => { :except => ['github-pages', 'feature'] })
+        request.should be_approved
+      end
+
+      it 'if the branch is not matched by the branches :except option given as an array' do
+        request.stubs(:config).returns(:branches => { :except => ['/^master-foo$/', 'feature'] })
         request.should be_approved
       end
     end
@@ -151,8 +181,18 @@ describe Request::States do
         request.should_not be_approved
       end
 
+      it 'if the branch is not matched by the branches option given as a string' do
+        request.stubs(:config).returns(:branches => '/^mast.*$/, develop')
+        request.should_not be_approved
+      end
+
       it 'if the branch is not included in the branches option given as an array' do
         request.stubs(:config).returns(:branches => ['master', 'develop'])
+        request.should_not be_approved
+      end
+
+      it 'if the branch is not matched by the branches option given as an array' do
+        request.stubs(:config).returns(:branches => ['/^mast.*$/', 'develop'])
         request.should_not be_approved
       end
 
@@ -161,18 +201,38 @@ describe Request::States do
         request.should_not be_approved
       end
 
+      it 'if the branch is not matched by the branches :only option given as a string' do
+        request.stubs(:config).returns(:branches => { :only => '/^mast.*$/, develop' })
+        request.should_not be_approved
+      end
+
       it 'if the branch is not included in the branches :only option given as an array' do
         request.stubs(:config).returns(:branches => { :only => ['master', 'develop'] })
         request.should_not be_approved
       end
 
+      it 'if the branch is not matched by the branches :only option given as an array' do
+        request.stubs(:config).returns(:branches => { :only => ['/^mast.*$/', 'develop'] })
+        request.should_not be_approved
+      end
+
       it 'if the branch is included in the branches :except option given as a string' do
-        request.stubs(:config).returns(:branches => { :except => 'staging, feature-*' })
+        request.stubs(:config).returns(:branches => { :except => 'staging, feature' })
+        request.should_not be_approved
+      end
+
+      it 'if the branch is matched by the branches :except option given as a string' do
+        request.stubs(:config).returns(:branches => { :except => '/^staging$/, feature' })
         request.should_not be_approved
       end
 
       it 'if the branch is included in the branches :except option given as an array' do
-        request.stubs(:config).returns(:branches => { :except => ['staging', 'feature-*'] })
+        request.stubs(:config).returns(:branches => { :except => ['staging', 'feature'] })
+        request.should_not be_approved
+      end
+
+      it 'if the branch is matched by the branches :except option given as an array' do
+        request.stubs(:config).returns(:branches => { :except => ['/^staging$/', 'feature'] })
         request.should_not be_approved
       end
     end
