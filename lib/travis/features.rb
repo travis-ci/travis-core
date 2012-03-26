@@ -7,7 +7,8 @@ module Travis
   module Features
     mattr_accessor :redis, :rollout
     class << self
-      delegate *Rollout.public_instance_methods(false), :to => :rollout
+      methods = Rollout.public_instance_methods(false) << {:to => self}
+      delegate(*methods)
     end
 
     def self.start
