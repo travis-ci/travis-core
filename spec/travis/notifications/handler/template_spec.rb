@@ -3,6 +3,8 @@ require 'travis/notifications/handler/template'
 require 'support/active_record'
 
 describe Travis::Notifications::Handler::Template do
+  include Support::ActiveRecord
+
   let(:build) { Factory(:build)}
   let(:template_string) {
     template =<<TEMPLATE
@@ -18,10 +20,6 @@ TEMPLATE
   before do
     Travis::Features.start
     Travis::Features.activate_user(:short_urls, user)
-  end
-
-  after do
-    user.destroy
   end
 
   describe "interpolating" do

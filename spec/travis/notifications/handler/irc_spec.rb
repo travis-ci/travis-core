@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'travis/features'
 require 'support/active_record'
 require 'support/mocks/irc'
 
@@ -8,11 +9,14 @@ describe Travis::Notifications::Handler::Irc do
   attr_reader :irc
 
   before do
+    Travis::Features.start
     @irc = Support::Mocks::Irc.new
     TCPSocket.any_instance.stubs(:puts => true, :get => true, :eof? => true)
     Travis.config.notifications = [:irc]
+    Travis::Features.activate_user(:short_urls, user)
   end
 
+  let(:user) { Factory(:user, :email => 'owner@example.com') }
   let(:repository) { Factory(:repository, :owner_email => 'owner@example.com') }
   let(:common_irc_config) { { 'notifications' => { 'irc' => "irc.freenode.net:1234#travis" } } }
 
