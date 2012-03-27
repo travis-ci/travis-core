@@ -4,6 +4,21 @@ require 'active_support/deprecation'
 require 'active_support/core_ext/module'
 
 module Travis
+  # Wraps feature flips for Travis.
+  # This allows enabling/disabling certain features for users
+  # and repositories only.
+  #
+  # The start method needs to be called before using this module.
+  # You can then ask for features to be enabled for repositories:
+  #
+  # Repository.find_by_slug('rails/rails')
+  # if Travis::Features.active?(:pull_requests, repository)
+  #   ...
+  # end
+  #
+  # This wraps checking if a repository is enabled and then delegates
+  # to the rollout library, where features can be enabled for users,
+  # groups and based on percentages.
   module Features
     mattr_accessor :redis, :rollout
     class << self
