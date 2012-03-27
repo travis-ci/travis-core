@@ -40,5 +40,21 @@ describe Travis::Features do
         client.host.should == '127.0.0.1'
       end
     end
+
+    describe "with Travis.config" do
+      before do
+        Travis.config.redis_url = 'redis://172.0.0.1:6379'
+      end
+
+      after do
+        Travis.config.redis_url = nil
+      end
+
+      it "should use the Travis.config if set" do
+        Travis::Features.start
+        client = Travis::Features.redis.client
+        client.host.should == '172.0.0.1'
+      end
+    end
   end
 end

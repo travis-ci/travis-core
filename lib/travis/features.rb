@@ -12,7 +12,7 @@ module Travis
     end
 
     def self.start
-      url = ENV['REDISTOGO_URL'] || 'redis://localhost:6379'
+      url = Travis.config.redis_url || ENV['REDISTOGO_URL'] || 'redis://localhost:6379'
       self.redis ||= ::Redis.connect(:url => url)
       self.rollout ||= ::Rollout.new(redis)
     end
