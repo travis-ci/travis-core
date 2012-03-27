@@ -73,7 +73,7 @@ module Travis
         end
 
         def short_urls_enabled?
-          Travis::Features.active?(:short_urls, build.repository.owner)
+          Travis::Features.active?(:short_urls, build.repository)
         end
 
         def shorten_url(url)
