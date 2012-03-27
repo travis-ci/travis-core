@@ -10,7 +10,7 @@ module Travis
       class Webhook
         autoload :Payload, 'travis/notifications/handler/webhook/payload'
 
-        EVENTS = 'build:finished'
+        EVENTS = /build:(started|finished)/
 
         include Logging
 
@@ -38,18 +38,27 @@ module Travis
 
         include do
           def notify(event, object, *args)
-            send_webhooks(object.webhooks, object) if object.send_webhook_notifications?
+            case event
+            when "build:started"
+              send_start_webhooks(object.webhooks, object) if object.send_webhook_start_notifications?
+            when "build:finished"
+              send_webhooks(object.webhooks, object) if object.send_webhook_notifications?
+            end
           end
 
           protected
 
-            def send_webhooks(targets, build)
-              targets.each { |target| send_webhook(target, build) }
+            def send_start_webhooks(targets, build)
+              targets.each { |target| send_webhook(target, build, build.repository) }
             end
 
-            def send_webhook(target, build)
+            def send_webhooks(targets, build)
+              targets.each { |target| send_webhook(target, build, build) }
+            end
+
+            def send_webhook(target, build, payload_object)
               response = http.post(target) do |req|
-                req.body = { :payload => self.class.payload_for(build).to_json }
+                req.body = { :payload => self.class.payload_for(payload_object).to_json }
                 req.headers['Authorization'] = authorization(build)
               end
               log_request(build, response)

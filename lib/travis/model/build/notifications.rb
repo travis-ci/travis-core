@@ -6,12 +6,17 @@ class Build
   # and should probably be cleaned up and moved there TODO
   module Notifications
     DEFAULTS = {
+      :start   => { :email => false,   :webhooks => false,   :campfire => false,   :irc => false   },
       :success => { :email => :change, :webhooks => :always, :campfire => :always, :irc => :always },
       :failure => { :email => :always, :webhooks => :always, :campfire => :always, :irc => :always }
     }
 
     def send_email_notifications?
       emails_enabled? && email_recipients.present? && send_notifications_for?(:email)
+    end
+
+    def send_webhook_start_notifications?
+      webhooks.any? && notify_on_start?(:webhooks)
     end
 
     def send_webhook_notifications?
@@ -28,6 +33,10 @@ class Build
 
     def send_notifications_for?(type)
       previous_on_branch.blank? || notify_on_success?(type) || notify_on_failure?(type)
+    end
+
+    def notify_on_start?(type)
+      config_with_fallbacks(type, :on_start, DEFAULTS[:start][type])
     end
 
     def notify_on_success?(type)
@@ -76,16 +85,18 @@ class Build
       # Filters can be configured for each notification type.
       # If no rules are configured for the given type, then fall back to the global rules, and then to the defaults.
       def config_with_fallbacks(type, key, default)
-        if (notifications[type] && notifications[type].is_a?(Hash) && notifications[type].has_key?(key))
+        config = if (notifications[type] && notifications[type].is_a?(Hash) && notifications[type].has_key?(key))
           # Returns the type config if key is present (:notifications => :email => [:on_success])
-          notifications[type][key].to_sym
+          notifications[type][key]
         elsif notifications.has_key?(key)
           # Returns the global config if key is present (:notifications => [:on_success])
-          notifications[key].to_sym
+          notifications[key]
         else
           # Else, returns the given default
           default
         end
+
+        config.respond_to?(:to_sym) ? config.to_sym : config
       end
 
       # Returns (recipients, urls, channels) for (email, webhooks, irc)
