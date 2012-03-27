@@ -1,3 +1,5 @@
+require 'travis/features'
+
 module Travis
   module Notifications
     module Handler
@@ -39,21 +41,39 @@ module Travis
         end
 
         def compare_url
-          shorten_url(build.commit.compare_url)
+          if short_urls_enabled?
+            shorten_url(build.commit.compare_url)
+          else
+            build.commit.compare_url
+          end
         end
 
         def build_url
-          repo = build.repository
-          url  = [Travis.config.http_host, repo.owner_name, repo.name, 'builds', build.id].join('/')
-          shorten_url(url)
+          if short_urls_enabled?
+            repo = build.repository
+            url  = [Travis.config.http_host, repo.owner_name, repo.name, 'builds', build.id].join('/')
+            shorten_url(url)
+          else
+            long_build_url(build)
+          end
         end
 
         private
+
+        def long_build_url(build)
+          host = Travis.config.host
+          repo = build.repository
+          "http://#{host}/#{repo.owner_name}/#{repo.name}/builds/#{build.id}"
+        end
 
         def replace_keywords(content)
           content.gsub(/%{(#{ACCEPTED_KEYWORDS.join("|")}|.*)}/) do
             send($1) if $1 && self.respond_to?($1)
           end
+        end
+
+        def short_urls_enabled?
+          Travis::Features.active?(:short_urls, build.repository)
         end
 
         def shorten_url(url)

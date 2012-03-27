@@ -71,7 +71,8 @@ module Travis
             :jobs          => { :retry => { :after => 60 * 60 * 2, :max_attempts => 1, :interval => 60 * 5 } },
             :archive       => {},
             :ssl           => {},
-            :sponsors      => { :platinum => [], :gold => [], :workers => {} }
+            :sponsors      => { :platinum => [], :gold => [], :workers => {} },
+            :redis         => {}
 
     default :_access => [:key]
 

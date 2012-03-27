@@ -112,4 +112,8 @@ class Repository < ActiveRecord::Base
   def rails_fork?
     slug != 'rails/rails' && slug =~ %r(/rails$)
   end
+
+  def owner
+    @owner ||= User.find_by_login(owner_name)
+  end
 end
