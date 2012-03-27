@@ -1,5 +1,6 @@
 require 'travis/features'
 require 'spec_helper'
+require 'support/active_record'
 
 describe Travis::Features do
   describe "connecting" do
@@ -52,8 +53,52 @@ describe Travis::Features do
 
       it "should use the Travis.config if set" do
         Travis::Features.start
-        client = Travis::Features.redis.client
-        client.host.should == '172.0.0.1'
+      end
+    end
+  end
+
+  describe "feature checks" do
+    include Support::ActiveRecord
+
+    describe "feature active" do
+      before do
+        Travis::Features.stop
+        Travis::Features.start
+      end
+
+      after do
+        Travis::Features.deactivate_user(:feature, user)
+        Travis::Features.deactivate_repository(:feature, repository)
+      end
+
+      let(:repository) {Factory(:repository)}
+      let!(:user) {Factory(:user)}
+
+      it "should return true if the repository's owner is activated" do
+        expect {
+          Travis::Features.activate_user(:feature, user)
+        }.to change {Travis::Features.active?(:feature, repository)}
+      end
+
+      it "should return false if the repository's owner isn't activated" do
+        Travis::Features.active?(:feature, repository).should == false
+      end
+
+      it "should allow enabling the repository" do
+        Travis::Features.activate_repository(:feature, repository)
+      end
+
+      it "should be active when the repository was activated" do
+        expect {
+          Travis::Features.activate_repository(:feature, repository)
+        }.to change {Travis::Features.active?(:feature, repository)}
+      end
+
+      it "shouldn't be active when the repository was deactivated" do
+        Travis::Features.activate_repository(:feature, repository)
+        expect {
+          Travis::Features.deactivate_repository(:feature, repository)
+        }.to change {Travis::Features.active?(:feature, repository)}
       end
     end
   end
