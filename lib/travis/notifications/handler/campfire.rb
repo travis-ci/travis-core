@@ -36,7 +36,6 @@ module Travis
         end
 
         def notify(event, object, *args)
-          puts 'boom'
           send_campfire(object.campfire_rooms, object) if object.send_campfire_notifications_on_finish?
         end
 
