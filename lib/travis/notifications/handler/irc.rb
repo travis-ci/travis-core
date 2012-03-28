@@ -17,7 +17,7 @@ module Travis
         include do
           def notify(event, object, *args)
             @build = object
-            send_irc_notifications if object.send_irc_notifications?
+            send_irc_notifications if object.send_irc_notifications_on_finish?
           end
 
           protected

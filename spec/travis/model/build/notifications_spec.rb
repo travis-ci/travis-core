@@ -11,49 +11,49 @@ describe Build::Notifications do
     stubs(:previous_on_branch)
   end
 
-  describe :send_notifications_for? do
+  describe :notify_on_finish_for? do
     it 'returns true by default' do
-      send_email_notifications?.should be_true
+      send_email_notifications_on_finish?.should be_true
     end
 
     it 'returns false if the build does not have any recipients' do
       stubs(:email_recipients).returns('')
-      send_email_notifications?.should be_false
+      send_email_notifications_on_finish?.should be_false
     end
 
     it 'returns false if the build has notifications disabled (deprecated api) (disabled => true)' do
       stubs(:config => { :notifications => { :disabled => true } })
-      send_email_notifications?.should be_false
+      send_email_notifications_on_finish?.should be_false
     end
 
     it 'returns false if the build has notifications disabled (deprecated api) (disable => true)' do
       stubs(:config => { :notifications => { :disable => true } })
-      send_email_notifications?.should be_false
+      send_email_notifications_on_finish?.should be_false
     end
 
     it 'returns false if the build has notifications disabled' do
       stubs(:config => { :notifications => { :email => false } })
-      send_email_notifications?.should be_false
+      send_email_notifications_on_finish?.should be_false
     end
 
     it "returns true if the given build failed and previous build failed" do
       stubs(:passed? => false, :failed? => true, :previous_on_branch => stub('previous', :passed? => false))
-      send_email_notifications?.should be_true
+      send_email_notifications_on_finish?.should be_true
     end
 
     it "returns true if the given build failed and previous build passed" do
       stubs(:passed? => false, :failed? => true, :previous_on_branch => stub('previous', :passed? => true))
-      send_email_notifications?.should be_true
+      send_email_notifications_on_finish?.should be_true
     end
 
     it "returns true if the given build passed and previous build failed" do
       stubs(:passed? => true, :failed? => false, :previous_on_branch => stub('previous', :passed? => false))
-      send_email_notifications?.should be_true
+      send_email_notifications_on_finish?.should be_true
     end
 
     it "returns false if the given build passed and previous build passed" do
       stubs(:passed? => true, :failed? => false, :previous_on_branch => stub('previous', :passed? => true))
-      send_email_notifications?.should be_false
+      send_email_notifications_on_finish?.should be_false
     end
 
     combinations = [
@@ -73,7 +73,7 @@ describe Build::Notifications do
     combinations.each do |previous, current, config, result|
       it "returns #{result} if the previous build #{status[previous]}, the current build #{status[current]} and config is #{config}" do
         stubs(:config => config, :passed? => current, :failed? => !current, :previous_on_branch => stub('previous', :passed? => previous))
-        send_email_notifications?.should == result
+        send_email_notifications_on_finish?.should == result
       end
     end
   end
@@ -113,30 +113,30 @@ describe Build::Notifications do
     end
   end
 
-  describe :send_webhook_notifications? do
+  describe :send_webhook_notifications_on_finish? do
     it 'returns true if the build configuration specifies webhooks' do
       webhooks = %w(http://evome.fr/notifications http://example.com/)
       stubs(:config => { :notifications => { :webhooks => webhooks } })
-      send_webhook_notifications?.should be_true
+      send_webhook_notifications_on_finish?.should be_true
     end
 
     it 'returns false if the build configuration does not specify any webhooks' do
       webhooks = %w(http://evome.fr/notifications http://example.com/)
       stubs(:config => {})
-      send_webhook_notifications?.should be_false
+      send_webhook_notifications_on_finish?.should be_false
     end
   end
 
-  describe :send_campfire_notifications? do
+  describe :send_campfire_notifications_on_finish? do
     it 'returns true if the build configuration specifies campfire channels' do
       channels = %w(travis:apitoken@42)
       stubs(:config => { :notifications => { :campfire => channels } })
-      send_campfire_notifications?.should be_true
+      send_campfire_notifications_on_finish?.should be_true
     end
 
     it 'returns false if the build configuration does not specify any webhooks' do
       stubs(:config => {})
-      send_campfire_notifications?.should be_false
+      send_campfire_notifications_on_finish?.should be_false
     end
   end
 
