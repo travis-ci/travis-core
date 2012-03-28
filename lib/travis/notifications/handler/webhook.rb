@@ -40,25 +40,21 @@ module Travis
           def notify(event, object, *args)
             case event
             when "build:started"
-              send_webhooks_on_start(object.webhooks, object) if object.send_webhook_notifications_on_start?
+              send_webhooks(object.webhooks, object) if object.send_webhook_notifications_on_start?
             when "build:finished"
-              send_webhooks_on_finish(object.webhooks, object) if object.send_webhook_notifications_on_finish?
+              send_webhooks(object.webhooks, object) if object.send_webhook_notifications_on_finish?
             end
           end
 
           protected
 
-            def send_webhooks_on_start(targets, build)
-              targets.each { |target| send_webhook(target, build, build.repository) }
+            def send_webhooks(targets, build)
+              targets.each { |target| send_webhook(target, build) }
             end
 
-            def send_webhooks_on_finish(targets, build)
-              targets.each { |target| send_webhook(target, build, build) }
-            end
-
-            def send_webhook(target, build, payload_object)
+            def send_webhook(target, build)
               response = http.post(target) do |req|
-                req.body = { :payload => self.class.payload_for(payload_object).to_json }
+                req.body = { :payload => self.class.payload_for(build).to_json }
                 req.headers['Authorization'] = authorization(build)
               end
               log_request(build, response)

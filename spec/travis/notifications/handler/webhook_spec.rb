@@ -23,50 +23,50 @@ describe Travis::Notifications::Handler::Webhook do
   it 'sends webhook notifications to a url given as a string' do
     target = 'http://evome.fr/notifications'
     build.config[:notifications][:webhooks] = target
-    verify_finished_build(build, target)
+    verify_notifications_on_finish(build, target)
   end
 
   it 'sends webhook notifications to the urls given as an array' do
     targets = ['http://evome.fr/notifications', 'http://example.com/']
     build.config[:notifications][:webhooks] = targets
-    verify_finished_build(build, *targets)
+    verify_notifications_on_finish(build, *targets)
   end
 
   it 'sends no webhook if the given url is blank' do
     build.config[:notifications][:webhooks] = ''
     # No need to assert anything here as Faraday would complain about a request not being stubbed <3
-    verify_finished_build(build)
+    verify_notifications_on_finish(build)
   end
 
   it 'sends webhook notifications to a url given at a "urls" key' do
     target = 'http://evome.fr/notifications'
     build.config[:notifications][:webhooks] = {:urls => target}
-    verify_finished_build(build, target)
+    verify_notifications_on_finish(build, target)
   end
 
   it 'sends webhook notifications to the urls given at a "urls" key' do
     targets = ['http://evome.fr/notifications', 'http://example.com/']
     build.config[:notifications][:webhooks] = {:urls => targets}
-    verify_finished_build(build, *targets)
+    verify_notifications_on_finish(build, *targets)
   end
 
   it 'sends webhook notifications on start to a url given at a "urls" key' do
     target = 'http://evome.fr/notifications'
     build.config[:notifications][:webhooks] = {:on_start => true, :urls => target}
-    verify_started_build(build, target)
-    verify_finished_build(build, target)
+    verify_notifications_on_start(build, target)
+    verify_notifications_on_finish(build, target)
   end
 
   it 'sends webhook notifications on start to the urls given as an array' do
     targets = ['http://evome.fr/notifications', 'http://example.com/']
     build.config[:notifications][:webhooks] = {:on_start => true, :urls => targets}
-    verify_started_build(build, *targets)
-    verify_finished_build(build, *targets)
+    verify_notifications_on_start(build, *targets)
+    verify_notifications_on_finish(build, *targets)
   end
 
   it 'sends no webhook on start by default' do
     build.config[:notifications][:webhooks] = {:on_start => true}
-    verify_started_build(build)
+    verify_notifications_on_start(build)
   end
 
   describe 'logging' do
@@ -83,15 +83,15 @@ describe Travis::Notifications::Handler::Webhook do
     end
   end
 
-  def verify_started_build(build, *urls)
-    verify_targets(build, 'build:started', build.repository, *urls)
+  def verify_notifications_on_start(build, *urls)
+    verify_notifications('build:started', build, *urls)
   end
 
-  def verify_finished_build(build, *urls)
-    verify_targets(build, 'build:finished', build, *urls)
+  def verify_notifications_on_finish(build, *urls)
+    verify_notifications('build:finished', build, *urls)
   end
 
-  def verify_targets(build, event, payload_object, *urls)
+  def verify_notifications(event, build, *urls)
     urls.each do |url|
       uri = URI.parse(url)
       http.post uri.path do |env|
@@ -99,7 +99,7 @@ describe Travis::Notifications::Handler::Webhook do
         env[:url].path.should == uri.path
         env[:request_headers]['Authorization'].should == authorization_for(build)
 
-        payload = normalize_json(Travis::Notifications::Handler::Webhook::Payload.new(payload_object).to_hash)
+        payload = normalize_json(Travis::Notifications::Handler::Webhook::Payload.new(build).to_hash)
 
         payload_from(env).keys.sort.should == payload.keys.map(&:to_s).sort
       end
