@@ -2,7 +2,7 @@ source :rubygems
 
 gemspec
 
-gem 'travis-support', :git => 'git://github.com/travis-ci/travis-support', :branch => 'sven'
+gem 'travis-support', :git => 'git://github.com/travis-ci/travis-support'
 gem 'metriks',        :git => 'git://github.com/mattmatt/metriks.git', :ref => 'source'
 gem 'gh',             :git => 'git://github.com/rkh/gh.git'
 gem 'redis',          '~> 2.2.2'
