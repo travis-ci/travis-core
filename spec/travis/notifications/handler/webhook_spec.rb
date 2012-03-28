@@ -57,6 +57,13 @@ describe Travis::Notifications::Handler::Webhook do
     verify_notifications_on_finish(build, target)
   end
 
+  it 'sends webhook notifications on start when configured as "always"' do
+    target = 'http://evome.fr/notifications'
+    build.config[:notifications][:webhooks] = {:on_start => :always, :urls => target}
+    verify_notifications_on_start(build, target)
+    verify_notifications_on_finish(build, target)
+  end
+
   it 'sends webhook notifications on start to the urls given as an array' do
     targets = ['http://evome.fr/notifications', 'http://example.com/']
     build.config[:notifications][:webhooks] = {:on_start => true, :urls => targets}
