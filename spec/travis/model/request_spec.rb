@@ -21,6 +21,13 @@ describe Request do
       request.payload.should == payload
       request.token.should == 'token'
     end
+
+    it 'creates a request for a payload that does not contain a commit' do
+      payload = GITHUB_PAYLOADS['force-no-commit']
+      request = Request.create_from(payload, 'token')
+      request.payload.should == payload
+      request.token.should == 'token'
+    end
   end
 
   describe 'repository_for' do

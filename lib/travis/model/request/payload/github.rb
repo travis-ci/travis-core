@@ -11,7 +11,7 @@ class Request
       end
 
       def attributes
-        { :source => source, :payload => payload, :commit => last_commit.to_hash, :token => token }
+        { :source => source, :payload => payload, :commit => last_commit.try(:to_hash), :token => token }
       end
     end
   end

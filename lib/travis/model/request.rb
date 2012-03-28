@@ -31,7 +31,7 @@ class Request < ActiveRecord::Base
     end
 
     def commit_for(payload, repository)
-      Commit.create!(payload.attributes[:commit].merge(:repository_id => repository.id))
+      Commit.create!(payload.attributes[:commit].merge(:repository_id => repository.id)) if payload.attributes[:commit]
     end
   end
 
@@ -40,7 +40,7 @@ class Request < ActiveRecord::Base
   belongs_to :repository
   has_many   :builds
 
-  validates :repository_id, :commit_id, :presence => true
+  validates :repository_id, :presence => true
 
   serialize :config
 
