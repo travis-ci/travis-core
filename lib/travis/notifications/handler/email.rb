@@ -13,7 +13,7 @@ module Travis
 
         include do
           def notify(event, object, *args)
-            send_emails(object) if object.send_email_notifications?
+            send_emails(object) if object.send_email_notifications_on_finish?
           rescue StandardError => e
             log_exception(e)
           end

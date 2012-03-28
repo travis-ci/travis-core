@@ -40,19 +40,19 @@ module Travis
           def notify(event, object, *args)
             case event
             when "build:started"
-              send_start_webhooks(object.webhooks, object) if object.send_webhook_start_notifications?
+              send_webhooks_on_start(object.webhooks, object) if object.send_webhook_notifications_on_start?
             when "build:finished"
-              send_webhooks(object.webhooks, object) if object.send_webhook_notifications?
+              send_webhooks_on_finish(object.webhooks, object) if object.send_webhook_notifications_on_finish?
             end
           end
 
           protected
 
-            def send_start_webhooks(targets, build)
+            def send_webhooks_on_start(targets, build)
               targets.each { |target| send_webhook(target, build, build.repository) }
             end
 
-            def send_webhooks(targets, build)
+            def send_webhooks_on_finish(targets, build)
               targets.each { |target| send_webhook(target, build, build) }
             end
 

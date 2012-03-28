@@ -11,42 +11,43 @@ class Build
       :failure => { :email => :always, :webhooks => :always, :campfire => :always, :irc => :always }
     }
 
-    def send_email_notifications?
-      emails_enabled? && email_recipients.present? && send_notifications_for?(:email)
+    def send_email_notifications_on_finish?
+      emails_enabled? && email_recipients.present? && notify_on_finish_for?(:email)
     end
 
-    def send_webhook_start_notifications?
-      webhooks.any? && notify_on_start?(:webhooks)
+    def send_webhook_notifications_on_start?
+      webhooks.any? && notify_on_start_for?(:webhooks)
     end
 
-    def send_webhook_notifications?
-      webhooks.any? && send_notifications_for?(:webhooks)
+    def send_webhook_notifications_on_finish?
+      webhooks.any? && notify_on_finish_for?(:webhooks)
     end
 
-    def send_campfire_notifications?
-      campfire_rooms.any? && send_notifications_for?(:campfire)
+    def send_campfire_notifications_on_finish?
+      campfire_rooms.any? && notify_on_finish_for?(:campfire)
     end
 
-    def send_irc_notifications?
-      irc_channels.any? && send_notifications_for?(:irc)
+    def send_irc_notifications_on_finish?
+      irc_channels.any? && notify_on_finish_for?(:irc)
     end
 
-    def send_notifications_for?(type)
-      previous_on_branch.blank? || notify_on_success?(type) || notify_on_failure?(type)
+    def notify_on_start_for?(type)
+      config = config_with_fallbacks(type, :on_start, DEFAULTS[:start][type])
+      config == true || config == :always
     end
 
-    def notify_on_start?(type)
-      config_with_fallbacks(type, :on_start, DEFAULTS[:start][type])
+    def notify_on_finish_for?(type)
+      previous_on_branch.blank? || notify_on_success_for?(type) || notify_on_failure_for?(type)
     end
 
-    def notify_on_success?(type)
+    def notify_on_success_for?(type)
       !!if passed?
         config = config_with_fallbacks(type, :on_success, DEFAULTS[:success][type])
         config == :always || (config == :change && !previous_passed?)
       end
     end
 
-    def notify_on_failure?(type)
+    def notify_on_failure_for?(type)
       !!if failed?
         config = config_with_fallbacks(type, :on_failure, DEFAULTS[:failure][type])
         config == :always || (config == :change && previous_passed?)
