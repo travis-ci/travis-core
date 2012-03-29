@@ -48,10 +48,16 @@ module Travis
   autoload :Renderer,      'travis/renderer'
 
   class << self
-    attr_accessor :pusher
-
     def config
       @config ||= Config.new
+    end
+
+    def pusher
+      @pusher ||= ::Pusher.tap do |pusher|
+        pusher.app_id = config.pusher.app_id
+        pusher.key    = config.pusher.key
+        pusher.secret = config.pusher.secret
+      end
     end
   end
 end

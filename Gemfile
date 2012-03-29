@@ -2,11 +2,7 @@ source :rubygems
 
 gemspec
 
-# see https://gist.github.com/2063855
-base ||= 'git://github.com/travis-ci'
-type = base[0, 2] == '..' ? :path : :git
-
-gem 'travis-support', type => "#{base}/travis-support"
+gem 'travis-support', :git => 'git://github.com/travis-ci/travis-support'
 gem 'metriks',        :git => 'git://github.com/mattmatt/metriks.git', :ref => 'source'
 gem 'gh',             :git => 'git://github.com/rkh/gh.git'
 gem 'redis',          '~> 2.2.2'
