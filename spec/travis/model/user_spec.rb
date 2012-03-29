@@ -29,6 +29,24 @@ describe User do
     end
   end
 
+  describe 'organization_ids' do
+    let!(:travis)  { Factory(:org, :login => 'travis') }
+    let!(:sinatra) { Factory(:org, :login => 'sinatra') }
+
+    before :each do
+     user.organizations << travis
+     user.save!
+    end
+
+    it 'contains the ids of organizations that the user is a member of' do
+      user.organization_ids.should include(travis.id)
+    end
+
+    it 'does not contain the ids of organizations that the user is not a member of' do
+      user.organization_ids.should_not include(sinatra.id)
+    end
+  end
+
   describe 'profile_image_hash' do
     it "returns gravatar_id if it's present" do
       user.gravatar_id = '41193cdbffbf06be0cdf231b28c54b18'
