@@ -38,6 +38,7 @@ class Request < ActiveRecord::Base
   has_one    :job, :as => :source, :class_name => 'Job::Configure'
   belongs_to :commit
   belongs_to :repository
+  belongs_to :owner, :polymorphic => true
   has_many   :builds
 
   validates :repository_id, :presence => true
@@ -45,6 +46,8 @@ class Request < ActiveRecord::Base
   serialize :config
 
   before_create do
+    self.owner = repository ? repository.owner : raise(Travis::UnknownRepository)
+
     if accept?
       ActiveSupport::Notifications.publish('github.requests', 'accepted', payload)
       build_job(:repository => repository, :commit => commit) # create the initial configure job

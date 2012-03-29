@@ -49,6 +49,7 @@ FactoryGirl.define do
   end
 
   factory :repository do
+    owner { User.find_by_login('svenfuchs') || Factory(:user) }
     name 'minimal'
     owner_name 'svenfuchs'
     owner_email 'svenfuchs@artweb-design.de'

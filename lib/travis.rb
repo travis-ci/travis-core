@@ -1,4 +1,5 @@
 require 'travis/support'
+require 'travis/exceptions'
 
 autoload :Artifact,    'travis/model/artifact'
 autoload :Build,       'travis/model/build'

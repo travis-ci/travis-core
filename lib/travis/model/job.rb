@@ -31,6 +31,7 @@ class Job < ActiveRecord::Base
   belongs_to :repository
   belongs_to :commit
   belongs_to :source, :polymorphic => true, :autosave => true
+  belongs_to :owner, :polymorphic => true
 
   validates :repository_id, :commit_id, :source_id, :source_type, :presence => true
 
@@ -44,6 +45,7 @@ class Job < ActiveRecord::Base
     build_log
     self.state = :created if self.state.nil?
     self.queue = Queue.for(self).name
+    self.owner = repository ? repository.owner : raise(Travis::UnknownRepository)
   end
 
   def duration
