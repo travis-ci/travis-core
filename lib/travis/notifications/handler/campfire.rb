@@ -7,6 +7,7 @@ module Travis
       #
       # Campfire credentials are encrypted using the repository's ssl key.
       class Campfire < Webhook
+        EVENTS = /build:finished/
 
         class << self
           def campfire_url(config)

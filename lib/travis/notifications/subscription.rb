@@ -1,3 +1,5 @@
+require 'metriks'
+
 module Travis
   module Notifications
 
@@ -20,11 +22,19 @@ module Travis
         end
 
         def notify(event, *args)
-          subscriber.new.notify(event, *args) if matches?(event)
+          if matches?(event)
+            subscriber.new.notify(event, *args)
+            increment_counter(event)
+          end
         end
 
         def matches?(event)
           patterns.any? { |patterns| patterns.is_a?(Regexp) ? patterns.match(event) : patterns == event }
+        end
+
+        def increment_counter(event)
+          metric = "travis.notifications.#{name}.#{event.gsub(/:/, '.')}"
+          Metriks.counter(metric).increment
         end
       }
     end
