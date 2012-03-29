@@ -20,6 +20,11 @@ describe Travis::Notifications::Handler::Webhook do
     end
   end
 
+  it "only is set up to accept build:finished and build:started notifications" do
+    Travis::Notifications::Handler::Webhook::EVENTS.should === 'build:finished'
+    Travis::Notifications::Handler::Webhook::EVENTS.should === 'build:started'
+  end
+
   it 'sends webhook notifications to a url given as a string' do
     target = 'http://evome.fr/notifications'
     build.config[:notifications][:webhooks] = target
