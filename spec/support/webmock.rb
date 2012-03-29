@@ -1,5 +1,6 @@
 require 'active_support'
 require 'webmock'
+require 'webmock/rspec'
 
 module Support
   module Webmock

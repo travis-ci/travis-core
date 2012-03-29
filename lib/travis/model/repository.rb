@@ -31,7 +31,6 @@ class Repository < ActiveRecord::Base
     self.key = SslKey.new(:repository_id => self.id)
   end
 
-  # TODO why can't this use before_create?
   before_save do
     self.owner = owner_type.constantize.find_by_login(owner_name) if owner_id.blank? && owner_type.present?
   end

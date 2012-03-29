@@ -13,6 +13,23 @@ describe Repository do
     end
   end
 
+  describe 'associations' do
+    describe 'owner' do
+      let(:user) { Factory(:user) }
+      let(:org)  { Factory(:org)  }
+
+      it 'can be a user' do
+        repository = Factory(:repository, :owner => user)
+        repository.reload.owner.should == user
+      end
+
+      it 'can be an organization' do
+        repository = Factory(:repository, :owner => org)
+        repository.reload.owner.should == org
+      end
+    end
+  end
+
   describe 'class methods' do
     describe 'find_by' do
       let(:minimal) { Factory(:repository) }

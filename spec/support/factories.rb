@@ -71,6 +71,10 @@ FactoryGirl.define do
     tokens { [Token.new] }
   end
 
+  factory :org, :class => 'Organization' do
+    name 'travis-ci'
+  end
+
   factory :worker do
     host 'ruby-1.worker.travis-ci.org'
     name 'ruby-1'

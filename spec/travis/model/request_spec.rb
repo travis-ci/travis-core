@@ -16,10 +16,26 @@ describe Request do
   end
 
   describe 'create_from' do
+    let!(:owner)  { Factory(:user) }
+    let(:payload) { GITHUB_PAYLOADS['gem-release'] }
+    let(:request) { Request.create_from(payload, 'token') }
+
     it 'creates a request for the given payload' do
       request = Request.create_from(payload, 'token')
       request.payload.should == payload
       request.token.should == 'token'
+    end
+
+    it 'sets the repository owner' do
+      request.repository.owner.should == owner
+    end
+
+    it 'sets the request owner' do
+      request.owner.should == owner
+    end
+
+    it 'sets the configure job owner' do
+      request.job.owner.should == owner
     end
 
     it 'creates a request for a payload that does not contain a commit' do

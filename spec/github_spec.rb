@@ -37,6 +37,7 @@ describe Github do
       :name        => 'gem-release',
       :url         => 'http://github.com/svenfuchs/gem-release',
       :description => 'Release your gems with ease',
+      :owner_type  => 'User',
       :owner_name  => 'svenfuchs',
       :owner_email => 'svenfuchs@artweb-design.de',
       :private     => false

@@ -8,6 +8,8 @@ class User < ActiveRecord::Base
   devise :omniauthable, :api_token_authenticatable
 
   has_many :tokens
+  has_many :memberships
+  has_many :organizations, :through => :memberships
 
   attr_accessible :name, :login, :email, :github_id, :github_oauth_token, :gravatar_id
 
@@ -18,7 +20,8 @@ class User < ActiveRecord::Base
     def find_or_create_for_oauth(payload)
       data = user_data_from_oauth(payload)
       user = User.find_by_github_id(data['github_id'])
-      user ? user.update_attributes(data) && user : create!(data)
+      user ? user.update_attributes(data) : user = create!(data)
+      user
     end
 
     def user_data_from_oauth(payload) # TODO move this to a OauthPayload
@@ -31,6 +34,10 @@ class User < ActiveRecord::Base
           'gravatar_id'        => payload['extra']['raw_info']['gravatar_id']
       }
     end
+  end
+
+  def organization_ids
+    @organization_ids ||= memberships.map(&:organization_id)
   end
 
   def recently_signed_up?
