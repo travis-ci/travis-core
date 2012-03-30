@@ -27,7 +27,7 @@ module Support
       http://github.com/api/v2/json/user/show/LTe
     )
 
-    class Request
+    class MockRequest
       attr_reader :uri, :stub
 
       def initialize(url)
@@ -67,7 +67,7 @@ module Support
       attr_reader :requests
 
       def mock!
-        @requests = Hash[*URLS.map { |url| [url, Request.new(url).stub] }.flatten]
+        @requests = Hash[*URLS.map { |url| [url, MockRequest.new(url).stub] }.flatten]
       end
     end
 
