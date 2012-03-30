@@ -1,3 +1,5 @@
+require 'gh'
+
 class Organization < ActiveRecord::Base
   class << self
     def create_from_github(name)
