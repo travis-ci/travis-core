@@ -20,7 +20,7 @@ class User < ActiveRecord::Base
     def create_from_github(name)
       # TODO ask @rkh about this
       data = GH["users/#{name}"] || raise(Travis::GithubApiError)
-      create!(:name => data['name'], :login => data['login'], :email => data['email'], :github_id => data['id'])
+      create!(:name => data['name'], :login => data['login'], :email => data['email'], :github_id => data['id'], :gravatar_id => data['gravatar_id'])
     end
 
     def find_or_create_for_oauth(payload)

@@ -15,7 +15,7 @@ class Request < ActiveRecord::Base
   include Approval, States
 
   class << self
-    # TODO clean this up
+    # TODO clean this up, maybe extract a factory?
     def create_from(payload, token)
       ActiveSupport::Notifications.publish('github.requests', 'received', payload)
       payload = Payload::Github.new(payload, token)
@@ -37,7 +37,7 @@ class Request < ActiveRecord::Base
 
     def owner_for(payload)
       type = payload.owner_type.constantize
-      owner = type.find_by_login(payload.owner_name) || type.create_from_github(payload.owner_name)
+      type.find_by_login(payload.owner_name) || type.create_from_github(payload.owner_name)
     end
   end
 
