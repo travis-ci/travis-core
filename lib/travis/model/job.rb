@@ -45,7 +45,6 @@ class Job < ActiveRecord::Base
     build_log
     self.state = :created if self.state.nil?
     self.queue = Queue.for(self).name
-    self.owner = repository ? repository.owner : raise(Travis::UnknownRepository)
   end
 
   def duration

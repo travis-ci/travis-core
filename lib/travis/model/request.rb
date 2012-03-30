@@ -54,7 +54,7 @@ class Request < ActiveRecord::Base
   before_create do
     if accept?
       ActiveSupport::Notifications.publish('github.requests', 'accepted', payload)
-      build_job(:repository => repository, :commit => commit) # create the initial configure job
+      build_job(:repository => repository, :commit => commit, :owner => owner) # create the initial configure job
     else
       ActiveSupport::Notifications.publish('github.requests', 'rejected', payload)
       self.state = :finished

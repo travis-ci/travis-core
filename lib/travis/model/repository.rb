@@ -31,10 +31,6 @@ class Repository < ActiveRecord::Base
     self.key = SslKey.new(:repository_id => self.id)
   end
 
-  before_save do
-    self.owner = owner_type.constantize.find_by_login(owner_name) if owner_id.blank? && owner_type.present?
-  end
-
   delegate  :public_key, :to => :key
 
   class << self

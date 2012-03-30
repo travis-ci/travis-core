@@ -51,10 +51,6 @@ class Build < ActiveRecord::Base
   belongs_to :owner, :polymorphic => true
   has_many   :matrix, :as => :source, :order => :id, :class_name => 'Job::Test', :dependent => :destroy
 
-  before_create do
-    self.owner = repository ? repository.owner : raise(Travis::UnknownRepository)
-  end
-
   validates :repository_id, :commit_id, :request_id, :presence => true
 
   serialize :config
