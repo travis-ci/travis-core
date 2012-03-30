@@ -1,6 +1,7 @@
 require 'active_support'
 require 'webmock'
 require 'webmock/rspec'
+require 'uri'
 
 module Support
   module Webmock
@@ -14,6 +15,9 @@ module Support
 
     URLS = %w(
       https://api.github.com/users/svenfuchs/repos?per_page=9999
+      https://api.github.com/users/svenfuchs
+      https://api.github.com/users/LTe
+      https://api.github.com/orgs/travis-ci
       https://github.com/api/v2/json/repos/show/svenfuchs
       http://github.com/api/v2/json/repos/show/svenfuchs/gem-release
       http://github.com/api/v2/json/repos/show/svenfuchs/minimal
@@ -24,15 +28,24 @@ module Support
     )
 
     class Request
-      attr_reader :url, :filename
+      attr_reader :uri, :stub
 
       def initialize(url)
-        @url = url
-        @filename = "spec/fixtures/github/#{url.gsub(%r(https?://github.com/), '')}.json"
+        @uri = URI.parse(url)
       end
 
-      def stub!
-        WebMock.stub_request(:get, url).to_return(:status => 200, :body => body, :headers => {})
+      def filename
+        @filename ||= "spec/fixtures/github/#{path}"
+      end
+
+      def path
+        path = uri.path
+        path += "?#{uri.query}" if uri.query
+        "#{uri.host}#{path}.json"
+      end
+
+      def stub
+        @stub ||= WebMock.stub_request(:get, uri.to_s).to_return(:status => 200, :body => body, :headers => {})
       end
 
       def body
@@ -41,8 +54,8 @@ module Support
       end
 
       def store
-        puts "Storing #{url} to #{filename}."
-        `curl -so #{filename} --create-dirs #{url}`
+        puts "Storing #{uri.to_s} to #{filename}."
+        `curl -so #{filename} --create-dirs #{uri.to_s}`
       end
 
       def stored?
@@ -51,18 +64,15 @@ module Support
     end
 
     class << self
+      attr_reader :requests
+
       def mock!
-        URLS.each { |url| Request.new(url).stub! }
+        @requests = Hash[*URLS.map { |url| [url, Request.new(url).stub] }.flatten]
       end
     end
 
-    def mock_github_api
-      Support::GithubApi.mock!
-    end
-
-    def stub_github_api_post
-      url = 'https://api.github.com/hub?access_token=github_oauth_token'
-      stub_request(:post, url).to_return(:status => 200, :body => '')
+    def requests
+      Support::Webmock.requests
     end
   end
 end

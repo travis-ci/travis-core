@@ -17,6 +17,12 @@ class User < ActiveRecord::Base
   after_create :create_a_token
 
   class << self
+    def create_from_github(name)
+      # TODO ask @rkh about this
+      data = GH["users/#{name}"] || raise(Travis::GithubApiError)
+      create!(:name => data['name'], :login => data['login'], :email => data['email'], :github_id => data['id'])
+    end
+
     def find_or_create_for_oauth(payload)
       data = user_data_from_oauth(payload)
       user = User.find_by_github_id(data['github_id'])

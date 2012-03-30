@@ -21,7 +21,7 @@ describe Github do
     repository = Github::Repository.new(data['repository']).fetch
     repository.name.should == 'gem-release'
     repository.owner_name.should == 'svenfuchs'
-    repository.owner_email.should == 'svenfuchs@artweb-design.de'
+    repository.owner_email.should == 'me@svenfuchs.com'
   end
 
   it 'repository owned by an organization' do

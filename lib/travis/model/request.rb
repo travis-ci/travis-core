@@ -19,19 +19,25 @@ class Request < ActiveRecord::Base
     def create_from(payload, token)
       ActiveSupport::Notifications.publish('github.requests', 'received', payload)
       payload = Payload::Github.new(payload, token)
-      repository = repository_for(payload.repository)
+      owner = owner_for(payload.repository)
+      repository = repository_for(payload.repository, owner)
       commit = commit_for(payload, repository)
-      repository.requests.create!(payload.attributes.merge(:state => :created, :commit => commit))
+      repository.requests.create!(payload.attributes.merge(:state => :created, :commit => commit, :owner => owner))
     end
 
-    def repository_for(payload)
+    def repository_for(payload, owner)
       Repository.find_or_create_by_owner_name_and_name(payload.owner_name, payload.name).tap do |repository|
-        repository.update_attributes!(payload.to_hash)
+        repository.update_attributes!(payload.to_hash.merge(:owner => owner))
       end
     end
 
     def commit_for(payload, repository)
       Commit.create!(payload.attributes[:commit].merge(:repository_id => repository.id)) if payload.attributes[:commit]
+    end
+
+    def owner_for(payload)
+      type = payload.owner_type.constantize
+      owner = type.find_by_login(payload.owner_name) || type.create_from_github(payload.owner_name)
     end
   end
 
@@ -46,8 +52,6 @@ class Request < ActiveRecord::Base
   serialize :config
 
   before_create do
-    self.owner = repository ? repository.owner : raise(Travis::UnknownRepository)
-
     if accept?
       ActiveSupport::Notifications.publish('github.requests', 'accepted', payload)
       build_job(:repository => repository, :commit => commit) # create the initial configure job
