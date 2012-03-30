@@ -31,6 +31,7 @@ class Job < ActiveRecord::Base
   belongs_to :repository
   belongs_to :commit
   belongs_to :source, :polymorphic => true, :autosave => true
+  belongs_to :owner, :polymorphic => true
 
   validates :repository_id, :commit_id, :source_id, :source_type, :presence => true
 

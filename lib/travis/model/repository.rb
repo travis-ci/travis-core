@@ -22,6 +22,7 @@ class Repository < ActiveRecord::Base
   has_one :last_success, :class_name => 'Build', :order => 'id DESC', :conditions => { :status => 0 }
   has_one :last_failure, :class_name => 'Build', :order => 'id DESC', :conditions => { :status => 1 }
   has_one :key, :class_name => 'SslKey'
+  belongs_to :owner, :polymorphic => true
 
   validates :name,       :presence => true, :uniqueness => { :scope => :owner_name }
   validates :owner_name, :presence => true
@@ -111,9 +112,5 @@ class Repository < ActiveRecord::Base
 
   def rails_fork?
     slug != 'rails/rails' && slug =~ %r(/rails$)
-  end
-
-  def owner
-    @owner ||= User.find_by_login(owner_name)
   end
 end

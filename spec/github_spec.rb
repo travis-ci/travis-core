@@ -21,7 +21,7 @@ describe Github do
     repository = Github::Repository.new(data['repository']).fetch
     repository.name.should == 'gem-release'
     repository.owner_name.should == 'svenfuchs'
-    repository.owner_email.should == 'svenfuchs@artweb-design.de'
+    repository.owner_email.should == 'me@svenfuchs.com'
   end
 
   it 'repository owned by an organization' do
@@ -37,6 +37,7 @@ describe Github do
       :name        => 'gem-release',
       :url         => 'http://github.com/svenfuchs/gem-release',
       :description => 'Release your gems with ease',
+      :owner_type  => 'User',
       :owner_name  => 'svenfuchs',
       :owner_email => 'svenfuchs@artweb-design.de',
       :private     => false

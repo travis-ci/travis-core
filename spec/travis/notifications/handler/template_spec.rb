@@ -5,36 +5,28 @@ require 'support/active_record'
 describe Travis::Notifications::Handler::Template do
   include Support::ActiveRecord
 
-  let(:build) { Factory(:build)}
-  let(:template_string) {
-    template =<<TEMPLATE
-author=%{author}
-build_url=%{build_url}
-compare_url=%{compare_url}
-TEMPLATE
-  }
-  let(:template) {
-    Travis::Notifications::Handler::Template.new(template_string, build)
-  }
-  let(:user) { Factory(:user)}
+  let(:build)    { Factory(:build)}
+  let(:template) { Travis::Notifications::Handler::Template.new('author=%{author} build_url=%{build_url} compare_url=%{compare_url}', build) }
+  let(:user)     { Factory(:user)}
+
   before do
     Travis::Features.start
     Travis::Features.activate_user(:short_urls, user)
   end
 
   describe "interpolating" do
-    let(:interpolated) {template.interpolate}
+    let(:result) { template.interpolate }
 
     it "should replace the author" do
-      interpolated.should =~ /author=Sven Fuchs/
+      result.should =~ /author=Sven Fuchs/
     end
 
     it "should replace the build url" do
-      interpolated.should =~ %r{build_url=http://trvs.io/}
+      result.should =~ %r(build_url=http://trvs.io/)
     end
 
     it "should replace the compare url" do
-      interpolated.should =~ %r{compare_url=http://trvs.io/}
+      result.should =~ %r(compare_url=http://trvs.io/)
     end
 
     describe "with short urls disabled"
@@ -62,11 +54,11 @@ TEMPLATE
     end
 
     it "should return a compare url" do
-      template.compare_url.should =~ %r{http://trvs.io/}
+      template.compare_url.should =~ %r(http://trvs.io/)
     end
 
     it "should return a build url" do
-      template.build_url.should =~ %r{http://trvs.io/}
+      template.build_url.should =~ %r(http://trvs.io/)
     end
 
     describe "with shortening disabled" do
@@ -75,11 +67,11 @@ TEMPLATE
       end
 
       it "should return the full compare url" do
-        template.compare_url.should =~ %r{https://github.com/svenfuchs/minimal/compare/master...develop}
+        template.compare_url.should =~ %r(https://github.com/svenfuchs/minimal/compare/master...develop)
       end
-      
+
       it "should return the full build url" do
-        template.build_url.should =~ %r{travis-ci.org/svenfuchs/minimal/builds}
+        template.build_url.should =~ %r(travis-ci.org/svenfuchs/minimal/builds)
       end
     end
   end
