@@ -32,7 +32,7 @@ describe Travis::Notifications::Subscription do
     it "should increment a counter when the event is triggered" do
       expect {
         subscription.notify('build:finished')
-      }.to change {Metriks.counter('travis.notifications.subscription_test_handler.build.finished').count}
+      }.to change {Metriks.meter('travis.notifications.subscription_test_handler.build.finished').count}
     end
     
     it "shouldn't notify when the event doesn't match" do

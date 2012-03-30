@@ -34,7 +34,7 @@ module Travis
 
         def increment_counter(event)
           metric = "travis.notifications.#{name}.#{event.gsub(/:/, '.')}"
-          Metriks.counter(metric).increment
+          Metriks.meter(metric).mark
         end
       }
     end
