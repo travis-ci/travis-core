@@ -37,7 +37,7 @@ class Request
       end
     end
 
-    protected
+    private
 
       def split_branches(branches)
         branches.is_a?(String) ? branches.split(',').map(&:strip) : branches
