@@ -24,7 +24,7 @@ describe Job::Cleanup do
 
     describe :stalled do
       it 'finds stalled jobs' do
-        Job.stalled.should == jobs[0, 2]
+        Job.stalled.order(:id).should == jobs[0, 2]
       end
     end
   end
