@@ -33,6 +33,7 @@ RSpec.configure do |c|
   end
 end
 
+require 'gh'
 GH.module_eval do
   def self.reset
     backend = Thread.current[:GH] and backend.cache.clear
