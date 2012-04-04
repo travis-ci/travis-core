@@ -4,7 +4,6 @@ gemspec
 
 gem 'travis-support', :git => 'git://github.com/travis-ci/travis-support'
 gem 'metriks',        :git => 'git://github.com/mattmatt/metriks.git', :ref => 'source'
-gem 'gh',             :git => 'git://github.com/rkh/gh.git'
 
 platform :mri do
   gem 'amq-client',    '>= 0.9.1'
