@@ -37,8 +37,9 @@ module Travis
     end
 
     def active?(feature, repository)
-      repository_active?(feature, repository) or
-        rollout.active?(feature, repository.owner)
+      feature_active?(feature) or
+        (rollout.active?(feature, repository.owner) or
+          repository_active?(feature, repository))
     end
 
     def activate_repository(feature, repository)
@@ -53,6 +54,38 @@ module Travis
       redis.sismember(repository_key(feature), repository.id) 
     end
 
+    def user_active?(feature, user)
+      rollout.active?(feature, user)
+    end
+
+    def activate_all(feature)
+      redis.del(disabled_key(feature))
+    end
+
+    def feature_active?(feature)
+      enabled_for_all?(feature) and !feature_inactive?(feature)
+    end
+
+    def feature_inactive?(feature)
+      redis.get(disabled_key(feature)) != "1"
+    end
+
+    def deactivate_all(feature)
+      redis.set(disabled_key(feature), 0)
+    end
+
+    def enabled_for_all?(feature)
+      redis.get(enabled_for_all_key(feature)) == '1'
+    end
+
+    def enable_for_all(feature)
+      redis.set(enabled_for_all_key(feature), 1)
+    end
+
+    def disable_for_all(feature)
+      redis.set(enabled_for_all_key(feature), 0)
+    end
+
     extend self
 
     private
@@ -65,5 +98,12 @@ module Travis
       "#{key(feature)}:repositories"
     end
 
+    def disabled_key(feature)
+      "#{key(feature)}:disabled"
+    end
+
+    def enabled_for_all_key(feature)
+      "#{key(feature)}:disabled"
+    end
   end
 end
