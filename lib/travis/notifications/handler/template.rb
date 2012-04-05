@@ -61,9 +61,9 @@ module Travis
         private
 
         def long_build_url(build)
-          host = Travis.config.host
+          host = Travis.config.http_host
           repo = build.repository
-          "http://#{host}/#{repo.owner_name}/#{repo.name}/builds/#{build.id}"
+          "#{host}/#{repo.owner_name}/#{repo.name}/builds/#{build.id}"
         end
 
         def replace_keywords(content)
