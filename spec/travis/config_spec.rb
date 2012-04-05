@@ -53,6 +53,16 @@ describe Travis::Config do
     end
   end
 
+  describe 'normalizations' do
+    describe 'given an array value on config.notifications' do
+      let(:config) { Travis::Config.new(:notifications => %w(foo bar)) }
+
+      it 'moves the array to config.notifications.handlers' do
+        config.notifications.handlers.should == %w(foo bar)
+      end
+    end
+  end
+
   describe 'using DATABASE_URL for database configuration if present' do
     it 'works when given a url with a port' do
       ENV['DATABASE_URL'] = 'postgres://username:password@hostname:port/database'
