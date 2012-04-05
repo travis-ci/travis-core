@@ -23,7 +23,7 @@ module Travis
       include Logging
 
       def subscriptions
-        @subscriptions ||= Travis.config.notifications.handlers.map do |name|
+        @subscriptions ||= Travis.config.notifications.map do |name|
           Subscription.new(name)
         end
       end

@@ -6,7 +6,7 @@ describe Travis::Notifications::Handler::Pusher do
   include Support::ActiveRecord, Support::Pusher
 
   before do
-    Travis.config.notifications.handlers = [:pusher]
+    Travis.config.notifications = [:pusher]
     Travis::Notifications::Handler::Pusher.send(:public, :queue_for, :payload_for)
   end
 

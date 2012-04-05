@@ -4,7 +4,7 @@ describe Travis::Notifications::Handler::Email do
   let(:build) { Travis::Models::Build.new(record) }
 
   before do
-    Travis.config.notifications.handlers = [:email]
+    Travis.config.notifications = [:email]
   end
 
   it 'should be specified'

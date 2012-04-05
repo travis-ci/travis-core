@@ -12,7 +12,7 @@ describe Travis::Notifications::Handler::Irc do
     Travis::Features.start
     @irc = Support::Mocks::Irc.new
     TCPSocket.any_instance.stubs(:puts => true, :get => true, :eof? => true)
-    Travis.config.notifications.handlers = [:irc]
+    Travis.config.notifications = [:irc]
     Travis::Features.activate_user(:short_urls, user)
   end
 
