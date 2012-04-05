@@ -30,7 +30,7 @@ describe Travis::Mailer::Build do
   describe 'finished build email notification' do
     describe 'with no custom from address configured' do
       before :each do
-        Travis.config.notifications.email.delete(:from)
+        Travis.config.email.delete(:from)
       end
 
       it 'has "notifications@[hostname]" as a from address' do
@@ -40,7 +40,7 @@ describe Travis::Mailer::Build do
 
     describe 'with a custom from address configured' do
       before :each do
-        Travis.config.notifications.email.from = 'builds@travis-ci.org'
+        Travis.config.email.from = 'builds@travis-ci.org'
       end
 
       it 'has that address as a from address' do

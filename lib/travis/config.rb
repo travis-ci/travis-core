@@ -60,10 +60,6 @@ module Travis
       def normalize(data)
         data.deep_symbolize_keys!
         data.merge!(:database => database_from_env) if database_env_url
-        if data[:notifications].is_a?(Array)
-          data[:notifications] = { :handlers => data[:notifications] }
-          Travis.logger.info('Deprecation: Please specify notification handlers as notification.handlers in your config')
-        end
         data
       end
     end
@@ -76,10 +72,11 @@ module Travis
             :pusher        => { :app_id => 'app-id', :key => 'key', :secret => 'secret' },
             :smtp          => { :user_name => 'postmark-api_key' },
             :async         => {},
-            :notifications => { :handlers => [], :email => {} },
+            :notifications => [],
             :queues        => [],
             :workers       => { :prune => { :after => 15, :interval => 5 } },
             :jobs          => { :retry => { :after => 60 * 60 * 2, :max_attempts => 1, :interval => 60 * 5 } },
+            :email         => {},
             :archive       => {},
             :ssl           => {},
             :sponsors      => { :platinum => [], :gold => [], :workers => {} },
