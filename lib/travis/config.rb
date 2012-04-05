@@ -1,6 +1,7 @@
 require 'hashr'
 require 'yaml'
 require 'active_support/core_ext/object/blank'
+require 'core_ext/hash/deep_symbolize_keys'
 
 # Encapsulates the configuration necessary for travis-core.
 #
@@ -55,6 +56,16 @@ module Travis
           {}
         end
       end
+
+      def normalize(data)
+        data.deep_symbolize_keys!
+        data.merge!(:database => database_from_env) if database_env_url
+        if data[:notifications].is_a?(Array)
+          data[:notifications] = { :handlers => data[:notifications] }
+          Travis.logger.info('Deprecation: Please specify notification handlers as notification.handlers in your config')
+        end
+        data
+      end
     end
 
     define  :host          => 'travis-ci.org',
@@ -65,7 +76,7 @@ module Travis
             :pusher        => { :app_id => 'app-id', :key => 'key', :secret => 'secret' },
             :smtp          => { :user_name => 'postmark-api_key' },
             :async         => {},
-            :notifications => [],
+            :notifications => { :handlers => [], :email => {} },
             :queues        => [],
             :workers       => { :prune => { :after => 15, :interval => 5 } },
             :jobs          => { :retry => { :after => 60 * 60 * 2, :max_attempts => 1, :interval => 60 * 5 } },
@@ -77,8 +88,7 @@ module Travis
     default :_access => [:key]
 
     def initialize(data = nil, *args)
-      data ||= self.class.load_env || self.class.load_file || {}
-      data.merge! :database => self.class.database_from_env if self.class.database_env_url
+      data = self.class.normalize(data || self.class.load_env || self.class.load_file || {})
       super
     end
 

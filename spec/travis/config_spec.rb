@@ -27,8 +27,12 @@ describe Travis::Config do
   end
 
   describe 'defaults' do
-    it 'notifications defaults to []' do
-      config.notifications.should == []
+    it 'notifications.handlers defaults to []' do
+      config.notifications.handlers.should == []
+    end
+
+    it 'notifications.email defaults to {}' do
+      config.notifications.email.should == {}
     end
 
     it 'queues defaults to []' do
@@ -50,6 +54,16 @@ describe Travis::Config do
         :encoding => 'unicode',
         :min_messages => 'warning'
       }
+    end
+  end
+
+  describe 'normalizations' do
+    describe 'given an array value on config.notifications' do
+      let(:config) { Travis::Config.new(:notifications => %w(foo bar)) }
+
+      it 'moves the array to config.notifications.handlers' do
+        config.notifications.handlers.should == %w(foo bar)
+      end
     end
   end
 

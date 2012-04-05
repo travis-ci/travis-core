@@ -12,7 +12,7 @@ describe Travis::Notifications::Handler::Webhook do
 
   before do
     Travis.logger = Logger.new(io)
-    Travis.config.notifications = [:webhook]
+    Travis.config.notifications.handlers = [:webhook]
 
     Travis::Notifications::Handler::Webhook.http_client = Faraday.new do |f|
       f.request :url_encoded

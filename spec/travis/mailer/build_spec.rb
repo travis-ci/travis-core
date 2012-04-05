@@ -28,6 +28,26 @@ describe Travis::Mailer::Build do
   end
 
   describe 'finished build email notification' do
+    describe 'with no custom from address configured' do
+      before :each do
+        Travis.config.notifications.email.delete(:from)
+      end
+
+      it 'has "notifications@[hostname]" as a from address' do
+        email.from.join.should == 'notifications@travis-ci.org'
+      end
+    end
+
+    describe 'with a custom from address configured' do
+      before :each do
+        Travis.config.notifications.email.from = 'builds@travis-ci.org'
+      end
+
+      it 'has that address as a from address' do
+        email.from.join.should == 'builds@travis-ci.org'
+      end
+    end
+
     it 'delivers to the repository owner, committer and commit author' do
       email.should deliver_to(recipients)
     end
