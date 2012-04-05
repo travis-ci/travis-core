@@ -15,7 +15,7 @@ describe Travis::Notifications::Handler::Archive do
 
   before do
     Travis.logger = Logger.new(io)
-    Travis.config.notifications = [:archive]
+    Travis.config.notifications.handlers = [:archive]
     Travis::Notifications::Handler::Pusher.send(:public, :queue_for, :payload_for)
 
     Travis::Notifications::Handler::Archive.http_client = Faraday.new do |f|

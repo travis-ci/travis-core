@@ -76,7 +76,7 @@ module Travis
             :pusher        => { :app_id => 'app-id', :key => 'key', :secret => 'secret' },
             :smtp          => { :user_name => 'postmark-api_key' },
             :async         => {},
-            :notifications => [],
+            :notifications => { :handlers => [] },
             :queues        => [],
             :workers       => { :prune => { :after => 15, :interval => 5 } },
             :jobs          => { :retry => { :after => 60 * 60 * 2, :max_attempts => 1, :interval => 60 * 5 } },

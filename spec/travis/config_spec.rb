@@ -27,8 +27,8 @@ describe Travis::Config do
   end
 
   describe 'defaults' do
-    it 'notifications defaults to []' do
-      config.notifications.should == []
+    it 'notifications.handlers defaults to []' do
+      config.notifications.handlers.should == []
     end
 
     it 'queues defaults to []' do

@@ -10,7 +10,7 @@ describe Travis::Notifications do
   describe "notifying of an event" do
     describe "campfire" do
       before do
-        Travis.config.notifications = [:campfire]
+        Travis.config.notifications.handlers = [:campfire]
       end
 
       it "should not publish start events to campfire" do
@@ -26,7 +26,7 @@ describe Travis::Notifications do
 
     describe "webhooks" do
       before do
-        Travis.config.notifications = [:webhook]
+        Travis.config.notifications.handlers = [:webhook]
       end
 
       it "should publish start events to webhooks" do

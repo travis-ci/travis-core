@@ -11,7 +11,7 @@ describe Travis::Notifications::Handler::Campfire do
 
   before do
     Travis.logger = Logger.new(io)
-    Travis.config.notifications = [:campfire]
+    Travis.config.notifications.handlers = [:campfire]
 
     campfire.http_client = Faraday.new do |f|
       f.request :url_encoded
