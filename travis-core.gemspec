@@ -42,5 +42,5 @@ Gem::Specification.new do |s|
   # apis
   s.add_dependency 'octokit',           '~> 0.6.5'
   s.add_dependency 'pusher',            '~> 0.9.2'
-  s.add_dependency 'gh',                '~> 0.0.1'
+  s.add_dependency 'gh'
 end
