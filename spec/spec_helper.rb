@@ -4,6 +4,7 @@ RSpec.configure do |c|
   c.before(:each) { Time.now.utc.tap { | now| Time.stubs(:now).returns(now) } }
 end
 
+require 'gh'
 require 'support/payloads'
 require 'support/matchers'
 require 'support/mocha'
@@ -30,13 +31,6 @@ RSpec.configure do |c|
     Travis::Notifications.instance_variable_set(:@queues, nil)
     Travis::Notifications.instance_variable_set(:@subscriptions, nil)
     Travis::Notifications::Handler::Pusher.send(:protected, :queue_for, :payload_for)
-  end
-end
-
-require 'gh'
-GH.module_eval do
-  def self.reset
-    backend = Thread.current[:GH] and backend.cache.clear
   end
 end
 
