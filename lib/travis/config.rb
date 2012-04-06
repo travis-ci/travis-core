@@ -80,7 +80,7 @@ module Travis
             :archive       => {},
             :ssl           => {},
             :sponsors      => { :platinum => [], :gold => [], :workers => {} },
-            :redis         => {}
+            :redis         => { :url => ENV['REDISTOGO_URL'] || 'redis://localhost:6379' }
 
     default :_access => [:key]
 

@@ -21,14 +21,14 @@ module Travis
   # groups and based on percentages.
   module Features
     mattr_accessor :redis, :rollout
+
     class << self
       methods = (Rollout.public_instance_methods(false) - [:active?, "active?"]) << {:to => :rollout}
       delegate(*methods)
     end
 
     def start
-      url = Travis.config.redis.url || ENV['REDISTOGO_URL'] || 'redis://localhost:6379'
-      self.redis ||= ::Redis.connect(:url => url)
+      self.redis ||= ::Redis.connect(:url => Travis.config.redis.url)
       self.rollout ||= ::Rollout.new(redis)
     end
 
@@ -51,7 +51,7 @@ module Travis
     end
 
     def repository_active?(feature, repository)
-      redis.sismember(repository_key(feature), repository.id) 
+      redis.sismember(repository_key(feature), repository.id)
     end
 
     def user_active?(feature, user)

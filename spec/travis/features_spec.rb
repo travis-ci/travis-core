@@ -29,6 +29,7 @@ describe Travis::Features do
     describe "with environment variable set" do
       before do
         ENV['REDISTOGO_URL'] = 'redis://127.0.0.1:6379'
+        load 'lib/travis/config.rb' # defaults are evaluated at load time
       end
 
       after do
