@@ -1,11 +1,7 @@
 require 'active_record'
-require 'devise'
-require 'devise/orm/active_record'
 require 'gh'
 
 class User < ActiveRecord::Base
-  devise :omniauthable
-
   has_many :tokens
   has_many :memberships
   has_many :organizations, :through => :memberships
