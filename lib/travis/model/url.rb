@@ -1,3 +1,4 @@
+require 'digest/sha1'
 require 'active_record'
 
 class Url < ActiveRecord::Base
@@ -18,6 +19,6 @@ class Url < ActiveRecord::Base
   private
 
   def set_code
-    self.code = [[Digest::MD5.hexdigest(url).to_i(13)].pack("N")].pack("m0").tr("+/", "-_").sub(/==\n?$/, '')
+    self.code = Digest::SHA1.hexdigest(url)[0..9]
   end
 end

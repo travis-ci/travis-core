@@ -25,7 +25,7 @@ describe Url do
 
   describe "#short_url" do
     it "returns the full short url" do
-      subject.short_url.should match(%r(^http://trvs.io/\w{6}$))
+      subject.short_url.should match(%r(^http://trvs.io/\w{10}$))
     end
   end
 

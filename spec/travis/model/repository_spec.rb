@@ -69,15 +69,15 @@ describe Repository do
       end
 
       it 'performs searches case-insensitive' do
-        Repository.search('ePoS').count.should == 2
+        Repository.search('ePoS').to_a.count.should == 2
       end
 
       it 'performs searches with / entered' do
-        Repository.search('fuchs/').count.should == 2
+        Repository.search('fuchs/').to_a.count.should == 2
       end
 
       it 'performs searches with \ entered' do
-        Repository.search('fuchs\\').count.should == 2
+        Repository.search('fuchs\\').to_a.count.should == 2
       end
     end
   end

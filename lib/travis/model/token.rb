@@ -1,4 +1,4 @@
-require 'devise'
+require 'securerandom'
 
 # Tokens used for authenticating requests from Github.
 #
@@ -17,6 +17,6 @@ class Token < ActiveRecord::Base
   protected
 
     def generate_token
-      self.token = Devise.friendly_token.first(20)
+      self.token = SecureRandom.base64(15).tr('+/=lIO0', 'pqrsxyz')
     end
 end

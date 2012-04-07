@@ -1,12 +1,7 @@
 require 'active_record'
-require 'devise'
-require 'devise/orm/active_record'
-require 'devise/api_token_authenticatable'
 require 'gh'
 
 class User < ActiveRecord::Base
-  devise :omniauthable, :api_token_authenticatable
-
   has_many :tokens
   has_many :memberships
   has_many :organizations, :through => :memberships
