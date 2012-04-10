@@ -6,14 +6,13 @@ gem 'travis-support', :git => 'git://github.com/travis-ci/travis-support'
 gem 'metriks',        :git => 'git://github.com/mattmatt/metriks.git', :ref => 'source'
 
 platform :mri do
-  gem 'amq-client',    '>= 0.9.1'
-  gem 'amqp',          '>= 0.9.2'
-  gem 'pg',            '~> 0.13.2'
+  gem 'bunny',          '~> 0.7.9'
+  gem 'pg',             '~> 0.13.2'
 end
 
 platform :jruby do
-  gem 'jruby-openssl', '~> 0.7.4'
-  gem 'hot_bunnies',   '~> 1.3.3'
+  gem 'jruby-openssl',  '~> 0.7.4'
+  gem 'hot_bunnies',    '~> 1.3.3'
   gem 'activerecord-jdbcpostgresql-adapter', '1.2.2' # see https://github.com/bmabey/database_cleaner/pull/83
   gem 'activerecord-jdbc-adapter',           '1.2.2'
 end
