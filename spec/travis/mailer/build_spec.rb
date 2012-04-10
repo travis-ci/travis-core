@@ -139,5 +139,43 @@ describe Travis::Mailer::Build do
         email.subject.should == '[Failed] svenfuchs/broken_build#1 (master - 62aae5f)'
       end
     end
+
+    describe 'for a broken build with tags' do
+      let(:build) { Factory(:broken_build_with_tags) }
+      
+      before :each do
+        Job::Tagging.stubs(:rules).returns [
+          { 'tag' => 'database_missing',   'message' => 'Your should create a test database.'                 },
+          { 'tag' => 'rake_not_bundled',   'message' => 'Your Gemfile is missing Rake.'                       },
+          { 'tag' => 'log_limit_exceeded', 'message' => 'Your test suite has output more than 4194304 Bytes.' }
+        ]
+      end
+
+      it 'subject' do
+        email.subject.should == '[Failed] svenfuchs/broken_build_with_tags#3 (master - 62aae5f)'
+      end
+
+      it 'contains the expected text part' do
+        email.text_part.body.should include_lines(%(
+          Notes :
+          * Your should create a test database. (1.1 and 1.2) <br />
+          * Your Gemfile is missing Rake. (1.1) <br />
+          * Your test suite has output more than 4194304 Bytes. (1.2) <br />
+        ))
+      end
+
+      it 'contains the expected html part' do
+        email.html_part.body.should include_lines(%(
+          <th>Notes</th>
+          <td>
+          <ul>
+          <li>Your should create a test database. (1.1 and 1.2)</li>
+          <li>Your Gemfile is missing Rake. (1.1)</li>
+          <li>Your test suite has output more than 4194304 Bytes. (1.2)</li>
+          </ul>
+          </td>
+        ))
+      end
+    end
   end
 end

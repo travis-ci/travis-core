@@ -60,6 +60,10 @@ class Build
       end
     end
 
+    def matrix_uniq_tags
+      matrix.map(&:tags).join(",").split(",").uniq
+    end
+
     protected
 
       # expand the matrix (i.e. create test jobs) and update the config for each job

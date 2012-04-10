@@ -68,6 +68,29 @@ module Travis
         def seconds_part(diff)
           diff % ONE_MINUTE
         end
+
+        def notes(build, format)
+          rules = Job::Tagging.rules
+          messages = build.matrix_uniq_tags.map do |tag|
+            ix = rules.index { |rule| rule['tag'] == tag }
+            if ix and message = rules[ix]['message']
+              jobs_list = build.matrix.map do |job|
+                job.number if job.tags =~ /#{tag}/
+              end
+              jobs_list = jobs_list.compact.to_sentence
+              formated_note(format, message, jobs_list)
+            end
+          end
+
+          "\n" + messages.join("\n")
+        end
+
+        def formated_note(format, message, jobs_list)
+          case format
+            when "text" then "* #{message} (#{jobs_list}) <br />"
+            when "html" then "<li>#{message} (#{jobs_list})</li>"
+          end
+        end
       end
     end
   end
