@@ -101,8 +101,8 @@ FactoryGirl.define do
 
   factory :broken_build_with_tags, :parent => :build do
     repository  { Factory(:repository, :name => 'broken_build_with_tags', :last_build_status => 1) }
-    matrix      {[Factory(:test, :tags => "database_missing,rake_not_bundled",   :job_id => "1.1"),
-                  Factory(:test, :tags => "database_missing,log_limit_exceeded", :job_id => "1.2")]}
+    matrix      {[Factory(:test, :tags => "database_missing,rake_not_bundled",   :number => "1.1"),
+                  Factory(:test, :tags => "database_missing,log_limit_exceeded", :number => "1.2")]}
     status      1
     state       :finished
     started_at  { Time.now.utc }

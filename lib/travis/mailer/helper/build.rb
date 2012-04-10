@@ -85,13 +85,14 @@ module Travis
         def notes(build, format)
           rules = Job::Tagging.rules
           messages = build.matrix_uniq_tags.map do |tag|
-             if message = rules[rules.index {|rule| rule["tag"] == tag}]["message"]
-               jobs_list = build.matrix.map do |job|
-                 job.job_id if job.tags =~ /#{tag}/
-               end
-               jobs_list = jobs_list.compact.to_sentence
-               formated_note(format, message, jobs_list)
-             end
+            ix = rules.index { |rule| rule['tag'] == tag }
+            if ix and message = rules[ix]['message']
+              jobs_list = build.matrix.map do |job|
+                job.number if job.tags =~ /#{tag}/
+              end
+              jobs_list = jobs_list.compact.to_sentence
+              formated_note(format, message, jobs_list)
+            end
           end
 
           "\n" + messages.join("\n")
