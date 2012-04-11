@@ -25,13 +25,13 @@ describe Travis::Tasks::ConfigureBuild do
 
     it "returns { '.result' => 'not_found' } if the repository has not .travis.yml" do
       response.expects(:success?).returns(false)
-      response.expects(:code).returns(404)
+      response.expects(:status).returns(404)
       result['config']['.result'].should == 'not_found'
     end
 
     it "returns { '.result' => 'server_error' } if a 500 server error is returned" do
       response.expects(:success?).returns(false)
-      response.expects(:code).returns(500)
+      response.expects(:status).returns(500)
       result['config']['.result'].should == 'server_error'
     end
 

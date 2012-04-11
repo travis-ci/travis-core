@@ -30,7 +30,7 @@ module Travis
         def fetch_and_parse
           if response.success?
             parse(response.body)
-          elsif response.code == 404
+          elsif response.status == 404
             { ".result" => 'not_found' }
           else
             { ".result" => 'server_error' }
