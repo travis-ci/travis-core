@@ -35,17 +35,17 @@ describe Job do
 
   describe 'before_create' do
     it 'instantiates the log artifact' do
-      job = Job::Test.create!(:repository => Factory(:repository), :commit => Factory(:commit), :owner => Factory(:build))
+      job = Job::Test.create!(:repository => Factory(:repository), :commit => Factory(:commit), :source => Factory(:build))
       job.reload.log.should be_instance_of(Artifact::Log)
     end
 
     it 'sets the state attribute' do
-      job = Job::Test.create!(:repository => Factory(:repository), :commit => Factory(:commit), :owner => Factory(:build))
+      job = Job::Test.create!(:repository => Factory(:repository), :commit => Factory(:commit), :source => Factory(:build))
       job.reload.should be_created
     end
 
     it 'sets the queue attribute' do
-      job = Job::Test.create!(:repository => Factory(:repository), :commit => Factory(:commit), :owner => Factory(:build))
+      job = Job::Test.create!(:repository => Factory(:repository), :commit => Factory(:commit), :source => Factory(:build))
       job.reload.queue.should == 'builds.common'
     end
   end
@@ -64,6 +64,24 @@ describe Job do
     it 'returns the duration if both started_at and finished_at are populated' do
       job = Job.new(:started_at => 20.seconds.ago, :finished_at => 10.seconds.ago)
       job.duration.should == 10
+    end
+  end
+
+  describe 'tagging' do
+    let(:job) { Factory.create(:test) }
+
+    before :each do
+      Job::Tagging.stubs(:rules).returns [
+        { 'tag' => 'rake_not_bundled',   'pattern' => 'rake is not part of the bundle.' }
+      ]
+    end
+
+    it 'should tag a job its log contains a particular string' do
+      job.start!
+      job.reload.append_log!('rake is not part of the bundle')
+      job.finish!
+
+      job.reload.tags.should == "rake_not_bundled"
     end
   end
 end

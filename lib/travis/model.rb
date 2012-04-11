@@ -1,5 +1,9 @@
+# This module is required for preloading classes on JRuby, see
+#   https://github.com/travis-ci/travis-support/blob/master/lib/core_ext/module/load_constants.rb
+# which is used in
+#   https://github.com/travis-ci/travis-hub/blob/master/lib/travis/hub/cli.rb#L15
 module Travis
-  class Model
+  module Model
     autoload :Artifact,    'travis/model/artifact'
     autoload :Build,       'travis/model/build'
     autoload :Commit,      'travis/model/commit'

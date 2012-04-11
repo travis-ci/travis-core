@@ -4,6 +4,8 @@ require 'pusher'
 module Travis
   module Notifications
     module Handler
+
+      # Notifies registered clients about various state changes through Pusher.
       class Pusher
         autoload :Payload, 'travis/notifications/handler/pusher/payload'
 
@@ -25,20 +27,8 @@ module Travis
               channel(event, object).trigger(event, data)
             end
 
-            def config
-              @config ||= Travis.config.pusher
-            end
-
-            def pusher
-              @pusher ||= ::Pusher.tap do |pusher|
-                pusher.app_id = config.app_id
-                pusher.key    = config.key
-                pusher.secret = config.secret
-              end
-            end
-
             def channel(event, object)
-              pusher[queue_for(event, object)]
+              Travis.pusher[queue_for(event, object)]
             end
 
             def client_event_for(event)

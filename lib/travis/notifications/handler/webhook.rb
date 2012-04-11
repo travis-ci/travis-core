@@ -4,10 +4,13 @@ require 'faraday'
 module Travis
   module Notifications
     module Handler
+
+      # Sends build notifications to webhooks as defined in the configuration
+      # (`.travis.yml`).
       class Webhook
         autoload :Payload, 'travis/notifications/handler/webhook/payload'
 
-        EVENTS = 'build:finished'
+        EVENTS = /build:(started|finished)/
 
         include Logging
 
@@ -35,7 +38,12 @@ module Travis
 
         include do
           def notify(event, object, *args)
-            send_webhooks(object.webhooks, object) if object.send_webhook_notifications?
+            case event
+            when "build:started"
+              send_webhooks(object.webhooks, object) if object.send_webhook_notifications_on_start?
+            when "build:finished"
+              send_webhooks(object.webhooks, object) if object.send_webhook_notifications_on_finish?
+            end
           end
 
           protected

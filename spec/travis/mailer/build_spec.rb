@@ -8,23 +8,46 @@ require 'support/matchers'
 describe Travis::Mailer::Build do
   include Support::ActiveRecord
 
-  let(:build) {
-    Factory(:build,
-            :state => :finished,
-            :started_at => Time.utc(2011, 6, 23, 15, 30, 45),
-            :finished_at => Time.utc(2011, 6, 23, 16, 47, 52),
-            :commit => Factory(:commit, :author_name => "まつもとゆきひろ a.k.a. Matz"))
-  }
+  let(:build) do
+    Factory(
+      :build,
+      :state => :finished,
+      :started_at => Time.utc(2011, 6, 23, 15, 30, 45),
+      :finished_at => Time.utc(2011, 6, 23, 16, 47, 52),
+      :commit => Factory(:commit, :author_name => "まつもとゆきひろ a.k.a. Matz")
+    )
+  end
 
   let(:recipients) { ['owner@example.com', 'committer@example.com', 'author@example.com'] }
   let(:email)      { Travis::Mailer::Build.finished_email(build, recipients) }
 
   before :each do
     Travis::Mailer.setup
+    I18n.reload!
     ActionMailer::Base.delivery_method = :test
   end
 
   describe 'finished build email notification' do
+    describe 'with no custom from address configured' do
+      before :each do
+        Travis.config.email.delete(:from)
+      end
+
+      it 'has "notifications@[hostname]" as a from address' do
+        email.from.join.should == 'notifications@travis-ci.org'
+      end
+    end
+
+    describe 'with a custom from address configured' do
+      before :each do
+        Travis.config.email.from = 'builds@travis-ci.org'
+      end
+
+      it 'has that address as a from address' do
+        email.from.join.should == 'builds@travis-ci.org'
+      end
+    end
+
     it 'delivers to the repository owner, committer and commit author' do
       email.should deliver_to(recipients)
     end
@@ -73,7 +96,7 @@ describe Travis::Mailer::Build do
         # Encode the email, then parse the encoded string as a new Mail
         h = Mail.new(email.encoded).html_part
         html = h.body.to_s
-        html.force_encoding(h.charset) if RUBY_VERSION >= "1.9.2"
+        html.force_encoding(h.charset) if html.respond_to?(:force_encoding)
         html.should include("まつもとゆきひろ a.k.a. Matz")
       end
 
@@ -92,7 +115,7 @@ describe Travis::Mailer::Build do
         end
 
         it 'adds a sponsor image' do
-          sponsor.should =~ %r(<img src="data:image/png;base64[^"]+">)
+          sponsor.should =~ %r(<img src="https://secure.travis-ci.org/images/sponsors/xing-100x60.png")
         end
 
         it 'does not escape tags contained in the sponsor text' do
@@ -107,11 +130,6 @@ describe Travis::Mailer::Build do
       it 'subject' do
         email.subject.should == '[Passed] svenfuchs/successful_build#1 (master - 62aae5f)'
       end
-
-      it 'should have the "success" css class on alert-message' do
-        email.deliver
-        email.html_part.decoded.should =~ /<div[^>]+class="[^"]*success[^"]*"/
-      end
     end
 
     describe 'for a broken build' do
@@ -120,10 +138,43 @@ describe Travis::Mailer::Build do
       it 'subject' do
         email.subject.should == '[Failed] svenfuchs/broken_build#1 (master - 62aae5f)'
       end
+    end
 
-      it 'should have the "failure" css class on alert-message' do
-        email.deliver
-        email.html_part.decoded.should =~ /<div[^>]+class="[^"]*failure[^"]*"/
+    describe 'for a broken build with tags' do
+      let(:build) { Factory(:broken_build_with_tags) }
+      
+      before :each do
+        Job::Tagging.stubs(:rules).returns [
+          { 'tag' => 'database_missing',   'message' => 'Your should create a test database.'                 },
+          { 'tag' => 'rake_not_bundled',   'message' => 'Your Gemfile is missing Rake.'                       },
+          { 'tag' => 'log_limit_exceeded', 'message' => 'Your test suite has output more than 4194304 Bytes.' }
+        ]
+      end
+
+      it 'subject' do
+        email.subject.should == '[Failed] svenfuchs/broken_build_with_tags#3 (master - 62aae5f)'
+      end
+
+      it 'contains the expected text part' do
+        email.text_part.body.should include_lines(%(
+          Notes :
+          * Your should create a test database. (1.1 and 1.2) <br />
+          * Your Gemfile is missing Rake. (1.1) <br />
+          * Your test suite has output more than 4194304 Bytes. (1.2) <br />
+        ))
+      end
+
+      it 'contains the expected html part' do
+        email.html_part.body.should include_lines(%(
+          <th>Notes</th>
+          <td>
+          <ul>
+          <li>Your should create a test database. (1.1 and 1.2)</li>
+          <li>Your Gemfile is missing Rake. (1.1)</li>
+          <li>Your test suite has output more than 4194304 Bytes. (1.2)</li>
+          </ul>
+          </td>
+        ))
       end
     end
   end

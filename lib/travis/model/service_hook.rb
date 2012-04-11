@@ -1,5 +1,7 @@
 require 'travis/github_api'
 
+# Helper object that is aggregated by a Repository and allows to de/activate
+# a service hook on Github.
 class ServiceHook
   ATTRIBUTES = [:uid, :owner_name, :name, :description, :url, :active, :repository]
 
@@ -21,11 +23,14 @@ class ServiceHook
   protected
 
     def activate(user)
-      Travis::GithubApi.add_service_hook(owner_name, name, user.github_oauth_token,
+      hook_details = {
         :token  => user.tokens.first.token,
-        :user   => user.login,
-        :domain => Travis.config.domain
-      )
+        :user   => user.login
+      }
+
+      hook_details[:domain] = Travis.config.service_hook_url if Travis.config.service_hook_url
+
+      Travis::GithubApi.add_service_hook(owner_name, name, user.github_oauth_token, hook_details)
     end
 
     def deactivate(user)

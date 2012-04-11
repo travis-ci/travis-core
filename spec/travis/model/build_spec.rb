@@ -6,7 +6,7 @@ describe Build do
 
   let(:repository) { Factory(:repository) }
 
-  describe 'ClassMethods' do
+  describe 'class methods' do
     it 'recent returns recent builds that at least are started ordered by creation time descending' do
       Factory(:build, :state => 'finished')
       Factory(:build, :state => 'started')
@@ -94,7 +94,7 @@ describe Build do
     end
   end
 
-  describe 'InstanceMethods' do
+  describe 'instance methods' do
     describe 'config' do
       it 'defaults to an empty hash' do
         Build.new.config.should == {}
@@ -102,6 +102,13 @@ describe Build do
 
       it 'deep_symbolizes keys on write' do
         build = Factory(:build, :config => { 'foo' => { 'bar' => 'bar' } })
+        build.config[:foo][:bar].should == 'bar'
+      end
+
+      it 'tries to deserialize the config itself if a String is returned' do
+        build = Factory(:build)
+        build.stubs(:read_attribute).returns("---\n:foo:\n  :bar: bar")
+        Build.logger.expects(:warn)
         build.config[:foo][:bar].should == 'bar'
       end
     end

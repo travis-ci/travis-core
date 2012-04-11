@@ -1,4 +1,5 @@
+.Gemfile*
+Gemfile.lock
 config/travis.yml
 play/*
 log/*
-Gemfile.lock

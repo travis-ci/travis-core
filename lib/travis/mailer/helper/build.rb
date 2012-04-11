@@ -9,7 +9,13 @@ module Travis
           package  = [:platinum, :platinum, :gold].shuffle.first
           count    = package == :platinum ? 1 : 2
           sponsors = Travis.config.sponsors[package] || []
-          sponsors.shuffle[0, count].map { |sponsor| Hashr.new(sponsor) }
+          sponsors.shuffle[0, count].map do |sponsor|
+            Hashr.new(sponsor.merge(:package => package))
+          end
+        end
+
+        def header_status(build)
+          build.passed? ? 'success' : 'failure'
         end
 
         def encode_image(path)
@@ -20,7 +26,7 @@ module Travis
         end
 
         def repository_build_url(options)
-          [Travis.config.host, options[:slug], 'builds', options[:id]].join('/')
+          [Travis.config.http_host, options[:slug], 'builds', options[:id]].join('/')
         end
 
         def title(build)
@@ -61,6 +67,29 @@ module Travis
 
         def seconds_part(diff)
           diff % ONE_MINUTE
+        end
+
+        def notes(build, format)
+          rules = Job::Tagging.rules
+          messages = build.matrix_uniq_tags.map do |tag|
+            ix = rules.index { |rule| rule['tag'] == tag }
+            if ix and message = rules[ix]['message']
+              jobs_list = build.matrix.map do |job|
+                job.number if job.tags =~ /#{tag}/
+              end
+              jobs_list = jobs_list.compact.to_sentence
+              formated_note(format, message, jobs_list)
+            end
+          end
+
+          "\n" + messages.join("\n")
+        end
+
+        def formated_note(format, message, jobs_list)
+          case format
+            when "text" then "* #{message} (#{jobs_list}) <br />"
+            when "html" then "<li>#{message} (#{jobs_list})</li>"
+          end
         end
       end
     end

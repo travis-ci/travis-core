@@ -31,6 +31,10 @@ describe Travis::Config do
       config.notifications.should == []
     end
 
+    it 'notifications.email defaults to {}' do
+      config.email.should == {}
+    end
+
     it 'queues defaults to []' do
       config.queues.should == []
     end

@@ -13,6 +13,23 @@ describe Repository do
     end
   end
 
+  describe 'associations' do
+    describe 'owner' do
+      let(:user) { Factory(:user) }
+      let(:org)  { Factory(:org)  }
+
+      it 'can be a user' do
+        repository = Factory(:repository, :owner => user)
+        repository.reload.owner.should == user
+      end
+
+      it 'can be an organization' do
+        repository = Factory(:repository, :owner => org)
+        repository.reload.owner.should == org
+      end
+    end
+  end
+
   describe 'class methods' do
     describe 'find_by' do
       let(:minimal) { Factory(:repository) }
@@ -25,6 +42,12 @@ describe Repository do
         repository = Repository.find_by(:name => minimal.name, :owner_name => minimal.owner_name)
         repository.owner_name.should == minimal.owner_name
         repository.name.should == minimal.name
+      end
+
+      it "should raise an error when a repository couldn't be found using params" do
+        expect {
+          Repository.find_by(:name => 'emptiness')
+        }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
@@ -46,16 +69,30 @@ describe Repository do
       end
 
       it 'performs searches case-insensitive' do
-        Repository.search('ePoS').count.should == 2
+        Repository.search('ePoS').to_a.count.should == 2
       end
 
       it 'performs searches with / entered' do
-        Repository.search('fuchs/').count.should == 2
+        Repository.search('fuchs/').to_a.count.should == 2
       end
 
       it 'performs searches with \ entered' do
-        Repository.search('fuchs\\').count.should == 2
+        Repository.search('fuchs\\').to_a.count.should == 2
       end
+    end
+  end
+
+  describe 'source_url' do
+    let(:repository) { Repository.new(:owner_name => 'travis-ci', :name => 'travis-ci') }
+
+    it 'returns the public git source url for a public repository' do
+      repository.private = false
+      repository.source_url.should == 'git://github.com/travis-ci/travis-ci.git'
+    end
+
+    it 'returns the private git source url for a private repository' do
+      repository.private = true
+      repository.source_url.should == 'git@github.com:travis-ci/travis-ci.git'
     end
   end
 
@@ -96,11 +133,8 @@ describe Repository do
       repository.public_key.should eql(repository.key.public_key)
     end
 
-    it "should create a new key" do
-      SslKey.delete_all
-      lambda do
-        repository.key
-      end.should change(SslKey, :count).by(1)
+    it "should create a new key when the repository is created" do
+      repository.key.should_not == nil
     end
 
     it "should retrieve the existing key" do
@@ -109,6 +143,26 @@ describe Repository do
       lambda do
         repository.key.id.should eql(key.id)
       end.should change(SslKey, :count).by(0)
+    end
+
+    it "should check if a key exists and create a new one on access" do
+      repository.key.destroy
+      repository.reload
+      repository.key.should_not == nil
+    end
+
+    it "shouldn't fail when fail when creating a new ssl key failed" do
+      key = repository.key
+      repository.stubs(:associated_key).returns(nil).then.returns(key)
+      expect {
+        repository.key
+      }.to_not raise_error
+    end
+
+    it "should return the other key when a validation error is raised" do
+      key = repository.key
+      repository.stubs(:associated_key).returns(nil).then.returns(key)
+      repository.key.should == key
     end
   end
 
@@ -145,4 +199,22 @@ describe Repository do
     end
   end
 
+  describe 'rails_fork?' do
+    let(:repository) { Repository.new }
+
+    it 'returns true if the repository is a rails fork' do
+      repository.owner_name, repository.name = 'josh', 'rails'
+      repository.rails_fork?.should be_true
+    end
+
+    it 'returns false if the repository is rails/rails' do
+      repository.owner_name, repository.name = 'rails', 'rails'
+      repository.rails_fork?.should be_false
+    end
+
+    it 'returns false if the repository is not owned by the rails org' do
+      repository.owner_name, repository.name = 'josh', 'completeness-fu'
+      repository.rails_fork?.should be_false
+    end
+  end
 end

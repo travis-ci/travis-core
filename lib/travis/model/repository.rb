@@ -2,6 +2,14 @@ require 'uri'
 require 'core_ext/hash/compact'
 require 'active_record'
 
+# Models a repository that has many builds and requests.
+#
+# A repository has an ssl key pair that is used to encrypt and decrypt
+# sensitive data contained in the public `.travis.yml` file, such as Campfire
+# authentication data.
+#
+# A repository also has a ServiceHook that can be used to de/activate service
+# hooks on Github.
 class Repository < ActiveRecord::Base
   has_many :requests, :dependent => :delete_all
   has_many :builds, :dependent => :delete_all do
@@ -14,9 +22,14 @@ class Repository < ActiveRecord::Base
   has_one :last_success, :class_name => 'Build', :order => 'id DESC', :conditions => { :status => 0 }
   has_one :last_failure, :class_name => 'Build', :order => 'id DESC', :conditions => { :status => 1 }
   has_one :key, :class_name => 'SslKey'
+  belongs_to :owner, :polymorphic => true
 
   validates :name,       :presence => true, :uniqueness => { :scope => :owner_name }
   validates :owner_name, :presence => true
+
+  before_create do
+    self.key = SslKey.new(:repository_id => self.id)
+  end
 
   delegate  :public_key, :to => :key
 
@@ -38,15 +51,15 @@ class Repository < ActiveRecord::Base
     end
 
     def search(query)
-      query = query.gsub('\\', '\/')
-      where('(repositories.owner_name || \'/\' || repositories.name) ~* ?', query)
+      query = query.gsub('\\', '/')
+      where("(repositories.owner_name || chr(47) || repositories.name) ILIKE ?", "%#{query}%")
     end
 
     def find_by(params)
       if id = params[:repository_id] || params[:id]
         self.find(id)
       else
-        self.where(params.slice(:name, :owner_name)).first
+        self.where(params.slice(:name, :owner_name)).first || raise(ActiveRecord::RecordNotFound)
       end
     end
 
@@ -55,13 +68,12 @@ class Repository < ActiveRecord::Base
     end
   end
 
-  def last_build_status(params = {})
-    params = params.symbolize_keys.slice(*Build.matrix_keys_for(params))
-    params.blank? ? read_attribute(:last_build_status) : builds.last_status_on(params)
-  end
-
   def slug
     @slug ||= [owner_name, name].join('/')
+  end
+
+  def source_url
+    private? ? "git@github.com:#{slug}.git": "git://github.com/#{slug}.git"
   end
 
   def service_hook
@@ -73,17 +85,33 @@ class Repository < ActiveRecord::Base
     )
   end
 
-  alias :old_key :key
-  def key
-    @key ||= old_key || SslKey.create(:repository_id => self.id)
-  end
-
   def branches
     builds.descending.paged({}).includes([:commit]).map{ |build| build.commit.branch }.uniq
   end
 
-  def last_finished_builds_by_branches
-    branches.map { |branch| builds.last_finished_on_branch(branch) }.compact
+  def last_build_status(params = {})
+    params = params.symbolize_keys.slice(*Build.matrix_keys_for(params))
+    params.blank? ? read_attribute(:last_build_status) : builds.last_status_on(params)
   end
 
+  def last_finished_builds_by_branches
+    n = branches.map { |branch| builds.last_finished_on_branch(branch) }.compact
+    n.sort { |a, b| b.finished_at <=> a.finished_at }
+  end
+
+  alias_method :associated_key, :key
+  def key
+    @key ||= associated_key || SslKey.new(:repository => self).tap do |key|
+      begin
+        key.save!
+      rescue ActiveRecord::RecordInvalid => e
+        logger.warn "Error lazily creating an SSL key for repository #{slug}. Someone else probably created it just now."
+        associated_key.reload
+      end
+    end
+  end
+
+  def rails_fork?
+    slug != 'rails/rails' && slug =~ %r(/rails$)
+  end
 end

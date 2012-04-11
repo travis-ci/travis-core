@@ -4,6 +4,17 @@ require 'core_ext/ostruct/hash_access'
 require 'active_support/json'
 require 'net/http'
 
+# Github::Api wraps some parts of the Github API for
+#
+#  * easier access (e.g.  Github::Commit#branch parses the `ref` value
+#    contained in the Github payload and returns just the branch name) as
+#    well as
+#
+#  * adding some Travis CI specific logic (e.g. Github::Repository#owner_email
+#    either returns the given value from the Github payload OR fetches the
+#    owner OR fetches all owners of an organization and returns the respective
+#    emails).
+#
 # TODO: either port this to Octokit or use Hashr instead of OpenStruct
 module Github
   module Api
@@ -94,10 +105,14 @@ module Github
   class Repository < OpenStruct
     include Api
 
-    ATTR_NAMES = [:name, :description, :url, :owner_name, :owner_email]
+    ATTR_NAMES = [:name, :description, :url, :owner_type, :owner_name, :owner_email, :private]
 
     def to_hash
       ATTR_NAMES.inject({}) { |result, name| result.merge(name => self.send(name)) }
+    end
+
+    def owner_type
+      organization ? 'Organization' : 'User'
     end
 
     def owner_name
@@ -120,13 +135,14 @@ module Github
       "repos/show/#{owner_name}/#{name}"
     end
 
-    def private?
-      self['private']
+    def private
+      !!self['private']
     end
+    alias_method :private?, :private
   end
 
   class Commit < OpenStruct
-    ATTR_NAMES = [:commit, :message, :branch, :committed_at, :committer_name, :committer_email, :author_name, :author_email, :compare_url]
+    ATTR_NAMES = [:commit, :message, :branch, :ref, :committed_at, :committer_name, :committer_email, :author_name, :author_email, :compare_url]
 
     def initialize(data, repository)
       data['author'] ||= {}

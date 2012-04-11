@@ -4,6 +4,9 @@ require 'active_support/core_ext/module/delegation'
 module Travis
   module Notifications
     module Handler
+
+      # Enqueues a remote job payload so it can be picked up and processed by a
+      # Worker.
       class Worker
         autoload :Payload, 'travis/notifications/handler/worker/payload'
 

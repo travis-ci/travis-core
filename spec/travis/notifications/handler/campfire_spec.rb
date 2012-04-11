@@ -19,6 +19,11 @@ describe Travis::Notifications::Handler::Campfire do
     end
   end
 
+  it "only is set up to accept build:finished notifications" do
+    Travis::Notifications::Handler::Campfire::EVENTS.should === 'build:finished'
+    Travis::Notifications::Handler::Campfire::EVENTS.should_not === 'build:started'
+  end
+
   it "sends campfire notifications to the room given as a string" do
     target = 'evome:apitoken@42'
     build.config[:notifications][:campfire] = target

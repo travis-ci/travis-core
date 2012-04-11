@@ -26,16 +26,17 @@ FactoryGirl.define do
   factory :configure, :class => 'Job::Configure' do
     repository { Repository.first || Factory(:repository) }
     commit     { Factory(:commit) }
-    owner      { Factory(:request) }
+    source     { Factory(:request) }
   end
 
   factory :test, :class => 'Job::Test' do
     repository { Repository.first || Factory(:repository) }
     commit     { Factory(:commit) }
-    owner      { Factory(:build) }
+    source     { Factory(:build) }
     log        { Factory(:log) }
     config     { { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' } }
     number     '2.1'
+    tags       ""
   end
 
   factory :log, :class => 'Artifact::Log' do
@@ -49,6 +50,7 @@ FactoryGirl.define do
   end
 
   factory :repository do
+    owner { User.find_by_login('svenfuchs') || Factory(:user) }
     name 'minimal'
     owner_name 'svenfuchs'
     owner_email 'svenfuchs@artweb-design.de'
@@ -68,6 +70,10 @@ FactoryGirl.define do
     login 'svenfuchs'
     email 'sven@fuchs.com'
     tokens { [Token.new] }
+  end
+
+  factory :org, :class => 'Organization' do
+    name 'travis-ci'
   end
 
   factory :worker do
@@ -95,6 +101,16 @@ FactoryGirl.define do
     status 1
     state :finished
     started_at { Time.now.utc }
+    finished_at { Time.now.utc }
+  end
+
+  factory :broken_build_with_tags, :parent => :build do
+    repository  { Factory(:repository, :name => 'broken_build_with_tags', :last_build_status => 1) }
+    matrix      {[Factory(:test, :tags => "database_missing,rake_not_bundled",   :number => "1.1"),
+                  Factory(:test, :tags => "database_missing,log_limit_exceeded", :number => "1.2")]}
+    status      1
+    state       :finished
+    started_at  { Time.now.utc }
     finished_at { Time.now.utc }
   end
 end

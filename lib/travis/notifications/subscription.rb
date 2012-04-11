@@ -1,5 +1,16 @@
+require 'metriks'
+
 module Travis
   module Notifications
+
+    # Notification handlers subscribe to events issued from core models (such
+    # as Build, Job::Configure and Job::Test).
+    #
+    # Subscriptions are defined in Travis.config so they can easily be
+    # added/removed for an environment.
+    #
+    # Subscribing classes are supposed to define an EVENTS constant which holds
+    # a regular expression which will be matched against the event name.
     class Subscription
       attr_reader :name, :subscriber, :patterns
 
@@ -11,11 +22,19 @@ module Travis
         end
 
         def notify(event, *args)
-          subscriber.new.notify(event, *args) if matches?(event)
+          if matches?(event)
+            subscriber.new.notify(event, *args)
+            increment_counter(event)
+          end
         end
 
         def matches?(event)
           patterns.any? { |patterns| patterns.is_a?(Regexp) ? patterns.match(event) : patterns == event }
+        end
+
+        def increment_counter(event)
+          metric = "travis.notifications.#{name}.#{event.gsub(/:/, '.')}"
+          Metriks.meter(metric).mark
         end
       }
     end

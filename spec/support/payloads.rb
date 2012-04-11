@@ -52,6 +52,50 @@ GITHUB_PAYLOADS = {
     "compare": "https://github.com/svenfuchs/gem-release/compare/af674bd...9854592"
   }),
 
+  "travis-core" => %({
+    "repository": {
+      "url": "http://github.com/travis-ci/travis-core",
+      "name": "gem-release",
+      "description": "description for travis-core",
+      "organization": "travis-ci",
+      "owner": {
+        "email": "contact@travis-ci.org",
+        "name": "travis-ci"
+      }
+    },
+    "commits": [{
+      "id":        "9854592",
+      "message":   "Bump to 0.0.15",
+      "timestamp": "2010-10-27 04:32:37",
+      "committer": {
+        "name":  "Sven Fuchs",
+        "email": "svenfuchs@artweb-design.de"
+      },
+      "author": {
+        "name":  "Josh Kalderimis",
+        "email": "josh@email.org"
+      }
+    }],
+    "ref": "refs/heads/master",
+    "compare": "https://github.com/travis-ci/travis-core/compare/af674bd...9854592"
+  }),
+
+  "travis-core-no-commit" => %({
+    "repository": {
+      "url": "http://github.com/travis-ci/travis-core",
+      "name": "gem-release",
+      "description": "description for travis-core",
+      "organization": "travis-ci",
+      "owner": {
+        "email": "contact@travis-ci.org",
+        "name": "travis-ci"
+      }
+    },
+    "commits":[],
+    "ref": "refs/heads/master",
+    "compare": "https://github.com/travis-ci/travis-core/compare/af674bd...9854592"
+  }),
+
   "gh-pages-update" => %({
     "repository": {
       "url": "http://github.com/svenfuchs/gem-release",
@@ -331,8 +375,22 @@ GITHUB_PAYLOADS = {
     },
     "credentials" => {
       "token" => "1234567890abcdefg"
+    },
+    "extra" => {
+      "raw_info" => {
+        "gravatar_id" => "41193cdbffbf06be0cdf231b28c54b18"
+      }
     }
   },
+}
+
+GITHUB_OAUTH_DATA = {
+  'name'               => 'John',
+  'email'              => 'john@email.com',
+  'login'              => 'john',
+  'github_id'          => 234423,
+  'github_oauth_token' => '1234567890abcdefg',
+  'gravatar_id'        => '41193cdbffbf06be0cdf231b28c54b18'
 }
 
 WORKER_PAYLOADS = {

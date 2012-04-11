@@ -1,43 +1,60 @@
-# based on :
+# Very (maybe too) simple IRC client that is used for IRC notifications.
+#
+# based on:
 # https://github.com/sr/shout-bot
 #
-# libs to take note of :
+# other libs to take note of:
 # https://github.com/tbuehlmann/ponder
 # https://github.com/cinchrb/cinch
 # https://github.com/cho45/net-irc
-
-require "socket"
+require 'socket'
 
 class IrcClient
-  attr_accessor :channel, :socket
+  attr_accessor :channel, :socket, :ping_thread
 
   def initialize(server, nick, options = {})
     @socket = TCPSocket.open(server, options[:port] || 6667)
+
+    @ping_thread = start_ping_thread
+
     socket.puts "PASS #{options[:password]}" if options[:password]
     socket.puts "NICK #{nick}"
     socket.puts "USER #{nick} #{nick} #{nick} :#{nick}"
   end
 
   def join(channel, key = nil)
-    self.channel = channel
-    socket.puts "JOIN ##{self.channel} #{key}".strip
+    socket.puts "JOIN ##{channel} #{key}".strip
   end
 
   def run(&block)
-    instance_eval(&block) if block_given?
+    yield(self) if block_given?
   end
 
-  def leave
+  def leave(channel)
     socket.puts "PART ##{channel}"
   end
 
-  def say(message)
-    socket.puts "PRIVMSG ##{channel} :#{message}" if channel
+  def say(message, channel, use_notice = false)
+    message_type = use_notice ? "NOTICE" : "PRIVMSG"
+    socket.puts "#{message_type} ##{channel} :#{message}"
   end
 
   def quit
-    socket.puts "QUIT"
+    socket.puts 'QUIT'
     socket.gets until socket.eof?
+    socket.close
+    ping_thread.exit
+  end
+
+  private
+
+  def start_ping_thread
+    Thread.new(socket) do |s|
+      loop do
+        s.puts "PONG #{$1}" if s.gets =~ /^PING (.*)/
+        sleep 0.2
+      end
+    end
   end
 end
 

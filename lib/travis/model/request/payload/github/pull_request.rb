@@ -2,6 +2,7 @@ class Request
   module Payload
     module Github
       class PullRequest < GenericEvent
+        ACTIONS = %w[opened synchronize]
         def action
           data["action"]
         end
@@ -14,19 +15,13 @@ class Request
           super.merge "comments_url" => pull_request.links["comments"]
         end
 
-        def reject?
-          no_commit_change? or super
+        def accept?
+          ACTIONS.include? action
         end
 
         def commit
           event.merge_commit
         end
-
-        private
-
-          def no_commit_change?
-            action != "opened" and action != "synchronize"
-          end
       end
     end
   end

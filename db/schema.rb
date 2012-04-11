@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120216133223) do
+ActiveRecord::Schema.define(:version => 20120324104051) do
 
   create_table "artifacts", :force => true do |t|
     t.text     "content"
@@ -39,6 +39,8 @@ ActiveRecord::Schema.define(:version => 20120216133223) do
     t.string   "language"
     t.datetime "archived_at"
     t.integer  "duration"
+    t.integer  "owner_id"
+    t.string   "owner_type"
   end
 
   add_index "builds", ["repository_id"], :name => "index_builds_on_repository_id"
@@ -64,8 +66,8 @@ ActiveRecord::Schema.define(:version => 20120216133223) do
   create_table "jobs", :force => true do |t|
     t.integer  "repository_id"
     t.integer  "commit_id"
-    t.integer  "owner_id"
-    t.string   "owner_type"
+    t.integer  "source_id"
+    t.string   "source_type"
     t.string   "queue"
     t.string   "type"
     t.string   "state"
@@ -81,11 +83,26 @@ ActiveRecord::Schema.define(:version => 20120216133223) do
     t.text     "tags"
     t.integer  "retries",       :default => 0
     t.boolean  "allow_failure", :default => false
+    t.integer  "owner_id"
+    t.string   "owner_type"
   end
 
   add_index "jobs", ["queue", "state"], :name => "index_jobs_on_queue_and_state"
   add_index "jobs", ["repository_id"], :name => "index_jobs_on_repository_id"
-  add_index "jobs", ["type", "owner_id", "owner_type"], :name => "index_jobs_on_type_and_owner_id_and_owner_type"
+  add_index "jobs", ["type", "source_id", "source_type"], :name => "index_jobs_on_type_and_owner_id_and_owner_type"
+
+  create_table "memberships", :force => true do |t|
+    t.integer "organization_id"
+    t.integer "user_id"
+  end
+
+  create_table "organizations", :force => true do |t|
+    t.string   "name"
+    t.string   "login"
+    t.integer  "github_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "repositories", :force => true do |t|
     t.string   "name"
@@ -104,6 +121,9 @@ ActiveRecord::Schema.define(:version => 20120216133223) do
     t.text     "description"
     t.string   "last_build_language"
     t.integer  "last_build_duration"
+    t.boolean  "private",                :default => false
+    t.integer  "owner_id"
+    t.string   "owner_type"
   end
 
   add_index "repositories", ["last_build_started_at"], :name => "index_repositories_on_last_build_started_at"
@@ -123,6 +143,8 @@ ActiveRecord::Schema.define(:version => 20120216133223) do
     t.datetime "updated_at"
     t.string   "event_type"
     t.string   "comments_url"
+    t.integer  "owner_id"
+    t.string   "owner_type"
   end
 
   create_table "ssl_keys", :force => true do |t|
@@ -142,6 +164,13 @@ ActiveRecord::Schema.define(:version => 20120216133223) do
     t.datetime "updated_at"
   end
 
+  create_table "urls", :force => true do |t|
+    t.string   "url"
+    t.string   "code"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "users", :force => true do |t|
     t.string   "name"
     t.string   "login"
@@ -151,6 +180,8 @@ ActiveRecord::Schema.define(:version => 20120216133223) do
     t.boolean  "is_admin",           :default => false
     t.integer  "github_id"
     t.string   "github_oauth_token"
+    t.string   "gravatar_id"
+    t.string   "locale"
   end
 
   add_index "users", ["github_id"], :name => "index_users_on_github_id"

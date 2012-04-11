@@ -2,7 +2,6 @@ require 'action_mailer'
 require 'i18n'
 require 'pathname'
 require 'postmark-rails'
-require 'hpricot' # so that premailer uses it
 
 module Travis
   module Mailer
@@ -23,7 +22,7 @@ module Travis
       end
 
       def base_dir
-        @base_dir = Pathname.new(File.expand_path('../mailer', __FILE__))
+        Pathname.new(File.expand_path('../mailer', __FILE__))
       end
     end
   end

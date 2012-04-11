@@ -1,4 +1,7 @@
 class Job
+
+  # Some logic that figures out the sponsor for the given job based on the
+  # worker name it ran on.
   module Sponsors
     def sponsor
       @sponsors ||= begin

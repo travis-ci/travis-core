@@ -12,7 +12,7 @@ class ConfigureMock
   include Job::Configure::States
 
   attr_accessor :state, :config, :status, :finished_at
-  def owner; @owner ||= stub('request', :start => nil, :configure! => nil, :state => nil, :state= => nil) end
+  def source; @source ||= stub('request', :start => nil, :configure! => nil, :state => nil, :state= => nil) end
   def save!; end
 end
 
@@ -27,8 +27,8 @@ describe Job::Configure::States do
         job.state.should == :started
       end
 
-      it 'propagates the event to the owner' do
-        job.owner.expects(:start)
+      it 'propagates the event to the source' do
+        job.source.expects(:start)
         job.start
       end
 
@@ -44,8 +44,8 @@ describe Job::Configure::States do
         job.state.should == :finished
       end
 
-      it 'configures the owner' do
-        job.owner.expects(:configure!).with(config)
+      it 'configures the source' do
+        job.source.expects(:configure!).with(config)
         job.finish(config)
       end
 

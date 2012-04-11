@@ -7,6 +7,13 @@ Rabl.configure do |config|
 end
 
 module Travis
+
+  # Renders objects to hashes, json and xml using a Rabl view.
+  #
+  # Now go away. Don't look at it. and better do not touch it.
+  # AND DON'T ASK ABOUT IT ANY MOAR!
+  #
+  # ;)
   class Renderer
     class << self
       def hash(object, options = {})
@@ -27,7 +34,7 @@ module Travis
     def initialize(format, object, options = {})
       @format, @object, @options = format, object, options
 
-      @base_dir = options.fetch(:base_dir, 'app/views')
+      @base_dir = options.fetch(:base_dir, root.join('app/views'))
       @version  = options.fetch(:version, :v1)
       @type     = options.fetch(:type, :default)
       @template_name = options.fetch(:template, model_name)
@@ -42,6 +49,10 @@ module Travis
     end
 
     protected
+
+      def root
+        defined?(Rails) && Rails.root || Pathname.new('.')
+      end
 
       def set_instance_variable
         instance_variable_set(:"@#{model_name.split('/').first}", object)

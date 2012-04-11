@@ -1,5 +1,14 @@
 require 'active_record'
 
+# Job models a unit of work that is run on a remote worker.
+#
+# There currently are two types of jobs:
+#
+#  * Job::Configure belongs to a Request and fetches the build configuration
+#    (.travis.yml) from the Github API.
+#  * Job::Test belongs to a Build (one or many Job::Test instances make up a
+#    build matrix) and executes a test suite with parameters defined in the
+#    configuration.
 class Job < ActiveRecord::Base
   autoload :Configure, 'travis/model/job/configure'
   autoload :Cleanup,   'travis/model/job/cleanup'
@@ -17,13 +26,14 @@ class Job < ActiveRecord::Base
 
   include Cleanup
 
-  has_one    :log, :class_name => "Artifact::Log", :conditions => { :type => "Artifact::Log" }, :dependent => :destroy
+  has_one    :log, :class_name => 'Artifact::Log', :conditions => { :type => 'Artifact::Log' }, :dependent => :destroy
   has_many   :artifacts
   belongs_to :repository
   belongs_to :commit
-  belongs_to :owner, :polymorphic => true, :autosave => true
+  belongs_to :source, :polymorphic => true, :autosave => true
+  belongs_to :owner, :polymorphic => true
 
-  validates :repository_id, :commit_id, :owner_id, :owner_type, :presence => true
+  validates :repository_id, :commit_id, :source_id, :source_type, :presence => true
 
   serialize :config
 

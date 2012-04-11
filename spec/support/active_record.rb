@@ -7,6 +7,7 @@ require 'support/factories'
 
 FileUtils.mkdir_p('log')
 
+# TODO why not make this use Travis::Database.connect ?
 config = Travis.config.database.dup
 config.merge!('adapter' => 'jdbcpostgresql', 'username' => ENV['USER']) if RUBY_PLATFORM == 'java'
 
@@ -15,8 +16,8 @@ ActiveRecord::Base.logger = Logger.new('log/test.db.log')
 ActiveRecord::Base.configurations = { 'test' => config }
 ActiveRecord::Base.establish_connection('test')
 
-DatabaseCleaner.strategy = :truncation
 DatabaseCleaner.clean_with :truncation
+DatabaseCleaner.strategy = :transaction
 
 module Support
   module ActiveRecord
@@ -24,6 +25,10 @@ module Support
 
     included do
       before :each do
+        DatabaseCleaner.start
+      end
+
+      after :each do
         DatabaseCleaner.clean
       end
     end

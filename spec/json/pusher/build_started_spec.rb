@@ -31,7 +31,7 @@ describe 'JSON for pusher' do
     data['build']['matrix'].first.should == {
       'id' => test.id,
       'repository_id' => build.repository_id,
-      'parent_id' => test.owner_id,
+      'parent_id' => test.source_id,
       'number' => '2.1',
       'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
       'commit' => '62aae5f70ceee39123ef',
