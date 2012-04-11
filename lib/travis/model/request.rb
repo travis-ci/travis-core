@@ -36,11 +36,12 @@ class Request < ActiveRecord::Base
     def repository_for(repository, owner)
       Repository.find_or_create_by_owner_name_and_name(owner.login, repository.name).tap do |repo|
         # TODO: maybe we're missing fields here, double-check
-        repo.update_attributes! :owner_email => owner.email, :description => repository.description
+        repo.update_attributes! :owner => owner, :description => repository.description
       end
     end
 
     def commit_for(payload, repository)
+      p payload.attributes[:commit]
       Commit.create!(payload.attributes[:commit].merge(:repository_id => repository.id)) if payload.attributes[:commit]
     end
 

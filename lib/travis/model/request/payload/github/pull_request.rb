@@ -12,7 +12,7 @@ class Request
         end
 
         def attributes
-          super.merge "comments_url" => pull_request.links["comments"]
+          super.merge "comments_url" => event._links["comments"]
         end
 
         def accept?

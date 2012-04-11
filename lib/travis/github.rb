@@ -180,9 +180,14 @@ module Travis
 
     class PullRequest < Event
       attribute(:base, :head) { |l| Label.new(l) }
+      attribute(:number)
 
       def repository
         base.repository
+      end
+
+      def merge_commit
+        GH[GH["repos/#{repository.owner.login}/#{repository.name}/git/refs/pull/#{number}/merge"]['object']['_links']['self']['href']].to_hash
       end
     end
 
@@ -209,6 +214,7 @@ module Travis
     class Repository < Resource
       attribute(:name)
       attribute(:owner) { |o| User.new(o) }
+      attribute(:description)
 
       def initialize(data = {})
         if data.respond_to? :to_str
@@ -217,6 +223,15 @@ module Travis
         end
 
         super data
+      end
+
+      # TODO for @rkh
+      def owner_type
+        @owner_type ||= GH["users/#{owner.login}"]['type']
+      end
+
+      def owner_name
+        owner.login
       end
     end
   end
