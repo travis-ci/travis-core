@@ -9,6 +9,9 @@ describe Request::Payload::Github::Push do
         :name => 'gem-release',
         :description => 'Release your gems with ease',
         :url => 'http://github.com/svenfuchs/gem-release',
+        :owner_name => 'svenfuchs',
+        :owner_email => 'svenfuchs@artweb-design.de',
+        :owner_type => 'User',
         :private => false
       }
     end

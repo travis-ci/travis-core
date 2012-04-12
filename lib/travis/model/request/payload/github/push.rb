@@ -10,11 +10,18 @@ class Request
           @token = token
         end
 
+        def accept?
+          true
+        end
+
         def repository
           @repository ||= {
             :name        => gh['repository']['name'],
             :description => gh['repository']['description'],
             :url         => gh['repository']['_links']['html']['href'],
+            :owner_name  => gh['repository']['owner']['login'],
+            :owner_email => gh['repository']['owner']['email'],
+            :owner_type  => gh['repository']['owner']['type'],
             :private     => !!gh['repository']['private']
           }
         end

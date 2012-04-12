@@ -208,59 +208,61 @@ describe Request do
       end
     end
 
-    describe 'a github pull-request event' do
-      let(:request) { Request.create_from('pull_request', payload, 'token') }
-      let(:payload) { GITHUB_PAYLOADS['pull-request'] }
+    # describe 'a github pull-request event' do
+    #   let(:request) { Request.create_from('pull_request', payload, 'token') }
+    #   let(:payload) { GITHUB_PAYLOADS['pull-request'] }
 
-      login = 'travis-repos'
-      type  = 'user'
+    #   login = 'travis-repos'
+    #   type  = 'user'
 
-      describe 'if the organization exists' do
-        before(:each) { Factory(:org, :login => login) }
-        it_should_behave_like 'a rejected request', type, login
-        it_should_behave_like 'does not create an organization'
-      end
+    #   describe 'if the organization exists' do
+    #     before(:each) { Factory(:org, :login => login) }
+    #     it_should_behave_like 'a rejected request', type, login
+    #     it_should_behave_like 'does not create an organization'
+    #   end
 
-      describe 'if the organization does not exist' do
-        before(:each) { Organization.delete_all }
-        it_should_behave_like 'a rejected request', type, login
-        it_should_behave_like 'creates an object from the github api', type, login
-      end
-    end
+    #   describe 'if the organization does not exist' do
+    #     before(:each) { Organization.delete_all }
+    #     it_should_behave_like 'a rejected request', type, login
+    #     it_should_behave_like 'creates an object from the github api', type, login
+    #   end
+    # end
   end
 
   describe 'repository_for' do
-    let(:payload) { Request::Payload::Github.new(GITHUB_PAYLOADS['gem-release'], 'token') }
+    let(:attrs) { Request::Payload::Github::Push.new(GITHUB_PAYLOADS['gem-release'], 'token').repository }
 
-    subject { lambda { Request.repository_for(payload.repository, owner) } }
+    def repository
+      Request.repository_for(attrs, owner)
+    end
 
     it 'creates a repository if it does not exist' do
-      subject.should change(Repository, :count).by(1)
+      expect { repository }.to change(Repository, :count).by(1)
     end
 
     it 'finds a repository if it exists' do
-      subject.call
-      subject.should_not change(Repository, :count)
+      repository
+      expect { repository }.to_not change(Repository, :count)
     end
 
     it 'sets the given payload attributes to the repository' do
-      repository = subject.call
+      repository = self.repository
       repository.name.should == 'gem-release'
+      repository.owner_type.should == 'User'
       repository.owner_name.should == 'svenfuchs'
       repository.owner_email.should == 'svenfuchs@artweb-design.de'
-      repository.owner_name.should == 'svenfuchs'
       repository.url.should == 'http://github.com/svenfuchs/gem-release'
     end
   end
 
   describe 'commit_for' do
-    let(:payload) { Request::Payload::Github.new(GITHUB_PAYLOADS['gem-release'], 'token') }
+    let(:attrs) { Request::Payload::Github::Push.new(GITHUB_PAYLOADS['gem-release'], 'token').commit }
     let(:repository) { stub('repository', :id => 1) }
 
     it 'creates a commit for the given payload' do
-      commit = Request.commit_for(payload, repository)
+      commit = Request.commit_for(attrs, repository)
 
-      commit.commit.should  == '9854592'
+      commit.commit.should  == '46ebe012ef3c0be5542a2e2faafd48047127e4be'
       commit.message.should == 'Bump to 0.0.15'
       commit.branch.should  == 'master'
       commit.committed_at.strftime("%Y-%m-%d %H:%M:%S").should == '2010-10-27 04:32:37'
