@@ -16,4 +16,5 @@ Support::Webmock.urls = %w(
   https://api.github.com/orgs/travis-repos
   https://api.github.com/repos/travis-repos/test-project-1/git/refs/pull/1/merge
   https://api.github.com/repos/travis-repos/test-project-1/git/commits/e99a0a08d2e6c9818d4cf0bb28af81be2cd06fd2
+  https://api.github.com/users/travis-ci
 )
