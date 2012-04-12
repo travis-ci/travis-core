@@ -46,7 +46,6 @@ module Travis
   autoload :Database,      'travis/database'
   autoload :EventLogger,   'travis/event_logger'
   autoload :Features,      'travis/features'
-  autoload :GithubApi,     'travis/github_api'
   autoload :Github,        'travis/github'
   autoload :Mailer,        'travis/mailer'
   autoload :Model,         'travis/model'
