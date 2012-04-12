@@ -1,24 +1,54 @@
 class Request
   module Payload
     module Github
-      class Push < GenericEvent
-        def event
-          @event ||= Travis::Github::Push.new data
+      class Push
+        attr_reader :payload, :gh, :token
+
+        def initialize(payload, token)
+          @payload = payload
+          @gh = GH.load(payload)
+          @token = token
         end
 
-        def reject?
-          no_commit? or super
+        def repository
+          @repository ||= {
+            :name        => gh['repository']['name'],
+            :description => gh['repository']['description'],
+            :url         => gh['repository']['_links']['html']['href'],
+            :private     => !!gh['repository']['private']
+          }
+        end
+
+        def owner
+          @owner ||= {
+            :type  => gh['repository']['owner']['type'],
+            :login => gh['repository']['owner']['login']
+          }
+        end
+
+        def request
+          @request ||= {
+            :payload => payload,
+            :token   => token
+          }
         end
 
         def commit
-          event.commits.last
-        end
-
-        protected
-
-          def no_commit?
-            commit.nil? or commit.sha.blank?
+          @commit ||= if commit = gh['commits'].first
+            {
+              :commit          => commit['sha'],
+              :message         => commit['message'],
+              :branch          => gh['ref'].split('/').last,
+              :ref             => gh['ref'],
+              :committed_at    => commit['date'],
+              :committer_name  => commit['committer']['name'],
+              :committer_email => commit['committer']['email'],
+              :author_name     => commit['author']['name'],
+              :author_email    => commit['author']['email'],
+              :compare_url     => gh['compare']
+            }
           end
+        end
       end
     end
   end
