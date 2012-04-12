@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Request::Payload::Github::PullRequest do
+  include Support::Webmock
+
   let(:payload) { Request::Payload::Github::PullRequest.new(GITHUB_PAYLOADS['pull-request'], '12345') }
 
   describe 'repository' do

@@ -1,7 +1,7 @@
 class Request
   module Payload
     module Github
-      class PullRequest < GenericEvent
+      class PullRequest
         ACTIONS = %w[opened synchronize]
 
         attr_reader :payload, :gh, :token

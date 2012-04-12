@@ -207,26 +207,28 @@ describe Request do
         end
       end
     end
+  end
 
-    # describe 'a github pull-request event' do
-    #   let(:request) { Request.create_from('pull_request', payload, 'token') }
-    #   let(:payload) { GITHUB_PAYLOADS['pull-request'] }
+  describe 'a github pull-request event' do
+    describe 'for a repository that belongs to an organization' do
+      let(:request) { Request.create_from('pull_request', payload, 'token') }
+      let(:payload) { GITHUB_PAYLOADS['pull-request'] }
 
-    #   login = 'travis-repos'
-    #   type  = 'user'
+      login = 'travis-repos'
+      type  = 'organization'
 
-    #   describe 'if the organization exists' do
-    #     before(:each) { Factory(:org, :login => login) }
-    #     it_should_behave_like 'a rejected request', type, login
-    #     it_should_behave_like 'does not create an organization'
-    #   end
+      describe 'if the organization exists' do
+        before(:each) { Factory(:org, :login => login) }
+        it_should_behave_like 'an accepted request', type, login
+        it_should_behave_like 'does not create an organization'
+      end
 
-    #   describe 'if the organization does not exist' do
-    #     before(:each) { Organization.delete_all }
-    #     it_should_behave_like 'a rejected request', type, login
-    #     it_should_behave_like 'creates an object from the github api', type, login
-    #   end
-    # end
+      describe 'if the organization does not exist' do
+        before(:each) { Organization.delete_all }
+        it_should_behave_like 'an accepted request', type, login
+        it_should_behave_like 'creates an object from the github api', type, login
+      end
+    end
   end
 
   describe 'repository_for' do

@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Request::Payload::Github::Push do
+  include Support::Webmock
+
   let(:payload) { Request::Payload::Github::Push.new(GITHUB_PAYLOADS['gem-release'], '12345') }
 
   describe 'repository' do
