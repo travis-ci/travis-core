@@ -1,9 +1,10 @@
 require 'spec_helper'
+require 'support/webmock'
 
-describe Request::Payload::Github::PullRequest do
+describe Travis::Github::Payload::PullRequest do
   include Support::Webmock
 
-  let(:payload) { Request::Payload::Github::PullRequest.new(GITHUB_PAYLOADS['pull-request'], '12345') }
+  let(:payload) { Travis::Github::Payload.for('pull-request', GITHUB_PAYLOADS['pull-request']) }
 
   describe 'repository' do
     it 'returns all attributes required for a Repository' do
@@ -32,7 +33,6 @@ describe Request::Payload::Github::PullRequest do
     it 'returns all attributes required for a Request' do
       payload.request.should == {
         :payload => GITHUB_PAYLOADS['pull-request'],
-        :token => '12345'
       }
     end
   end

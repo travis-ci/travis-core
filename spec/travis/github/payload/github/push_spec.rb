@@ -1,9 +1,10 @@
 require 'spec_helper'
+require 'support/webmock'
 
-describe Request::Payload::Github::Push do
+describe Travis::Github::Payload::Push do
   include Support::Webmock
 
-  let(:payload) { Request::Payload::Github::Push.new(GITHUB_PAYLOADS['gem-release'], '12345') }
+  let(:payload) { Travis::Github::Payload.for('push', GITHUB_PAYLOADS['gem-release']) }
 
   describe 'repository' do
     it 'returns all attributes required for a Repository' do
@@ -32,7 +33,6 @@ describe Request::Payload::Github::Push do
     it 'returns all attributes required for a Request' do
       payload.request.should == {
         :payload => GITHUB_PAYLOADS['gem-release'],
-        :token => '12345'
       }
     end
   end

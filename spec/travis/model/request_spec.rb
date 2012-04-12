@@ -232,7 +232,7 @@ describe Request do
   end
 
   describe 'repository_for' do
-    let(:attrs) { Request::Payload::Github::Push.new(GITHUB_PAYLOADS['gem-release'], 'token').repository }
+    let(:attrs) { Travis::Github::Payload::Push.new(GITHUB_PAYLOADS['gem-release']).repository }
 
     def repository
       Request.repository_for(attrs, owner)
@@ -258,7 +258,7 @@ describe Request do
   end
 
   describe 'commit_for' do
-    let(:attrs) { Request::Payload::Github::Push.new(GITHUB_PAYLOADS['gem-release'], 'token').commit }
+    let(:attrs) { Travis::Github::Payload::Push.new(GITHUB_PAYLOADS['gem-release']).commit }
     let(:repository) { stub('repository', :id => 1) }
 
     it 'creates a commit for the given payload' do

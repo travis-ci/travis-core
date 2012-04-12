@@ -13,23 +13,17 @@ class Request < ActiveRecord::Base
   autoload :States,   'travis/model/request/states'
 
   include Approval, States
-  EVENT_TYPES = { 'push' => Payload::Github::Push, 'pull_request' => Payload::Github::PullRequest }
 
   class << self
-    # TODO replace with registration API?
-    def payload_class_for(type)
-      EVENT_TYPES[type] or raise ArgumentError, "unsupported github event"
-    end
-
     # TODO clean this up, maybe extract a factory?
-    def create_from(type, payload, token)
-      ActiveSupport::Notifications.publish('github.requests', 'received', payload)
-      payload = payload_class_for(type).new(payload, token)
+    def create_from(type, data, token)
+      ActiveSupport::Notifications.publish('github.requests', 'received', data)
+      payload = Travis::Github::Payload.for(type, data)
       if payload.accept?
         owner = owner_for(payload.owner)
         repository = repository_for(payload.repository, owner)
         commit = commit_for(payload.commit, repository) if payload.commit
-        repository.requests.create!(payload.request.merge(:state => :created, :commit => commit, :owner => owner, :event_type => type))
+        repository.requests.create!(payload.request.merge(:state => :created, :commit => commit, :owner => owner, :token => token, :event_type => type))
       end
     end
 

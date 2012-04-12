@@ -1,15 +1,14 @@
-class Request
-  module Payload
-    module Github
+module Travis
+  module Github
+    module Payload
       class PullRequest
         ACTIONS = %w[opened synchronize]
 
-        attr_reader :payload, :gh, :token
+        attr_reader :payload, :gh
 
-        def initialize(payload, token)
+        def initialize(payload)
           @payload = payload
           @gh = GH.load(payload)
-          @token = token
         end
 
         def action
@@ -42,7 +41,6 @@ class Request
         def request
           @request ||= {
             :payload => payload,
-            :token   => token
           }
         end
 
