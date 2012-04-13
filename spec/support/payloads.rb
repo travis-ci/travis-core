@@ -12,7 +12,7 @@ GITHUB_PAYLOADS = {
     "commits": [{
       "id":        "9854592",
       "message":   "Bump to 0.0.15",
-      "timestamp": "2010-10-27 04:32:37",
+      "timestamp": "2010-10-27T04:32:37Z",
       "committer": {
         "name":  "Sven Fuchs",
         "email": "svenfuchs@artweb-design.de"
@@ -38,7 +38,7 @@ GITHUB_PAYLOADS = {
     "commits": [{
       "id":        "46ebe012ef3c0be5542a2e2faafd48047127e4be",
       "message":   "Bump to 0.0.15",
-      "timestamp": "2010-10-27 04:32:37",
+      "timestamp": "2010-10-27T04:32:37Z",
       "committer": {
         "name":  "Sven Fuchs",
         "email": "svenfuchs@artweb-design.de"
@@ -66,7 +66,7 @@ GITHUB_PAYLOADS = {
     "commits": [{
       "id":        "46ebe012ef3c0be5542a2e2faafd48047127e4be",
       "message":   "Bump to 0.0.15",
-      "timestamp": "2010-10-27 04:32:37",
+      "timestamp": "2010-10-27T04:32:37Z",
       "committer": {
         "name":  "Sven Fuchs",
         "email": "svenfuchs@artweb-design.de"
@@ -108,7 +108,7 @@ GITHUB_PAYLOADS = {
     "commits": [{
       "id":        "9854592",
       "message":   "Bump to 0.0.15",
-      "timestamp": "2010-10-27 04:32:37",
+      "timestamp": "2010-10-27T04:32:37Z",
       "committer": {
         "name":  "Sven Fuchs",
         "email": "svenfuchs@artweb-design.de"
@@ -133,7 +133,7 @@ GITHUB_PAYLOADS = {
     "commits": [{
       "id":        "46ebe012ef3c0be5542a2e2faafd48047127e4be",
       "message":   "Bump to 0.0.15",
-      "timestamp": "2010-10-27 04:32:37",
+      "timestamp": "2010-10-27T04:32:37Z",
       "committer": {
         "name":  "Sven Fuchs",
         "email": "svenfuchs@artweb-design.de"
