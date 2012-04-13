@@ -44,7 +44,7 @@ describe Travis::Github::Payload::Push do
         :message => 'Bump to 0.0.15',
         :branch => 'master',
         :ref => 'refs/heads/master',
-        :committed_at => '2010-10-27T04:32:37+02:00',
+        :committed_at => '2010-10-27T04:32:37Z',
         :committer_name => 'Sven Fuchs',
         :committer_email => 'svenfuchs@artweb-design.de',
         :author_name => 'Christopher Floess',
