@@ -10,7 +10,6 @@ class Request < ActiveRecord::Base
   autoload :Approval, 'travis/model/request/approval'
   autoload :Branches, 'travis/model/request/branches'
   autoload :Factory,  'travis/model/request/factory'
-  autoload :Payload,  'travis/model/request/payload'
   autoload :States,   'travis/model/request/states'
 
   include Approval, States
