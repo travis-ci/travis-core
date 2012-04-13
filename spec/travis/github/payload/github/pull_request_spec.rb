@@ -44,7 +44,7 @@ describe Travis::Github::Payload::PullRequest do
         :message => 'Update README.md',
         :branch => 'master',
         :ref => 'refs/pull/1/merge',
-        :committed_at => '2012-02-14T06:00:25-08:00',
+        :committed_at => '2012-02-14T14:00:25Z',
         :committer_name => 'Konstantin Haase',
         :committer_email => 'k.haase@finn.de',
         :author_name => 'Konstantin Haase',
