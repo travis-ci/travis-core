@@ -42,6 +42,6 @@ class Request < ActiveRecord::Base
   end
 
   def pull_request?
-    event_type == 'pull-request'
+    event_type == 'pull_request'
   end
 end

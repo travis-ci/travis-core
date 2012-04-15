@@ -8,7 +8,7 @@ describe Travis::Notifications::Handler::Github do
   include Support::Formats
 
   let(:github)  { Travis::Notifications::Handler::Github.new }
-  let(:request) { Factory(:request, :event_type => 'pull-request', :comments_url => 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments') }
+  let(:request) { Factory(:request, :event_type => 'pull_request', :comments_url => 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments') }
   let(:build)   { Factory(:build, :request => request) }
   let(:io)      { StringIO.new }
 
@@ -28,7 +28,7 @@ describe Travis::Notifications::Handler::Github do
     end
   end
 
-  describe 'given the request is a pull-request event' do
+  describe 'given the request is a pull_request event' do
     it 'it adds a github comment' do
       Travis::Notifications::Handler::Github.any_instance.expects(:add_comment).with(build)
       Travis::Notifications.dispatch('build:finished', build)

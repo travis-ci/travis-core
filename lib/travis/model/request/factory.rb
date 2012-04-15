@@ -3,7 +3,7 @@ class Request
     attr_reader :type, :data, :token
 
     def initialize(type, data, token)
-      @type = type
+      @type = type.gsub('-', '_')
       @data = data
       @token = token
     end

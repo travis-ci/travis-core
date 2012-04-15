@@ -6,8 +6,7 @@ module Travis
 
       class << self
         def for(type, data)
-          const = const_get(type.gsub('-', '_').camelize)
-          const.new(data)
+          const_get(type.camelize).new(data)
         end
       end
     end
