@@ -47,6 +47,7 @@ FactoryGirl.define do
     repository { Repository.first || Factory(:repository) }
     association :commit
     token 'the-token'
+    event_type 'push'
   end
 
   factory :repository do
