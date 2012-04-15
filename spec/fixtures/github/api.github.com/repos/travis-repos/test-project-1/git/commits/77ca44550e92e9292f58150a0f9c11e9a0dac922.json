@@ -1,0 +1,29 @@
+{
+  "message": "Merge 9b00989b1a0e7d9b609ad2e28338c060f79a71ac into ee644876520685ea3ce144bc8449c1155cee56b4\n",
+  "url": "https://api.github.com/repos/travis-repos/test-project-1/git/commits/77ca44550e92e9292f58150a0f9c11e9a0dac922",
+  "committer": {
+    "email": "merge-button@github.com",
+    "date": "2012-04-12T10:02:34-07:00",
+    "name": "GitHub Merge Button"
+  },
+  "author": {
+    "email": "merge-button@github.com",
+    "date": "2012-04-12T10:02:34-07:00",
+    "name": "GitHub Merge Button"
+  },
+  "parents": [
+    {
+      "url": "https://api.github.com/repos/travis-repos/test-project-1/git/commits/ee644876520685ea3ce144bc8449c1155cee56b4",
+      "sha": "ee644876520685ea3ce144bc8449c1155cee56b4"
+    },
+    {
+      "url": "https://api.github.com/repos/travis-repos/test-project-1/git/commits/9b00989b1a0e7d9b609ad2e28338c060f79a71ac",
+      "sha": "9b00989b1a0e7d9b609ad2e28338c060f79a71ac"
+    }
+  ],
+  "sha": "77ca44550e92e9292f58150a0f9c11e9a0dac922",
+  "tree": {
+    "url": "https://api.github.com/repos/travis-repos/test-project-1/git/trees/2c5e1a479aa5db1cc366132ee17e0d76c4a7a252",
+    "sha": "2c5e1a479aa5db1cc366132ee17e0d76c4a7a252"
+  }
+}

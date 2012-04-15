@@ -6,6 +6,47 @@ describe Travis::Github::Payload::PullRequest do
 
   let(:payload) { Travis::Github::Payload.for('pull_request', GITHUB_PAYLOADS['pull-request']) }
 
+  describe 'accept' do
+    describe 'given action is "opened"' do
+      before :each do
+        payload.gh.data['action'] = 'opened'
+      end
+
+      it 'returns true' do
+        payload.accept?.should be_true
+      end
+    end
+
+    describe 'given action is "synchronize"' do
+      let(:last) { stub('commit') }
+
+      before :each do
+        payload.gh.data['action'] = 'synchronize'
+        Commit.stubs(:last_by_comments_url).returns(last)
+      end
+
+      it 'returns true if head has changed' do
+        last.stubs(:commit).returns('12345')
+        payload.accept?.should be_true
+      end
+
+      it 'returns false if base has not changed' do
+        last.stubs(:commit).returns(payload.commit[:commit])
+        payload.accept?.should be_false
+      end
+    end
+
+    describe 'given action is "comment"' do
+      before :each do
+        payload.gh.data['action'] = 'comment'
+      end
+
+      it 'returns false' do
+        payload.accept?.should be_false
+      end
+    end
+  end
+
   describe 'repository' do
     it 'returns all attributes required for a Repository' do
       payload.repository.should == {
