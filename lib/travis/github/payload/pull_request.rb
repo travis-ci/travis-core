@@ -1,3 +1,5 @@
+require 'gh'
+
 module Travis
   module Github
     module Payload
@@ -19,12 +21,8 @@ module Travis
           action == :opened || action == :synchronize && head_change?
         end
 
-        # TODO We should probably track the pull request some other way (maybe
-        # Request#number) rather than using the comments_url which is unique
-        # for the pull request but semantically silly, obviously.
         def head_change?
-          last = Commit.last_by_comments_url(request[:comments_url])
-          last && last.commit != head_commit['sha']
+          Request.last_by_head_commit(head_commit['sha']).nil?
         end
 
         def repository
@@ -49,7 +47,8 @@ module Travis
         def request
           @request ||= {
             :payload      => payload,
-            :comments_url => gh['pull_request']['_links']['comments']['href']
+            :comments_url => gh['pull_request']['_links']['comments']['href'],
+            :head_commit  => head_commit['sha']
           }
         end
 
