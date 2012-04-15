@@ -144,11 +144,15 @@ class Build < ActiveRecord::Base
     deserialized
   end
 
-  def previous_on_branch
-    Build.on_branch(commit.branch).previous(self)
-  end
-
   def config=(config)
     super(config.deep_symbolize_keys)
+  end
+
+  def pull_request?
+    request.pull_request?
+  end
+
+  def previous_on_branch
+    Build.on_branch(commit.branch).previous(self)
   end
 end

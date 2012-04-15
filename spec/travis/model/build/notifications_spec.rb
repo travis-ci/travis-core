@@ -1,6 +1,8 @@
 require 'spec_helper'
+require 'support/active_record'
 
 describe Build::Notifications do
+  include Support::ActiveRecord # TODO why do we need active_record here?
   include Build::Notifications
 
   let(:config)     { }
@@ -9,11 +11,17 @@ describe Build::Notifications do
 
   before(:each) do
     stubs(:previous_on_branch)
+    stubs(:pull_request?).returns false
   end
 
   describe :notify_on_finish_for? do
     it 'returns true by default' do
       send_email_notifications_on_finish?.should be_true
+    end
+
+    it 'returns false if the build is a pull-request' do
+      stubs(:pull_request?).returns true
+      send_email_notifications_on_finish?.should be_false
     end
 
     it 'returns false if the build does not have any recipients' do
@@ -120,6 +128,11 @@ describe Build::Notifications do
       send_webhook_notifications_on_finish?.should be_true
     end
 
+    it 'returns false if the build is a pull-request' do
+      stubs(:pull_request?).returns true
+      send_webhook_notifications_on_finish?.should be_false
+    end
+
     it 'returns false if the build configuration does not specify any webhooks' do
       webhooks = %w(http://evome.fr/notifications http://example.com/)
       stubs(:config => {})
@@ -132,6 +145,11 @@ describe Build::Notifications do
       channels = %w(travis:apitoken@42)
       stubs(:config => { :notifications => { :campfire => channels } })
       send_campfire_notifications_on_finish?.should be_true
+    end
+
+    it 'returns false if the build is a pull-request' do
+      stubs(:pull_request?).returns true
+      send_webhook_notifications_on_finish?.should be_false
     end
 
     it 'returns false if the build configuration does not specify any webhooks' do
