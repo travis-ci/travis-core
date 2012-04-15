@@ -1,13 +1,11 @@
 require 'spec_helper'
 require 'support/active_record'
 require 'support/formats'
-require 'travis/testing/webmock'
 require 'json'
 
 describe Travis::Notifications::Handler::Github do
   include Support::ActiveRecord
   include Support::Formats
-  include Travis::Testing::Webmock
 
   let(:github)  { Travis::Notifications::Handler::Github.new }
   let(:request) { Factory(:request, :event_type => 'pull_request', :comments_url => 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments') }

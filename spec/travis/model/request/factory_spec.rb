@@ -1,10 +1,9 @@
 require 'spec_helper'
 require 'support/payloads'
 require 'support/active_record'
-require 'travis/testing/webmock'
 
 describe Request do
-  include Support::ActiveRecord, Travis::Testing::Webmock
+  include Support::ActiveRecord
 
   let(:payload) { GITHUB_PAYLOADS['gem-release'] }
   let(:owner)   { User.first || Factory(:user) }

@@ -1,9 +1,6 @@
 require 'spec_helper'
-require 'travis/testing/webmock'
 
 describe Travis::Github::Payload::Push do
-  include Travis::Testing::Webmock
-
   let(:payload) { Travis::Github::Payload.for('push', GITHUB_PAYLOADS['gem-release']) }
 
   describe 'repository' do

@@ -8,8 +8,11 @@ require 'gh'
 require 'support/payloads'
 require 'support/matchers'
 require 'support/mocha'
+
 require 'travis'
 require 'travis/support'
+require 'travis/support/testing/webmock'
+
 require 'stringio'
 require 'logger'
 require 'patches/rspec_hash_diff'
@@ -21,6 +24,8 @@ RSpec.configure do |c|
   c.filter_run :focused => true
   c.run_all_when_everything_filtered = true
   # c.backtrace_clean_patterns.clear
+
+  c.include Travis::Support::Testing::Webmock
 
   c.before :each do
     GH.reset

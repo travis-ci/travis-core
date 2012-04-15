@@ -1,9 +1,6 @@
 require 'spec_helper'
-require 'travis/testing/webmock'
 
 describe Travis::Github::Payload::PullRequest do
-  include Travis::Testing::Webmock
-
   let(:payload) { Travis::Github::Payload.for('pull_request', GITHUB_PAYLOADS['pull-request']) }
 
   describe 'accept' do
