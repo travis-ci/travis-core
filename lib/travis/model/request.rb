@@ -40,4 +40,8 @@ class Request < ActiveRecord::Base
       self.state = :finished
     end
   end
+
+  def pull_request?
+    event_type == 'pull-request'
+  end
 end
