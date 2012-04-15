@@ -47,9 +47,11 @@ describe Travis::Notifications::Handler::Github do
     end
 
     it 'posts a comment to github' do
-      body = ActiveSupport::JSON.encode(:body => "This pull request was tested on [Travis CI](http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}) and has passed.")
+      comment = "This pull request passes on Travis CI. [http://travis-ci.org/images/status/passing.png](http://travis-ci.org/svenfuchs/minimal/builds/#{build.id})"
+      body = lambda { |request| ActiveSupport::JSON.decode(request.body)['body'].should == comment }
+
       github.notify('build:finished', build)
-      a_request(:post, url).with { |r| r.body == body }.should have_been_made
+      a_request(:post, url).with(&body).should have_been_made
     end
 
     it 'authenticates as travisbot using the token' do

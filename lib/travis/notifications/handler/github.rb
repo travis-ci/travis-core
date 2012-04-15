@@ -28,7 +28,7 @@ module Travis
           end
 
           def comment(build)
-            "This pull request was tested on [Travis CI](#{build_url(build)}) and has #{build.passed? ? 'passed' : 'failed' }."
+            "This pull request #{build.passed? ? 'passes' : 'fails' } on Travis CI. [http://travis-ci.org/images/status/passing.png](#{build_url(build)})"
           end
 
           def build_url(build)
