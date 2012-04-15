@@ -8,19 +8,13 @@ module Travis
     #
     # This is used so people can add encrypted sensitive data to their
     # `.travis.yml` file.
-    class SecureConfig
+    class SecureConfig < Struct.new(:key)
       def self.decrypt(config, key)
         self.new(key).decrypt(config)
       end
 
       def self.encrypt(config, key)
         self.new(key).encrypt(config)
-      end
-
-      attr_reader :key
-
-      def initialize(key)
-        @key = key
       end
 
       def decrypt(config)

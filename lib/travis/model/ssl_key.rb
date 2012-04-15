@@ -38,6 +38,10 @@ class SslKey < ActiveRecord::Base
     generate_keys
   end
 
+  def secure
+    Travis::Event::SecureConfig.new(self)
+  end
+
   private
 
   def build_key
