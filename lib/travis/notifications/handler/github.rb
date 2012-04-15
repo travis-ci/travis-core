@@ -15,10 +15,16 @@ module Travis
 
           def add_comment(build)
             url  = build.request.comments_url
-            GH.post(url, :body => comment(build))
+            authenticated do
+              GH.post(url, :body => comment(build))
+            end
             info "Successfully commented on #{url}."
-          rescue
-            error "Could not comment on #{url}." # TODO add response.status and body
+          rescue Faraday::Error::ClientError => e
+            error "Could not comment on #{url} (#{e.response[:status]} #{e.response[:body]})."
+          end
+
+          def authenticated(&block)
+            GH.with(:token => Travis.config.github.token, &block)
           end
 
           def comment(build)

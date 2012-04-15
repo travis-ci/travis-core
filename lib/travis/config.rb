@@ -71,6 +71,7 @@ module Travis
             :airbrake      => { :key => 'airbrake-api_key' },
             :pusher        => { :app_id => 'app-id', :key => 'key', :secret => 'secret' },
             :smtp          => { :user_name => 'postmark-api_key' },
+            :github        => { :token => 'travisbot-token' },
             :async         => {},
             :notifications => [],
             :queues        => [],

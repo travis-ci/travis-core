@@ -10,6 +10,7 @@ module Support
     included do
       before :each do
         Support::Webmock.mock!
+        WebMock.disable_net_connect!
       end
     end
 

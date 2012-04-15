@@ -1,11 +1,13 @@
 require 'spec_helper'
 require 'support/active_record'
 require 'support/formats'
+require 'support/webmock'
 require 'json'
 
 describe Travis::Notifications::Handler::Github do
   include Support::ActiveRecord
   include Support::Formats
+  include Support::Webmock
 
   let(:github)  { Travis::Notifications::Handler::Github.new }
   let(:request) { Factory(:request, :event_type => 'pull_request', :comments_url => 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments') }
@@ -15,6 +17,7 @@ describe Travis::Notifications::Handler::Github do
   before do
     Travis.logger = Logger.new(io)
     Travis.config.notifications = [:github]
+    stub_request(:post, 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments').to_return(:status => 200, :body => '{}')
   end
 
   describe 'given the request is a push event' do
@@ -36,15 +39,22 @@ describe Travis::Notifications::Handler::Github do
   end
 
   describe 'add_comment' do
+    let(:url) { build.request.comments_url }
+
     it 'posts to the request comments_url' do
-      comment = "This pull request was tested on [Travis CI](http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}) and has passed."
-      GH.expects(:post).with(anything, :body => comment)
       github.notify('build:finished', build)
+      a_request(:post, url).should have_been_made
     end
 
     it 'posts a comment to github' do
-      GH.expects(:post).with(request.comments_url, anything)
+      body = ActiveSupport::JSON.encode(:body => "This pull request was tested on [Travis CI](http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}) and has passed.")
       github.notify('build:finished', build)
+      a_request(:post, url).with { |r| r.body == body }.should have_been_made
+    end
+
+    it 'authenticates as travisbot using the token' do
+      github.notify('build:finished', build)
+      a_request(:post, url).with { |r| r.headers['Authorization'] == 'token travisbot-token' }.should have_been_made
     end
   end
 
@@ -56,9 +66,9 @@ describe Travis::Notifications::Handler::Github do
     end
 
     it 'warns about a failed request' do
-      GH.stubs(:post).raises(StandardError) # TODO use future GH exception
+      GH.stubs(:with).raises(Faraday::Error::ClientError.new(:status => 403, :body => 'nono.'))
       github.notify('build:finished', build)
-      io.string.should include('[github] Could not comment on https://api.github.com')
+      io.string.should include('[github] Could not comment on https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments (403 nono.)')
     end
   end
 end
