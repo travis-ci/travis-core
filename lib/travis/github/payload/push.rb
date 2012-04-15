@@ -1,3 +1,5 @@
+require 'gh'
+
 module Travis
   module Github
     module Payload

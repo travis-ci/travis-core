@@ -15,20 +15,19 @@ describe Travis::Github::Payload::PullRequest do
     end
 
     describe 'given action is "synchronize"' do
-      let(:last) { stub('commit') }
+      let(:last) { stub('request') }
 
       before :each do
         payload.gh.data['action'] = 'synchronize'
-        Commit.stubs(:last_by_comments_url).returns(last)
       end
 
       it 'returns true if head has changed' do
-        last.stubs(:commit).returns('12345')
+        Request.stubs(:last_by_head_commit).returns(nil)
         payload.accept?.should be_true
       end
 
       it 'returns false if base has not changed' do
-        last.stubs(:commit).returns(payload.head_commit['sha'])
+        Request.stubs(:last_by_head_commit).returns(last)
         payload.accept?.should be_false
       end
     end
@@ -71,7 +70,8 @@ describe Travis::Github::Payload::PullRequest do
     it 'returns all attributes required for a Request' do
       payload.request.should == {
         :payload => GITHUB_PAYLOADS['pull-request'],
-        :comments_url => 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments'
+        :comments_url => 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments',
+        :head_commit => '1317692c01d0c3a20b89ea634d06cd66b8c517d3'
       }
     end
   end

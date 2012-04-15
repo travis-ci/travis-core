@@ -19,6 +19,10 @@ class Request < ActiveRecord::Base
       ActiveSupport::Notifications.publish('github.requests', 'received', data)
       Factory.new(type, data, token).request
     end
+
+    def last_by_head_commit(head_commit)
+      where(:head_commit => head_commit).order(:id).last
+    end
   end
 
   has_one    :job, :as => :source, :class_name => 'Job::Configure'
