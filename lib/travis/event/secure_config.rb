@@ -13,6 +13,10 @@ module Travis
         self.new(key).decrypt(config)
       end
 
+      def self.encrypt(config, key)
+        self.new(key).encrypt(config)
+      end
+
       attr_reader :key
 
       def initialize(key)
@@ -26,6 +30,10 @@ module Travis
           key, element = element if result.is_a?(Hash)
           process(result, key, decrypt_element(key, element))
         end
+      end
+
+      def encrypt(config)
+        { 'secure' => key.encode(config) }
       end
 
       private

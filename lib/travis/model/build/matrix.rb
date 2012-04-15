@@ -95,6 +95,7 @@ class Build
           keys.inject([]) do |result, key|
             values = config[key]
             values = [values] unless values.is_a?(Array)
+            values.collect! { |value| Travis::Event::SecureConfig.decrypt(value, repository.key) }
             values += [values.last] * (size - values.size) if values.size < size
             result << values.map { |value| [key, value] }
           end

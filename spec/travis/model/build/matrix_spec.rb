@@ -202,6 +202,15 @@ describe Build, 'matrix' do
         ]
       end
 
+      it 'decrypts a secure env configuration (single test config)' do
+        repository = Factory(:repository)
+        single_test_config['env'] = single_test_config.delete('env').map { |env| Travis::Event::SecureConfig.encrypt(env, repository.key) }
+        build = Factory(:build, :config => single_test_config, :repository => repository)
+        build.expand_matrix_config(build.matrix_config.to_a).should == [
+                                                                        [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'USE_GIT_REPOS=true']],
+                                                                       ]
+      end
+
       it 'expands the build matrix configuration (multiple tests config)' do
         build = Factory(:build, :config => multiple_tests_config)
         build.expand_matrix_config(build.matrix_config.to_a).should == [
@@ -331,6 +340,8 @@ describe Build, 'matrix' do
     end
 
     describe :matrix_config do
+      let(:repository) { Factory(:repository) }
+
       it 'with string values' do
         build = Factory(:build, :config => { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-2.3.x', :env => 'FOO=bar' })
         expected = [
@@ -338,6 +349,16 @@ describe Build, 'matrix' do
           [[:gemfile, 'gemfiles/rails-2.3.x']],
           [[:env,     'FOO=bar']]
         ]
+        build.matrix_config.should == expected
+      end
+
+      it 'strings with a secure env' do
+        build = Factory(:build, :repository => repository, :config => { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-2.3.x', :env => Travis::Event::SecureConfig.encrypt('FOO=bar', repository.key) })
+        expected = [
+                    [[:rvm,     '1.8.7']],
+                    [[:gemfile, 'gemfiles/rails-2.3.x']],
+                    [[:env,     'FOO=bar']]
+                   ]
         build.matrix_config.should == expected
       end
 
@@ -365,6 +386,16 @@ describe Build, 'matrix' do
           [[:rvm, '1.8.7'], [:rvm, '1.9.2']],
           [[:gemfile, 'gemfiles/rails-2.3.x'], [:gemfile, 'gemfiles/rails-2.3.x']]
         ]
+      end
+
+      it 'with secure and insecure envs' do
+        build = Factory(:build, :repository => repository, :config => { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-2.3.x', :env => [Travis::Event::SecureConfig.encrypt('FOO=bar', repository.key), 'FOO=baz'] })
+        expected = [
+                    [[:rvm, '1.8.7'], [:rvm, '1.8.7']],
+                    [[:gemfile, 'gemfiles/rails-2.3.x'], [:gemfile, 'gemfiles/rails-2.3.x']],
+                    [[:env, 'FOO=bar'], [:env, 'FOO=baz']]
+                   ]
+        build.matrix_config.should == expected
       end
     end
   end
