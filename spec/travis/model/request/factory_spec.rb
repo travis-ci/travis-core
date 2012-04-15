@@ -213,12 +213,20 @@ describe Request do
         before(:each) { Factory(:org, :login => login) }
         it_should_behave_like 'an accepted request', type, login
         it_should_behave_like 'does not create an organization'
+
+        it 'sets the comments_url to the request' do
+          request.comments_url.should == 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments'
+        end
       end
 
       describe 'if the organization does not exist' do
         before(:each) { Organization.delete_all }
         it_should_behave_like 'an accepted request', type, login
         it_should_behave_like 'creates an object from the github api', type, login
+
+        it 'sets the comments_url to the request' do
+          request.comments_url.should == 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments'
+        end
       end
     end
   end

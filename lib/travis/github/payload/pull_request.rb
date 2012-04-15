@@ -40,7 +40,8 @@ module Travis
 
         def request
           @request ||= {
-            :payload => payload,
+            :payload      => payload,
+            :comments_url => gh['pull_request']['_links']['comments']['href']
           }
         end
 

@@ -33,6 +33,7 @@ describe Travis::Github::Payload::PullRequest do
     it 'returns all attributes required for a Request' do
       payload.request.should == {
         :payload => GITHUB_PAYLOADS['pull-request'],
+        :comments_url => 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments'
       }
     end
   end
