@@ -37,12 +37,6 @@ module Travis
           send_campfire(object.campfire_rooms, object) if object.send_campfire_notifications_on_finish?
         end
 
-        def http_client
-          @http_client ||= Faraday.new(http_options) do |f|
-            f.adapter :net_http
-          end
-        end
-
         protected
 
           def send_campfire(targets, build)
@@ -62,6 +56,12 @@ module Travis
                   req.headers['Content-Type']  = 'application/json'
                 end
               end
+            end
+          end
+
+          def http_client
+            @http_client ||= Faraday.new(http_options) do |f|
+              f.adapter :net_http
             end
           end
 
