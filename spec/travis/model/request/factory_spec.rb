@@ -1,10 +1,10 @@
 require 'spec_helper'
 require 'support/payloads'
 require 'support/active_record'
-require 'support/webmock'
+require 'travis/testing/webmock'
 
 describe Request do
-  include Support::ActiveRecord, Support::Webmock
+  include Support::ActiveRecord, Travis::Testing::Webmock
 
   let(:payload) { GITHUB_PAYLOADS['gem-release'] }
   let(:owner)   { User.first || Factory(:user) }
@@ -87,7 +87,7 @@ describe Request do
 
       it 'calls the github api to populate the user' do
         request
-        assert_requested requests["https://api.github.com/#{type == 'organization' ? 'orgs' : 'users'}/#{name}"]
+        a_request(:get, "https://api.github.com/#{type == 'organization' ? 'orgs' : 'users'}/#{name}").should have_been_requested
       end
     end
 

@@ -1,8 +1,8 @@
 require 'spec_helper'
-require 'support/webmock'
+require 'travis/testing/webmock'
 
 describe Travis::Github::Payload::PullRequest do
-  include Support::Webmock
+  include Travis::Testing::Webmock
 
   let(:payload) { Travis::Github::Payload.for('pull_request', GITHUB_PAYLOADS['pull-request']) }
 
@@ -82,15 +82,15 @@ describe Travis::Github::Payload::PullRequest do
   describe 'commit' do
     it 'returns all attributes required for a Commit' do
       payload.commit.should == {
-        :commit => '77ca44550e92e9292f58150a0f9c11e9a0dac922',
-        :message => 'Update README.md',
+        :commit => 'dc7423310796301fe71b98eda8b5ba1afee3f639',
+        :message => "do not require rake\n",
         :branch => 'master',
         :ref => 'refs/pull/1/merge',
-        :committed_at => '2012-02-14T14:00:25Z',
+        :committed_at => '2012-04-14T16:19:15Z',
         :committer_name => 'Konstantin Haase',
-        :committer_email => 'k.haase@finn.de',
+        :committer_email => 'konstantin.mailinglists@googlemail.com',
         :author_name => 'Konstantin Haase',
-        :author_email => 'k.haase@finn.de',
+        :author_email => 'konstantin.mailinglists@googlemail.com',
         :compare_url => 'https://github.com/travis-repos/test-project-1/pull/1'
       }
     end

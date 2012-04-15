@@ -1,6 +1,6 @@
 require 'spec_helper'
 require 'support/active_record'
-require 'support/webmock'
+require 'travis/testing/webmock'
 
 describe Organization do
   include Support::ActiveRecord

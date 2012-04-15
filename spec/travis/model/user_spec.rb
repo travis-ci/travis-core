@@ -1,9 +1,9 @@
 require 'spec_helper'
 require 'support/active_record'
-require 'support/webmock'
+require 'travis/testing/webmock'
 
 describe User do
-  include Support::ActiveRecord, Support::Webmock
+  include Support::ActiveRecord, Travis::Testing::Webmock
 
   let(:user)    { FactoryGirl.build(:user) }
   let(:payload) { GITHUB_PAYLOADS[:oauth] }
