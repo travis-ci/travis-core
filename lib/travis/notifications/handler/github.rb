@@ -24,7 +24,8 @@ module Travis
           end
 
           def authenticated(&block)
-            GH.with(:token => Travis.config.github.token, &block)
+            config = Travis.config.github # TODO why does Travis.config.github.slice(:username, :password) not work?
+            GH.with(:username => config.username, :password => config.password, &block)
           end
 
           def comment(build)

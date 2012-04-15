@@ -17,7 +17,7 @@ describe Travis::Notifications::Handler::Github do
   before do
     Travis.logger = Logger.new(io)
     Travis.config.notifications = [:github]
-    stub_request(:post, 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments').to_return(:status => 200, :body => '{}')
+    stub_request(:post, 'https://travisbot:password@api.github.com/repos/travis-repos/test-project-1/issues/1/comments').to_return(:status => 200, :body => '{}')
   end
 
   describe 'given the request is a push event' do
@@ -39,7 +39,7 @@ describe Travis::Notifications::Handler::Github do
   end
 
   describe 'add_comment' do
-    let(:url) { build.request.comments_url }
+    let(:url) { build.request.comments_url.gsub('//', '//travisbot:password@') }
 
     it 'posts to the request comments_url' do
       github.notify('build:finished', build)
@@ -52,10 +52,12 @@ describe Travis::Notifications::Handler::Github do
       a_request(:post, url).with { |r| r.body == body }.should have_been_made
     end
 
-    it 'authenticates as travisbot using the token' do
-      github.notify('build:finished', build)
-      a_request(:post, url).with { |r| r.headers['Authorization'] == 'token travisbot-token' }.should have_been_made
-    end
+    # can't test auth separately because it's already part of the url with username/password
+    #
+    # it 'authenticates as travisbot using the token' do
+    #   github.notify('build:finished', build)
+    #   a_request(:post, url).with { |r| p r.headers; r.headers['Authorization'] == 'token: travisbot-token' }.should have_been_made
+    # end
   end
 
   describe 'logging' do
