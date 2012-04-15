@@ -45,10 +45,6 @@ module Travis
           end
         end
 
-        def http_client=(http_client)
-          @http_client = http_client
-        end
-
         protected
 
           def send_campfire(targets, build)
