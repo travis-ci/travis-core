@@ -31,7 +31,7 @@ describe Travis::Github::Payload::PullRequest do
       end
 
       it 'returns false if base has not changed' do
-        last.stubs(:commit).returns(payload.commit[:commit])
+        last.stubs(:commit).returns(payload.head_commit['sha'])
         payload.accept?.should be_false
       end
     end

@@ -16,15 +16,15 @@ module Travis
         end
 
         def accept?
-          action == :opened || action == :synchronize && base_change?
+          action == :opened || action == :synchronize && head_change?
         end
 
         # TODO We should probably track the pull request some other way (maybe
         # Request#number) rather than using the comments_url which is unique
         # for the pull request but semantically silly, obviously.
-        def base_change?
+        def head_change?
           last = Commit.last_by_comments_url(request[:comments_url])
-          last && last.commit != commit[:commit]
+          last && last.commit != head_commit['sha']
         end
 
         def repository
