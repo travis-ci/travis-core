@@ -18,7 +18,7 @@ module Travis
         end
 
         def accept?
-          action == :opened || action == :synchronize && head_change?
+          [:opened, :reopened].include?(action) || action == :synchronize && head_change?
         end
 
         def head_change?

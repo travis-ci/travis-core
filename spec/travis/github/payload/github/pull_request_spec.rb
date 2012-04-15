@@ -14,6 +14,16 @@ describe Travis::Github::Payload::PullRequest do
       end
     end
 
+    describe 'given action is "reopened"' do
+      before :each do
+        payload.gh.data['action'] = 'reopened'
+      end
+
+      it 'returns true' do
+        payload.accept?.should be_true
+      end
+    end
+
     describe 'given action is "synchronize"' do
       let(:last) { stub('request') }
 
