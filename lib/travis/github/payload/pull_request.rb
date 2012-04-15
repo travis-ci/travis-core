@@ -8,6 +8,8 @@ module Travis
 
         def initialize(payload)
           @payload = payload
+
+          GH.reset # FIXME: solve this somehow differently
           @gh = GH.load(payload)
         end
 
