@@ -7,41 +7,35 @@ describe Travis::Notifications::Handler::Archive do
   include Support::ActiveRecord
   include Support::Formats
 
-  let(:notification) { Travis::Notifications::Handler::Archive.new }
   let(:http)     { Faraday::Adapter::Test::Stubs.new }
-  let(:archiver) { Travis::Notifications::Handler::Archive.new }
+  let(:client)   { Faraday.new { |f| f.request :url_encoded; f.adapter(:test, http) } }
+  let(:archive)  { Travis::Notifications::Handler::Archive.new }
   let(:build)    { Factory(:build, :created_at => Time.utc(2011, 1, 1), :config => { :rvm => ['1.9.2', 'rbx'] }) }
   let(:io)       { StringIO.new }
 
   before do
     Travis.logger = Logger.new(io)
     Travis.config.notifications = [:archive]
-    Travis::Notifications::Handler::Pusher.send(:public, :queue_for, :payload_for)
-
-    Travis::Notifications::Handler::Archive.http_client = Faraday.new do |f|
-      f.request :url_encoded
-      f.adapter :test, http
-    end
+    archive.stubs(:http_client).returns(client)
   end
 
   it 'build:finish archives the build' do
     Travis::Notifications::Handler::Archive.any_instance.expects(:archive).with(build)
     Travis::Notifications.dispatch('build:finished', build)
-    puts io.string
   end
 
   describe 'archive' do
     before :each do
-      archiver.stubs(:store).returns(true)
+      archive.stubs(:store).returns(true)
     end
 
     it 'stores the build to the storage' do
-      archiver.expects(:store).with(build)
-      archiver.send(:archive, build)
+      archive.expects(:store).with(build)
+      archive.send(:archive, build)
     end
 
     it 'sets the build to be archived' do
-      archiver.send(:archive, build)
+      archive.send(:archive, build)
       build.reload.archived_at.should_not be_nil
     end
   end
@@ -53,7 +47,7 @@ describe Travis::Notifications::Handler::Archive do
       test = build.matrix.first
       repository = build.repository
 
-      data = JSON.parse(archiver.send(:json_for, build))
+      data = JSON.parse(archive.send(:json_for, build))
       data.except('matrix', 'repository').should == {
         'id' => build.id,
         'number' => build.number,
@@ -88,17 +82,16 @@ describe Travis::Notifications::Handler::Archive do
 
   describe 'logging' do
     it 'logs a successful request' do
-      notification.stubs(:url_for).returns('http://example.com/builds/1')
+      archive.stubs(:url_for).returns('http://example.com/builds/1')
       http.put('/builds/1') {[ 200, {}, 'nono.' ]}
-      notification.notify('build:finished', build)
+      archive.notify('build:finished', build)
       io.string.should include('[archive] Successfully archived http://example.com/builds/1')
-      puts io.string
     end
 
     it 'warns about a failed request' do
-      notification.stubs(:url_for).returns('http://example.com/builds/1')
+      archive.stubs(:url_for).returns('http://example.com/builds/1')
       http.put('/builds/1') {[ 403, {}, 'nono.' ]}
-      notification.notify('build:finished', build)
+      archive.notify('build:finished', build)
       io.string.should include('[archive] Could not archive to http://example.com/builds/1. Status: 403 ("nono.")')
     end
   end

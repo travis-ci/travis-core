@@ -29,24 +29,12 @@ module Travis
           end
 
           def build_url(build)
-            host = Travis.config.http_host
-            repo = build.repository
-            "#{host}/#{repo.owner_name}/#{repo.name}/builds/#{build.id}"
+            "#{Travis.config.http_host}/#{build.repository.slug}/builds/#{build.id}"
           end
         end
 
         def notify(event, object, *args)
           send_campfire(object.campfire_rooms, object) if object.send_campfire_notifications_on_finish?
-        end
-
-        def http_client
-          @http_client ||= Faraday.new(http_options) do |f|
-            f.adapter :net_http
-          end
-        end
-
-        def http_client=(http_client)
-          @http_client = http_client
         end
 
         protected
@@ -68,6 +56,12 @@ module Travis
                   req.headers['Content-Type']  = 'application/json'
                 end
               end
+            end
+          end
+
+          def http_client
+            @http_client ||= Faraday.new(http_options) do |f|
+              f.adapter :net_http
             end
           end
 

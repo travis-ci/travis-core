@@ -4,7 +4,7 @@ require 'support/webmock'
 describe Travis::Github::Payload::PullRequest do
   include Support::Webmock
 
-  let(:payload) { Travis::Github::Payload.for('pull-request', GITHUB_PAYLOADS['pull-request']) }
+  let(:payload) { Travis::Github::Payload.for('pull_request', GITHUB_PAYLOADS['pull-request']) }
 
   describe 'repository' do
     it 'returns all attributes required for a Repository' do
@@ -33,6 +33,7 @@ describe Travis::Github::Payload::PullRequest do
     it 'returns all attributes required for a Request' do
       payload.request.should == {
         :payload => GITHUB_PAYLOADS['pull-request'],
+        :comments_url => 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments'
       }
     end
   end

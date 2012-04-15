@@ -17,17 +17,6 @@ module Travis
           def payload_for(build)
             Payload.new(build).to_hash
           end
-
-          def http_client
-            @http_client ||= Faraday.new do |f|
-              f.request :url_encoded
-              f.adapter :net_http
-            end
-          end
-
-          def http_client=(http_client)
-            @http_client = http_client
-          end
         end
 
         include do
@@ -42,7 +31,7 @@ module Travis
             end
 
             def store(build)
-              response = http.put(url_for(build), json_for(build))
+              response = http_client.put(url_for(build), json_for(build))
               log_request(build, response)
               response.success?
             end
@@ -59,8 +48,11 @@ module Travis
               Travis::Renderer.json(build, :type => :archive, :template => 'build', :base_dir => base_dir)
             end
 
-            def http
-              self.class.http_client
+            def http_client
+              @http_client ||= Faraday.new do |f|
+                f.request :url_encoded
+                f.adapter :net_http
+              end
             end
 
             def log_request(build, response)
