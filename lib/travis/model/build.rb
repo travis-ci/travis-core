@@ -73,6 +73,14 @@ class Build < ActiveRecord::Base
       joins(:commit).where(branches.present? ? ["commits.branch IN (?)", branches] : [])
     end
 
+    def pushes
+      joins(:request).where(:requests => { :event_type => ['push', '', nil] })
+    end
+
+    def pull_requests
+      joins(:request).where(:requests => { :event_type => 'pull_request' })
+    end
+
     def previous(build)
       where("builds.repository_id = ? AND builds.id < ?", build.repository_id, build.id).finished.descending.limit(1).first
     end

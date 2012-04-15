@@ -7,28 +7,34 @@ describe Build do
   let(:repository) { Factory(:repository) }
 
   describe 'class methods' do
-    it 'recent returns recent builds that at least are started ordered by creation time descending' do
-      Factory(:build, :state => 'finished')
-      Factory(:build, :state => 'started')
-      Factory(:build, :state => 'created')
+    describe 'recent' do
+      it 'returns recent builds that at least are started ordered by creation time descending' do
+        Factory(:build, :state => 'finished')
+        Factory(:build, :state => 'started')
+        Factory(:build, :state => 'created')
 
-      Build.recent.all.map(&:state).should == ['started', 'finished']
+        Build.recent.all.map(&:state).should == ['started', 'finished']
+      end
     end
 
-    it 'was_started returns builds that are either started or finished' do
-      Factory(:build, :state => 'finished')
-      Factory(:build, :state => 'started')
-      Factory(:build, :state => 'created')
+    describe 'was_started' do
+      it 'returns builds that are either started or finished' do
+        Factory(:build, :state => 'finished')
+        Factory(:build, :state => 'started')
+        Factory(:build, :state => 'created')
 
-      Build.was_started.map(&:state).sort.should == ['finished', 'started']
+        Build.was_started.map(&:state).sort.should == ['finished', 'started']
+      end
     end
 
-    it 'on_branch returns builds that are on any of the given branches' do
-      Factory(:build, :commit => Factory(:commit, :branch => 'master'))
-      Factory(:build, :commit => Factory(:commit, :branch => 'develop'))
-      Factory(:build, :commit => Factory(:commit, :branch => 'feature'))
+    describe 'on_branch' do
+      it 'returns builds that are on any of the given branches' do
+        Factory(:build, :commit => Factory(:commit, :branch => 'master'))
+        Factory(:build, :commit => Factory(:commit, :branch => 'develop'))
+        Factory(:build, :commit => Factory(:commit, :branch => 'feature'))
 
-      Build.on_branch('master,develop').map(&:commit).map(&:branch).sort.should == ['develop', 'master']
+        Build.on_branch('master,develop').map(&:commit).map(&:branch).sort.should == ['develop', 'master']
+      end
     end
 
     describe 'older_than' do
@@ -70,26 +76,54 @@ describe Build do
       end
     end
 
-    it 'paged limits the results to the `per_page` value' do
-      3.times { Factory(:build) }
-      Build.stubs(:per_page).returns(1)
+    describe 'paged' do
+      it 'limits the results to the `per_page` value' do
+        3.times { Factory(:build) }
+        Build.stubs(:per_page).returns(1)
 
-      Build.paged({}).should have(1).item
+        Build.paged({}).should have(1).item
+      end
+
+      it 'uses an offset' do
+        3.times { |i| Factory(:build) }
+        Build.stubs(:per_page).returns(1)
+
+        builds = Build.paged({:page => 2})
+        builds.should have(1).item
+        builds.first.number.should == '2'
+      end
     end
 
-    it 'paged uses an offset' do
-      3.times { |i| Factory(:build) }
-      Build.stubs(:per_page).returns(1)
-
-      builds = Build.paged({:page => 2})
-      builds.should have(1).item
-      builds.first.number.should == '2'
+    describe 'next_number' do
+      it 'returns the next build number' do
+        1.upto(3) do |number|
+          Factory(:build, :repository => repository, :number => number)
+          repository.builds.next_number.should == number + 1
+        end
+      end
     end
 
-    it 'next_number returns the next build number' do
-      1.upto(3) do |number|
-        Factory(:build, :repository => repository, :number => number)
-        repository.builds.next_number.should == number + 1
+    describe 'pushes' do
+      before do
+        Factory(:build)
+        Factory(:build, :request => Factory(:request, :event_type => ''))
+        Factory(:build, :request => Factory(:request, :event_type => 'pull_request'))
+      end
+
+      it "returns only builds which have Requests with an event_type of push" do
+        Build.pushes.all.count.should == 2
+      end
+    end
+
+    describe 'pull_requests' do
+      before do
+        Factory(:build)
+        Factory(:build, :request => Factory(:request, :event_type => ''))
+        Factory(:build, :request => Factory(:request, :event_type => 'pull_request'))
+      end
+
+      it "returns only builds which have Requests with an event_type of pull_request" do
+        Build.pull_requests.all.count.should == 1
       end
     end
   end
