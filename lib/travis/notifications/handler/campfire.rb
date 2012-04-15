@@ -29,9 +29,7 @@ module Travis
           end
 
           def build_url(build)
-            host = Travis.config.http_host
-            repo = build.repository
-            "#{host}/#{repo.owner_name}/#{repo.name}/builds/#{build.id}"
+            "#{Travis.config.http_host}/#{build.repository.slug}/builds/#{build.id}"
           end
         end
 
