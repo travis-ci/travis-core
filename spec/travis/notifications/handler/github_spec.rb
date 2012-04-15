@@ -47,7 +47,7 @@ describe Travis::Notifications::Handler::Github do
     end
 
     it 'posts a comment to github' do
-      comment = "This pull request passes on Travis CI. [http://travis-ci.org/images/status/passing.png](http://travis-ci.org/svenfuchs/minimal/builds/#{build.id})"
+      comment = "This pull request [passes](http://travis-ci.org/svenfuchs/minimal/builds/#{build.id})."
       body = lambda { |request| ActiveSupport::JSON.decode(request.body)['body'].should == comment }
 
       github.notify('build:finished', build)
