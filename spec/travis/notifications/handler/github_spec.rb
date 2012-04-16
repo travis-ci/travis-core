@@ -45,7 +45,7 @@ describe Travis::Notifications::Handler::Github do
     end
 
     it 'posts a comment to github' do
-      comment = "This pull request [passes](http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}) (merged #{build.request.head_commit[0..7]} into #{build.request.base_commit[0..7]}."
+      comment = "This pull request [passes](http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}) (merged #{build.request.head_commit[0..7]} into #{build.request.base_commit[0..7]})."
       body = lambda { |request| ActiveSupport::JSON.decode(request.body)['body'].should == comment }
 
       github.notify('build:finished', build)

@@ -28,7 +28,7 @@ module Travis
           end
 
           def comment(build)
-            "This pull request [#{build.passed? ? 'passes' : 'fails' }](#{build_url(build)}) (merged #{build.request.head_commit[0..7]} into #{build.request.base_commit[0..7]}."
+            "This pull request [#{build.passed? ? 'passes' : 'fails' }](#{build_url(build)}) (merged #{build.request.head_commit[0..7]} into #{build.request.base_commit[0..7]})."
           end
 
           def build_url(build)
