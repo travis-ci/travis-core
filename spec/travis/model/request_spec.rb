@@ -98,8 +98,8 @@ describe Request do
       end
 
       it 'calls the github api to populate the user' do
-        subject.call
-        assert_requested requests["https://api.github.com/#{type == 'organization' ? 'orgs' : 'users'}/#{name}"]
+        request
+        a_request(:get, "https://api.github.com/#{type == 'organization' ? 'orgs' : 'users'}/#{name}").should have_been_requested
       end
     end
 
