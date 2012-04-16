@@ -130,39 +130,12 @@ describe Repository do
     let(:repository) { Factory(:repository) }
 
     it "should return the public key" do
-      repository.public_key.should eql(repository.key.public_key)
+      repository.public_key.should == repository.key.public_key
     end
 
     it "should create a new key when the repository is created" do
-      repository.key.should_not == nil
-    end
-
-    it "should retrieve the existing key" do
-      key = repository.key
-      repository.reload # reload so the @key is reseted
-      lambda do
-        repository.key.id.should eql(key.id)
-      end.should change(SslKey, :count).by(0)
-    end
-
-    it "should check if a key exists and create a new one on access" do
-      repository.key.destroy
-      repository.reload
-      repository.key.should_not == nil
-    end
-
-    it "shouldn't fail when fail when creating a new ssl key failed" do
-      key = repository.key
-      repository.stubs(:associated_key).returns(nil).then.returns(key)
-      expect {
-        repository.key
-      }.to_not raise_error
-    end
-
-    it "should return the other key when a validation error is raised" do
-      key = repository.key
-      repository.stubs(:associated_key).returns(nil).then.returns(key)
-      repository.key.should == key
+      repository = Repository.create!(:owner_name => 'travis-ci', :name => 'travis-ci')
+      repository.key.should_not be_nil
     end
   end
 
