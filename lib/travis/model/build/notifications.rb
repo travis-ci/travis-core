@@ -12,23 +12,23 @@ class Build
     }
 
     def send_email_notifications_on_finish?
-      emails_enabled? && email_recipients.present? && notify_on_finish_for?(:email)
+      !pull_request? && emails_enabled? && email_recipients.present? && notify_on_finish_for?(:email)
     end
 
     def send_webhook_notifications_on_start?
-      webhooks.any? && notify_on_start_for?(:webhooks)
+      !pull_request? && webhooks.any? && notify_on_start_for?(:webhooks)
     end
 
     def send_webhook_notifications_on_finish?
-      webhooks.any? && notify_on_finish_for?(:webhooks)
+      !pull_request? && webhooks.any? && notify_on_finish_for?(:webhooks)
     end
 
     def send_campfire_notifications_on_finish?
-      campfire_rooms.any? && notify_on_finish_for?(:campfire)
+      !pull_request? && campfire_rooms.any? && notify_on_finish_for?(:campfire)
     end
 
     def send_irc_notifications_on_finish?
-      irc_channels.any? && notify_on_finish_for?(:irc)
+      !pull_request? && irc_channels.any? && notify_on_finish_for?(:irc)
     end
 
     def notify_on_start_for?(type)

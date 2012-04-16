@@ -6,17 +6,14 @@ describe Travis::Notifications::Handler::Campfire do
 
   let(:campfire) { Travis::Notifications::Handler::Campfire.new }
   let(:http)     { Faraday::Adapter::Test::Stubs.new }
+  let(:client)   { Faraday.new { |f| f.request :url_encoded; f.adapter :test, http } }
   let(:build)    { Factory(:build, :config => { 'notifications' => { 'campfire' => 'evome:apitoken@42' } }) }
   let(:io)       { StringIO.new }
 
   before do
     Travis.logger = Logger.new(io)
     Travis.config.notifications = [:campfire]
-
-    campfire.http_client = Faraday.new do |f|
-      f.request :url_encoded
-      f.adapter :test, http
-    end
+    campfire.stubs(:http_client).returns(client)
   end
 
   it "only is set up to accept build:finished notifications" do

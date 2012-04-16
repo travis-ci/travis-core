@@ -73,6 +73,25 @@ class Build < ActiveRecord::Base
       joins(:commit).where(branches.present? ? ["commits.branch IN (?)", branches] : [])
     end
 
+    def for_event_type(event_type)
+      with_request = includes('request')
+
+      case event_type
+      when 'pull_requests'
+        with_request.pull_requests
+      else
+        with_request.pushes
+      end
+    end
+
+    def pushes
+      joins(:request).where(:requests => { :event_type => ['push', '', nil] })
+    end
+
+    def pull_requests
+      joins(:request).where(:requests => { :event_type => 'pull_request' })
+    end
+
     def previous(build)
       where("builds.repository_id = ? AND builds.id < ?", build.repository_id, build.id).finished.descending.limit(1).first
     end
@@ -136,11 +155,15 @@ class Build < ActiveRecord::Base
     deserialized
   end
 
-  def previous_on_branch
-    Build.on_branch(commit.branch).previous(self)
-  end
-
   def config=(config)
     super(config.deep_symbolize_keys)
+  end
+
+  def pull_request?
+    request.pull_request?
+  end
+
+  def previous_on_branch
+    Build.on_branch(commit.branch).previous(self)
   end
 end

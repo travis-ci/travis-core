@@ -3,7 +3,7 @@ source :rubygems
 gemspec
 
 gem 'travis-support', :git => 'git://github.com/travis-ci/travis-support'
-gem 'gh', :git => 'git://github.com/rkh/gh'
+gem 'gh',             :git => 'git://github.com/rkh/gh'
 
 platform :mri do
   gem 'bunny',          '~> 0.7.9'

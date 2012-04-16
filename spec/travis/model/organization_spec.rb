@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'support/active_record'
-require 'support/webmock'
 
 describe Organization do
   include Support::ActiveRecord

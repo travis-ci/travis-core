@@ -143,6 +143,10 @@ ActiveRecord::Schema.define(:version => 20120324104051) do
     t.datetime "updated_at",    :null => false
     t.integer  "owner_id"
     t.string   "owner_type"
+    t.string   "event_type"
+    t.string   "comments_url"
+    t.string   "base_commit"
+    t.string   "head_commit"
   end
 
   create_table "ssl_keys", :force => true do |t|

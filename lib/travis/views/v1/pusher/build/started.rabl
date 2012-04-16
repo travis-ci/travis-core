@@ -7,6 +7,7 @@ child build => :build do # TODO flatten this into the main namespace
 
   glue build.commit do
     attributes :commit, :branch, :message, :committed_at, :committer_name, :committer_email, :author_name, :author_email, :compare_url
+    node(:event_type) { build.request.event_type }
   end
 
   code :matrix do

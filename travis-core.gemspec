@@ -32,7 +32,7 @@ Gem::Specification.new do |s|
   # structures
   s.add_dependency 'hashr',             '~> 0.0.19'
   s.add_dependency 'rabl',              '~> 0.5.1'
-  s.add_dependency 'metriks',           '~> 0.9.7.3'
+  s.add_dependency 'metriks',           '~> 0.9.7'
 
   # app
   s.add_dependency 'simple_states',     '~> 0.1.0.pre2'
