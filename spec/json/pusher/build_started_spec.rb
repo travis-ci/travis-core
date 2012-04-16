@@ -26,7 +26,8 @@ describe 'JSON for pusher' do
       'committer_name' => 'Sven Fuchs',
       'committer_email' => 'svenfuchs@artweb-design.de',
       'committed_at' => '2011-11-11T11:11:11Z',
-      'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop'
+      'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
+      'event_type' => 'push'
     }
     data['build']['matrix'].first.should == {
       'id' => test.id,
