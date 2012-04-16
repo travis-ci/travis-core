@@ -1,0 +1,29 @@
+{
+  "message": "Merge branch 'master' of git://github.com/travis-repos/test-project-1\n\nConflicts:\n\tRakefile\n",
+  "url": "https://api.github.com/repos/travis-repos/test-project-1/git/commits/5442e1772f6de100a2451bd1e08824d3be37a46f",
+  "committer": {
+    "email": "konstantin.mailinglists@googlemail.com",
+    "date": "2012-04-16T06:30:33-07:00",
+    "name": "Konstantin Haase"
+  },
+  "author": {
+    "email": "konstantin.mailinglists@googlemail.com",
+    "date": "2012-04-16T06:30:33-07:00",
+    "name": "Konstantin Haase"
+  },
+  "parents": [
+    {
+      "url": "https://api.github.com/repos/travis-repos/test-project-1/git/commits/1317692c01d0c3a20b89ea634d06cd66b8c517d3",
+      "sha": "1317692c01d0c3a20b89ea634d06cd66b8c517d3"
+    },
+    {
+      "url": "https://api.github.com/repos/travis-repos/test-project-1/git/commits/ee644876520685ea3ce144bc8449c1155cee56b4",
+      "sha": "ee644876520685ea3ce144bc8449c1155cee56b4"
+    }
+  ],
+  "sha": "5442e1772f6de100a2451bd1e08824d3be37a46f",
+  "tree": {
+    "url": "https://api.github.com/repos/travis-repos/test-project-1/git/trees/7df56c21ed8962dc84cb00609e4584f22cfef5c5",
+    "sha": "7df56c21ed8962dc84cb00609e4584f22cfef5c5"
+  }
+}
