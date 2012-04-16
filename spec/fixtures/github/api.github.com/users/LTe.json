@@ -1,21 +1,21 @@
 {
   "followers": 18,
   "type": "User",
-  "bio": null,
   "created_at": "2009-12-02T17:16:00Z",
   "email": "lite.88@gmail.com",
+  "bio": null,
   "company": null,
-  "blog": "http://ruby-blog.pl/",
   "public_gists": 61,
   "url": "https://api.github.com/users/LTe",
   "following": 23,
-  "avatar_url": "https://secure.gravatar.com/avatar/98f11c73a95318bbf85e419c1727434d?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png",
   "login": "LTe",
   "public_repos": 21,
-  "html_url": "https://github.com/LTe",
   "gravatar_id": "98f11c73a95318bbf85e419c1727434d",
+  "avatar_url": "https://secure.gravatar.com/avatar/98f11c73a95318bbf85e419c1727434d?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png",
+  "html_url": "https://github.com/LTe",
   "name": "Piotr Niełacny",
+  "blog": "http://ruby-blog.pl/",
   "location": "Poland",
-  "hireable": false,
-  "id": 160962
+  "id": 160962,
+  "hireable": false
 }

@@ -81,8 +81,8 @@ describe Travis::Github::Payload::PullRequest do
       payload.request.should == {
         :payload => GITHUB_PAYLOADS['pull-request'],
         :comments_url => 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments',
-        :base_commit => 'TOOD',
-        :head_commit => '1317692c01d0c3a20b89ea634d06cd66b8c517d3'
+        :base_commit => 'ee644876520685ea3ce144bc8449c1155cee56b4',
+        :head_commit => '5442e1772f6de100a2451bd1e08824d3be37a46f'
       }
     end
   end
@@ -90,11 +90,11 @@ describe Travis::Github::Payload::PullRequest do
   describe 'commit' do
     it 'returns all attributes required for a Commit' do
       payload.commit.should == {
-        :commit => 'dc7423310796301fe71b98eda8b5ba1afee3f639',
-        :message => "do not require rake\n",
+        :commit => 'ef34a166e2dd7780d40800890474f836c8b3fc34',
+        :message => "Merge branch 'master' of git://github.com/travis-repos/test-project-1\n\nConflicts:\n\tRakefile\n",
         :branch => 'master',
         :ref => 'refs/pull/1/merge',
-        :committed_at => '2012-04-14T16:19:15Z',
+        :committed_at => '2012-04-16T13:30:33Z',
         :committer_name => 'Konstantin Haase',
         :committer_email => 'konstantin.mailinglists@googlemail.com',
         :author_name => 'Konstantin Haase',

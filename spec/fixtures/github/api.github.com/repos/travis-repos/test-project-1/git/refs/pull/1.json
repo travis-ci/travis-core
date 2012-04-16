@@ -4,8 +4,8 @@
     "ref": "refs/pull/1/head",
     "object": {
       "type": "commit",
-      "url": "https://api.github.com/repos/travis-repos/test-project-1/git/commits/1317692c01d0c3a20b89ea634d06cd66b8c517d3",
-      "sha": "1317692c01d0c3a20b89ea634d06cd66b8c517d3"
+      "url": "https://api.github.com/repos/travis-repos/test-project-1/git/commits/5442e1772f6de100a2451bd1e08824d3be37a46f",
+      "sha": "5442e1772f6de100a2451bd1e08824d3be37a46f"
     }
   },
   {
@@ -13,8 +13,8 @@
     "ref": "refs/pull/1/merge",
     "object": {
       "type": "commit",
-      "url": "https://api.github.com/repos/travis-repos/test-project-1/git/commits/dc7423310796301fe71b98eda8b5ba1afee3f639",
-      "sha": "dc7423310796301fe71b98eda8b5ba1afee3f639"
+      "url": "https://api.github.com/repos/travis-repos/test-project-1/git/commits/ef34a166e2dd7780d40800890474f836c8b3fc34",
+      "sha": "ef34a166e2dd7780d40800890474f836c8b3fc34"
     }
   }
 ]
