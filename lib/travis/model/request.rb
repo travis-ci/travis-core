@@ -48,12 +48,4 @@ class Request < ActiveRecord::Base
   def pull_request?
     event_type == 'pull_request'
   end
-
-  def event_type
-    unless attributes['event_type'].blank?
-      attributes['event_type']
-    else
-      'push'
-    end
-  end
 end
