@@ -3,7 +3,7 @@ source :rubygems
 gemspec
 
 gem 'travis-support', :git => 'git://github.com/travis-ci/travis-support'
-gem 'metriks',        :git => 'git://github.com/mattmatt/metriks.git', :ref => 'source'
+gem 'metriks',  '~> 0.9.7.3'
 
 platform :mri do
   gem 'bunny',          '~> 0.7.9'

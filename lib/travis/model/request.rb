@@ -17,7 +17,7 @@ class Request < ActiveRecord::Base
   class << self
     # TODO clean this up, maybe extract a factory?
     def create_from(payload, token)
-      ActiveSupport::Notifications.publish('github.requests', 'received', payload)
+      ActiveSupport::Notifications.publish('github.requests.received', payload)
       payload = Payload::Github.new(payload, token)
       owner = owner_for(payload.repository)
       repository = repository_for(payload.repository, owner)
@@ -53,10 +53,10 @@ class Request < ActiveRecord::Base
 
   before_create do
     if accept?
-      ActiveSupport::Notifications.publish('github.requests', 'accepted', payload)
+      ActiveSupport::Notifications.publish('github.requests.accepted', payload)
       build_job(:repository => repository, :commit => commit, :owner => owner) # create the initial configure job
     else
-      ActiveSupport::Notifications.publish('github.requests', 'rejected', payload)
+      ActiveSupport::Notifications.publish('github.requests.rejected', payload)
       self.state = :finished
     end
   end
