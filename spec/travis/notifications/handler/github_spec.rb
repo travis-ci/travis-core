@@ -8,7 +8,7 @@ describe Travis::Notifications::Handler::Github do
   include Support::Formats
 
   let(:github)  { Travis::Notifications::Handler::Github.new }
-  let(:request) { Factory(:request, :event_type => 'pull_request', :comments_url => 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments') }
+  let(:request) { Factory(:request, :event_type => 'pull_request', :comments_url => 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments', :base_commit => 'a3585bf3f9691ba396c38194c4b4920e51f1490b', :head_commit => '1317692c01d0c3a20b89ea634d06cd66b8c517d3') }
   let(:build)   { Factory(:build, :request => request) }
   let(:io)      { StringIO.new }
 
@@ -45,7 +45,7 @@ describe Travis::Notifications::Handler::Github do
     end
 
     it 'posts a comment to github' do
-      comment = "This pull request [passes](http://travis-ci.org/svenfuchs/minimal/builds/#{build.id})."
+      comment = "This pull request [passes](http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}) (merged #{build.request.head_commit[0..7]} into #{build.request.base_commit[0..7]}."
       body = lambda { |request| ActiveSupport::JSON.decode(request.body)['body'].should == comment }
 
       github.notify('build:finished', build)

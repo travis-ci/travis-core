@@ -48,6 +48,7 @@ module Travis
           @request ||= {
             :payload      => payload,
             :comments_url => gh['pull_request']['_links']['comments']['href'],
+            :base_commit  => base_commit['sha'],
             :head_commit  => head_commit['sha']
           }
         end
@@ -67,6 +68,10 @@ module Travis
               :compare_url     => gh['pull_request']['_links']['html']['href']
             }
           end
+        end
+
+        def base_commit
+          gh['pull_request']['base_commit'] || { 'sha' => '' }
         end
 
         def head_commit
