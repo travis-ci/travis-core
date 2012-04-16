@@ -1,3 +1,5 @@
+require 'octokit'
+
 module Travis
   module Github
     autoload :Payload,     'travis/github/payload'
