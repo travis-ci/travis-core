@@ -36,6 +36,18 @@ GITHUB_PAYLOADS = {
       }
     },
     "commits": [{
+      "id":        "586374eac43853e5542a2e2faafd48047127e4be",
+      "message":   "Update the readme",
+      "timestamp": "2010-10-14T04:00:37Z",
+      "committer": {
+        "name":  "Sven Fuchs",
+        "email": "svenfuchs@artweb-design.de"
+      },
+      "author": {
+        "name":  "Christopher Floess",
+        "email": "chris@flooose.de"
+      }
+    },{
       "id":        "46ebe012ef3c0be5542a2e2faafd48047127e4be",
       "message":   "Bump to 0.0.15",
       "timestamp": "2010-10-27T04:32:37Z",
