@@ -2,13 +2,14 @@ require 'spec_helper'
 require 'support/active_record'
 require 'support/formats'
 
-describe 'JSON for pusher' do
+describe Travis::Notifications::Json::Pusher::Job::Created do
   include Support::ActiveRecord, Support::Formats
 
   let(:test) { Factory(:test) }
+  let(:data) { Travis::Notifications::Json::Pusher::Job::Created.new(test).data }
 
-  it 'job:created' do
-    json_for_pusher('job:created', test).should == {
+  it 'data' do
+    data.should == {
       'id' => test.id,
       'build_id' => test.source_id,
       'repository_id' => test.repository_id,

@@ -2,15 +2,16 @@ require 'spec_helper'
 require 'support/active_record'
 require 'support/formats'
 
-describe 'JSON for worker jobs' do
+describe Travis::Notifications::Json::Worker::Job::Configure do
   include Support::ActiveRecord, Support::Formats
 
   let(:repository) { Repository.new(:owner_name => 'svenfuchs', :name => 'minimal') }
   let(:commit)     { Factory(:commit, :repository => repository) }
   let(:job)        { Factory(:configure, :commit => commit) }
+  let(:data)       { Travis::Notifications::Json::Worker::Job::Configure.new(job).data }
 
-  it 'Job::Configure' do
-    json_for_worker(job).should == {
+  it 'build' do
+    data.should == {
       'type' => 'configure',
       'build' => {
         'id' => job.id,

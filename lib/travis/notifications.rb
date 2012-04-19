@@ -15,6 +15,7 @@ module Travis
   # Notification handlers register for and deal with these client event names.
   module Notifications
     autoload :Handler,         'travis/notifications/handler'
+    autoload :Json,            'travis/notifications/json'
     autoload :Instrumentation, 'travis/notifications/instrumentation'
     autoload :Subscription,    'travis/notifications/subscription'
     autoload :SecureConfig,    'travis/notifications/secure_config'
