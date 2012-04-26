@@ -51,6 +51,7 @@ module Travis
   autoload :Model,         'travis/model'
   autoload :Notifications, 'travis/notifications'
   autoload :Renderer,      'travis/renderer'
+  autoload :Tasks,         'travis/tasks'
 
   class << self
     def config
