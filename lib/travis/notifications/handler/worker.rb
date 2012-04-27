@@ -42,7 +42,7 @@ module Travis
             end
 
             def renderer_for(job)
-              Json::Worker::Job.const_get(job.class.name.demodulize)
+              Api::Json::Worker::Job.const_get(job.class.name.demodulize)
             end
         end
       end

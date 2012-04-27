@@ -42,6 +42,7 @@ autoload :Worker,       'travis/model/worker'
 # (needed in travis-hub in order to connect to the database) and Travis::Renderer
 # (our inferior layer on top of Rabl).
 module Travis
+  autoload :Api,           'travis/api'
   autoload :Config,        'travis/config'
   autoload :Database,      'travis/database'
   autoload :EventLogger,   'travis/event_logger'

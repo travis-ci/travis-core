@@ -40,11 +40,11 @@ describe Travis::Notifications::Handler::Worker do
 
   describe 'renderer_for' do
     it 'returns Travis::Notifications::Json::Worker::Job::Configure for a configure job' do
-      worker.send(:renderer_for, configure).should == Travis::Notifications::Json::Worker::Job::Configure
+      worker.send(:renderer_for, configure).should == Travis::Api::Json::Worker::Job::Configure
     end
 
     it 'returns Travis::Notifications::Json::Worker::Job::Test for a test job' do
-      worker.send(:renderer_for, test).should == Travis::Notifications::Json::Worker::Job::Test
+      worker.send(:renderer_for, test).should == Travis::Api::Json::Worker::Job::Test
     end
   end
 end
