@@ -28,7 +28,7 @@ describe Travis::Notifications::Handler::Worker do
     end
 
     it 'publishes the payload to the publisher' do
-      builds.expects(:publish).with(payload)
+      builds.expects(:publish).with(payload, :properties => { :type => 'test' })
       worker.notify(:start, job)
     end
   end
