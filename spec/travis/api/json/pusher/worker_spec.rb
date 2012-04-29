@@ -1,19 +1,18 @@
 require 'spec_helper'
-require 'support/active_record'
-require 'support/formats'
+require 'travis/api'
+require 'travis/api/support/stubs'
 
 describe Travis::Api::Json::Pusher::Worker do
-  include Support::ActiveRecord, Support::Formats
+  include Support::Stubs, Support::Formats
 
-  let(:worker) { Factory(:worker) }
   let(:data)   { Travis::Api::Json::Pusher::Worker.new(worker).data }
 
   it 'data' do
     data.should == {
-      'id' => worker.id,
+      'id' => 1,
       'host' => 'ruby-1.worker.travis-ci.org',
       'name' => 'ruby-1',
-      'state' => :created,
+      'state' => 'created',
       'last_error' => nil,
       'payload' => nil
     }

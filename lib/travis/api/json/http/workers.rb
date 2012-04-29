@@ -3,6 +3,8 @@ module Travis
     module Json
       module Http
         class Workers
+          include Formats
+
           attr_reader :workers
 
           def initialize(workers, options = {})
@@ -19,7 +21,7 @@ module Travis
               'name' => worker.name,
               'host' => worker.host,
               'state' => worker.state.to_s,
-              'last_seen_at' => worker.last_seen_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
+              'last_seen_at' => format_date(worker.last_seen_at),
               'payload' => worker.payload,
               'last_error' => worker.last_error
             }

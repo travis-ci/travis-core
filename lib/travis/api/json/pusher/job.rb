@@ -8,6 +8,8 @@ module Travis
           autoload :Started,  'travis/api/json/pusher/job/started'
           autoload :Finished, 'travis/api/json/pusher/job/finished'
 
+          include Formats
+
           attr_reader :job
 
           def initialize(job)

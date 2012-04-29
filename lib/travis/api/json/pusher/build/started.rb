@@ -5,6 +5,8 @@ module Travis
         class Build
           class Started < Build
             class Job
+              include Formats
+
               attr_reader :job, :commit
 
               def initialize(job)
@@ -23,7 +25,7 @@ module Travis
                   'branch' => commit.branch,
                   'message' => commit.message,
                   'compare_url' => commit.compare_url,
-                  'committed_at' => commit.committed_at,
+                  'committed_at' => format_date(commit.committed_at),
                   'author_name' => commit.author_name,
                   'author_email' => commit.author_email,
                   'committer_name' => commit.committer_name,
@@ -43,12 +45,12 @@ module Travis
                 'number' => build.number,
                 'config' => build.config.stringify_keys,
                 'result' => 0,
-                'started_at' => build.started_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                'started_at' => format_date(build.started_at),
                 'commit' => commit.commit,
                 'branch' => commit.branch,
                 'message' => commit.message,
                 'compare_url' => commit.compare_url,
-                'committed_at' => commit.committed_at,
+                'committed_at' => format_date(commit.committed_at),
                 'author_name' => commit.author_name,
                 'author_email' => commit.author_email,
                 'committer_name' => commit.committer_name,
@@ -65,8 +67,8 @@ module Travis
                 'description' => repository.description,
                 'last_build_id' => repository.last_build_id,
                 'last_build_number' => repository.last_build_number,
-                'last_build_started_at' => repository.last_build_started_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                'last_build_finished_at' => repository.last_build_finished_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                'last_build_started_at' => format_date(repository.last_build_started_at),
+                'last_build_finished_at' => format_date(repository.last_build_finished_at),
                 'last_build_duration' => repository.last_build_duration,
                 'last_build_result' => repository.last_build_status,
                 'last_build_language' => repository.last_build_language

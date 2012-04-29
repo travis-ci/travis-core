@@ -12,7 +12,7 @@ module Travis
               {
                 'id' => build.id,
                 'result' => 0,
-                'finished_at' => build.finished_at.strftime('%Y-%m-%dT%H:%M:%SZ')
+                'finished_at' => format_date(build.finished_at)
               }
             end
 
@@ -22,8 +22,8 @@ module Travis
                 'slug' => repository.slug,
                 'last_build_id' => repository.last_build_id,
                 'last_build_number' => repository.last_build_number,
-                'last_build_started_at' => repository.last_build_started_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                'last_build_finished_at' => repository.last_build_finished_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                'last_build_started_at' => format_date(repository.last_build_started_at),
+                'last_build_finished_at' => format_date(repository.last_build_finished_at),
                 'last_build_duration' => repository.last_build_duration,
                 'last_build_result' => repository.last_build_status,
               }

@@ -1,18 +1,11 @@
 require 'spec_helper'
-require 'support/active_record'
 require 'travis/api'
+require 'travis/api/support/stubs'
 
 describe Travis::Api::Json::Http::Builds do
-  include Support::ActiveRecord, Support::Formats
+  include Support::Stubs, Support::Formats
 
-  let(:builds) { [build] }
-  let(:build)  { Factory(:build, :matrix => [test], :config => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] }) }
-  let(:test)   { Factory(:test, :config => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' }, :started_at => Time.now.utc, :finished_at => Time.now.utc) }
-  let(:data)   { Travis::Api::Json::Http::Builds.new(builds).data }
-
-  before :each do
-    build.request.event_type = 'push'
-  end
+  let(:data) { Travis::Api::Json::Http::Builds.new([build]).data }
 
   it 'builds' do
     data.first.should == {
@@ -20,10 +13,10 @@ describe Travis::Api::Json::Http::Builds do
       'event_type' => 'push', # on the build api this probably should be just 'pull_request' => true or similar
       'repository_id' => build.repository_id,
       'number' => 2,
-      'state' => :created,
-      'started_at' => json_format_time(Time.now.utc),
+      'state' => 'finished',
+      'started_at' => json_format_time(Time.now.utc - 1.minute),
       'finished_at' => json_format_time(Time.now.utc),
-      'duration' => nil,
+      'duration' => 60,
       'result' => 0,
       'commit' => '62aae5f70ceee39123ef',
       'branch' => 'master',

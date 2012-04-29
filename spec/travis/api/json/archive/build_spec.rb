@@ -1,13 +1,11 @@
 require 'spec_helper'
-require 'support/active_record'
 require 'support/formats'
+require 'travis/api/support/stubs'
 
 describe Travis::Api::Json::Archive::Build do
-  include Support::ActiveRecord, Support::Formats
+  include Support::Formats, Support::Stubs
 
-  let(:build) { Factory(:build, :matrix => [test], :config => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] }) }
-  let(:test)  { Factory(:test, :config => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' }, :started_at => Time.now.utc, :finished_at => Time.now.utc) }
-  let(:data)  { Travis::Api::Json::Archive::Build.new(build).data }
+  let(:data) { Travis::Api::Json::Archive::Build.new(build).data }
 
   it 'data' do
     data.except('matrix', 'repository').should == {
@@ -15,9 +13,9 @@ describe Travis::Api::Json::Archive::Build do
       'number' => 2,
       'config' => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
       'result' => 0,
-      'started_at' => json_format_time(Time.now.utc),
+      'started_at' => json_format_time(Time.now.utc - 1.minute),
       'finished_at' => json_format_time(Time.now.utc),
-      'duration' => nil,
+      'duration' => 60,
       'commit' => '62aae5f70ceee39123ef',
       'branch' => 'master',
       'message' => 'the commit message',
@@ -25,7 +23,7 @@ describe Travis::Api::Json::Archive::Build do
       'author_email' => 'svenfuchs@artweb-design.de',
       'committer_name' => 'Sven Fuchs',
       'committer_email' => 'svenfuchs@artweb-design.de',
-      'committed_at' => '2011-11-11T11:11:11Z',
+      'committed_at' => json_format_time(Time.now.utc - 1.hour),
     }
   end
 
@@ -34,9 +32,9 @@ describe Travis::Api::Json::Archive::Build do
       'id' => test.id,
       'number' => '2.1',
       'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
-      'started_at' => json_format_time(Time.now.utc),
+      'started_at' => json_format_time(Time.now.utc - 1.minute),
       'finished_at' => json_format_time(Time.now.utc),
-      'log' => test.log.content
+      'log' => 'the test log'
     }
   end
 

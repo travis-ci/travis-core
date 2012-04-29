@@ -1,11 +1,10 @@
 require 'spec_helper'
-require 'support/active_record'
-require 'support/formats'
+require 'travis/api'
+require 'travis/api/support/stubs'
 
 describe Travis::Api::Json::Pusher::Job::Started do
-  include Support::ActiveRecord, Support::Formats
+  include Support::Stubs, Support::Formats
 
-  let(:test) { Factory(:test, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4') }
   let(:data) { Travis::Api::Json::Pusher::Job::Started.new(test).data }
 
   before :each do
@@ -19,9 +18,9 @@ describe Travis::Api::Json::Pusher::Job::Started do
 
   it 'data' do
     data.should == {
-      'id' => test.id,
-      'build_id' => test.source_id,
-      'started_at' => nil,
+      'id' => 1,
+      'build_id' => 1,
+      'started_at' => json_format_time(Time.now.utc - 1.minute),
       'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4',
       'sponsor' => { 'name' => 'Railslove', 'url' => 'http://railslove.de' }
     }

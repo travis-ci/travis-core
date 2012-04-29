@@ -4,6 +4,8 @@ module Travis
       module Http
         module Job
           class Tests
+            include Formats
+
             attr_reader :jobs
 
             def initialize(jobs, options = {})
@@ -20,7 +22,7 @@ module Travis
                 'id' => job.id,
                 'repository_id' => job.repository_id,
                 'number' => job.number,
-                'state' => job.state,
+                'state' => job.state.to_s,
                 'queue' => job.queue,
                 'allow_failure' => job.allow_failure
               }

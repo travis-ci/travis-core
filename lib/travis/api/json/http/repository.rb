@@ -3,6 +3,8 @@ module Travis
     module Json
       module Http
         class Repository
+          include Formats
+
           attr_reader :repository, :options
 
           def initialize(repository, options = {})
@@ -25,10 +27,6 @@ module Travis
               'last_build_started_at' => format_date(repository.last_build_started_at),
               'last_build_finished_at' => format_date(repository.last_build_finished_at)
             }
-          end
-
-          def format_date(date)
-            date && date.strftime('%Y-%m-%dT%H:%M:%SZ')
           end
         end
       end

@@ -1,11 +1,10 @@
 require 'spec_helper'
-require 'support/active_record'
-require 'support/formats'
+require 'travis/api'
+require 'travis/api/support/stubs'
 
 describe Travis::Api::Json::Pusher::Job::Created do
-  include Support::ActiveRecord, Support::Formats
+  include Support::Stubs, Support::Formats
 
-  let(:test) { Factory(:test) }
   let(:data) { Travis::Api::Json::Pusher::Job::Created.new(test).data }
 
   it 'data' do

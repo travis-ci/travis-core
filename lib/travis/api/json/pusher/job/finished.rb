@@ -8,7 +8,7 @@ module Travis
               {
                 'id' => job.id,
                 'build_id' => job.source_id,
-                'finished_at' => job.finished_at,
+                'finished_at' => format_date(job.finished_at),
                 'result' => job.status
               }
             end

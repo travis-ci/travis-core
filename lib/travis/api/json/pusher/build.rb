@@ -6,6 +6,8 @@ module Travis
           autoload :Started,  'travis/api/json/pusher/build/started'
           autoload :Finished, 'travis/api/json/pusher/build/finished'
 
+          include Formats
+
           attr_reader :build
 
           def initialize(build)

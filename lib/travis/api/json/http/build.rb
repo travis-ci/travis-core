@@ -4,6 +4,8 @@ module Travis
       module Http
         class Build
           class Job
+            include Formats
+
             attr_reader :job, :commit
 
             def initialize(job)
@@ -16,12 +18,14 @@ module Travis
                 'id' => job.id,
                 'number' => job.number,
                 'config' => job.config.stringify_keys,
-                'started_at' => job.started_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                'finished_at' => job.finished_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                'started_at' => format_date(job.started_at),
+                'finished_at' => format_date(job.finished_at),
                 'log' => job.log.content
               }
             end
           end
+
+          include Formats
 
           attr_reader :build, :commit, :request, :repository
 
@@ -38,16 +42,16 @@ module Travis
               'repository_id' => repository.id,
               'number' => build.number,
               'config' => build.config.stringify_keys,
-              'state' => build.state,
+              'state' => build.state.to_s,
               'result' => build.status,
               'status' => build.status,
-              'started_at' => build.started_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
-              'finished_at' => build.finished_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
+              'started_at' => format_date(build.started_at),
+              'finished_at' => format_date(build.finished_at),
               'duration' => build.duration,
               'commit' => commit.commit,
               'branch' => commit.branch,
               'message' => commit.message,
-              'committed_at' => commit.committed_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
+              'committed_at' => format_date(commit.committed_at),
               'author_name' => commit.author_name,
               'author_email' => commit.author_email,
               'committer_name' => commit.committer_name,
@@ -55,13 +59,6 @@ module Travis
               'compare_url' => commit.compare_url,
               'event_type' => request.event_type,
               'matrix' => build.matrix.map { |job| Job.new(job).data },
-            }
-          end
-
-          def repository_data
-            {
-              # 'id' => repository.id,
-              # 'slug' => repository.slug
             }
           end
         end

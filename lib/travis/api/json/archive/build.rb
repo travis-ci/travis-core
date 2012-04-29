@@ -4,6 +4,8 @@ module Travis
       module Archive
         class Build
           class Job
+            include Formats
+
             attr_reader :job, :commit
 
             def initialize(job)
@@ -16,12 +18,14 @@ module Travis
                 'id' => job.id,
                 'number' => job.number,
                 'config' => job.config,
-                'started_at' => job.started_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                'finished_at' => job.finished_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                'started_at' => format_date(job.started_at),
+                'finished_at' => format_date(job.finished_at),
                 'log' => job.log.content
               }
             end
           end
+
+          include Formats
 
           attr_reader :build, :commit, :repository
 
@@ -37,13 +41,13 @@ module Travis
               'number' => build.number,
               'config' => build.config.stringify_keys,
               'result' => 0,
-              'started_at' => build.started_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
-              'finished_at' => build.finished_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
+              'started_at' => format_date(build.started_at),
+              'finished_at' => format_date(build.finished_at),
               'duration' => build.duration,
               'commit' => commit.commit,
               'branch' => commit.branch,
               'message' => commit.message,
-              'committed_at' => commit.committed_at.strftime('%Y-%m-%dT%H:%M:%SZ'),
+              'committed_at' => format_date(commit.committed_at),
               'author_name' => commit.author_name,
               'author_email' => commit.author_email,
               'committer_name' => commit.committer_name,

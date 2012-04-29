@@ -1,9 +1,11 @@
 require 'spec_helper'
 require 'travis/api'
+require 'travis/api/support/stubs'
 
 describe Travis::Api::Json::Http::Workers do
-  let(:workers) { [Factory(:worker)] }
-  let(:data)    { Travis::Api::Json::Http::Workers.new(workers).data }
+  include Support::Formats, Support::Stubs
+
+  let(:data) { Travis::Api::Json::Http::Workers.new([worker]).data }
 
   before(:each) do
     Time.stubs(:now).returns(Time.utc(2011, 11, 11, 11, 11, 11))
@@ -11,11 +13,11 @@ describe Travis::Api::Json::Http::Workers do
 
   it 'workers' do
     data.first.should == {
-      'id' => workers.first.id,
+      'id' => 1,
       'name' => 'ruby-1',
       'host' => 'ruby-1.worker.travis-ci.org',
       'state' => 'created',
-      'last_seen_at' => '2011-11-11T11:11:11Z',
+      'last_seen_at' => json_format_time(Time.now.utc),
       'payload' => nil,
       'last_error' => nil
     }

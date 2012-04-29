@@ -4,6 +4,8 @@ module Travis
       module Http
         module Job
           class Test
+            include Formats
+
             attr_reader :job, :commit
 
             def initialize(job, options = {})
@@ -20,7 +22,7 @@ module Travis
                 'build_id' => job.source_id,
                 'number' => job.number,
                 'config' => job.config.stringify_keys,
-                'state' => job.state,
+                'state' => job.state.to_s,
                 'result' => job.status,
                 'status' => job.status,
                 'started_at' => format_date(job.started_at),
@@ -38,10 +40,6 @@ module Travis
                 'sponsor' => job.sponsor.to_hash.stringify_keys,
                 'worker' => job.worker
               }
-            end
-
-            def format_date(date)
-              date && date.strftime('%Y-%m-%dT%H:%M:%SZ')
             end
           end
         end

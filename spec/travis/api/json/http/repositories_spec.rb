@@ -1,26 +1,30 @@
 require 'spec_helper'
-require 'support/active_record'
 require 'travis/api'
+require 'travis/api/support/stubs'
 
 describe Travis::Api::Json::Http::Repositories do
-  include Support::ActiveRecord, Support::Formats
+  include Support::Stubs, Support::Formats
 
-  let(:repository)   { Factory(:repository) }
-  let(:data)         { Travis::Api::Json::Http::Repositories.new([repository]).data }
+  let(:data) { Travis::Api::Json::Http::Repositories.new([repository]).data }
+  let(:branches) { [] }
+
+  before :each do
+    repository.stubs(:last_finished_builds_by_branches).returns(branches)
+  end
 
   it 'data' do
     data.first.except('branch_summary').should == {
       'id' => repository.id,
       'slug' => 'svenfuchs/minimal',
-      'description' => nil,
+      'description' => 'the repo description',
       'last_build_id' => repository.last_build_id,
       'last_build_number' => repository.last_build_number,
-      'last_build_started_at' => json_format_time(Time.now.utc),
+      'last_build_started_at' => json_format_time(Time.now.utc - 1.minute),
       'last_build_finished_at' => json_format_time(Time.now.utc),
       'last_build_status' => repository.last_build_status, # still here for backwards compatibility
       'last_build_result' => repository.last_build_status,
-      'last_build_language' => nil,
-      'last_build_duration' => nil
+      'last_build_language' => 'ruby',
+      'last_build_duration' => 60
     }
   end
 
