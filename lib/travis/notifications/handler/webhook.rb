@@ -8,17 +8,11 @@ module Travis
       # Sends build notifications to webhooks as defined in the configuration
       # (`.travis.yml`).
       class Webhook
-        autoload :Payload, 'travis/notifications/handler/webhook/payload'
-
         EVENTS = /build:(started|finished)/
 
         include Logging
 
         class << self
-          def payload_for(build)
-            Payload.new(build).to_hash
-          end
-
           def http_client
             @http_client ||= Faraday.new(http_options) do |f|
               f.request :url_encoded
@@ -54,7 +48,7 @@ module Travis
 
             def send_webhook(target, build)
               response = http.post(target) do |req|
-                req.body = { :payload => self.class.payload_for(build).to_json }
+                req.body = { :payload => payload_for(build).to_json }
                 req.headers['Authorization'] = authorization(build)
               end
               log_request(build, response)
@@ -75,6 +69,10 @@ module Travis
 
             def authorization(build)
               Digest::SHA2.hexdigest(build.repository.slug + build.request.token)
+            end
+
+            def payload_for(build)
+              Api::Json::Webhook::Build::Finished.new(build).data
             end
         end
       end

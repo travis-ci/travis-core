@@ -7,8 +7,6 @@ module Travis
 
       # Notifies registered clients about various state changes through Pusher.
       class Pusher
-        autoload :Payload, 'travis/notifications/handler/pusher/payload'
-
         EVENTS = [/build:(started|finished)/, /job:test:(created|started|log|finished)/, /worker:.*/]
 
         include Logging
@@ -50,7 +48,18 @@ module Travis
             end
 
             def payload_for(event, object, extra = {})
-              Payload.new(client_event_for(event), object, extra).to_hash
+              renderer_for(event, object).new(object).data.merge(extra)
+            end
+
+            def renderer_for(event, object)
+              object_type = object.class.name.split('::').first
+              case object_type
+              when 'Worker'
+                Api::Json::Pusher::Worker
+              else
+                event_type  = event.split(':').last.camelize
+                Api::Json::Pusher.const_get(object_type).const_get(event_type)
+              end
             end
         end
       end

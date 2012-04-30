@@ -22,7 +22,7 @@ module Travis
         end
 
         def head_change?
-          Request.last_by_head_commit(head_commit['sha']).nil?
+          head_commit && Request.last_by_head_commit(head_commit['sha']).nil?
         end
 
         def repository

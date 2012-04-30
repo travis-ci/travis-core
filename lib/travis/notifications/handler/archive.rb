@@ -45,7 +45,7 @@ module Travis
             end
 
             def json_for(build)
-              Travis::Renderer.json(build, :type => :archive, :template => 'build', :base_dir => base_dir)
+              Api::Json::Archive::Build.new(build).data.to_json
             end
 
             def http_client
@@ -62,10 +62,6 @@ module Travis
                 [:error, "Could not archive to #{response.env[:url].to_s}. Status: #{response.status} (#{response.body.inspect})"]
               end
               send(severity, message)
-            end
-
-            def base_dir
-              File.expand_path('../../../views', __FILE__)
             end
         end
       end
