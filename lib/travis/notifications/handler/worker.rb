@@ -28,7 +28,7 @@ module Travis
           end
 
           def enqueue(job)
-            publisher_for(job).publish(payload_for(job))
+            publisher_for(job).publish(payload_for(job), :properties => { :type => type })
           end
 
           protected

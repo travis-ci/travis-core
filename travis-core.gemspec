@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'metriks',           '~> 0.9.7'
 
   # app
-  s.add_dependency 'simple_states',     '~> 0.1.0.pre2'
+  s.add_dependency 'simple_states',     '0.1.0.pre2'
 
   # apis
   s.add_dependency 'octokit',           '~> 0.6.5'
