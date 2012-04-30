@@ -16,8 +16,10 @@ module Travis
             def data
               {
                 'id' => job.id,
+                'repository_id' => job.repository_id,
                 'number' => job.number,
                 'config' => job.config.stringify_keys,
+                'result' => job.status,
                 'started_at' => format_date(job.started_at),
                 'finished_at' => format_date(job.finished_at),
                 'log' => job.log.content
@@ -27,19 +29,18 @@ module Travis
 
           include Formats
 
-          attr_reader :build, :commit, :request, :repository
+          attr_reader :build, :commit, :request
 
           def initialize(build, options = {})
             @build = build
             @commit = build.commit
             @request = build.request
-            @repository = build.repository
           end
 
           def data
             {
               'id' => build.id,
-              'repository_id' => repository.id,
+              'repository_id' => build.repository_id,
               'number' => build.number,
               'config' => build.config.stringify_keys,
               'state' => build.state.to_s,
