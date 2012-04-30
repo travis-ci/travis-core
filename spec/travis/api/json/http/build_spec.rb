@@ -38,7 +38,6 @@ describe Travis::Api::Json::Http::Build do
       'id' => 1,
       'repository_id' => 1,
       'number' => '2.1',
-      'log' => 'the test log',
       'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
       'result' => 0,
       'started_at' => json_format_time(Time.now.utc - 1.minute),
