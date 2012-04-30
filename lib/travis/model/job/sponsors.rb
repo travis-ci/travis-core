@@ -7,7 +7,7 @@ class Job
       @sponsors ||= begin
         key = worker.split(':').first
         key ? Travis.config.sponsors.workers[key] : Hashr.new # TODO fix Hashr on Jruby 1.8 mode when key is an empty string
-      end
+      end || Hashr.new
     end
 
     # TODO this overwrites the activerecord attribute which currently is not populated from the actual worker
