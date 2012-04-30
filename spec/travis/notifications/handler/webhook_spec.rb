@@ -111,7 +111,8 @@ describe Travis::Notifications::Handler::Webhook do
         env[:url].path.should == uri.path
         env[:request_headers]['Authorization'].should == authorization_for(build)
 
-        payload = Travis::Notifications::Json::Webhook::Build::Finished.new(build).data
+        payload = normalize_json(Travis::Notifications::Handler::Webhook::Payload.new(build).to_hash)
+
         payload_from(env).keys.sort.should == payload.keys.map(&:to_s).sort
       end
     end

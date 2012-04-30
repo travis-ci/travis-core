@@ -71,31 +71,31 @@ describe Travis::Notifications::Handler::Pusher do
 
   describe 'payload_for returns the payload required for client side job events' do
     it 'job:created' do
-      receiver.payload_for('job:created', test).keys.should == %w(id build_id repository_id number queue)
+      receiver.payload_for('job:created', test).keys.should == [:id, :number, :queue, :repository_id, :build_id]
     end
 
     it 'job:started' do
-      receiver.payload_for('job:started', test).keys.should == %w(id build_id started_at worker sponsor)
+      receiver.payload_for('job:started', test).keys.should == [:id, :started_at, :worker, :sponsor, :build_id]
     end
 
     it 'job:log' do
-      receiver.payload_for('job:log', test, 'log' => 'foo').keys.should == %w(id log)
+      receiver.payload_for('job:log', test, :log => 'foo').keys.should == [:id, :log]
     end
 
     it 'job:finished' do
-      receiver.payload_for('job:finished', test).keys.should == %w(id build_id finished_at result)
+      receiver.payload_for('job:finished', test).keys.should == [:id, :finished_at, :result, :build_id]
     end
 
     it 'build:started' do
-      receiver.payload_for('build:started', build).keys.should == %w(build repository)
+      receiver.payload_for('build:started', build).keys.should == [:build, :repository]
     end
 
     it 'build:finished' do
-      receiver.payload_for('build:finished', build).keys.should == %w(build repository)
+      receiver.payload_for('build:finished', build).keys.should == [:build, :repository]
     end
 
     it 'worker:started' do
-      receiver.payload_for('worker:started', worker).keys.should == %w(id host name state payload last_error)
+      receiver.payload_for('worker:started', worker).keys.should == [:id, :host, :name, :state, :payload, :last_error]
     end
   end
 

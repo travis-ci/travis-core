@@ -8,6 +8,8 @@ module Travis
       # Enqueues a remote job payload so it can be picked up and processed by a
       # Worker.
       class Worker
+        autoload :Payload, 'travis/notifications/handler/worker/payload'
+
         EVENTS = /job:.*:created/
 
         include Logging
@@ -28,21 +30,13 @@ module Travis
           end
 
           def enqueue(job)
-            publisher_for(job).publish(payload_for(job), :properties => { :type => type })
+            publisher_for(job).publish(Payload.for(job), :properties => { :type => type })
           end
 
           protected
 
             def publisher_for(job)
               job.is_a?(Job::Configure) ? Travis::Amqp::Publisher.configure : Travis::Amqp::Publisher.builds(job.queue)
-            end
-
-            def payload_for(job)
-              renderer_for(job).new(job).data
-            end
-
-            def renderer_for(job)
-              Json::Worker::Job.const_get(job.class.name.demodulize)
             end
         end
       end
