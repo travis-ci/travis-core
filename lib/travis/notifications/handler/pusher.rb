@@ -7,8 +7,6 @@ module Travis
 
       # Notifies registered clients about various state changes through Pusher.
       class Pusher
-        autoload :Payload, 'travis/notifications/handler/pusher/payload'
-
         EVENTS = [/build:(started|finished)/, /job:test:(created|started|log|finished)/, /worker:.*/]
 
         include Logging
