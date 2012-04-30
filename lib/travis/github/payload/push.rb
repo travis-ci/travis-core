@@ -41,7 +41,7 @@ module Travis
         end
 
         def commit
-          @commit ||= if commit = gh['commits'].first
+          @commit ||= if commit = gh['commits'].last
             {
               :commit          => commit['sha'],
               :message         => commit['message'],
