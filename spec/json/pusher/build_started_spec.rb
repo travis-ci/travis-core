@@ -2,14 +2,15 @@ require 'spec_helper'
 require 'support/active_record'
 require 'support/formats'
 
-describe Travis::Notifications::Json::Pusher::Build::Started do
+describe 'JSON for pusher' do
   include Support::ActiveRecord, Support::Formats
 
   let(:build) { Factory(:build, :matrix => [test], :config => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] }) }
   let(:test)  { Factory(:test, :config => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' }) }
-  let(:data)  { Travis::Notifications::Json::Pusher::Build::Started.new(build).data }
 
-  it 'build' do
+  it 'build:started' do
+    data = json_for_pusher('build:started', build)
+
     data['build'].except('matrix').should == {
       'id' => build.id,
       'repository_id' => build.repository_id,
@@ -28,9 +29,6 @@ describe Travis::Notifications::Json::Pusher::Build::Started do
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
       'event_type' => 'push'
     }
-  end
-
-  it 'matrix' do
     data['build']['matrix'].first.should == {
       'id' => test.id,
       'repository_id' => build.repository_id,
@@ -47,9 +45,6 @@ describe Travis::Notifications::Json::Pusher::Build::Started do
       'committed_at' => '2011-11-11T11:11:11Z',
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop'
     }
-  end
-
-  it 'repository' do
     data['repository'].should == {
       'id' => build.repository_id,
       'slug' => 'svenfuchs/minimal',

@@ -2,17 +2,15 @@ require 'spec_helper'
 require 'support/active_record'
 require 'support/formats'
 
-describe Travis::Notifications::Json::Worker::Job::Test do
+describe 'JSON for a Job::Test worker job' do
   include Support::ActiveRecord, Support::Formats
-
-  let(:data) { Travis::Notifications::Json::Worker::Job::Test.new(job).data }
-  let(:job)  { Factory(:test, :commit => commit) }
 
   describe 'for a push request' do
     let(:commit) { Factory(:commit, :ref => nil) }
+    let(:job)    { Factory(:test, :commit => commit) }
 
     it 'contains the expected data' do
-      data.should == {
+      json_for_worker(job).should == {
         'type' => 'test',
         'build' => {
           'id' => job.id,
@@ -36,9 +34,10 @@ describe Travis::Notifications::Json::Worker::Job::Test do
 
   describe 'for a pull request' do
     let(:commit) { Factory(:commit, :ref => 'refs/pull/180/merge') }
+    let(:job)    { Factory(:test, :commit => commit) }
 
     it 'contains the expected data' do
-      data.should == {
+      json_for_worker(job).should == {
         'type' => 'test',
         'build' => {
           'id' => job.id,
@@ -61,4 +60,3 @@ describe Travis::Notifications::Json::Worker::Job::Test do
     end
   end
 end
-

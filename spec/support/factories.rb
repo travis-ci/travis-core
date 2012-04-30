@@ -36,7 +36,7 @@ FactoryGirl.define do
     log        { Factory(:log) }
     config     { { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' } }
     number     '2.1'
-    tags       ''
+    tags       ""
   end
 
   factory :log, :class => 'Artifact::Log' do

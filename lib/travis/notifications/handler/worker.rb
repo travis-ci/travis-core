@@ -30,6 +30,7 @@ module Travis
           end
 
           def enqueue(job)
+            type = job.class.name.demodulize.underscore
             publisher_for(job).publish(Payload.for(job), :properties => { :type => type })
           end
 

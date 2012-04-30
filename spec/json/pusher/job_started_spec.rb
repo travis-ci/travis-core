@@ -2,11 +2,10 @@ require 'spec_helper'
 require 'support/active_record'
 require 'support/formats'
 
-describe Travis::Notifications::Json::Pusher::Job::Started do
+describe 'JSON for pusher' do
   include Support::ActiveRecord, Support::Formats
 
   let(:test) { Factory(:test, :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4') }
-  let(:data) { Travis::Notifications::Json::Pusher::Job::Started.new(test).data }
 
   before :each do
     Travis.config.sponsors.workers = {
@@ -17,8 +16,8 @@ describe Travis::Notifications::Json::Pusher::Job::Started do
     }
   end
 
-  it 'data' do
-    data.should == {
+  it 'job:started' do
+    json_for_pusher('job:started', test).should == {
       'id' => test.id,
       'build_id' => test.source_id,
       'started_at' => nil,
@@ -27,4 +26,3 @@ describe Travis::Notifications::Json::Pusher::Job::Started do
     }
   end
 end
-
