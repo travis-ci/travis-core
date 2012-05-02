@@ -65,8 +65,14 @@ module Travis
     end
 
     module Assets
+      HOSTS = {
+        :production  => 'travis-assets.herokuapp.com',
+        :staging     => 'travis-assets-staging.herokuapp.com',
+        :development => 'localhost:3000'
+      }
+
       def host
-        'localhost:3000' if Travis.config.env == 'development'
+        HOSTS[Travis.config.env.to_sym]
       end
 
       def version
