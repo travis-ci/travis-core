@@ -8,7 +8,7 @@
       <div id="build" class="section">
         <div class="content">
           <h1>
-            <table class="status" background="https://secure.travis-ci.org/images/mailer/<%= header_status(@build) %>-header-bg.png">
+            <table class="status" background="https://<%= Travis.config.assets.host %>/<%= Travis.config.assets.version %>/images/mailer/<%= header_status(@build) %>-header-bg.png">
               <tr>
                 <td><%= @build.human_status_message %></td>
               </tr>
@@ -51,7 +51,7 @@
         <table border="0" class="footer">
           <tr>
             <td>
-              <img src="https://secure.travis-ci.org/images/mailer/footer-logo-38x38.png">
+              <img src="https://<%= Travis.config.assets.host %>/<%= Travis.config.assets.version %>/images/mailer/footer-logo-38x38.png">
             </td>
             <td>
               You can configure recipients for build notifications in your
@@ -67,7 +67,7 @@
         <table border="0">
           <tr>
             <td>
-              <img src="https://secure.travis-ci.org/images/mailer/please-donate.png">
+              <img src="https://<%= Travis.config.assets.host %>/<%= Travis.config.assets.version %>/images/mailer/please-donate.png">
             </td>
             <td>
               <h2>We need your help!</h2>
@@ -96,7 +96,7 @@
                     <tr>
                       <td>
                         <a href="<%= sponsor.url %>">
-                          <img src="https://secure.travis-ci.org/images/sponsors/<%= sponsor.name %>-100x60.png">
+                          <img src="https://<%= Travis.config.assets.host %>/<%= Travis.config.assets.version %>/images/sponsors/<%= sponsor.name %>-100x60.png">
                         </a>
                       </td>
                       <td>

@@ -115,7 +115,7 @@ describe Travis::Mailer::Build do
         end
 
         it 'adds a sponsor image' do
-          sponsor.should =~ %r(<img src="https://secure.travis-ci.org/images/sponsors/xing-100x60.png")
+          sponsor.should =~ %r(<img src="https://#{Travis.config.assets.host}/#{Travis.config.assets.version}/images/sponsors/xing-100x60.png")
         end
 
         it 'does not escape tags contained in the sponsor text' do
@@ -142,7 +142,7 @@ describe Travis::Mailer::Build do
 
     describe 'for a broken build with tags' do
       let(:build) { Factory(:broken_build_with_tags) }
-      
+
       before :each do
         Job::Tagging.stubs(:rules).returns [
           { 'tag' => 'database_missing',   'message' => 'Your should create a test database.'                 },
