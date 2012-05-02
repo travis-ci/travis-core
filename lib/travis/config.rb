@@ -1,7 +1,9 @@
 require 'hashr'
 require 'yaml'
+
 require 'active_support/core_ext/object/blank'
 require 'core_ext/hash/deep_symbolize_keys'
+require 'core_ext/kernel/run_periodically'
 
 # Encapsulates the configuration necessary for travis-core.
 #
@@ -112,5 +114,34 @@ module Travis
     def http_shorten_host
       "http://#{shorten_host}"
     end
+
+    def update_periodically
+      update
+      run_periodically(60, &method(:update))
+    end
+
+    protected
+
+      def update
+        response = http_client.get("http://#{Travis.config.assets.host}/current")
+        if response.success?
+          self.assets.version = response.body
+        else
+          error(response)
+        end
+      rescue Faraday::Error::ClientError => e
+        error(e.response)
+      end
+
+      def error(response)
+        error "Could not retrieve asset version (#{response[:status]} #{response[:body]})."
+      end
+
+      def http_client
+        @http_client ||= Faraday.new do |f|
+          f.request :url_encoded
+          f.adapter :net_http
+        end
+      end
   end
 end
