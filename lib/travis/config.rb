@@ -20,7 +20,8 @@ module Travis
   class Config < Hashr
     class << self
       def env
-       ENV['ENV'] || ENV['RAILS_ENV'] || ENV['RACK_ENV'] || 'development'
+        puts "[DEPRECATED] Travis::Config.env is deprecated. Please use Travis.env."
+        Travis.env
       end
 
       def load_env
@@ -28,7 +29,7 @@ module Travis
       end
 
       def load_file
-        @load_file ||= YAML.load_file(filename)[env] if File.exists?(filename) rescue {}
+        @load_file ||= YAML.load_file(filename)[Travis.env] if File.exists?(filename) rescue {}
       end
 
       def filename
@@ -64,27 +65,19 @@ module Travis
       end
     end
 
-    module Assets
-      HOSTS = {
-        :production  => 'travis-assets.herokuapp.com',
-        :staging     => 'travis-assets-staging.herokuapp.com',
-        :development => 'localhost:3000'
-      }
+    HOSTS = {
+      :production  => 'travis-assets.herokuapp.com',
+      :staging     => 'travis-assets-staging.herokuapp.com',
+      :development => 'localhost:3000'
+    }
 
-      def host
-        HOSTS[Travis.config.env.to_sym]
-      end
-
-      def version
-        defined?(Travis::Assets) ? Travis::Assets.version : 'asset-id'
-      end
-    end
+    include Logging
 
     define  :host          => 'travis-ci.org',
             :shorten_host  => 'trvs.io',
-            :assets        => { :_include => Assets },
+            :assets        => { :host => HOSTS[Travis.env.to_sym], :version => defined?(Travis::Assets) ? Travis::Assets.version : 'asset-id' },
             :amqp          => { :username => 'guest', :password => 'guest', :host => 'localhost', :prefetch => 1 },
-            :database      => { :adapter => 'postgresql', :database => "travis_#{Travis::Config.env}", :encoding => 'unicode', :min_messages => 'warning' },
+            :database      => { :adapter => 'postgresql', :database => "travis_#{Travis.env}", :encoding => 'unicode', :min_messages => 'warning' },
             :airbrake      => { :key => 'airbrake-api_key' },
             :pusher        => { :app_id => 'app-id', :key => 'key', :secret => 'secret' },
             :smtp          => { :user_name => 'postmark-api_key' },
@@ -108,7 +101,8 @@ module Travis
     end
 
     def env
-      self.class.env
+      puts "[DEPRECATED] Travis.config.env is deprecated. Please use Travis.env."
+      Travis.env
     end
 
     def http_host

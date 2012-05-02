@@ -11,11 +11,7 @@ module Travis
         ActiveRecord::Base.default_timezone = :utc
         ActiveRecord::Base.logger = Travis.logger
         ActiveRecord::Base.configurations = { env => Travis.config.database }
-        ActiveRecord::Base.establish_connection(env)
-      end
-
-      def env
-        Travis.config.env
+        ActiveRecord::Base.establish_connection(Travis.env)
       end
     end
   end

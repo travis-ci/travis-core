@@ -54,6 +54,10 @@ module Travis
   autoload :Tasks,         'travis/tasks'
 
   class << self
+    def env
+     ENV['ENV'] || ENV['RAILS_ENV'] || ENV['RACK_ENV'] || 'development'
+    end
+
     def config
       @config ||= Config.new
     end
