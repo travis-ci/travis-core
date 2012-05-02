@@ -39,7 +39,7 @@ describe Travis::Features do
       it "should use the environment variable if available" do
         Travis::Features.start
         client = Travis::Features.redis.client
-        client.host.should == 'localhost'
+        client.host.should == '127.0.0.1'
       end
     end
 

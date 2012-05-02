@@ -62,25 +62,21 @@ module Travis
         data.merge!(:database => database_from_env) if database_env_url
         data
       end
+    end
 
-      def default_asset_host
-        if Travis.config.env == 'development'
-          'localhost:3000'
-        else
-          host = 'travis-assets'
-          host += "-#{Travis::Config.env}" if Travis.config.env == 'staging'
-          "#{host}.herokuapp.com"
-        end
+    module Assets
+      def host
+        'localhost:3000' if Travis.config.env == 'development'
       end
 
-      def default_assets_version
+      def version
         defined?(Travis::Assets) ? Travis::Assets.version : 'asset-id'
       end
     end
 
     define  :host          => 'travis-ci.org',
             :shorten_host  => 'trvs.io',
-            :assets        => { :host => default_asset_host, :version => default_assets_version },
+            :assets        => { :_include => Assets },
             :amqp          => { :username => 'guest', :password => 'guest', :host => 'localhost', :prefetch => 1 },
             :database      => { :adapter => 'postgresql', :database => "travis_#{Travis::Config.env}", :encoding => 'unicode', :min_messages => 'warning' },
             :airbrake      => { :key => 'airbrake-api_key' },
