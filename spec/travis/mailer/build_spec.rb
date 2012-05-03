@@ -115,7 +115,7 @@ describe Travis::Mailer::Build do
         end
 
         it 'adds a sponsor image' do
-          sponsor.should =~ %r(<img src="https://#{Travis.config.assets.host}/#{Travis.config.assets.version}/images/sponsors/xing-100x60.png")
+          sponsor.should =~ %r(<img src="https://love.travis-ci.org/images/sponsors/xing-100x60.png")
         end
 
         it 'does not escape tags contained in the sponsor text' do

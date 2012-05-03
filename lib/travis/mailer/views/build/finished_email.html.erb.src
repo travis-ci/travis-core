@@ -96,7 +96,7 @@
                     <tr>
                       <td>
                         <a href="<%= sponsor.url %>">
-                          <img src="https://<%= Travis.config.assets.host %>/<%= Travis.config.assets.version %>/images/sponsors/<%= sponsor.name %>-100x60.png">
+                          <img src="https://love.travis-ci.org/images/sponsors/<%= sponsor.name %>-100x60.png">
                         </a>
                       </td>
                       <td>
