@@ -123,9 +123,11 @@ module Travis
     protected
 
       def update
+        puts "[asset-version] Updating asset version from http://#{Travis.config.assets.host}/current"
         response = http_client.get("http://#{Travis.config.assets.host}/current")
         if response.success?
           self.assets.version = response.body
+          puts "[asset-version] Updated asset version to #{assets.version}"
         else
           error(response)
         end
