@@ -14,7 +14,7 @@ module Travis
           end
         end
 
-        def header_status(build)
+        def header_result(build)
           build.passed? ? 'success' : 'failure'
         end
 

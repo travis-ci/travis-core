@@ -39,7 +39,7 @@ class Job
 
     def force_finish
       append_log!("\n#{FORCE_FINISH_MESSAGE}") if respond_to?(:append_log!)
-      finish!(:status => 1, :finished_at => Time.now.utc)
+      finish!(:result => 1, :finished_at => Time.now.utc)
     end
 
     def requeueable?

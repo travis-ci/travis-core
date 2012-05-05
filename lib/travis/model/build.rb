@@ -31,7 +31,7 @@ require 'core_ext/hash/deep_symbolize_keys'
 #  * Matrix        - logic related to expanding the build matrix, normalizing
 #                    configuration for Job::Test instances, evaluating the
 #                    final build result etc.
-#  * Messages      - helpers for evaluating human readable status messages
+#  * Messages      - helpers for evaluating human readable result messages
 #                    (e.g. "Still Failing")
 #  * Notifications - helpers that are used by notification handlers (and that
 #                    TODO probably should be cleaned up and moved to

@@ -19,7 +19,7 @@ module Travis
                 'repository_id' => job.repository_id,
                 'number' => job.number,
                 'config' => job.config.stringify_keys,
-                'result' => job.status,
+                'result' => job.result,
                 'started_at' => format_date(job.started_at),
                 'finished_at' => format_date(job.finished_at),
               }

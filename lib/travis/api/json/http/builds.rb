@@ -23,7 +23,7 @@ module Travis
               'repository_id' => build.repository_id,
               'number' => build.number,
               'state' => build.state.to_s,
-              'result' => build.status,
+              'result' => build.result,
               'started_at' => format_date(build.started_at),
               'finished_at' => format_date(build.finished_at),
               'duration' => build.duration,

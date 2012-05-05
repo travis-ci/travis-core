@@ -41,7 +41,7 @@ describe Travis::Notifications::Handler::Template do
       template.author.should == 'Sven Fuchs'
     end
 
-    it "should return the status message" do
+    it "should return the result message" do
       template.message.should == "The build is pending."
     end
 

@@ -29,40 +29,40 @@ describe Build, 'matrix' do
     end
   end
 
-  describe :matrix_status do
-    context "if any job has the status 1" do
+  describe :matrix_result do
+    context "if any job has the result 1" do
       it 'returns 1 ' do
         build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] })
-        build.matrix[0].update_attributes!(:status => 1, :state => :finished)
-        build.matrix[1].update_attributes!(:status => 0, :state => :finished)
-        build.matrix_status.should == 1
+        build.matrix[0].update_attributes!(:result => 1, :state => :finished)
+        build.matrix[1].update_attributes!(:result => 0, :state => :finished)
+        build.matrix_result.should == 1
       end
     end
 
-    context "if all jobs have the status 0" do
+    context "if all jobs have the result 0" do
       it 'returns 0' do
         build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] })
-        build.matrix[0].update_attributes!(:status => 0, :state => :finished)
-        build.matrix[1].update_attributes!(:status => 0, :state => :finished)
-        build.matrix_status.should == 0
+        build.matrix[0].update_attributes!(:result => 0, :state => :finished)
+        build.matrix[1].update_attributes!(:result => 0, :state => :finished)
+        build.matrix_result.should == 0
       end
     end
 
     context "if a failed job is allowed to fail" do
       it 'returns 0' do
         build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] })
-        build.matrix[0].update_attributes!(:status => 0, :state => :finished)
-        build.matrix[1].update_attributes!(:status => 1, :state => :finished, :allow_failure => true)
-        build.matrix_status.should == 0
+        build.matrix[0].update_attributes!(:result => 0, :state => :finished)
+        build.matrix[1].update_attributes!(:result => 1, :state => :finished, :allow_failure => true)
+        build.matrix_result.should == 0
       end
     end
 
     context "if all jobs fail and one is allowed to fail" do
       it 'returns 1' do
         build = Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] })
-        build.matrix[0].update_attributes!(:status => 1, :state => :finished)
-        build.matrix[1].update_attributes!(:status => 1, :state => :finished, :allow_failure => true)
-        build.matrix_status.should == 1
+        build.matrix[0].update_attributes!(:result => 1, :state => :finished)
+        build.matrix[1].update_attributes!(:result => 1, :state => :finished, :allow_failure => true)
+        build.matrix_result.should == 1
       end
     end
   end
@@ -70,9 +70,9 @@ describe Build, 'matrix' do
   describe :matrix_duration do
     let(:build) do
       Build.new(:matrix => [
-                            Job::Test.new(:started_at => 60.seconds.ago, :finished_at => 40.seconds.ago),
-                            Job::Test.new(:started_at => 20.seconds.ago, :finished_at => 10.seconds.ago)
-                           ])
+        Job::Test.new(:started_at => 60.seconds.ago, :finished_at => 40.seconds.ago),
+        Job::Test.new(:started_at => 20.seconds.ago, :finished_at => 10.seconds.ago)
+       ])
     end
 
     context "if the matrix is finished" do

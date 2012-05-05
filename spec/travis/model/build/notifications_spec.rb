@@ -76,10 +76,10 @@ describe Build::Notifications do
       [false, true,  { :notifications => { :on_success => 'change' } }, true ],
       [false, true,  { :notifications => { :on_success => 'never'  } }, false],
     ]
-    status = { true  => 'passed', false => 'failed' }
+    results = { true  => 'passed', false => 'failed' }
 
     combinations.each do |previous, current, config, result|
-      it "returns #{result} if the previous build #{status[previous]}, the current build #{status[current]} and config is #{config}" do
+      it "returns #{result} if the previous build #{results[previous]}, the current build #{results[current]} and config is #{config}" do
         stubs(:config => config, :passed? => current, :failed? => !current, :previous_on_branch => stub('previous', :passed? => previous))
         send_email_notifications_on_finish?.should == result
       end

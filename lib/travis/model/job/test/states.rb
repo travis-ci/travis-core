@@ -17,6 +17,9 @@ class Job
     module States
       extend ActiveSupport::Concern
 
+      # TODO remove status after migrating to result columns
+      FINISHING_ATTRIBUTES = [:status, :result, :finished_at]
+
       included do
         include SimpleStates, Job::States, Travis::Notifications
 
@@ -34,7 +37,7 @@ class Job
       end
 
       def finish(data = {})
-        [:status, :finished_at].each do |key|
+        FINISHING_ATTRIBUTES.each do |key|
           send(:"#{key}=", data[key]) if data.key?(key)
         end
       end
@@ -46,7 +49,7 @@ class Job
       protected
 
         def extract_finishing_attributes(attributes)
-          extract!(attributes, :finished_at, :status)
+          extract!(attributes, *FINISHING_ATTRIBUTES)
         end
     end
   end

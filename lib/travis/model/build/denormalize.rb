@@ -5,8 +5,8 @@ class Build
   #
   # E.g. on `start` the `started_at` attribute of a build gets set to its
   # repository's `last_started_at` attribute. Likewise on `finish` the
-  # `finished_at` and `status` attributes are set to `last_finished_at` and
-  # `last_status` on the repository.
+  # `finished_at` and `result` attributes are set to `last_finished_at` and
+  # `last_result` on the repository.
   #
   # These attributes are used in the repositories list and thus read frequently.
   module Denormalize
@@ -15,8 +15,8 @@ class Build
     end
 
     DENORMALIZE = {
-      :start  => %w(id language number status duration started_at finished_at),
-      :finish => %w(duration status finished_at)
+      :start  => %w(id language number result duration started_at finished_at),
+      :finish => %w(duration result finished_at)
     }
 
     def denormalize?(event)

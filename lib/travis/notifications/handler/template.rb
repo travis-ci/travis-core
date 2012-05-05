@@ -37,7 +37,7 @@ module Travis
         end
 
         def message
-          build.human_status_message
+          build.human_result_message
         end
 
         def compare_url

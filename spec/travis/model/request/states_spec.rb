@@ -240,7 +240,7 @@ describe Request::States do
 
   describe 'extract_attributes' do
     it 'discards values from the given hash that are not attributes' do
-      result = request.send(:extract_attributes, { :state => :finished, :status => 1, 'source' => 'github' })
+      result = request.send(:extract_attributes, { :state => :finished, :result => 1, 'source' => 'github' })
       result.should == { :state => :finished, :source => 'github' }
     end
   end

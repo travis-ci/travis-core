@@ -35,12 +35,12 @@ describe Build, 'denormalization' do
 
   describe 'on build:finished' do
     before :each do
-      build.denormalize(:finish, :status => 0)
+      build.denormalize(:finish, :result => 0)
       build.reload
     end
 
-    it 'denormalizes last_build_status to its repository' do
-      build.repository.last_build_status.should == build.status
+    it 'denormalizes last_build_result to its repository' do
+      build.repository.last_build_result.should == build.result
     end
 
     it 'denormalizes last_build_duration to its repository' do

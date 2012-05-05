@@ -166,47 +166,47 @@ describe Build do
     end
 
     describe :passed? do
-      it 'passed? returns true if status is 0' do
-        build = Factory(:build, :status => 0)
+      it 'passed? returns true if result is 0' do
+        build = Factory(:build, :result => 0)
         build.passed?.should be_true
       end
 
-      it 'passed? returns true if status is 1' do
-        build = Factory(:build, :status => 1)
+      it 'passed? returns true if result is 1' do
+        build = Factory(:build, :result => 1)
         build.passed?.should be_false
       end
     end
 
-    describe :status_message do
+    describe :result_message do
       it 'returns "Passed" if the build has passed' do
-        build = Factory(:build, :status => 0, :state => :finished)
-        build.status_message.should == 'Passed'
+        build = Factory(:build, :result => 0, :state => :finished)
+        build.result_message.should == 'Passed'
       end
 
       it 'returns "Failed" if the build has failed' do
-        build = Factory(:build, :status => 1, :state => :finished)
-        build.status_message.should == 'Failed'
+        build = Factory(:build, :result => 1, :state => :finished)
+        build.result_message.should == 'Failed'
       end
 
       it 'returns "Pending" if the build is pending' do
-        build = Factory(:build, :status => nil, :state => :started)
-        build.status_message.should == 'Pending'
+        build = Factory(:build, :result => nil, :state => :started)
+        build.result_message.should == 'Pending'
       end
     end
 
     describe :color do
       it 'returns "green" if the build has passed' do
-        build = Factory(:build, :status => 0, :state => :finished)
+        build = Factory(:build, :result => 0, :state => :finished)
         build.color.should == 'green'
       end
 
       it 'returns "red" if the build has failed' do
-        build = Factory(:build, :status => 1, :state => :finished)
+        build = Factory(:build, :result => 1, :state => :finished)
         build.color.should == 'red'
       end
 
       it 'returns "yellow" if the build is pending' do
-        build = Factory(:build, :status => nil, :state => :started)
+        build = Factory(:build, :result => nil, :state => :started)
         build.color.should == 'yellow'
       end
     end
@@ -223,7 +223,7 @@ describe Build do
       previous = build.previous_finished_on_branch
       previous.number.should == "3"
       previous.passed?.should == false
-      build.status_message.should == "Fixed"
+      build.result_message.should == "Fixed"
     end
   end
 end

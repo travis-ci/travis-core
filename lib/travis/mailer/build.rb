@@ -14,7 +14,7 @@ module Travis
       private
 
         def subject
-          "[#{@build.status_message}] #{@build.repository.slug}##{@build.number} (#{@commit.branch} - #{@commit.commit[0, 7]})"
+          "[#{@build.result_message}] #{@build.repository.slug}##{@build.number} (#{@commit.branch} - #{@commit.commit[0, 7]})"
         end
 
         def from

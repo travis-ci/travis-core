@@ -32,7 +32,7 @@ class Build
     end
 
     def finish(data = {})
-      self.status = matrix_status
+      self.result = matrix_result
       self.duration = matrix_duration
       self.finished_at = data[:finished_at]
     end
@@ -42,7 +42,7 @@ class Build
     end
 
     def passed?
-      status == 0
+      result == 0
     end
 
     def failed?

@@ -17,14 +17,14 @@ class Repository < ActiveRecord::Base
 
   has_many :requests, :dependent => :delete_all
   has_many :builds, :dependent => :delete_all do
-    def last_status_on(params)
-      last_finished_on_branch(params[:branch]).try(:matrix_status, params)
+    def last_result_on(params)
+      last_finished_on_branch(params[:branch]).try(:matrix_result, params)
     end
   end
 
   has_one :last_build,   :class_name => 'Build', :order => 'id DESC', :conditions => { :state  => ['started', 'finished']  }
-  has_one :last_success, :class_name => 'Build', :order => 'id DESC', :conditions => { :status => 0 }
-  has_one :last_failure, :class_name => 'Build', :order => 'id DESC', :conditions => { :status => 1 }
+  has_one :last_success, :class_name => 'Build', :order => 'id DESC', :conditions => { :result => 0 }
+  has_one :last_failure, :class_name => 'Build', :order => 'id DESC', :conditions => { :result => 1 }
   has_one :key, :class_name => 'SslKey'
   belongs_to :owner, :polymorphic => true
 
@@ -93,9 +93,9 @@ class Repository < ActiveRecord::Base
     builds.descending.paged({}).includes([:commit]).map{ |build| build.commit.branch }.uniq
   end
 
-  def last_build_status(params = {})
+  def last_build_result(params = {})
     params = params.symbolize_keys.slice(*Build.matrix_keys_for(params))
-    params.blank? ? read_attribute(:last_build_status) : builds.last_status_on(params)
+    params.blank? ? read_attribute(:last_build_result) : builds.last_result_on(params)
   end
 
   def last_finished_builds_by_branches

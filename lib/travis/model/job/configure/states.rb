@@ -23,7 +23,7 @@ class Job
         event :all, :after => :notify
 
         def finish(data)
-          [:config, :status, :finished_at].each do |key|
+          [:config, :finished_at].each do |key|
             send(:"#{key}=", data[key]) if data.key?(key)
           end
         end

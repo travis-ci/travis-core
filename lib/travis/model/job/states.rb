@@ -34,7 +34,7 @@ class Job
     end
 
     def passed?
-      status == 0
+      result == 0
     end
 
     # TODO should be able to merge this with passed?. either the failure is not allowed or the build has passed.
@@ -43,11 +43,11 @@ class Job
     end
 
     def failed?
-      status == 1
+      result == 1
     end
 
     def unknown?
-      status == nil
+      result == nil
     end
 
     protected

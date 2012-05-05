@@ -8,7 +8,7 @@ FactoryGirl.define do
     started_at { Time.now.utc }
     finished_at { Time.now.utc }
     number 1
-    status 0
+    result 0
   end
 
   factory :commit do
@@ -59,7 +59,7 @@ FactoryGirl.define do
     last_duration 60
     created_at { |r| Time.utc(2011, 01, 30, 5, 25) }
     updated_at { |r| r.created_at + 5.minutes }
-    last_build_status 0
+    last_build_result 0
     last_build_number '2'
     last_build_id 2
     last_build_started_at { Time.now.utc }
@@ -91,25 +91,25 @@ FactoryGirl.define do
 
   factory :successful_build, :parent => :build do
     repository { |b| Factory(:repository, :name => 'successful_build') }
-    status 0
+    result 0
     state :finished
     started_at { Time.now.utc }
     finished_at { Time.now.utc }
   end
 
   factory :broken_build, :parent => :build do
-    repository { Factory(:repository, :name => 'broken_build', :last_build_status => 1) }
-    status 1
+    repository { Factory(:repository, :name => 'broken_build', :last_build_result => 1) }
+    result 1
     state :finished
     started_at { Time.now.utc }
     finished_at { Time.now.utc }
   end
 
   factory :broken_build_with_tags, :parent => :build do
-    repository  { Factory(:repository, :name => 'broken_build_with_tags', :last_build_status => 1) }
+    repository  { Factory(:repository, :name => 'broken_build_with_tags', :last_build_result => 1) }
     matrix      {[Factory(:test, :tags => "database_missing,rake_not_bundled",   :number => "1.1"),
                   Factory(:test, :tags => "database_missing,log_limit_exceeded", :number => "1.2")]}
-    status      1
+    result      1
     state       :finished
     started_at  { Time.now.utc }
     finished_at { Time.now.utc }

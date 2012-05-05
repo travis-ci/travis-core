@@ -47,7 +47,7 @@ class Build
       matrix_finished? ? matrix.inject(0) { |duration, job| duration + job.duration.to_i } : nil
     end
 
-    def matrix_status(config = {})
+    def matrix_result(config = {})
       tests = matrix_for(config)
       if tests.blank?
         nil

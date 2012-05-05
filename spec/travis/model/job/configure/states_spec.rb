@@ -11,7 +11,7 @@ class ConfigureMock
 
   include Job::Configure::States
 
-  attr_accessor :state, :config, :status, :finished_at
+  attr_accessor :state, :config, :result, :finished_at
   def source; @source ||= stub('request', :start => nil, :configure! => nil, :state => nil, :state= => nil) end
   def save!; end
 end
@@ -50,7 +50,7 @@ describe Job::Configure::States do
       end
 
       it 'notifies observers' do
-        data = { :status => 0, :config => config, :finished_at => Time.now.utc }
+        data = { :result => 0, :config => config, :finished_at => Time.now.utc }
 
         Travis::Notifications.expects(:dispatch).with('job:configure:started', job)
         Travis::Notifications.expects(:dispatch).with('job:configure:finished', job, data)
@@ -66,7 +66,7 @@ describe Job::Configure::States do
 
     describe 'update_attributes' do
       describe 'given finishing attributes' do
-        let(:attributes) { { :config => { :rvm => 'rbx' }, :status => 0 } }
+        let(:attributes) { { :config => { :rvm => 'rbx' }, :result => 0 } }
 
         it 'extracts finishing attributes' do
           job.update_attributes(attributes)

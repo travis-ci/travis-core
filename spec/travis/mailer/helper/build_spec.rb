@@ -7,20 +7,20 @@ describe Travis::Mailer::Helper::Build do
 
   let(:build) { Factory(:running_build) }
 
-  let(:successful_build) { Factory(:build, :status => 0) }
-  let(:failed_build)     { Factory(:build, :status => 1) }
+  let(:successful_build) { Factory(:build, :result => 0) }
+  let(:failed_build)     { Factory(:build, :result => 1) }
 
   it '#title returns title for the build' do
     title(build).should == 'Build Update for svenfuchs/running_build'
   end
 
-  describe 'header_status' do
+  describe 'header_result' do
     it 'returns failure header class for a failed build' do
-      header_status(failed_build).should == 'failure'
+      header_result(failed_build).should == 'failure'
     end
 
     it 'returns success header class for a successful build' do
-      header_status(successful_build).should == 'success'
+      header_result(successful_build).should == 'success'
     end
   end
 end
