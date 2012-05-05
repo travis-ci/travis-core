@@ -106,23 +106,18 @@ describe Repository do
     repository.last_build.id.should == build.id
   end
 
-  describe 'last_build_result' do
+  describe 'last_build_result_on' do
     let(:build)      { Factory(:build, :state => 'finished', :config => { 'rvm' => ['1.8.7', '1.9.2'], 'env' => ['DB=sqlite3', 'DB=postgresql'] }) }
     let(:repository) { build.repository }
 
-    it 'returns the last_build_result attribute if no params have been passed' do
-      repository.update_attributes(:last_build_result => 0)
-      repository.reload.last_build_result.should == 0
-    end
-
     it 'returns 0 (passing) if all specified builds are passing' do
       build.matrix.each { |job| job.update_attribute(:result, job.config[:rvm] == '1.8.7' ? 0 : 1) }
-      repository.last_build_result('rvm' => '1.8.7').should == 0
+      repository.last_build_result_on('rvm' => '1.8.7').should == 0
     end
 
     it 'returns 1 (failing) if at least one specified build is failing' do
       build.matrix.each_with_index { |build, ix| build.update_attribute(:result, ix == 0 ? 1 : 0) }
-      repository.last_build_result('rvm' => '1.8.7').should == 1
+      repository.last_build_result_on('rvm' => '1.8.7').should == 1
     end
   end
 
