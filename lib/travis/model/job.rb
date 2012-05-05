@@ -10,6 +10,7 @@ require 'active_record'
 #    build matrix) and executes a test suite with parameters defined in the
 #    configuration.
 class Job < ActiveRecord::Base
+  autoload :Compat,    'travis/model/job/compat'
   autoload :Configure, 'travis/model/job/configure'
   autoload :Cleanup,   'travis/model/job/cleanup'
   autoload :Queue,     'travis/model/job/queue'
@@ -24,7 +25,7 @@ class Job < ActiveRecord::Base
     end
   end
 
-  include Cleanup
+  include Cleanup, Compat
 
   has_one    :log, :class_name => 'Artifact::Log', :conditions => { :type => 'Artifact::Log' }, :dependent => :destroy
   has_many   :artifacts

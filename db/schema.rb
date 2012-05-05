@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120324104051) do
+ActiveRecord::Schema.define(:version => 20120505165100) do
 
   create_table "artifacts", :force => true do |t|
     t.text     "content"
@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(:version => 20120324104051) do
     t.integer  "duration"
     t.integer  "owner_id"
     t.string   "owner_type"
+    t.integer  "result"
   end
 
   add_index "builds", ["repository_id"], :name => "index_builds_on_repository_id"
@@ -85,6 +86,7 @@ ActiveRecord::Schema.define(:version => 20120324104051) do
     t.boolean  "allow_failure", :default => false
     t.integer  "owner_id"
     t.string   "owner_type"
+    t.integer  "result"
   end
 
   add_index "jobs", ["queue", "state"], :name => "index_jobs_on_queue_and_state"
@@ -124,6 +126,7 @@ ActiveRecord::Schema.define(:version => 20120324104051) do
     t.boolean  "private",                :default => false
     t.integer  "owner_id"
     t.string   "owner_type"
+    t.integer  "last_build_result"
   end
 
   add_index "repositories", ["last_build_started_at"], :name => "index_repositories_on_last_build_started_at"

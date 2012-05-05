@@ -11,6 +11,10 @@ require 'active_record'
 # A repository also has a ServiceHook that can be used to de/activate service
 # hooks on Github.
 class Repository < ActiveRecord::Base
+  autoload :Compat, 'travis/model/repository/compat'
+
+  include Compat
+
   has_many :requests, :dependent => :delete_all
   has_many :builds, :dependent => :delete_all do
     def last_status_on(params)
