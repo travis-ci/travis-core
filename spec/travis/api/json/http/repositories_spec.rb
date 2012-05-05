@@ -8,12 +8,8 @@ describe Travis::Api::Json::Http::Repositories do
   let(:data) { Travis::Api::Json::Http::Repositories.new([repository]).data }
   let(:branches) { [] }
 
-  before :each do
-    repository.stubs(:last_finished_builds_by_branches).returns(branches)
-  end
-
   it 'data' do
-    data.first.except('branch_summary').should == {
+    data.first.should == {
       'id' => repository.id,
       'slug' => 'svenfuchs/minimal',
       'description' => 'the repo description',
@@ -26,17 +22,5 @@ describe Travis::Api::Json::Http::Repositories do
       'last_build_language' => 'ruby',
       'last_build_duration' => 60
     }
-  end
-
-  xit 'branch_summary' do
-    # 'branch_summary' => [{
-    #   'build_id' => build.id,
-    #   'commit' => build.commit.commit,
-    #   'branch' => build.commit.branch,
-    #   'message' => build.commit.message,
-    #   'status' => build.status,
-    #   'started_at' => '2010-11-12T12:30:00Z',
-    #   'finished_at' => '2010-11-12T12:30:20Z',
-    # }]
   end
 end
