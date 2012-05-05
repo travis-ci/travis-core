@@ -77,7 +77,7 @@ module Travis
 
     define  :host          => 'travis-ci.org',
             :shorten_host  => 'trvs.io',
-            :assets        => { :host => HOSTS[Travis.env.to_sym], :version => defined?(Travis::Assets) ? Travis::Assets.version : 'asset-id' },
+            :assets        => { :host => HOSTS[Travis.env.to_sym], :version => defined?(Travis::Assets) ? Travis::Assets.version : 'asset-id', :interval => 15 },
             :amqp          => { :username => 'guest', :password => 'guest', :host => 'localhost', :prefetch => 1 },
             :database      => { :adapter => 'postgresql', :database => "travis_#{Travis.env}", :encoding => 'unicode', :min_messages => 'warning' },
             :airbrake      => { :key => 'airbrake-api_key' },
@@ -117,17 +117,16 @@ module Travis
 
     def update_periodically
       update
-      run_periodically(60, &method(:update))
+      run_periodically(Travis.config.assets.interval, &method(:update))
     end
 
     protected
 
       def update
-        puts "[asset-version] Updating asset version from http://#{Travis.config.assets.host}/current"
         response = http_client.get("http://#{Travis.config.assets.host}/current")
         if response.success?
           self.assets.version = response.body
-          puts "[asset-version] Updated asset version to #{assets.version}"
+          puts "[asset-version] Updated asset version from http://#{Travis.config.assets.host}/current to #{assets.version}"
         else
           error(response)
         end
