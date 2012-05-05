@@ -6,7 +6,6 @@ describe Travis::Api::Json::Http::Repositories do
   include Support::Stubs, Support::Formats
 
   let(:data) { Travis::Api::Json::Http::Repositories.new([repository]).data }
-  let(:branches) { [] }
 
   it 'data' do
     data.first.should == {

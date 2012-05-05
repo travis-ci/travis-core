@@ -6,14 +6,9 @@ describe Travis::Api::Json::Http::Repository do
   include Support::Stubs, Support::Formats
 
   let(:data) { Travis::Api::Json::Http::Repository.new(repository).data }
-  let(:branches) { [] }
-
-  before :each do
-    repository.stubs(:last_finished_builds_by_branches).returns(branches)
-  end
 
   it 'data' do
-    data.except('public_key', 'branch_summary').should == {
+    data.except('public_key').should == {
       'id' => repository.id,
       'slug' => 'svenfuchs/minimal',
       'description' => 'the repo description',
@@ -30,17 +25,5 @@ describe Travis::Api::Json::Http::Repository do
 
   it 'public_key' do
     data['public_key'].should =~ /-----BEGIN.*PUBLIC KEY-----/
-  end
-
-  xit 'branch_summary' do
-    # 'branch_summary' => [{
-    #   'build_id' => build.id,
-    #   'commit' => build.commit.commit,
-    #   'branch' => build.commit.branch,
-    #   'message' => build.commit.message,
-    #   'status' => build.status,
-    #   'started_at' => '2010-11-12T12:30:00Z',
-    #   'finished_at' => '2010-11-12T12:30:20Z',
-    # }]
   end
 end
