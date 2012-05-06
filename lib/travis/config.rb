@@ -124,7 +124,7 @@ module Travis
 
       def update
         version = fetch
-        if version && assets.version == version
+        if version && assets.version != version
           self.assets.version = version
           puts "[asset-version] Updated asset version from http://#{Travis.config.assets.host}/current to #{assets.version}"
         end
