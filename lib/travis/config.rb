@@ -123,19 +123,23 @@ module Travis
     protected
 
       def update
-        response = http_client.get("http://#{Travis.config.assets.host}/current")
-        if response.success?
-          self.assets.version = response.body
+        version = fetch
+        if version && assets.version == version
+          self.assets.version = version
           puts "[asset-version] Updated asset version from http://#{Travis.config.assets.host}/current to #{assets.version}"
-        else
-          error(response)
         end
-      rescue Faraday::Error::ClientError => e
-        error(e.response)
       end
 
-      def error(response)
-        error "Could not retrieve asset version (#{response[:status]} #{response[:body]})."
+      def fetch
+        response = http_client.get("http://#{Travis.config.assets.host}/current")
+        if response.success?
+          response.body
+        else
+          log_error "Could not retrieve asset version (#{response[:status]} #{response[:body]})."
+          nil
+        end
+      rescue Faraday::Error::ClientError => e
+        log_error "Could not retrieve asset version (#{e.inspect})."
       end
 
       def http_client
