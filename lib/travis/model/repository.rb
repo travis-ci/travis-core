@@ -94,8 +94,16 @@ class Repository < ActiveRecord::Base
   end
 
   def last_build_result(params = {})
-    params = params.symbolize_keys.slice(*Build.matrix_keys_for(params))
-    params.blank? ? read_attribute(:last_build_result) : builds.last_result_on(params)
+    if params.blank?
+      read_attribute(:last_build_result)
+    else
+      puts '[DEPRECATED] last_build_results with params is deprecated. please use last_build_result_on(params)'
+      last_build_result_on(params)
+    end
+  end
+
+  def last_build_result_on(params)
+    builds.last_result_on(params.symbolize_keys.slice(*Build.matrix_keys_for(params)))
   end
 
   def last_finished_builds_by_branches

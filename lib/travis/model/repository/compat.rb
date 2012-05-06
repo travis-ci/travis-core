@@ -3,6 +3,7 @@ class Repository
   # Add/remove as needed before/after deploying and running migrations.
   module Compat
     def last_build_status=(last_build_result)
+      puts '[DEPRECATED] setting Repository#last_build_status is deprecated. Please use Repository#last_build_result='
       self.last_build_result = last_build_result
     end
   end

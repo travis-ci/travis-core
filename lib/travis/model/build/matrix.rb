@@ -70,6 +70,8 @@ class Build
       def expand_matrix
         expand_matrix_config(matrix_config.to_a).each_with_index do |row, ix|
           attributes = self.attributes.slice(*Job.column_names).symbolize_keys
+          # TODO remove this once migration to the :result column is done
+          attributes.delete(:status)
           attributes.merge!(
             :owner => owner,
             :number => "#{number}.#{ix + 1}",

@@ -7,13 +7,13 @@ module Travis
             def data
               {
                 'type' => 'configure',
-                'build' => build_data,
+                'job' => job_data,
                 'repository' => repository_data,
                 'queue' => job.queue
               }
             end
 
-            def build_data
+            def job_data
               {
                 'id' => job.id,
                 'commit' => commit.commit,

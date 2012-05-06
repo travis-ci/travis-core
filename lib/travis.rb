@@ -51,7 +51,7 @@ module Travis
   autoload :Mailer,        'travis/mailer'
   autoload :Model,         'travis/model'
   autoload :Notifications, 'travis/notifications'
-  autoload :Tasks,         'travis/tasks'
+  autoload :Task,          'travis/task'
 
   class << self
     def env

@@ -17,6 +17,7 @@ module Support
             :last_build_started_at => Time.now.utc - 1.minute,
             :last_build_finished_at => Time.now.utc,
             :last_build_result => 0,
+            :last_build_result_on => 0,
             :last_build_language => 'ruby',
             :last_build_duration => 60
           }

@@ -1,13 +1,12 @@
 require 'spec_helper'
 require 'support/payloads'
-require 'travis/tasks/configure_build'
 
-describe Travis::Tasks::ConfigureBuild do
+describe Travis::Task::Request::Configure do
   let(:response) { stub('response', :success? => true, :body => 'foo: Foo') }
   let(:http)     { stub('http', :get => response) }
   let(:payload)  { Hashr.new(QUEUE_PAYLOADS['job:configure']) }
   let(:commit)   { payload[:build] }
-  let(:subject)  { Travis::Tasks::ConfigureBuild.new(commit, http) }
+  let(:subject)  { Travis::Task::Request::Configure.new(commit, http) }
   let(:result)   { subject.run }
 
   describe 'run' do
@@ -43,6 +42,26 @@ describe Travis::Tasks::ConfigureBuild do
     it "uses the commits's config_url" do
       commit.expects(:config_url)
       result
+    end
+  end
+
+  describe 'http_options' do
+    before :each do
+      @ssl = Travis.config.ssl
+    end
+
+    after :each do
+      Travis.config.ssl = @ssl
+    end
+
+    it 'returns a hash containing a :ca_path value if present' do
+      Travis.config.ssl = { :ca_path => '/path/to/certs' }
+      subject.send(:http_options)[:ssl][:ca_path].should == '/path/to/certs'
+    end
+
+    it 'returns a hash containing a :ca_file value if present' do
+      Travis.config.ssl = { :ca_file => '/path/to/cert.file' }
+      subject.send(:http_options)[:ssl][:ca_file].should == '/path/to/cert.file'
     end
   end
 end
