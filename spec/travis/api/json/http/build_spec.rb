@@ -41,7 +41,8 @@ describe Travis::Api::Json::Http::Build do
       'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
       'result' => 0,
       'started_at' => json_format_time(Time.now.utc - 1.minute),
-      'finished_at' => json_format_time(Time.now.utc)
+      'finished_at' => json_format_time(Time.now.utc),
+      'allow_failure' => false
     }
   end
 end
