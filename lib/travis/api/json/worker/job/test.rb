@@ -7,14 +7,16 @@ module Travis
             def data
               {
                 'type' => 'test',
-                'build' => build_data,
+                # TODO legacy. remove this once workers respond to a 'job' key
+                'build' => job_data,
+                'job' => job_data,
                 'repository' => repository_data,
                 'config' => job.config,
                 'queue' => job.queue
               }
             end
 
-            def build_data
+            def job_data
               data = {
                 'id' => job.id,
                 'number' => job.number,

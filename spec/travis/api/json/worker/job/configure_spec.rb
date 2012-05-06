@@ -14,7 +14,7 @@ describe Travis::Api::Json::Worker::Job::Configure do
   it 'build' do
     data.should == {
       'type' => 'configure',
-      'build' => {
+      'job' => {
         'id' => test.id,
         'commit' => '62aae5f70ceee39123ef',
         'branch' => 'master',

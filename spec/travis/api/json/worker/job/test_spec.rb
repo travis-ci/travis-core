@@ -16,6 +16,13 @@ describe Travis::Api::Json::Worker::Job::Test do
     it 'contains the expected data' do
       data.should == {
         'type' => 'test',
+        'job' => {
+          'id' => 1,
+          'number' => '2.1',
+          'commit' => '62aae5f70ceee39123ef',
+          'branch' => 'master'
+        },
+        # TODO legacy. remove this once workers respond to a 'job' key
         'build' => {
           'id' => 1,
           'number' => '2.1',
@@ -45,6 +52,14 @@ describe Travis::Api::Json::Worker::Job::Test do
     it 'contains the expected data' do
       data.should == {
         'type' => 'test',
+        'job' => {
+          'id' => 1,
+          'number' => '2.1',
+          'commit' => '62aae5f70ceee39123ef',
+          'branch' => 'master',
+          'ref'    => 'refs/pull/180/merge'
+        },
+        # TODO legacy. remove this once workers respond to a 'job' key
         'build' => {
           'id' => 1,
           'number' => '2.1',
