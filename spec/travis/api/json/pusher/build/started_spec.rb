@@ -43,7 +43,8 @@ describe Travis::Api::Json::Pusher::Build::Started do
       'committer_name' => 'Sven Fuchs',
       'committer_email' => 'svenfuchs@artweb-design.de',
       'committed_at' => json_format_time(Time.now.utc - 1.hour),
-      'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop'
+      'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
+      'allow_failure' => false
     }
   end
 

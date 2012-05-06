@@ -22,6 +22,7 @@ module Travis
                 'result' => job.result,
                 'started_at' => format_date(job.started_at),
                 'finished_at' => format_date(job.finished_at),
+                'allow_failure' => job.allow_failure
               }
             end
           end
