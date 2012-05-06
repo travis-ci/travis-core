@@ -13,7 +13,7 @@ describe Travis::Api::Json::Pusher::Build::Started do
       'repository_id' => build.repository_id,
       'number' => 2,
       'config' => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
-      'result' => 0,
+      'result' => nil,
       'started_at' => json_format_time(Time.now.utc - 1.minute),
       'commit' => '62aae5f70ceee39123ef',
       'branch' => 'master',
