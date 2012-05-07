@@ -110,6 +110,11 @@ describe Repository do
     let(:build)      { Factory(:build, :state => 'finished', :config => { 'rvm' => ['1.8.7', '1.9.2'], 'env' => ['DB=sqlite3', 'DB=postgresql'] }) }
     let(:repository) { build.repository }
 
+    it 'returns last_build_result if params is empty' do
+      repository.expects(:last_build_result).returns(2)
+      repository.last_build_result_on({}).should == 2
+    end
+
     it 'returns 0 (passing) if all specified builds are passing' do
       build.matrix.each { |job| job.update_attribute(:result, job.config[:rvm] == '1.8.7' ? 0 : 1) }
       repository.last_build_result_on('rvm' => '1.8.7').should == 0

@@ -103,7 +103,8 @@ class Repository < ActiveRecord::Base
   end
 
   def last_build_result_on(params)
-    builds.last_result_on(params.symbolize_keys.slice(*Build.matrix_keys_for(params)))
+    params = params.symbolize_keys.slice(*Build.matrix_keys_for(params))
+    params.empty? ? last_build_result : builds.last_result_on(params)
   end
 
   def last_finished_builds_by_branches
