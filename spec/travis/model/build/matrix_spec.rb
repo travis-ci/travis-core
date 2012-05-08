@@ -207,7 +207,7 @@ describe Build, 'matrix' do
         single_test_config['env'] = single_test_config.delete('env').map { |env| repository.key.secure.encrypt(env) }
         build = Factory(:build, :config => single_test_config, :repository => repository)
         build.expand_matrix_config(build.matrix_config.to_a).should == [
-                                                                        [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'USE_GIT_REPOS=true']],
+                                                                        [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'SECURE USE_GIT_REPOS=true']],
                                                                        ]
       end
 
@@ -357,7 +357,7 @@ describe Build, 'matrix' do
         expected = [
                     [[:rvm,     '1.8.7']],
                     [[:gemfile, 'gemfiles/rails-2.3.x']],
-                    [[:env,     'FOO=bar']]
+                    [[:env,     'SECURE FOO=bar']]
                    ]
         build.matrix_config.should == expected
       end
@@ -393,7 +393,7 @@ describe Build, 'matrix' do
         expected = [
                     [[:rvm, '1.8.7'], [:rvm, '1.8.7']],
                     [[:gemfile, 'gemfiles/rails-2.3.x'], [:gemfile, 'gemfiles/rails-2.3.x']],
-                    [[:env, 'FOO=bar'], [:env, 'FOO=baz']]
+                    [[:env, 'SECURE FOO=bar'], [:env, 'FOO=baz']]
                    ]
         build.matrix_config.should == expected
       end

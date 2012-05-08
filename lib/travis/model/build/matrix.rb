@@ -95,9 +95,17 @@ class Build
           keys.inject([]) do |result, key|
             values = config[key]
             values = [values] unless values.is_a?(Array)
-            values.collect! { |value| repository.key.secure.decrypt(value) }
+            decrypt_env(values) if key == :env
             values += [values.last] * (size - values.size) if values.size < size
             result << values.map { |value| [key, value] }
+          end
+        end
+      end
+
+      def decrypt_env(values)
+        values.collect! do |value|
+          repository.key.secure.decrypt(value) do |env|
+            env.insert(0, 'SECURE ')
           end
         end
       end
