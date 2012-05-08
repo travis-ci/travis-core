@@ -68,14 +68,36 @@ describe User do
     let(:user) { User.find_or_create_for_oauth(payload) }
 
     before do
-      WebMock.stub_request(:get, "https://api.github.com/user").
-        with(:headers => {'Authorization' => "token #{payload["credentials"]["token"]}"}).
+      WebMock.stub_request(:get, 'https://api.github.com/user').
+        with(:headers => {'Authorization' => "token #{payload['credentials']['token']}"}).
         to_return(:status => 200, :body => payload.to_json, :headers => {})
     end
 
     it 'should log the user in' do
       user.authenticated_on_github do
-        GH['/user']["name"].should be == payload["name"]
+        GH['/user']['name'].should be == payload['name']
+      end
+    end
+  end
+
+  describe 'authenticate_by_token' do
+    let(:user) { Factory(:user) }
+
+    describe 'given a valid token and login' do
+      it 'authenticates the user' do
+        User.authenticate_by_token(user.login, user.tokens.first.token).should == user
+      end
+    end
+
+    describe 'given a wrong token' do
+      it 'does not authenticate the user' do
+        User.authenticate_by_token('someone-else', user.tokens.first.token).should be_nil
+      end
+    end
+
+    describe 'given a wrong login' do
+      it 'does not authenticate the user' do
+        User.authenticate_by_token(user.login, 'some-other-token').should be_nil
       end
     end
   end

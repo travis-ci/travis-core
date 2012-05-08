@@ -35,6 +35,10 @@ class User < ActiveRecord::Base
           'gravatar_id'        => payload['extra']['raw_info']['gravatar_id']
       }
     end
+
+    def authenticate_by_token(login, token)
+      includes(:tokens).where(:login => login, 'tokens.token' => token).first
+    end
   end
 
   def organization_ids
