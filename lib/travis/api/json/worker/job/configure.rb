@@ -8,6 +8,8 @@ module Travis
               {
                 'type' => 'configure',
                 'job' => job_data,
+                # TODO remove this after workers respond to the job key
+                'build' => job_data,
                 'repository' => repository_data,
                 'queue' => job.queue
               }
