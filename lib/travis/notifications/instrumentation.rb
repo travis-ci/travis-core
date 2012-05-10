@@ -28,7 +28,7 @@ module Travis
         ActiveSupport::Notifications.subscribe(name.to_s, &method(:log_notification))
       end
 
-      def instrument(*args, &block)
+      def instrument(name, *args, &block)
         ActiveSupport::Notifications.instrument(name.to_s, :target => self, :args => args, &block)
       end
     end
