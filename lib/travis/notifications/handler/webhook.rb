@@ -72,7 +72,7 @@ module Travis
             end
 
             def payload_for(build)
-              Api::Json::Webhook::Build::Finished.new(build).data
+              Api::Webhook::Build::Finished.new(build).data
             end
         end
       end
