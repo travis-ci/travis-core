@@ -9,8 +9,9 @@ module Travis
         end
 
         def builder(type, options = {})
-          version = options[:version] || 'v1'
-          "#{name}::#{version.camelize}::#{type}".constantize
+          type = type.to_s.camelize
+          version = (options[:version] || 'v1').camelize
+          "#{name}::#{version}::#{type}".constantize
         end
       end
     end
