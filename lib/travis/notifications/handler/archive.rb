@@ -45,7 +45,7 @@ module Travis
             end
 
             def json_for(build)
-              Api::Json::Archive::Build.new(build).data.to_json
+              Api::Archive::Build.new(build).data.to_json
             end
 
             def http_client

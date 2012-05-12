@@ -55,10 +55,10 @@ module Travis
               object_type = object.class.name.split('::').first
               case object_type
               when 'Worker'
-                Api::Json::Pusher::Worker
+                Api::Pusher::Worker
               else
                 event_type  = event.split(':').last.camelize
-                Api::Json::Pusher.const_get(object_type).const_get(event_type)
+                Api::Pusher.const_get(object_type).const_get(event_type)
               end
             end
         end
