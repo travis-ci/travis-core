@@ -12,7 +12,7 @@ describe Travis::Api::Http::V2::Workers do
   end
 
   it 'workers' do
-    data.first.should == {
+    data['workers'].first.should == {
       'id' => 1,
       'name' => 'ruby-1',
       'host' => 'ruby-1.worker.travis-ci.org',

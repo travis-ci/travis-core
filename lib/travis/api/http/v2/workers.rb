@@ -12,7 +12,9 @@ module Travis
           end
 
           def data
-            workers.map { |worker| worker_data(worker) }
+            {
+              'workers' => workers.map { |worker| worker_data(worker) }
+            }
           end
 
           private

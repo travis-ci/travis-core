@@ -5,17 +5,53 @@ module Travis
         class Branches
           include Formats
 
-          attr_reader :repository
+          attr_reader :builds, :commits
 
           def initialize(repository, options = {})
-            @repository = repository
+            @builds = repository.last_finished_builds_by_branches
+            @commits = builds.map(&:commit)
           end
 
           def data
-            repository.last_finished_builds_by_branches.map do |build|
-              Build.new(build, :include_branches => false).data
-            end
+            {
+              'builds' => builds.map { |build| build_data(build) },
+              'commits' => commits.map { |commit| commit_data(commit) }
+            }
           end
+
+          private
+
+            def build_data(build)
+              {
+                'id' => build.id,
+                'repository_id' => build.repository_id,
+                'commit_id' => build.commit_id,
+                'number' => build.number,
+                'config' => build.config.stringify_keys,
+                'state' => build.state.to_s,
+                'result' => build.result,
+                'started_at' => format_date(build.started_at),
+                'finished_at' => format_date(build.finished_at),
+                'duration' => build.duration,
+                'job_ids' => build.matrix.map { |job| job.id },
+                'pull_request' => build.pull_request?
+              }
+            end
+
+            def commit_data(commit)
+              {
+                'id' => commit.id,
+                'commit' => commit.commit,
+                'branch' => commit.branch,
+                'message' => commit.message,
+                'committed_at' => format_date(commit.committed_at),
+                'author_name' => commit.author_name,
+                'author_email' => commit.author_email,
+                'committer_name' => commit.committer_name,
+                'committer_email' => commit.committer_email,
+                'compare_url' => commit.compare_url,
+              }
+            end
         end
       end
     end

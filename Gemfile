@@ -2,7 +2,6 @@ source :rubygems
 
 gemspec
 
-gem 'active_model_serializers', :git => 'git://github.com/josevalim/active_model_serializers.git'
 gem 'travis-support', :git => 'git://github.com/travis-ci/travis-support'
 gem 'gh',             :git => 'git://github.com/rkh/gh'
 

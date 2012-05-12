@@ -7,8 +7,8 @@ describe Travis::Api::Http::V2::Builds do
 
   let(:data) { Travis::Api::Http::V2::Builds.new([build]).data }
 
-  it 'build' do
-    data.first['build'].should == {
+  it 'builds' do
+    data['builds'].first.should == {
       'id' => 1,
       'repository_id' => 1,
       'commit_id' => 1,
@@ -25,7 +25,7 @@ describe Travis::Api::Http::V2::Builds do
   end
 
   it 'commit' do
-    data.first['commit'].should == {
+    data['commits'].first.should == {
       'id' => commit.id,
       'commit' => '62aae5f70ceee39123ef',
       'branch' => 'master',
