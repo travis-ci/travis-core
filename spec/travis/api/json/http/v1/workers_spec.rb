@@ -2,10 +2,10 @@ require 'spec_helper'
 require 'travis/api'
 require 'travis/api/support/stubs'
 
-describe Travis::Api::Json::Http::Workers do
+describe Travis::Api::Json::Http::V1::Workers do
   include Support::Formats, Support::Stubs
 
-  let(:data) { Travis::Api::Json::Http::Workers.new([worker]).data }
+  let(:data) { Travis::Api::Json::Http::V1::Workers.new([worker]).data }
 
   before(:each) do
     Time.stubs(:now).returns(Time.utc(2011, 11, 11, 11, 11, 11))

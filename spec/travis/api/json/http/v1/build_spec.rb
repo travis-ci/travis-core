@@ -2,10 +2,10 @@ require 'spec_helper'
 require 'travis/api'
 require 'travis/api/support/stubs'
 
-describe Travis::Api::Json::Http::Build do
+describe Travis::Api::Json::Http::V1::Build do
   include Support::Formats, Support::Stubs
 
-  let(:data) { Travis::Api::Json::Http::Build.new(build).data }
+  let(:data) { Travis::Api::Json::Http::V1::Build.new(build).data }
 
   it 'build' do
     data.except('matrix').should == {
