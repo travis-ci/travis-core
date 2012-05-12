@@ -2,10 +2,10 @@ require 'spec_helper'
 require 'travis/api'
 require 'travis/api/support/stubs'
 
-describe Travis::Api::Json::Http::Job::Test do
+describe Travis::Api::Json::Http::V1::Job::Test do
   include Support::Stubs, Support::Formats
 
-  let(:data) { Travis::Api::Json::Http::Job::Test.new(test).data }
+  let(:data) { Travis::Api::Json::Http::V1::Job::Test.new(test).data }
 
   it 'data' do
     data.should == {

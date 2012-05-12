@@ -2,13 +2,13 @@ require 'spec_helper'
 require 'travis/api'
 require 'travis/api/support/stubs'
 
-describe Travis::Api::Json::Http::Repositories do
+describe Travis::Api::Json::Http::V1::Repository do
   include Support::Stubs, Support::Formats
 
-  let(:data) { Travis::Api::Json::Http::Repositories.new([repository]).data }
+  let(:data) { Travis::Api::Json::Http::V1::Repository.new(repository).data }
 
   it 'data' do
-    data.first.should == {
+    data.except('public_key').should == {
       'id' => repository.id,
       'slug' => 'svenfuchs/minimal',
       'description' => 'the repo description',
@@ -21,5 +21,9 @@ describe Travis::Api::Json::Http::Repositories do
       'last_build_language' => 'ruby',
       'last_build_duration' => 60
     }
+  end
+
+  it 'public_key' do
+    data['public_key'].should =~ /-----BEGIN.*PUBLIC KEY-----/
   end
 end

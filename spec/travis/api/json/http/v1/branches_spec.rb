@@ -2,10 +2,10 @@ require 'spec_helper'
 require 'travis/api'
 require 'travis/api/support/stubs'
 
-describe Travis::Api::Json::Http::Branches do
+describe Travis::Api::Json::Http::V1::Branches do
   include Support::Stubs, Support::Formats
 
-  let(:data) { Travis::Api::Json::Http::Branches.new(repository).data }
+  let(:data) { Travis::Api::Json::Http::V1::Branches.new(repository).data }
   let(:branches) { [build] }
 
   before :each do
