@@ -7,8 +7,8 @@ describe Travis::Api::Http::V2::Tests do
 
   let(:data) { Travis::Api::Http::V2::Tests.new([test]).data }
 
-  it 'tests' do
-    data.first.should == {
+  it 'jobs' do
+    data['jobs'].first.should == {
       'id' => test.id,
       'repository_id' => test.repository_id,
       'number' => '2.1',

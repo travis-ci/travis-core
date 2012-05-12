@@ -12,8 +12,8 @@ describe Travis::Api::Http::V2::Branches do
     repository.stubs(:last_finished_builds_by_branches).returns(branches)
   end
 
-  it 'build' do
-    data.first['build'].should == {
+  it 'builds' do
+    data['builds'].first.should == {
       'id' => 1,
       'repository_id' => 1,
       'commit_id' => 1,
@@ -29,8 +29,8 @@ describe Travis::Api::Http::V2::Branches do
     }
   end
 
-  it 'commit' do
-    data.first['commit'].should == {
+  it 'commits' do
+    data['commits'].first.should == {
       'id' => 1,
       'commit' => '62aae5f70ceee39123ef',
       'branch' => 'master',
