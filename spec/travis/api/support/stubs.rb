@@ -11,7 +11,7 @@ module Support
             :description => 'the repo description',
             :url => 'http://github.com/svenfuchs/minimal',
             :source_url => 'git://github.com/svenfuchs/minimal.git',
-            :key => stub('key', :public_key => '-----BEGIN PUBLIC KEY-----'),
+            :key => stub('key', :id => 1, :public_key => '-----BEGIN PUBLIC KEY-----'),
             :last_build_id => 1,
             :last_build_number => 2,
             :last_build_started_at => Time.now.utc - 1.minute,
@@ -31,6 +31,7 @@ module Support
 
         let(:commit) do
           stub 'commit', {
+            :id => 1,
             :commit => '62aae5f70ceee39123ef',
             :branch => 'master',
             :message => 'the commit message',
@@ -50,6 +51,7 @@ module Support
             :repository_id => repository.id,
             :repository => repository,
             :request => request,
+            :commit_id => commit.id,
             :commit => commit,
             :matrix => [test],
             :number => 2,
@@ -60,6 +62,7 @@ module Support
             :started_at => Time.now.utc - 1.minute,
             :finished_at => Time.now.utc,
             :duration => 60,
+            :pull_request? => false
           }
         end
 
@@ -69,6 +72,7 @@ module Support
             :repository_id => 1,
             :repository => repository,
             :source_id => 1,
+            :commit_id => commit.id,
             :commit => commit,
             :log => stub('log', :content => 'the test log'),
             :number => '2.1',

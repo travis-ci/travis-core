@@ -2,6 +2,7 @@ module Travis
   module Api
     module Http
       autoload :V1, 'travis/api/http/v1'
+      autoload :V2, 'travis/api/http/v2'
 
       class << self
         def data(type, resource, params = {}, options = {})
