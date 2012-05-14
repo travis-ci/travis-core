@@ -43,7 +43,8 @@ module Travis
 
             def commit_data(commit)
               {
-                'commit' => commit.commit,
+                'id' => commit.id,
+                'sha' => commit.commit,
                 'branch' => commit.branch,
                 'message' => commit.message,
                 'committed_at' => format_date(commit.committed_at),

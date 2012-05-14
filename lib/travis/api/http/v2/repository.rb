@@ -14,7 +14,7 @@ module Travis
 
           def data
             {
-              'repository' => repository_data(repository)
+              'repositories' => repository_data(repository)
             }
           end
 

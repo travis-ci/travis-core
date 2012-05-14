@@ -6,13 +6,13 @@ module Travis
 
       class << self
         def data(type, resource, params = {}, options = {})
-          builder(type).new(resource, params).data
+          builder(type, options).new(resource, params).data
         end
 
         def builder(type, options = {})
-          type = type.to_s.camelize
+          type = type.to_s.split('::').last.camelize
           version = (options[:version] || 'v1').camelize
-          "#{name}::#{version}::#{type}".constantize
+          "#{name}::#{version}::#{type}".constantize.tap { |c| p c }
         end
       end
     end
