@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120505165100) do
+ActiveRecord::Schema.define(:version => 20120511171900) do
 
   create_table "artifacts", :force => true do |t|
     t.text     "content"
@@ -151,6 +151,8 @@ ActiveRecord::Schema.define(:version => 20120505165100) do
     t.string   "base_commit"
     t.string   "head_commit"
   end
+
+  add_index "requests", ["head_commit"], :name => "index_requests_on_head_commit"
 
   create_table "ssl_keys", :force => true do |t|
     t.integer  "repository_id"
