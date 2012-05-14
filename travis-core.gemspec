@@ -31,14 +31,13 @@ Gem::Specification.new do |s|
 
   # structures
   s.add_dependency 'hashr',             '~> 0.0.19'
-  s.add_dependency 'rabl',              '~> 0.5.1'
   s.add_dependency 'metriks',           '~> 0.9.7'
 
   # app
   s.add_dependency 'simple_states',     '~> 0.1.1'
 
   # apis
-  s.add_dependency 'octokit',           '~> 0.6.5'
+  s.add_dependency 'octokit',           '~> 1.1.0'
   s.add_dependency 'pusher',            '~> 0.9.2'
   s.add_dependency 'gh'
 end
