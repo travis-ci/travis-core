@@ -40,6 +40,7 @@ class Build < ActiveRecord::Base
   autoload :Compat,        'travis/model/build/compat'
   autoload :Denormalize,   'travis/model/build/denormalize'
   autoload :Matrix,        'travis/model/build/matrix'
+  autoload :Metrics,       'travis/model/build/metrics'
   autoload :Messages,      'travis/model/build/messages'
   autoload :Notifications, 'travis/model/build/notifications'
   autoload :States,        'travis/model/build/states'
