@@ -11,7 +11,7 @@ module Travis
             def build_data
               {
                 'id' => build.id,
-                'result' => 0,
+                'result' => build.result,
                 'finished_at' => format_date(build.finished_at)
               }
             end
