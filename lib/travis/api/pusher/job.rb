@@ -14,6 +14,10 @@ module Travis
         def initialize(job)
           @job = job
         end
+
+        def data(extra = {})
+          Http::V2::Job.new(job).data
+        end
       end
     end
   end

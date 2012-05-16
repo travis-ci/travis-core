@@ -12,8 +12,8 @@ describe Travis::Api::Http::V2::Branches do
     repository.stubs(:last_finished_builds_by_branches).returns(branches)
   end
 
-  it 'builds' do
-    data['builds'].first.should == {
+  it 'branches' do
+    data['branches'].first.should == {
       'id' => 1,
       'repository_id' => 1,
       'commit_id' => 1,
@@ -32,7 +32,7 @@ describe Travis::Api::Http::V2::Branches do
   it 'commits' do
     data['commits'].first.should == {
       'id' => 1,
-      'commit' => '62aae5f70ceee39123ef',
+      'sha' => '62aae5f70ceee39123ef',
       'branch' => 'master',
       'message' => 'the commit message',
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',

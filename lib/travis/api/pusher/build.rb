@@ -13,16 +13,8 @@ module Travis
           @build = build
         end
 
-        def commit
-          build.commit
-        end
-
-        def request
-          build.request
-        end
-
-        def repository
-          build.repository
+        def data(extra = {})
+          Http::V2::Build.new(build).data
         end
       end
     end

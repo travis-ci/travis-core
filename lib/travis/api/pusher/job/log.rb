@@ -3,10 +3,8 @@ module Travis
     module Pusher
       class Job
         class Log < Job
-          def data
-            {
-              'id' => job.id,
-            }
+          def data(extra = {})
+            { 'job' => { 'id' => job.id }.merge(extra) }
           end
         end
       end

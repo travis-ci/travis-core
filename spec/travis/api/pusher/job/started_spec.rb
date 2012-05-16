@@ -7,23 +7,8 @@ describe Travis::Api::Pusher::Job::Started do
 
   let(:data) { Travis::Api::Pusher::Job::Started.new(test).data }
 
-  before :each do
-    Travis.config.sponsors.workers = {
-      'ruby3.worker.travis-ci.org' => {
-        'name' => 'Railslove',
-        'url' => 'http://railslove.de'
-      }
-    }
-  end
-
-  it 'data' do
-    data.should == {
-      'id' => 1,
-      'build_id' => 1,
-      'started_at' => json_format_time(Time.now.utc - 1.minute),
-      'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4',
-      'sponsor' => { 'name' => 'Railslove', 'url' => 'http://railslove.de' }
-    }
+  it 'equals the http v2 api payload for the job' do
+    data.should == Travis::Api::Http::V2::Job.new(test).data
   end
 end
 

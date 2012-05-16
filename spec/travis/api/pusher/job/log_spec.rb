@@ -8,9 +8,7 @@ describe Travis::Api::Pusher::Job::Log do
   let(:data) { Travis::Api::Pusher::Job::Log.new(test).data }
 
   it 'data' do
-    data.should == {
-      'id' => test.id
-    }
+    data.should == { 'job' => { 'id' => test.id } }
   end
 end
 

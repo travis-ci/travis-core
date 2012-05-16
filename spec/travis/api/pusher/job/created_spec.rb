@@ -7,13 +7,7 @@ describe Travis::Api::Pusher::Job::Created do
 
   let(:data) { Travis::Api::Pusher::Job::Created.new(test).data }
 
-  it 'data' do
-    data.should == {
-      'id' => test.id,
-      'build_id' => test.source_id,
-      'repository_id' => test.repository_id,
-      'number' => '2.1',
-      'queue' => 'builds.common',
-    }
+  it 'equals the http v2 api payload for the job' do
+    data.should == Travis::Api::Http::V2::Job.new(test).data
   end
 end

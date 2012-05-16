@@ -59,7 +59,6 @@ class User < ActiveRecord::Base
   def github_service_hooks
     Travis::Github.repositories_for_user(login).map do |data|
       ServiceHook.new(
-        :uid => [data.owner.login, data.name].join(':'),
         :owner_name => data.owner.login,
         :name => data.name,
         :url => data.html_url,

@@ -107,7 +107,6 @@ describe User do
 
     it "contains the user's service_hooks (i.e. repository data from github)" do
       service_hook = user.github_service_hooks.first
-      service_hook.uid.should == 'svenfuchs:safemode'
       service_hook.owner_name.should == 'svenfuchs'
       service_hook.name.should == 'safemode'
       service_hook.description.should include('A library for safe evaluation of Ruby code')

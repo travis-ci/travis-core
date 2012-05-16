@@ -7,13 +7,8 @@ describe Travis::Api::Pusher::Job::Finished do
 
   let(:data) { Travis::Api::Pusher::Job::Finished.new(test).data }
 
-  it 'data' do
-    data.should == {
-      'id' => test.id,
-      'build_id' => test.source_id,
-      'finished_at' => json_format_time(Time.now.utc),
-      'result' => 0
-    }
+  it 'equals the http v2 api payload for the job' do
+    data.should == Travis::Api::Http::V2::Job.new(test).data
   end
 end
 

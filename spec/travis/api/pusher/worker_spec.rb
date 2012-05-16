@@ -9,12 +9,14 @@ describe Travis::Api::Pusher::Worker do
 
   it 'data' do
     data.should == {
-      'id' => 1,
-      'host' => 'ruby-1.worker.travis-ci.org',
-      'name' => 'ruby-1',
-      'state' => 'created',
-      'last_error' => nil,
-      'payload' => nil
+      'worker' => {
+        'id' => 1,
+        'host' => 'ruby-1.worker.travis-ci.org',
+        'name' => 'ruby-1',
+        'state' => 'created',
+        'last_error' => nil,
+        'payload' => nil
+      }
     }
   end
 end

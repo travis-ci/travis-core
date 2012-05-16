@@ -2,10 +2,10 @@ require 'spec_helper'
 require 'travis/api'
 require 'travis/api/support/stubs'
 
-describe Travis::Api::Http::V2::Test do
+describe Travis::Api::Http::V2::Job do
   include Support::Stubs, Support::Formats
 
-  let(:data) { Travis::Api::Http::V2::Test.new(test).data }
+  let(:data) { Travis::Api::Http::V2::Job.new(test).data }
 
   it 'job' do
     data['job'].should == {
@@ -20,6 +20,7 @@ describe Travis::Api::Http::V2::Test do
       'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
       'log' => 'the test log',
       'result' => 0,
+      'queue' => 'builds.common',
       'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4',
       'sponsor' => { 'name' => 'Railslove', 'url' => 'http://railslove.de' }
     }
@@ -27,7 +28,9 @@ describe Travis::Api::Http::V2::Test do
 
   it 'commit' do
     data['commit'].should == {
-      'commit' => '62aae5f70ceee39123ef',
+      'id' => 1,
+      'sha' => '62aae5f70ceee39123ef',
+      'message' => 'the commit message',
       'branch' => 'master',
       'message' => 'the commit message',
       'committed_at' => json_format_time(Time.now.utc - 1.hour),

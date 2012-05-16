@@ -48,7 +48,7 @@ module Travis
             end
 
             def payload_for(event, object, extra = {})
-              renderer_for(event, object).new(object).data.merge(extra)
+              renderer_for(event, object).new(object).data(extra)
             end
 
             def renderer_for(event, object)

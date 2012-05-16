@@ -1,7 +1,7 @@
 # Helper object that is aggregated by a Repository and allows to de/activate
 # a service hook on Github.
 class ServiceHook
-  ATTRIBUTES = [:uid, :owner_name, :name, :description, :url, :active, :repository]
+  ATTRIBUTES = [:owner_name, :name, :description, :url, :active, :repository]
 
   attr_accessor *ATTRIBUTES
 

@@ -27,7 +27,7 @@ describe Travis::Api::Http::V2::Builds do
   it 'commit' do
     data['commits'].first.should == {
       'id' => commit.id,
-      'commit' => '62aae5f70ceee39123ef',
+      'sha' => '62aae5f70ceee39123ef',
       'branch' => 'master',
       'message' => 'the commit message',
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
