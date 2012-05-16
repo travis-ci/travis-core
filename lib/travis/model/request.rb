@@ -16,7 +16,7 @@ class Request < ActiveRecord::Base
 
   class << self
     def create_from(type, data, token)
-      ActiveSupport::Notifications.publish('github.requests', 'received', data)
+      Metriks.meter('github.requests.received').mark
       Factory.new(type, data, token).request
     end
 
@@ -37,10 +37,10 @@ class Request < ActiveRecord::Base
 
   before_create do
     if accept?
-      ActiveSupport::Notifications.publish('github.requests.accepted', payload)
+      Metriks.meter('github.requests.accepted').mark
       build_job(:repository => repository, :commit => commit, :owner => owner) # create the initial configure job
     else
-      ActiveSupport::Notifications.publish('github.requests.rejected', payload)
+      Metriks.meter('github.requests.rejected').mark
       self.state = :finished
     end
   end
