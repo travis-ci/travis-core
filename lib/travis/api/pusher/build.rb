@@ -7,15 +7,26 @@ module Travis
 
         include Formats
 
-        attr_reader :build
+        attr_reader :build, :repository
 
         def initialize(build)
           @build = build
+          @repository = build.repository
         end
 
         def data(extra = {})
-          Http::V2::Build.new(build).data
+          repository_data.merge(build_data)
         end
+
+        private
+
+          def build_data
+            Http::V2::Build.new(build).data
+          end
+
+          def repository_data
+            Http::V2::Repository.new(build.repository).data
+          end
       end
     end
   end

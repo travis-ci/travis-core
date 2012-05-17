@@ -71,40 +71,31 @@ describe Travis::Notifications::Handler::Pusher do
 
   describe 'payload_for returns the payload required for client side job events' do
     it 'job:created' do
-      receiver.payload_for('job:created', test).should == Travis::Api::Http::V2::Job.new(test).data
+      receiver.payload_for('job:created', test).should == Travis::Api::Pusher::Job::Created.new(test).data
     end
 
     it 'job:started' do
-      receiver.payload_for('job:started', test).should == Travis::Api::Http::V2::Job.new(test).data
+      receiver.payload_for('job:started', test).should == Travis::Api::Pusher::Job::Started.new(test).data
     end
 
     it 'job:log' do
-      receiver.payload_for('job:log', test, 'log' => 'foo').should == { 'job' => { 'id' => test.id, 'log' => 'foo' } }
+      receiver.payload_for('job:log', test, 'log' => 'foo').should == Travis::Api::Pusher::Job::Log.new(test).data('log' => 'foo')
     end
 
     it 'job:finished' do
-      receiver.payload_for('job:finished', test).should == Travis::Api::Http::V2::Job.new(test).data
+      receiver.payload_for('job:finished', test).should == Travis::Api::Pusher::Job::Finished.new(test).data
     end
 
     it 'build:started' do
-      receiver.payload_for('build:started', build).should == Travis::Api::Http::V2::Build.new(build).data
+      receiver.payload_for('build:started', build).should == Travis::Api::Pusher::Build::Started.new(build).data
     end
 
     it 'build:finished' do
-      receiver.payload_for('build:finished', build).should == Travis::Api::Http::V2::Build.new(build).data
+      receiver.payload_for('build:finished', build).should == Travis::Api::Pusher::Build::Finished.new(build).data
      end
 
     it 'worker:started' do
-      receiver.payload_for('worker:started', worker).should == {
-      'worker' => {
-        'id' => worker.id,
-        'host' => 'ruby-1.worker.travis-ci.org',
-        'name' => 'ruby-1',
-        'state' => 'created',
-        'last_error' => nil,
-        'payload' => nil
-      }
-    }
+      receiver.payload_for('worker:started', worker).should == Travis::Api::Pusher::Worker.new(worker).data
     end
   end
 
