@@ -19,7 +19,6 @@ describe Travis::Api::Http::V2::Repositories do
       'last_build_result' => 0,
       'last_build_language' => 'ruby',
       'last_build_duration' => 60,
-      'public_key_id' => 1
     }
   end
 end
