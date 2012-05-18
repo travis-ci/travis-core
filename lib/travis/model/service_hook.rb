@@ -21,17 +21,21 @@ class ServiceHook
   protected
 
     def activate(user)
-      data = {
-        :token  => user.tokens.first.token,
-        :user   => user.login
-      }
-      data[:domain] = Travis.config.service_hook_url if Travis.config.service_hook_url
-
-      Travis::Github::ServiceHook.add(owner_name, name, user.github_oauth_token, data)
+      update(user, :token => user.tokens.first.token, :user => user.login, :domain => domain, :active => true)
     end
 
     def deactivate(user)
-      Travis::Github::ServiceHook.remove(owner_name, name, user.github_oauth_token)
+      update(user, :token => '', :user => '', :domain => '', :active => false)
+    end
+
+    def update(user, data)
+      user.authenticated_on_github do
+        GH.post("repos/#{repository.slug}/hooks", data)
+      end
+    end
+
+    def domain
+      Travis.config.service_hook_url || ''
     end
 end
 

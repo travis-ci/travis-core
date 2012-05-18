@@ -118,7 +118,7 @@ describe User do
 
     before :each do
       user.github_oauth_token = 'some-token'
-      Travis::Github.stubs(:repositories_for_user).returns(data)
+      Travis::Github.stubs(:repositories_for).returns(data)
     end
 
     it "contains the user's service_hooks (i.e. repository data from github)" do

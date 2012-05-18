@@ -2,13 +2,10 @@ require 'octokit'
 
 module Travis
   module Github
-    autoload :Payload,     'travis/github/payload'
-    autoload :ServiceHook, 'travis/github/service_hook'
-
-    class ServiceHookError < StandardError; end
+    autoload :Payload, 'travis/github/payload'
 
     class << self
-      def repositories_for_user(user)
+      def repositories_for(user)
         user.authenticated_on_github do
           GH['user/repos?per_page=100']
         end
