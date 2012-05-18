@@ -21,17 +21,29 @@ class ServiceHook
   protected
 
     def activate(user)
-      update(user, :name => 'travis', :active => true, :config => { :token => user.tokens.first.token, :user => user.login, :domain => domain })
+      user.authenticated_on_github do
+        hub('subscribe', :user => user.login, :token => user.tokens.first.token, :domain => domain)
+      end
     end
 
     def deactivate(user)
-      update(user, :name => 'travis', :active => false, :config => {})
+      user.authenticated_on_github do
+        hub('unsubscribe')
+      end
     end
 
-    def update(user, data)
-      user.authenticated_on_github do
-        GH.post("repos/#{repository.slug}/hooks", data)
-      end
+    def hub(action, params = {})
+      GH.post('hub', :'hub.mode' => action, :'hub.topic' => topic, :'hub.callback' => callback(params))
+    end
+
+    def topic
+      "https://github.com/#{owner_name}/#{name}/events/push"
+    end
+
+    def callback(params)
+      callback = "github://travis"
+      callback += '?' + params.map { |key, value| [key, value].join('=') }.join('&') unless params.empty?
+      callback
     end
 
     def domain

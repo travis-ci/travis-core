@@ -5,7 +5,7 @@ describe ServiceHook do
   include Support::ActiveRecord
 
   describe 'set' do
-    let(:user)       { stub('user', :login => 'login', :github_oauth_token => 'oauth_token', :tokens => [stub(:token => 'token')]) }
+    let(:user)       { stub('user', :login => 'svenfuchs', :github_oauth_token => 'oauth_token', :tokens => [stub(:token => 'token')]) }
     let(:repository) { Factory(:repository, :owner_name => 'svenfuchs', :name => 'minimal') }
 
     before :each do
@@ -15,8 +15,12 @@ describe ServiceHook do
     it 'activates a service hook' do
       Travis.config.stubs(:service_hook_url).returns(nil)
 
-      data = { :name => 'travis', :active => true, :config => { :user => 'login', :token => 'token', :domain => '' } }
-      GH.expects(:post).with('repos/svenfuchs/minimal/hooks', data)
+      options = {
+        :'hub.mode' => 'subscribe',
+        :'hub.topic' => 'https://github.com/svenfuchs/minimal/events/push',
+        :'hub.callback' => 'github://travis?user=svenfuchs&token=token&domain='
+      }
+      GH.expects(:post).with('hub', options)
 
       repository.service_hook.set(true, user)
       repository.should be_persisted
@@ -26,8 +30,12 @@ describe ServiceHook do
     it 'activates a service hook with a custom service hook url' do
       Travis.config.stubs(:service_hook_url).returns('staging.travis-ci.org')
 
-      data = { :name => 'travis', :active => true, :config => { :user => 'login', :token => 'token', :domain => 'staging.travis-ci.org' } }
-      GH.expects(:post).with('repos/svenfuchs/minimal/hooks', data)
+      options = {
+        :'hub.mode' => 'subscribe',
+        :'hub.topic' => 'https://github.com/svenfuchs/minimal/events/push',
+        :'hub.callback' => 'github://travis?user=svenfuchs&token=token&domain=staging.travis-ci.org'
+      }
+      GH.expects(:post).with('hub', options)
 
       repository.service_hook.set(true, user)
       repository.should be_persisted
@@ -35,8 +43,12 @@ describe ServiceHook do
     end
 
     it 'removes a service hook' do
-      data = { :name => 'travis', :active => false, :config => {} }
-      GH.expects(:post).with('repos/svenfuchs/minimal/hooks', data)
+      options = {
+        :'hub.mode' => 'unsubscribe',
+        :'hub.topic' => 'https://github.com/svenfuchs/minimal/events/push',
+        :'hub.callback' => 'github://travis'
+      }
+      GH.expects(:post).with('hub', options)
 
       repository.service_hook.set(false, user)
       repository.should be_persisted
