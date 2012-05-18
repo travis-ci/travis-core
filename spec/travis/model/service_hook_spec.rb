@@ -5,12 +5,11 @@ describe ServiceHook do
   include Support::ActiveRecord
 
   describe 'set' do
-    # let(:user)       { stub('user', :login => 'login', :github_oauth_token => 'oauth_token', :tokens => [stub(:token => 'user_token')]) }
-    let(:user)       { User.new(:login => 'login', :github_oauth_token => 'oauth_token') }
+    let(:user)       { stub('user', :login => 'login', :github_oauth_token => 'oauth_token', :tokens => [stub(:token => 'token')]) }
     let(:repository) { Factory(:repository, :owner_name => 'svenfuchs', :name => 'minimal') }
 
     before :each do
-      user.stubs(:tokens).returns([stub('token', :token => 'token')])
+      user.stubs(:authenticated_on_github).yields
     end
 
     it 'activates a service hook' do
