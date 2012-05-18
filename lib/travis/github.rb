@@ -8,9 +8,10 @@ module Travis
     class ServiceHookError < StandardError; end
 
     class << self
-      # TODO use GH
-      def repositories_for_user(login)
-        Octokit.repositories(login, :per_page => 9999)
+      def repositories_for_user(user)
+        user.authenticated_on_github do
+          GH['user/repos?per_page=100']
+        end
       end
     end
   end

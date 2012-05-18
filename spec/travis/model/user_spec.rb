@@ -103,14 +103,30 @@ describe User do
   end
 
   describe 'github_service_hooks' do
-    let!(:repository) { Factory(:repository, :name => 'safemode', :active => true) }
+    let!(:repo) { Factory(:repository, :name => 'safemode', :active => true) }
+
+    let(:data) do
+      [
+        {
+        'name' => 'safemode',
+        'owner' => { 'login' => 'svenfuchs' },
+        'description' => 'the description',
+        '_links' => { 'html' => { 'href' => 'https://github.com/svenfuchs/safemode' }}
+        }
+      ]
+    end
+
+    before :each do
+      user.github_oauth_token = 'some-token'
+      Travis::Github.stubs(:repositories_for_user).returns(data)
+    end
 
     it "contains the user's service_hooks (i.e. repository data from github)" do
       service_hook = user.github_service_hooks.first
       service_hook.uid.should == 'svenfuchs:safemode'
       service_hook.owner_name.should == 'svenfuchs'
       service_hook.name.should == 'safemode'
-      service_hook.description.should include('A library for safe evaluation of Ruby code')
+      service_hook.description.should == 'the description'
       service_hook.url.should == 'https://github.com/svenfuchs/safemode'
       service_hook.active.should be_true
     end
