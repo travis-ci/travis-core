@@ -15,12 +15,13 @@ describe ServiceHook do
     it 'activates a service hook' do
       Travis.config.stubs(:service_hook_url).returns(nil)
 
-      options = {
+      data = {
         :'hub.mode' => 'subscribe',
         :'hub.topic' => 'https://github.com/svenfuchs/minimal/events/push',
         :'hub.callback' => 'github://travis?user=svenfuchs&token=token&domain='
       }
-      GH.expects(:post).with('hub', options)
+      data = Faraday::Utils.build_nested_query(data)
+      GH.expects(:post).with('hub', data)
 
       repository.service_hook.set(true, user)
       repository.should be_persisted
@@ -30,12 +31,13 @@ describe ServiceHook do
     it 'activates a service hook with a custom service hook url' do
       Travis.config.stubs(:service_hook_url).returns('staging.travis-ci.org')
 
-      options = {
+      data = {
         :'hub.mode' => 'subscribe',
         :'hub.topic' => 'https://github.com/svenfuchs/minimal/events/push',
         :'hub.callback' => 'github://travis?user=svenfuchs&token=token&domain=staging.travis-ci.org'
       }
-      GH.expects(:post).with('hub', options)
+      data = Faraday::Utils.build_nested_query(data)
+      GH.expects(:post).with('hub', data)
 
       repository.service_hook.set(true, user)
       repository.should be_persisted
@@ -43,12 +45,13 @@ describe ServiceHook do
     end
 
     it 'removes a service hook' do
-      options = {
+      data = {
         :'hub.mode' => 'unsubscribe',
         :'hub.topic' => 'https://github.com/svenfuchs/minimal/events/push',
         :'hub.callback' => 'github://travis'
       }
-      GH.expects(:post).with('hub', options)
+      data = Faraday::Utils.build_nested_query(data)
+      GH.expects(:post).with('hub', data)
 
       repository.service_hook.set(false, user)
       repository.should be_persisted
