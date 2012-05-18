@@ -21,11 +21,11 @@ class ServiceHook
   protected
 
     def activate(user)
-      update(user, :token => user.tokens.first.token, :user => user.login, :domain => domain, :active => true)
+      update(user, :name => 'travis', :active => true, :config => { :token => user.tokens.first.token, :user => user.login, :domain => domain })
     end
 
     def deactivate(user)
-      update(user, :token => '', :user => '', :domain => '', :active => false)
+      update(user, :name => 'travis', :active => false, :config => {})
     end
 
     def update(user, data)
