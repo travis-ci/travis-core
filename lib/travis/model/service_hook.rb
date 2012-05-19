@@ -1,5 +1,3 @@
-require 'faraday/utils'
-
 # Helper object that is aggregated by a Repository and allows to de/activate
 # a service hook on Github.
 class ServiceHook
@@ -35,9 +33,7 @@ class ServiceHook
     end
 
     def update(action, params = {})
-      data = { :'hub.mode' => action, :'hub.topic' => topic, :'hub.callback' => callback(params) }
-      body = Faraday::Utils.build_nested_query(data)
-      GH.post('hub', body)
+      GH.post('hub', :'hub.mode' => action, :'hub.topic' => topic, :'hub.callback' => callback(params))
     end
 
     def topic

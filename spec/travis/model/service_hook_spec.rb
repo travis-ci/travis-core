@@ -20,7 +20,6 @@ describe ServiceHook do
         :'hub.topic' => 'https://github.com/svenfuchs/minimal/events/push',
         :'hub.callback' => 'github://travis?user=svenfuchs&token=token&domain='
       }
-      data = Faraday::Utils.build_nested_query(data)
       GH.expects(:post).with('hub', data)
 
       repository.service_hook.set(true, user)
@@ -36,7 +35,6 @@ describe ServiceHook do
         :'hub.topic' => 'https://github.com/svenfuchs/minimal/events/push',
         :'hub.callback' => 'github://travis?user=svenfuchs&token=token&domain=staging.travis-ci.org'
       }
-      data = Faraday::Utils.build_nested_query(data)
       GH.expects(:post).with('hub', data)
 
       repository.service_hook.set(true, user)
@@ -50,7 +48,6 @@ describe ServiceHook do
         :'hub.topic' => 'https://github.com/svenfuchs/minimal/events/push',
         :'hub.callback' => 'github://travis'
       }
-      data = Faraday::Utils.build_nested_query(data)
       GH.expects(:post).with('hub', data)
 
       repository.service_hook.set(false, user)
