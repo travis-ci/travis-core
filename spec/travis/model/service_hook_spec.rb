@@ -9,7 +9,7 @@ describe ServiceHook do
     let(:repository) { Factory(:repository, :owner_name => 'svenfuchs', :name => 'minimal') }
 
     before :each do
-      user.stubs(:authenticated_on_github).yields
+      # user.stubs(:authenticated_on_github).yields
     end
 
     it 'activates a service hook' do
@@ -20,7 +20,8 @@ describe ServiceHook do
         :'hub.topic' => 'https://github.com/svenfuchs/minimal/events/push',
         :'hub.callback' => 'github://travis?user=svenfuchs&token=token&domain='
       }
-      GH.expects(:post).with('hub', data)
+      # GH.expects(:post).with('hub', data)
+      Faraday::Connection.any_instance.expects(:post).with('/hub', data)
 
       repository.service_hook.set(true, user)
       repository.should be_persisted
@@ -35,7 +36,8 @@ describe ServiceHook do
         :'hub.topic' => 'https://github.com/svenfuchs/minimal/events/push',
         :'hub.callback' => 'github://travis?user=svenfuchs&token=token&domain=staging.travis-ci.org'
       }
-      GH.expects(:post).with('hub', data)
+      # GH.expects(:post).with('hub', data)
+      Faraday::Connection.any_instance.expects(:post).with('/hub', data)
 
       repository.service_hook.set(true, user)
       repository.should be_persisted
@@ -48,7 +50,8 @@ describe ServiceHook do
         :'hub.topic' => 'https://github.com/svenfuchs/minimal/events/push',
         :'hub.callback' => 'github://travis'
       }
-      GH.expects(:post).with('hub', data)
+      # GH.expects(:post).with('hub', data)
+      Faraday::Connection.any_instance.expects(:post).with('/hub', data)
 
       repository.service_hook.set(false, user)
       repository.should be_persisted

@@ -21,20 +21,36 @@ class ServiceHook
   protected
 
     def activate(user)
-      user.authenticated_on_github do
+      authenticated(user) do
         update('subscribe', :user => user.login, :token => user.tokens.first.token, :domain => domain)
       end
     end
 
     def deactivate(user)
-      user.authenticated_on_github do
+      authenticated(user) do
         update('unsubscribe')
       end
     end
 
     def update(action, params = {})
-      GH.post('hub', :'hub.mode' => action, :'hub.topic' => topic, :'hub.callback' => callback(params))
+      data = { :'hub.mode' => action, :'hub.topic' => topic, :'hub.callback' => callback(params) }
+
+      # GH.post('hub', data)
+      connection = Faraday.new(:url => 'https://api.github.com') do |builder|
+        builder.request(:authorization, :token, token)
+        builder.request :multipart
+        builder.request :url_encoded
+        builder.adapter :net_http
+      end
+      connection.post('/hub', data)
     end
+
+    def authenticated(user, &block)
+      # user.authenticated_on_github(&block)
+      @token = user.github_oauth_token
+      yield
+    end
+    attr_reader :token
 
     def topic
       "https://github.com/#{owner_name}/#{name}/events/push"
