@@ -75,15 +75,9 @@ class Build < ActiveRecord::Base
       joins(:commit).where(branches.present? ? ["commits.branch IN (?)", branches] : [])
     end
 
-    def for_event_type(event_type)
-      with_request = includes('request')
-
-      case event_type
-      when 'pull_requests'
-        with_request.pull_requests
-      else
-        with_request.pushes
-      end
+    def by_event_type(event_type)
+      scope = includes('request')
+      event_type == 'pull_request' ?  scope.pull_requests : scope.pushes
     end
 
     def pushes
