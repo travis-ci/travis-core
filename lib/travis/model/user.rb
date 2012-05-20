@@ -27,12 +27,12 @@ class User < ActiveRecord::Base
 
     def user_data_from_oauth(payload) # TODO move this to a OauthPayload
       {
-          'name'               => payload['info']['name'],
-          'email'              => payload['info']['email'],
-          'login'              => payload['info']['nickname'],
-          'github_id'          => payload['uid'].to_i,
-          'github_oauth_token' => payload['credentials']['token'],
-          'gravatar_id'        => payload['extra']['raw_info']['gravatar_id']
+        'name'               => payload['info']['name'],
+        'email'              => payload['info']['email'],
+        'login'              => payload['info']['nickname'],
+        'github_id'          => payload['uid'].to_i,
+        'github_oauth_token' => payload['credentials']['token'],
+        'gravatar_id'        => payload['extra']['raw_info']['gravatar_id']
       }
     end
 
@@ -57,18 +57,19 @@ class User < ActiveRecord::Base
   end
 
   def github_service_hooks
-    Travis::Github.repositories_for_user(login).map do |data|
+    Travis::Github.repositories_for(self).map do |data|
+      repos = repositories_for(data['owner']['login'])
       ServiceHook.new(
-        :owner_name => data.owner.login,
-        :name => data.name,
-        :url => data.html_url,
-        :active => repositories[data.name] && repositories[data.name].active,
-        :description => data.description
+        :uid => [data['owner']['login'], data['name']].join(':'),
+        :owner_name => data['owner']['login'],
+        :name => data['name'],
+        :url => data['_links']['html']['href'],
+        :active => repos[data['name']].try(:active),
+        :description => data['description']
       )
     end
   end
 
-  # TODO: We don't use the GH library yet (used in pull-requests branch)
   def authenticated_on_github(&block)
     fail "we don't have a github token for #{inspect}" if github_oauth_token.blank?
     GH.with(:token => github_oauth_token, &block)
@@ -84,7 +85,8 @@ class User < ActiveRecord::Base
       self.tokens.create!
     end
 
-    def repositories
-      @repositories ||= Repository.where(:owner_name => login).by_name
+    def repositories_for(login)
+      @repos ||= {}
+      @repos[login] ||= Repository.where(:owner_name => login).by_name
     end
 end

@@ -21,17 +21,49 @@ class ServiceHook
   protected
 
     def activate(user)
-      data = {
-        :token  => user.tokens.first.token,
-        :user   => user.login
-      }
-      data[:domain] = Travis.config.service_hook_url if Travis.config.service_hook_url
-
-      Travis::Github::ServiceHook.add(owner_name, name, user.github_oauth_token, data)
+      authenticated(user) do
+        update('subscribe', :user => user.login, :token => user.tokens.first.token, :domain => domain)
+      end
     end
 
     def deactivate(user)
-      Travis::Github::ServiceHook.remove(owner_name, name, user.github_oauth_token)
+      authenticated(user) do
+        update('unsubscribe')
+      end
+    end
+
+    def update(action, params = {})
+      data = { :'hub.mode' => action, :'hub.topic' => topic, :'hub.callback' => callback(params) }
+
+      # GH.post('hub', data)
+      connection = Faraday.new(:url => 'https://api.github.com') do |builder|
+        builder.request(:authorization, :token, token)
+        builder.request :multipart
+        builder.request :url_encoded
+        builder.adapter :net_http
+      end
+      connection.post('/hub', data)
+    end
+
+    def authenticated(user, &block)
+      # user.authenticated_on_github(&block)
+      @token = user.github_oauth_token
+      yield
+    end
+    attr_reader :token
+
+    def topic
+      "https://github.com/#{owner_name}/#{name}/events/push"
+    end
+
+    def callback(params)
+      callback = "github://travis"
+      callback += '?' + params.map { |key, value| [key, value].join('=') }.join('&') unless params.empty?
+      callback
+    end
+
+    def domain
+      Travis.config.service_hook_url || ''
     end
 end
 
