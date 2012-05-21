@@ -12,6 +12,7 @@ require 'active_record'
 # hooks on Github.
 class Repository < ActiveRecord::Base
   autoload :Compat, 'travis/model/repository/compat'
+  autoload :Sync,   'travis/model/repository/sync'
 
   include Compat
 

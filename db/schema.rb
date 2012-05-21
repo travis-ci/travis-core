@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120511171900) do
+ActiveRecord::Schema.define(:version => 20120521174400) do
 
   create_table "artifacts", :force => true do |t|
     t.text     "content"
@@ -105,6 +105,14 @@ ActiveRecord::Schema.define(:version => 20120511171900) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  create_table "permissions", :force => true do |t|
+    t.integer "user_id"
+    t.integer "repository_id"
+  end
+
+  add_index "permissions", ["repository_id"], :name => "index_permissions_on_repository_id"
+  add_index "permissions", ["user_id"], :name => "index_permissions_on_user_id"
 
   create_table "repositories", :force => true do |t|
     t.string   "name"

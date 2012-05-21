@@ -5,6 +5,8 @@ class User < ActiveRecord::Base
   has_many :tokens
   has_many :memberships
   has_many :organizations, :through => :memberships
+  has_many :permissions
+  has_many :repositories, :through => :permissions
 
   attr_accessible :name, :login, :email, :github_id, :github_oauth_token, :gravatar_id
 

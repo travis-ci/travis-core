@@ -10,7 +10,6 @@ class Organization < ActiveRecord::Base
 
     def sync_for(user)
       user.authenticated_on_github do
-        # TODO ask @rkh about this
         GH['user/orgs'].each do |data|
           org = Organization.find_or_create_by_github_id(data['id'])
           org.update_attributes!(:name => data['name'], :login => data['login'])

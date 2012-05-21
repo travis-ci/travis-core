@@ -8,6 +8,7 @@ module Travis
     autoload :Build,       'travis/model/build'
     autoload :Commit,      'travis/model/commit'
     autoload :Job,         'travis/model/job'
+    autoload :Permission,  'travis/model/permission'
     autoload :Repository,  'travis/model/repository'
     autoload :Request,     'travis/model/request'
     autoload :ServiceHook, 'travis/model/service_hook'
