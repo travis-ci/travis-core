@@ -47,6 +47,10 @@ class User < ActiveRecord::Base
     @organization_ids ||= memberships.map(&:organization_id)
   end
 
+  def repository_ids
+    @repository_ids ||= permissions.map(&:repository_id)
+  end
+
   def recently_signed_up?
     @recently_signed_up || false
   end

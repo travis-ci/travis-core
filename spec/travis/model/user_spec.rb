@@ -46,6 +46,24 @@ describe User do
     end
   end
 
+  describe 'repository_ids' do
+    let!(:travis)  { Factory(:repository, :name => 'travis', :owner => Factory(:org, :name => 'travis')) }
+    let!(:sinatra) { Factory(:repository, :name => 'sinatra', :owner => Factory(:org, :name => 'sinatra')) }
+
+    before :each do
+     user.repositories << travis
+     user.save!
+    end
+
+    it 'contains the ids of repositories the user is permitted to see' do
+      user.repository_ids.should include(travis.id)
+    end
+
+    it 'does not contain the ids of repositories the user is not permitted to see' do
+      user.repository_ids.should_not include(sinatra.id)
+    end
+  end
+
   describe 'profile_image_hash' do
     it "returns gravatar_id if it's present" do
       user.gravatar_id = '41193cdbffbf06be0cdf231b28c54b18'
