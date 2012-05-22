@@ -1,6 +1,8 @@
 require 'gh'
 
 class Organization < ActiveRecord::Base
+  autoload :Sync, 'travis/model/organization/sync'
+
   class << self
     def create_from_github(name)
       # TODO ask @rkh about this
@@ -9,13 +11,7 @@ class Organization < ActiveRecord::Base
     end
 
     def sync_for(user)
-      user.authenticated_on_github do
-        GH['user/orgs'].each do |data|
-          org = Organization.find_or_create_by_github_id(data['id'])
-          org.update_attributes!(:name => data['name'], :login => data['login'])
-          user.organizations << org unless user.organizations.include?(org)
-        end
-      end
+      Sync.new(user).run
     end
   end
 

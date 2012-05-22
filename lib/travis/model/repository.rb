@@ -22,6 +22,8 @@ class Repository < ActiveRecord::Base
       last_finished_on_branch(params[:branch]).try(:matrix_result, params)
     end
   end
+  has_many :permissions
+  has_many :users, :through => :permissions
 
   has_one :last_build,   :class_name => 'Build', :order => 'id DESC', :conditions => { :state  => ['started', 'finished']  }
   has_one :last_success, :class_name => 'Build', :order => 'id DESC', :conditions => { :result => 0 }
@@ -39,6 +41,10 @@ class Repository < ActiveRecord::Base
   delegate :public_key, :to => :key
 
   class << self
+    def sync_for(user)
+      Sync.new(user).run
+    end
+
     def timeline
       where(arel_table[:last_build_started_at].not_eq(nil)).order(arel_table[:last_build_started_at].desc)
     end

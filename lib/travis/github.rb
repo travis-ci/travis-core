@@ -1,3 +1,5 @@
+require 'gh'
+
 module Travis
   module Github
     autoload :Payload, 'travis/github/payload'
