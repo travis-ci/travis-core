@@ -63,17 +63,21 @@ class User < ActiveRecord::Base
   end
 
   def github_service_hooks
-    Travis::Github.repositories_for(self).map do |data|
-      repos = repositories_for(data['owner']['login'])
-      ServiceHook.new(
-        :uid => [data['owner']['login'], data['name']].join(':'),
-        :owner_name => data['owner']['login'],
-        :name => data['name'],
-        :url => data['_links']['html']['href'],
-        :active => repos[data['name']].try(:active),
-        :description => data['description']
-      )
-    end
+    repos = Travis::Github.repositories_for(self)
+    repos.map do |data|
+      if data['permissions']['admin']
+        repos = repositories_for(data['owner']['login'])
+        ServiceHook.new(
+          :uid => [data['owner']['login'], data['name']].join(':'),
+          :owner_name => data['owner']['login'],
+          :name => data['name'],
+          :url => data['_links']['html']['href'],
+          :active => repos[data['name']].try(:active),
+          :description => data['description'],
+          :private => data['private']
+        )
+      end
+    end.compact
   end
 
   def authenticated_on_github(&block)

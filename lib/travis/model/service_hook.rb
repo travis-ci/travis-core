@@ -1,12 +1,12 @@
 # Helper object that is aggregated by a Repository and allows to de/activate
 # a service hook on Github.
 class ServiceHook
-  ATTRIBUTES = [:uid, :owner_name, :name, :description, :url, :active, :repository]
+  ATTRS = [:uid, :owner_name, :name, :description, :url, :active, :repository, :private]
 
-  attr_accessor *ATTRIBUTES
+  attr_accessor *ATTRS
 
   def initialize(attrs)
-    ATTRIBUTES.each { |name| self.send(:"#{name}=", attrs[name]) if attrs.key?(name) }
+    ATTRS.each { |name| self.send(:"#{name}=", attrs[name]) if attrs.key?(name) }
   end
 
   def set(active, user)

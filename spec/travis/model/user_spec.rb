@@ -126,10 +126,15 @@ describe User do
     let(:data) do
       [
         {
-        'name' => 'safemode',
-        'owner' => { 'login' => 'svenfuchs' },
-        'description' => 'the description',
-        '_links' => { 'html' => { 'href' => 'https://github.com/svenfuchs/safemode' }}
+          'name' => 'safemode',
+          'owner' => { 'login' => 'svenfuchs' },
+          'description' => 'the description',
+          'permissions' => { 'admin' => true },
+          '_links' => { 'html' => { 'href' => 'https://github.com/svenfuchs/safemode' }}
+        },
+        {
+          'name' => 'some-org-repo',
+          'permissions' => { 'admin' => false },
         }
       ]
     end
@@ -139,7 +144,7 @@ describe User do
       Travis::Github.stubs(:repositories_for).returns(data)
     end
 
-    it "contains the user's service_hooks (i.e. repository data from github)" do
+    it "contains repositories where the user has an admin role" do
       service_hook = user.github_service_hooks.first
       service_hook.uid.should == 'svenfuchs:safemode'
       service_hook.owner_name.should == 'svenfuchs'
@@ -147,6 +152,11 @@ describe User do
       service_hook.description.should == 'the description'
       service_hook.url.should == 'https://github.com/svenfuchs/safemode'
       service_hook.active.should be_true
+    end
+
+    it "does not contain repositories where the user does not have an admin role" do
+      service_hooks = user.github_service_hooks
+      service_hooks.any? { |s| s.name == 'some-org-repo' }.should be_false
     end
   end
 end
