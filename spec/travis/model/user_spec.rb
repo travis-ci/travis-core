@@ -53,6 +53,7 @@ describe User do
     before :each do
      user.repositories << travis
      user.save!
+     user.reload
     end
 
     it 'contains the ids of repositories the user is permitted to see' do

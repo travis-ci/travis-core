@@ -6,10 +6,18 @@ module Travis
 
     class << self
       def repositories_for(user)
-        user.authenticated_on_github do
-          GH['user/repos?per_page=100']
+        GH.with(:token => user.github_oauth_token) do
+          resources_for(user).map do |resource|
+            GH["#{resource}?per_page=100"]
+          end.flatten
         end
       end
+
+      private
+
+        def resources_for(user)
+          ['user/repos'] + user.organizations.map { |org| "orgs/#{org.login}/repos" }
+        end
     end
   end
 end

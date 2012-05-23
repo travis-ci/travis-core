@@ -2,6 +2,8 @@ require 'active_record'
 require 'gh'
 
 class User < ActiveRecord::Base
+  autoload :Sync, 'travis/model/user/sync'
+
   has_many :tokens
   has_many :memberships
   has_many :organizations, :through => :memberships
@@ -14,11 +16,6 @@ class User < ActiveRecord::Base
   after_create :create_a_token
 
   class << self
-    def sync
-      Organization.sync_for(user)
-      Repository.sync_for(user)
-    end
-
     def create_from_github(name)
       # TODO ask @rkh about this
       data = GH["users/#{name}"] || raise(Travis::GithubApiError)
@@ -46,6 +43,10 @@ class User < ActiveRecord::Base
     def authenticate_by_token(login, token)
       includes(:tokens).where(:login => login, 'tokens.token' => token).first
     end
+  end
+
+  def sync
+    Sync.new(self).run
   end
 
   def organization_ids
