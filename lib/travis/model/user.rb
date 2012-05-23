@@ -69,20 +69,16 @@ class User < ActiveRecord::Base
   end
 
   def github_service_hooks
-    repos = Travis::Github.repositories_for(self)
-    repos.map do |data|
-      if data['permissions']['admin']
-        repos = repositories_for(data['owner']['login'])
-        ServiceHook.new(
-          :uid => [data['owner']['login'], data['name']].join(':'),
-          :owner_name => data['owner']['login'],
-          :name => data['name'],
-          :url => data['_links']['html']['href'],
-          :active => repos[data['name']].try(:active),
-          :description => data['description'],
-          :private => data['private']
-        )
-      end
+    repositories.administratable.map do |repo|
+      ServiceHook.new(
+        :uid => [repo.owner_name, repo.name].join(':'),
+        :owner_name => repo.owner_name,
+        :name => repo.name,
+        :url => "https://github.com/#{repo.slug}", # TODO shouldn't be needed, really
+        :active => repo.active,
+        :description => repo.description,
+        # :private => repo.private
+      )
     end.compact
   end
 

@@ -4,7 +4,7 @@ require 'support/active_record'
 describe User do
   include Support::ActiveRecord
 
-  let(:user)    { FactoryGirl.build(:user) }
+  let(:user)    { Factory(:user, :github_oauth_token => 'token') }
   let(:payload) { GITHUB_PAYLOADS[:oauth] }
 
   describe 'find_or_create_for_oauth' do
@@ -100,8 +100,6 @@ describe User do
   end
 
   describe 'authenticate_by_token' do
-    let(:user) { Factory(:user) }
-
     describe 'given a valid token and login' do
       it 'authenticates the user' do
         User.authenticate_by_token(user.login, user.tokens.first.token).should == user
@@ -122,42 +120,29 @@ describe User do
   end
 
   describe 'github_service_hooks' do
-    let!(:repo) { Factory(:repository, :name => 'safemode', :active => true) }
-
-    let(:data) do
-      [
-        {
-          'name' => 'safemode',
-          'owner' => { 'login' => 'svenfuchs' },
-          'description' => 'the description',
-          'permissions' => { 'admin' => true },
-          '_links' => { 'html' => { 'href' => 'https://github.com/svenfuchs/safemode' }}
-        },
-        {
-          'name' => 'some-org-repo',
-          'permissions' => { 'admin' => false },
-        }
-      ]
-    end
+    let(:own_repo)   { Factory(:repository, :name => 'own-repo', :description => 'description', :active => true) }
+    let(:admin_repo) { Factory(:repository, :name => 'admin-repo') }
+    let(:other_repo) { Factory(:repository, :name => 'other-repo') }
 
     before :each do
-      user.github_oauth_token = 'some-token'
-      Travis::Github.stubs(:repositories_for).returns(data)
+      user.permissions.create! :user => user, :repository => own_repo, :admin => true
+      user.permissions.create! :user => user, :repository => admin_repo, :admin => true
+      other_repo
     end
 
     it "contains repositories where the user has an admin role" do
       service_hook = user.github_service_hooks.first
-      service_hook.uid.should == 'svenfuchs:safemode'
+      service_hook.uid.should == 'svenfuchs:own-repo'
       service_hook.owner_name.should == 'svenfuchs'
-      service_hook.name.should == 'safemode'
-      service_hook.description.should == 'the description'
-      service_hook.url.should == 'https://github.com/svenfuchs/safemode'
+      service_hook.name.should == 'own-repo'
+      service_hook.description.should == 'description'
+      service_hook.url.should == 'https://github.com/svenfuchs/own-repo'
       service_hook.active.should be_true
     end
 
     it "does not contain repositories where the user does not have an admin role" do
       service_hooks = user.github_service_hooks
-      service_hooks.any? { |s| s.name == 'some-org-repo' }.should be_false
+      service_hooks.any? { |s| s.name == 'other-repo' }.should be_false
     end
   end
 end

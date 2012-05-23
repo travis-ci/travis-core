@@ -3,6 +3,7 @@ class CreatePermissions < ActiveRecord::Migration
     create_table :permissions do |t|
       t.belongs_to :user
       t.belongs_to :repository
+      t.boolean :admin
     end
 
     add_index :permissions, :user_id

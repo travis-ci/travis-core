@@ -14,7 +14,7 @@ describe Repository::Sync do
   end
 
   it 'creates a new repository per record if not yet present' do
-    GH.stubs(:[]).returns([{ 'name' => 'bar', 'owner' => { 'login' => 'foo' } }])
+    GH.stubs(:[]).returns([{ 'name' => 'bar', 'owner' => { 'login' => 'foo' }, 'permissions' => { 'admin' => true } }])
     subject.call
     Repository.find_by_owner_name_and_name('foo', 'bar').should be_present
   end

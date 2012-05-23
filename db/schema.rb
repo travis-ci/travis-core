@@ -109,6 +109,7 @@ ActiveRecord::Schema.define(:version => 20120521174400) do
   create_table "permissions", :force => true do |t|
     t.integer "user_id"
     t.integer "repository_id"
+    t.boolean "admin"
   end
 
   add_index "permissions", ["repository_id"], :name => "index_permissions_on_repository_id"
