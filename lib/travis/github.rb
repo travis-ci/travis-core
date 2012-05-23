@@ -8,7 +8,7 @@ module Travis
       def repositories_for(user)
         GH.with(:token => user.github_oauth_token) do
           resources_for(user).map do |resource|
-            GH["#{resource}?per_page=100"]
+            GH["#{resource}?per_page=100"].to_a
           end.flatten
         end
       end
