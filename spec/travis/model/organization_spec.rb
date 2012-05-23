@@ -5,8 +5,9 @@ describe Organization do
   include Support::ActiveRecord
 
   before :each do
-    body = '[ { "login": "travis-pro", "id": 1 } ]'
-    stub_request(:get, "https://api.github.com/user/orgs").to_return(:body => body)
+    GH.stubs(:[]).with('user/orgs').returns [
+      { 'id' => 1, 'name' => 'The Org', 'login' => 'the-org'  }
+    ]
   end
 
   describe 'sync_for' do
@@ -21,7 +22,7 @@ describe Organization do
     it 'finds existing organizations' do
       org = Organization.create!(:github_id => 1)
       action.call
-      org.reload.login.should == 'travis-pro'
+      org.reload.login.should == 'the-org'
     end
 
     it 'creates missing organizations' do

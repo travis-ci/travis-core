@@ -79,14 +79,15 @@ describe Request do
       end
     end
 
-    shared_examples_for 'creates an object from the github api' do |type, name|
+    shared_examples_for 'creates an object from the github api' do |type, login|
       it 'creates the object' do
         expect { request }.to change(type.camelize.constantize, :count).by(1)
       end
 
       it 'calls the github api to populate the user' do
+        resource = type == 'organization' ? "orgs/#{login}" : "users/#{login}"
+        GH.expects(:[]).with(resource).returns(:name => login.camelize, :login => login)
         request
-        a_request(:get, "https://api.github.com/#{type == 'organization' ? 'orgs' : 'users'}/#{name}").should have_been_requested
       end
     end
 
