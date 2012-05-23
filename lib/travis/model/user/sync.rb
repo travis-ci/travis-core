@@ -7,8 +7,10 @@ class User
     end
 
     def run
-      Organization.sync_for(user)
-      Repository.sync_for(user)
+      Metriks.timer('user.sync').time do
+        Organization.sync_for(user)
+        Repository.sync_for(user)
+      end
     end
   end
 end
