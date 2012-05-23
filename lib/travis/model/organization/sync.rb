@@ -1,6 +1,5 @@
 require 'gh'
 
-# Currently not being used ...
 class Organization
   class Sync
     attr_reader :user

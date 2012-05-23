@@ -14,6 +14,11 @@ class User < ActiveRecord::Base
   after_create :create_a_token
 
   class << self
+    def sync
+      Organization.sync_for(user)
+      Repository.sync_for(user)
+    end
+
     def create_from_github(name)
       # TODO ask @rkh about this
       data = GH["users/#{name}"] || raise(Travis::GithubApiError)
