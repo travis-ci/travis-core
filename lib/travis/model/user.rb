@@ -76,7 +76,7 @@ class User < ActiveRecord::Base
         :name => repo.name,
         :url => "https://github.com/#{repo.slug}", # TODO shouldn't be needed, really
         :active => repo.active,
-        :description => repo.description,
+        :description => repo.description
         # :private => repo.private
       )
     end.compact
