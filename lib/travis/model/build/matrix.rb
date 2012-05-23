@@ -125,7 +125,9 @@ class Build
       end
 
       def include_matrix_configs(matrix)
-        matrix + (config_matrix_settings[:include] || [])
+        include_configs = config_matrix_settings[:include] || []
+        include_configs = include_configs.map(&:to_a).map(&:sort)
+        matrix + include_configs
       end
 
       def config_matrix_settings
