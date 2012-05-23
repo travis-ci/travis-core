@@ -109,7 +109,7 @@ class Build
           base.empty? ? [result] : base.shift.map { |value| matrix.call(base, result + [value]) }.flatten(1)
         end
         expanded = matrix.call(config).uniq
-        exclude_matrix_configs(expanded)
+        include_matrix_configs(exclude_matrix_configs(expanded))
       end
 
       def exclude_matrix_configs(matrix)
@@ -122,6 +122,10 @@ class Build
         exclude_configs = exclude_configs.map(&:stringify_keys).map(&:to_a).map(&:sort)
         config = config.map { |config| [config[0].to_s, *config[1..-1]] }.sort
         exclude_configs.to_a.any? { |excluded| excluded == config }
+      end
+
+      def include_matrix_configs(matrix)
+        matrix + (config_matrix_settings[:include] || [])
       end
 
       def config_matrix_settings
