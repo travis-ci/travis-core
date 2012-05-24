@@ -6,6 +6,12 @@ module Travis
       class_attribute :type
       self.type = 'public'
 
+      class << self
+        def private?
+          self.type == 'private'
+        end
+      end
+
       attr_accessor :user
 
       def initialize(user)
@@ -14,9 +20,10 @@ module Travis
 
       def fetch
         authenticated do
-          resources_for(user).map do |resource|
-            GH["#{resource}?type=#{self.class.type}"].to_a
+          repos = resources_for(user).map do |resource|
+            GH["#{resource}"].to_a # should be: ?type=#{self.class.type}
           end.flatten
+          filter(repos.flatten)
         end
       end
 
@@ -28,6 +35,11 @@ module Travis
 
         def resources_for(user)
           ['user/repos'] + user.organizations.map { |org| "orgs/#{org.login}/repos" }
+        end
+
+        # we have to filter these ourselves because the github api is broken for this
+        def filter(repos)
+          repos.select { |repo| repo['private'] == self.class.private? }
         end
     end
   end

@@ -5,29 +5,17 @@ describe Repository::Sync do
   include Support::ActiveRecord
 
   let(:user) { Factory(:user, :github_oauth_token => 'token' ) }
+  let(:repo) { { 'name' => 'minimal', 'owner' => { 'login' => 'sven' }, 'permissions' => { 'admin' => true } } }
 
   subject { lambda { Repository::Sync.new(user).run } }
 
   before :each do
-    GH.stubs(:[]).returns([{ 'name' => 'minimal', 'owner' => { 'login' => 'sven' }, 'permissions' => { 'admin' => true } }])
-    @type = Travis::Github::Repositories.type
+    Travis::Github.stubs(:repositories_for).returns([repo])
   end
 
-  after :each do
-    Travis::Github::Repositories.type = @type
-  end
-
-  describe 'fetches repos from the github api' do
-    it 'using "public" as a type by default' do
-      GH.expects(:[]).with('user/repos?type=public').returns([])
-      subject.call
-    end
-
-    it 'using a custom type if set' do
-      Travis::Github::Repositories.type = 'private'
-      GH.expects(:[]).with('user/repos?type=private').returns([])
-      subject.call
-    end
+  it 'fetches repos from the github api' do
+    Travis::Github.expects(:repositories_for).with(user).returns([repo])
+    subject.call
   end
 
   it 'creates a new repository per record if not yet present' do
