@@ -10,11 +10,24 @@ describe Repository::Sync do
 
   before :each do
     GH.stubs(:[]).returns([{ 'name' => 'minimal', 'owner' => { 'login' => 'sven' }, 'permissions' => { 'admin' => true } }])
+    @type = Travis::Github::Repositories.type
   end
 
-  it 'fetches all repos the user has access to from the github api' do
-    GH.expects(:[]).with('user/repos?per_page=100').returns([])
-    subject.call
+  after :each do
+    Travis::Github::Repositories.type = @type
+  end
+
+  describe 'fetches repos from the github api' do
+    it 'using "public" as a type by default' do
+      GH.expects(:[]).with('user/repos?type=public').returns([])
+      subject.call
+    end
+
+    it 'using a custom type if set' do
+      Travis::Github::Repositories.type = 'private'
+      GH.expects(:[]).with('user/repos?type=private').returns([])
+      subject.call
+    end
   end
 
   it 'creates a new repository per record if not yet present' do

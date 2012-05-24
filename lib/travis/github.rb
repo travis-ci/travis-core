@@ -2,22 +2,13 @@ require 'gh'
 
 module Travis
   module Github
-    autoload :Payload, 'travis/github/payload'
+    autoload :Payload,      'travis/github/payload'
+    autoload :Repositories, 'travis/github/repositories'
 
     class << self
       def repositories_for(user)
-        GH.with(:token => user.github_oauth_token) do
-          resources_for(user).map do |resource|
-            GH["#{resource}?per_page=100"].to_a
-          end.flatten
-        end
+        Repositories.new(user).fetch
       end
-
-      private
-
-        def resources_for(user)
-          ['user/repos'] + user.organizations.map { |org| "orgs/#{org.login}/repos" }
-        end
     end
   end
 end
