@@ -1,23 +1,23 @@
 module Support
   module Mocks
-    class Pusher
-      attr_accessor :messages
+    module Pusher
+      class Channel
+        attr_accessor :messages
 
-      def initialize
-        @messages = []
-      end
+        def initialize
+          @messages = []
+        end
 
-      def trigger(*args)
-        messages << args
-      end
-      alias :trigger_async :trigger
+        def trigger(*args)
+          messages << args
+        end
+        alias :trigger_async :trigger
 
-      def reset!
-        @messages = []
+        def reset!
+          @messages = []
+        end
+        alias :clear! :reset!
       end
-      alias :clear! :reset!
     end
   end
 end
-
-

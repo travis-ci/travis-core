@@ -22,11 +22,10 @@ module Travis
               data  = args.last.is_a?(Hash) ? args.pop : {}
               data  = payload_for(event, object, data)
               event = client_event_for(event)
-              channel(event, object).trigger(event, data)
-            end
 
-            def channel(event, object)
-              Travis.pusher[queue_for(event, object)]
+              channels_for(event, object).each do |channel|
+                trigger(channel, event, data)
+              end
             end
 
             def client_event_for(event)
@@ -38,13 +37,17 @@ module Travis
               end
             end
 
-            def queue_for(event, object)
+            def channels_for(event, object)
               case event
               when 'job:log'
-                "job-#{object.id}"
+                ["job-#{object.id}"]
               else
-                'common'
+                ['common']
               end
+            end
+
+            def trigger(channel, event, data)
+              Travis.pusher[channel].trigger(event, data)
             end
 
             def payload_for(event, object, extra = {})
