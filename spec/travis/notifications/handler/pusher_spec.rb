@@ -72,31 +72,31 @@ describe Travis::Notifications::Handler::Pusher do
 
   describe 'payload_for returns the payload required for client side job events' do
     it 'job:created' do
-      receiver.payload_for('job:created', test).keys.should == %w(id build_id repository_id number queue)
+      receiver.payload_for('job:created', test).should == Travis::Api::Pusher::Job::Created.new(test).data
     end
 
     it 'job:started' do
-      receiver.payload_for('job:started', test).keys.should == %w(id build_id started_at worker sponsor)
+      receiver.payload_for('job:started', test).should == Travis::Api::Pusher::Job::Started.new(test).data
     end
 
     it 'job:log' do
-      receiver.payload_for('job:log', test, 'log' => 'foo').keys.should == %w(id log)
+      receiver.payload_for('job:log', test, 'log' => 'foo').should == Travis::Api::Pusher::Job::Log.new(test).data('log' => 'foo')
     end
 
     it 'job:finished' do
-      receiver.payload_for('job:finished', test).keys.should == %w(id build_id finished_at result)
+      receiver.payload_for('job:finished', test).should == Travis::Api::Pusher::Job::Finished.new(test).data
     end
 
     it 'build:started' do
-      receiver.payload_for('build:started', build).keys.should == %w(build repository)
+      receiver.payload_for('build:started', build).should == Travis::Api::Pusher::Build::Started.new(build).data
     end
 
     it 'build:finished' do
-      receiver.payload_for('build:finished', build).keys.should == %w(build repository)
-    end
+      receiver.payload_for('build:finished', build).should == Travis::Api::Pusher::Build::Finished.new(build).data
+     end
 
     it 'worker:started' do
-      receiver.payload_for('worker:started', worker).keys.should == %w(id host name state payload last_error)
+      receiver.payload_for('worker:started', worker).should == Travis::Api::Pusher::Worker.new(worker).data
     end
   end
 

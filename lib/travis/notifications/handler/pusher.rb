@@ -51,17 +51,17 @@ module Travis
             end
 
             def payload_for(event, object, extra = {})
-              renderer_for(event, object).new(object).data.merge(extra)
+              renderer_for(event, object).new(object).data(extra)
             end
 
             def renderer_for(event, object)
               object_type = object.class.name.split('::').first
               case object_type
               when 'Worker'
-                Api::Json::Pusher::Worker
+                Api::Pusher::Worker
               else
                 event_type  = event.split(':').last.camelize
-                Api::Json::Pusher.const_get(object_type).const_get(event_type)
+                Api::Pusher.const_get(object_type).const_get(event_type)
               end
             end
         end
