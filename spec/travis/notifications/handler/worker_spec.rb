@@ -7,7 +7,9 @@ describe Travis::Notifications::Handler::Worker do
   let(:worker)    { Travis::Notifications::Handler::Worker.new }
   let(:payload)   { { :the => 'payload' } }
   let(:builds)    { stub('builds', :publish => nil) }
-  let(:configure) { Factory(:configure) }
+  let(:repo)      { Factory(:repository) }
+  let(:commit)    { Factory(:commit, :repository => repo) }
+  let(:configure) { Factory(:configure, :commit => commit) }
   let(:test)      { Factory(:test) }
 
   describe 'notify' do
@@ -38,13 +40,13 @@ describe Travis::Notifications::Handler::Worker do
     end
   end
 
-  describe 'renderer_for' do
+  describe 'payload_for' do
     it 'returns Travis::Notifications::Worker::Job::Configure for a configure job' do
-      worker.send(:renderer_for, configure).should == Travis::Api::Worker::Job::Configure
+      worker.send(:payload_for, configure).should == Travis::Api::V0::Worker::Job::Configure.new(configure).data
     end
 
     it 'returns Travis::Notifications::Worker::Job::Test for a test job' do
-      worker.send(:renderer_for, test).should == Travis::Api::Worker::Job::Test
+      worker.send(:payload_for, test).should == Travis::Api::V0::Worker::Job::Test.new(test).data
     end
   end
 end

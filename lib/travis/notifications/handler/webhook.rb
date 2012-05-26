@@ -72,7 +72,11 @@ module Travis
             end
 
             def payload_for(build)
-              Api::Webhook::Build::Finished.new(build).data
+              Api.data(build, :for => 'webhook', :type => 'build/finished', :version => version)
+            end
+
+            def version
+              'v1' # can make this configurable in future in case we want to upgrade the webhook api
             end
         end
       end

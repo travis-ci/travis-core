@@ -8,6 +8,8 @@ module Travis
       # Enqueues a remote job payload so it can be picked up and processed by a
       # Worker.
       class Worker
+        API_VERSION = 'v0'
+
         EVENTS = /job:.*:created/
 
         include Logging
@@ -38,11 +40,7 @@ module Travis
             end
 
             def payload_for(job)
-              renderer_for(job).new(job).data
-            end
-
-            def renderer_for(job)
-              Api::Worker::Job.const_get(job.class.name.demodulize)
+              Api.data(job, :for => 'worker', :type => job.class.name, :version => API_VERSION)
             end
         end
       end

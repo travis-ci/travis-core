@@ -40,14 +40,14 @@ describe Travis::Notifications::Handler::Archive do
     end
   end
 
-  describe 'json_for' do
-    it 'returns archival json for the complete build' do
+  describe 'payload_for' do
+    it 'returns archival payload for the complete build' do
       build.matrix.first.log.update_attributes!(:content => 'the log')
       build.reload
       test = build.matrix.first
       repository = build.repository
 
-      data = JSON.parse(archive.send(:json_for, build))
+      data = archive.send(:payload_for, build)
       data.except('matrix', 'repository').should == {
         'id' => build.id,
         'number' => build.number,
@@ -68,7 +68,7 @@ describe Travis::Notifications::Handler::Archive do
       data['matrix'].first.should == {
         'id' => test.id,
         'number' => test.number,
-        'config' => { 'rvm' => '1.9.2' },
+        'config' => { :rvm => '1.9.2' },
         'started_at' => json_format_time(test.started_at),
         'finished_at' => json_format_time(test.finished_at),
         'log' => 'the log'

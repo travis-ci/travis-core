@@ -9,6 +9,8 @@ module Travis
       # Archives a Build to a couchdb once it is finished so we can purge old
       # build data at any time.
       class Archive
+        API_VERSION = 'v0'
+
         EVENTS = 'build:finished'
 
         include Logging
@@ -31,7 +33,7 @@ module Travis
             end
 
             def store(build)
-              response = http_client.put(url_for(build), json_for(build))
+              response = http_client.put(url_for(build), payload_for(build).to_json)
               log_request(build, response)
               response.success?
             end
@@ -44,8 +46,8 @@ module Travis
               "http://#{config.username}:#{CGI.escape(config.password)}@#{config.host}/builds/#{build.id}"
             end
 
-            def json_for(build)
-              Api::Archive::Build.new(build).data.to_json
+            def payload_for(build)
+              Api.data(build, :for => 'archive', :version => API_VERSION)
             end
 
             def http_client

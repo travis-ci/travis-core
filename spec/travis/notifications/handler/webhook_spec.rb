@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'support/active_record'
 require 'support/formats'
+require 'rack'
 
 describe Travis::Notifications::Handler::Webhook do
   include Support::ActiveRecord
@@ -111,7 +112,7 @@ describe Travis::Notifications::Handler::Webhook do
         env[:url].path.should == uri.path
         env[:request_headers]['Authorization'].should == authorization_for(build)
 
-        payload = Travis::Api::Webhook::Build::Finished.new(build).data
+        payload = Travis::Api::V1::Webhook::Build::Finished.new(build).data
         payload_from(env).keys.sort.should == payload.keys.map(&:to_s).sort
       end
     end
