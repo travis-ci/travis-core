@@ -12,7 +12,7 @@ module Travis
         private
 
           def builder(resource, options = {})
-            version = (options[:version] || 'v1').camelize
+            version = (options[:version] || 'v1').to_s.camelize
             type = (options[:type] || type_for(resource)).to_s.camelize
             "#{name}::#{version}::#{type}".constantize
           end
