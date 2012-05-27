@@ -52,8 +52,8 @@ module Travis
               Travis.pusher[channel].trigger(event, data)
             end
 
-            def payload_for(event, object, params = {})
-              Api.data(object, :for => 'pusher', :type => type_for(event), :params => params, :version => API_VERSION)
+            def payload_for(event, object, data = {})
+              Api.data(object, :for => 'pusher', :type => type_for(event), :params => data, :version => API_VERSION)
             end
 
             def type_for(event)

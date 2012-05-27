@@ -10,10 +10,11 @@ module Travis
 
           include Formats
 
-          attr_reader :job
+          attr_reader :job, :options
 
           def initialize(job, options = {})
             @job = job
+            @options = options
           end
         end
       end
