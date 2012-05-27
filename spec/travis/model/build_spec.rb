@@ -188,23 +188,6 @@ describe Build do
       end
     end
 
-    describe :result_message do
-      it 'returns "Passed" if the build has passed' do
-        build = Factory(:build, :result => 0, :state => :finished)
-        build.result_message.should == 'Passed'
-      end
-
-      it 'returns "Failed" if the build has failed' do
-        build = Factory(:build, :result => 1, :state => :finished)
-        build.result_message.should == 'Failed'
-      end
-
-      it 'returns "Pending" if the build is pending' do
-        build = Factory(:build, :result => nil, :state => :started)
-        build.result_message.should == 'Pending'
-      end
-    end
-
     describe :color do
       it 'returns "green" if the build has passed' do
         build = Factory(:build, :result => 0, :state => :finished)
