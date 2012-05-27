@@ -129,6 +129,23 @@ describe Build do
   end
 
   describe 'instance methods' do
+    it 'sets its number to the next build number on creation' do
+      1.upto(3) do |number|
+        Factory(:build).reload.number.should == number.to_s
+      end
+    end
+
+    it 'sets previous_build_result to nil if no last build exists on the same branch' do
+      build = Factory(:build, :result => 1, :commit => Factory(:commit, :branch => 'master'))
+      build.previous_result.should == nil
+    end
+
+    it 'sets previous_build_result to the result of the last build on the same branch if exists' do
+      build = Factory(:build, :result => 1, :commit => Factory(:commit, :branch => 'master'))
+      build = Factory(:build, :commit => Factory(:commit, :branch => 'master'))
+      build.previous_result.should == 1
+    end
+
     describe 'config' do
       it 'defaults to an empty hash' do
         Build.new.config.should == {}
@@ -144,12 +161,6 @@ describe Build do
         build.stubs(:read_attribute).returns("---\n:foo:\n  :bar: bar")
         Build.logger.expects(:warn)
         build.config[:foo][:bar].should == 'bar'
-      end
-    end
-
-    it 'sets its number to the next build number on creation' do
-      1.upto(3) do |number|
-        Factory(:build).reload.number.should == number.to_s
       end
     end
 

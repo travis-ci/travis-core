@@ -9,7 +9,7 @@ module Travis
       # Archives a Build to a couchdb once it is finished so we can purge old
       # build data at any time.
       class Archive
-        API_VERSION = 'v0'
+        API_VERSION = 'v1'
 
         EVENTS = 'build:finished'
 
