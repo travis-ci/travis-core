@@ -27,6 +27,7 @@ module Travis
                 'repository_id' => job.repository_id,
                 'build_id' => job.source_id,
                 'commit_id' => job.commit_id,
+                'log_id' => job.log.id,
                 'number' => job.number,
                 'config' => job.config.stringify_keys,
                 'number' => job.number,
@@ -35,7 +36,6 @@ module Travis
                 'result' => job.result,
                 'started_at' => format_date(job.started_at),
                 'finished_at' => format_date(job.finished_at),
-                'log' => job.log.content,
                 'queue' => job.queue,
                 'sponsor' => job.sponsor.to_hash.stringify_keys,
                 'worker' => job.worker

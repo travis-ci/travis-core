@@ -74,7 +74,7 @@ module Support
             :source_id => 1,
             :commit_id => commit.id,
             :commit => commit,
-            :log => stub('log', :content => 'the test log'),
+            :log => log,
             :number => '2.1',
             :config => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
             :result => 0,
@@ -87,6 +87,15 @@ module Support
             :finished_at => Time.now.utc,
             :sponsor => { 'name' => 'Railslove', 'url' => 'http://railslove.de' },
             :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4',
+          }
+        end
+
+        let(:log) do
+          stub 'log', {
+            :id => 1,
+            :job_id => 1,
+            :class => stub('class', :name => 'Artifact::Log'),
+            :content => 'the test log'
           }
         end
 

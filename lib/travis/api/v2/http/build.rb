@@ -62,13 +62,15 @@ module Travis
                 'repository_id' => job.repository_id,
                 'build_id' => job.source_id,
                 'commit_id' => job.commit_id,
+                'log_id' => job.log.id,
                 'state' => job.state.to_s,
                 'number' => job.number,
                 'config' => job.config.stringify_keys,
                 'result' => job.result,
                 'started_at' => format_date(job.started_at),
                 'finished_at' => format_date(job.finished_at),
-                'allow_failure' => job.allow_failure
+                'allow_failure' => job.allow_failure,
+                'sponsor' => job.sponsor
               }
             end
         end
