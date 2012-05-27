@@ -37,7 +37,11 @@ class Build
     end
 
     def notify_on_finish_for?(type)
-      previous_on_branch.blank? || notify_on_success_for?(type) || notify_on_failure_for?(type)
+      notify_on_initial_build? || notify_on_success_for?(type) || notify_on_failure_for?(type)
+    end
+
+    def notify_on_initial_build?
+      previous_result.nil?
     end
 
     def notify_on_success_for?(type)
@@ -116,7 +120,7 @@ class Build
       end
 
       def previous_passed?
-        previous_on_branch.try(:passed?)
+        previous_result == 0
       end
 
       def default_email_recipients

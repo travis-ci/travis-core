@@ -110,6 +110,7 @@ FactoryGirl.define do
     matrix      {[Factory(:test, :tags => "database_missing,rake_not_bundled",   :number => "1.1"),
                   Factory(:test, :tags => "database_missing,log_limit_exceeded", :number => "1.2")]}
     result      1
+    previous_result 0
     state       :finished
     started_at  { Time.now.utc }
     finished_at { Time.now.utc }

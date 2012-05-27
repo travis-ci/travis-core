@@ -3,7 +3,7 @@ module Travis
     module V1
       module Archive
         class Build
-          autoload :Job, 'travis/api/v0/archive/build/job'
+          autoload :Job, 'travis/api/v1/archive/build/job'
 
           include Formats
 

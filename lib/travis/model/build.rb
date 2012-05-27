@@ -160,8 +160,9 @@ class Build < ActiveRecord::Base
     request.pull_request?
   end
 
-  def previous_on_branch
-    repository.builds.on_branch(commit.branch).previous(self)
+  def previous_result
+    # TODO remove once previous_result has been populated
+    read_attribute(:previous_result) || repository.builds.on_branch(commit.branch).previous(self).try(:result)
   end
 
   private

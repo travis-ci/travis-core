@@ -152,7 +152,7 @@ describe Travis::Mailer::Build do
       end
 
       it 'subject' do
-        email.subject.should == '[Failed] svenfuchs/broken_build_with_tags#3 (master - 62aae5f)'
+        email.subject.should == '[Broken] svenfuchs/broken_build_with_tags#3 (master - 62aae5f)'
       end
 
       it 'contains the expected text part' do

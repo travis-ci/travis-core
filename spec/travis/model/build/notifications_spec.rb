@@ -10,8 +10,7 @@ describe Build::Notifications do
   let(:repository) { stub('repository', :owner_email => 'owner@email.org', :key => SslKey.new.tap { |k| k.generate_keys }) }
 
   before(:each) do
-    stubs(:previous_on_branch)
-    stubs(:pull_request?).returns false
+    stubs(:pull_request? => false, :previous_result => nil).returns false
   end
 
   describe :notify_on_finish_for? do
@@ -45,42 +44,59 @@ describe Build::Notifications do
     end
 
     it "returns true if the given build failed and previous build failed" do
-      stubs(:passed? => false, :failed? => true, :previous_on_branch => stub('previous', :passed? => false))
+      stubs(:passed? => false, :failed? => true, :previous_result => 1)
       send_email_notifications_on_finish?.should be_true
     end
 
     it "returns true if the given build failed and previous build passed" do
-      stubs(:passed? => false, :failed? => true, :previous_on_branch => stub('previous', :passed? => true))
+      stubs(:passed? => false, :failed? => true, :previous_result => 0)
       send_email_notifications_on_finish?.should be_true
     end
 
     it "returns true if the given build passed and previous build failed" do
-      stubs(:passed? => true, :failed? => false, :previous_on_branch => stub('previous', :passed? => false))
+      stubs(:passed? => true, :failed? => false, :previous_result => 1)
       send_email_notifications_on_finish?.should be_true
     end
 
     it "returns false if the given build passed and previous build passed" do
-      stubs(:passed? => true, :failed? => false, :previous_on_branch => stub('previous', :passed? => true))
+      stubs(:passed? => true, :failed? => false, :previous_result => 0)
       send_email_notifications_on_finish?.should be_false
     end
 
     combinations = [
-      [false, false, { :notifications => { :on_failure => 'always' } }, true ],
-      [true,  false, { :notifications => { :on_failure => 'always' } }, true ],
-      [false, false, { :notifications => { :on_failure => 'change' } }, false],
-      [true,  false, { :notifications => { :on_failure => 'change' } }, true ],
-      [true,  false, { :notifications => { :on_failure => 'never'  } }, false],
-      [true,  true,  { :notifications => { :on_success => 'always' } }, true ],
-      [false, true,  { :notifications => { :on_success => 'always' } }, true ],
-      [true,  true,  { :notifications => { :on_success => 'change' } }, false],
-      [false, true,  { :notifications => { :on_success => 'change' } }, true ],
-      [false, true,  { :notifications => { :on_success => 'never'  } }, false],
+      [nil, true,  { :notifications => { :on_failure => 'always' } }, true ],
+      [0,   true,  { :notifications => { :on_success => 'always' } }, true ],
+      [1,   true,  { :notifications => { :on_success => 'always' } }, true ],
+      [nil, false, { :notifications => { :on_failure => 'always' } }, true ],
+      [0,   false, { :notifications => { :on_failure => 'always' } }, true ],
+      [1,   false, { :notifications => { :on_failure => 'always' } }, true ],
+
+      [nil, true,  { :notifications => { :on_failure => 'change' } }, true ],
+      [0,   true,  { :notifications => { :on_success => 'change' } }, false],
+      [1,   true,  { :notifications => { :on_success => 'change' } }, true ],
+      [nil, false, { :notifications => { :on_failure => 'change' } }, true ],
+      [0,   false, { :notifications => { :on_failure => 'change' } }, true ],
+      [1,   false, { :notifications => { :on_failure => 'change' } }, false],
+
+      [nil, true,  { :notifications => { :on_success => 'never'  } }, true], # TODO this sounds wrong
+      [0,   true,  { :notifications => { :on_success => 'never'  } }, false],
+      [1,   true,  { :notifications => { :on_success => 'never'  } }, false],
+      [nil, false, { :notifications => { :on_success => 'never'  } }, true],
+      [0,   false, { :notifications => { :on_success => 'never'  } }, true],
+      [1,   false, { :notifications => { :on_success => 'never'  } }, true],
+
+      [nil, true,  { :notifications => { :on_failure => 'never'  } }, true],
+      [0,   true,  { :notifications => { :on_failure => 'never'  } }, false],
+      [1,   true,  { :notifications => { :on_failure => 'never'  } }, true],
+      [nil, false, { :notifications => { :on_failure => 'never'  } }, true], # TODO this sounds wrong
+      [0,   false, { :notifications => { :on_failure => 'never'  } }, false],
+      [1,   false, { :notifications => { :on_failure => 'never'  } }, false],
     ]
-    results = { true  => 'passed', false => 'failed' }
+    results = { true => 'passed', false => 'failed' }
 
     combinations.each do |previous, current, config, result|
-      it "returns #{result} if the previous build #{results[previous]}, the current build #{results[current]} and config is #{config}" do
-        stubs(:config => config, :passed? => current, :failed? => !current, :previous_on_branch => stub('previous', :passed? => previous))
+      it "returns #{result} if the previous result was #{previous.inspect}, the current build #{results[current]} and config is #{config}" do
+        stubs(:config => config, :passed? => current, :failed? => !current, :previous_result => previous)
         send_email_notifications_on_finish?.should == result
       end
     end

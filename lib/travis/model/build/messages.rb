@@ -37,7 +37,7 @@ class Build
     end
 
     def human_result_message
-      RESULT_MESSAGE_SENTENCESS[result_key]
+      RESULT_MESSAGE_SENTENCES[result_key]
     end
   end
 end
