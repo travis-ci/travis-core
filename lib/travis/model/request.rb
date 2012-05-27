@@ -45,6 +45,10 @@ class Request < ActiveRecord::Base
     end
   end
 
+  def event_type
+    read_attribute(:event_type) || 'push'
+  end
+
   def pull_request?
     event_type == 'pull_request'
   end
