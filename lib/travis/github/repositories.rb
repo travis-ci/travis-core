@@ -3,6 +3,8 @@ require 'active_support/core_ext/class/attribute'
 module Travis
   module Github
     class Repositories
+      include Logging
+
       class_attribute :type
       self.type = 'public'
 
@@ -21,8 +23,8 @@ module Travis
       def fetch
         authenticated do
           repos = resources_for(user).map do |resource|
-            GH["#{resource}"].to_a # should be: ?type=#{self.class.type}
-          end.flatten
+            fetch_resource(resource)
+          end.flatten.compact
           filter(repos.flatten)
         end
       end
@@ -31,6 +33,12 @@ module Travis
 
         def authenticated(&block)
           GH.with(:token => user.github_oauth_token, &block)
+        end
+
+        def fetch_resource(resource)
+          GH["#{resource}"].to_a # should be: ?type=#{self.class.type}
+        rescue Faraday::Error::ResourceNotFound => e
+          log_exception(e)
         end
 
         def resources_for(user)
