@@ -69,7 +69,7 @@ class User < ActiveRecord::Base
   end
 
   def github_service_hooks
-    repositories.administratable.map do |repo|
+    repositories.administratable.order('owner_name, name').map do |repo|
       ServiceHook.new(
         :uid => [repo.owner_name, repo.name].join(':'),
         :owner_name => repo.owner_name,

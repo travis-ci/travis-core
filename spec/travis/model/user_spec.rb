@@ -131,7 +131,7 @@ describe User do
     end
 
     it "contains repositories where the user has an admin role" do
-      service_hook = user.github_service_hooks.first
+      service_hook = user.github_service_hooks.last
       service_hook.uid.should == 'svenfuchs:own-repo'
       service_hook.owner_name.should == 'svenfuchs'
       service_hook.name.should == 'own-repo'
