@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120521174400) do
+ActiveRecord::Schema.define(:version => 20120527235800) do
 
   create_table "artifacts", :force => true do |t|
     t.text     "content"
@@ -30,8 +30,8 @@ ActiveRecord::Schema.define(:version => 20120521174400) do
     t.datetime "started_at"
     t.datetime "finished_at"
     t.string   "agent"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
     t.text     "config"
     t.integer  "commit_id"
     t.integer  "request_id"
@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(:version => 20120521174400) do
     t.integer  "owner_id"
     t.string   "owner_type"
     t.integer  "result"
+    t.integer  "previous_result"
   end
 
   add_index "builds", ["repository_id"], :name => "index_builds_on_repository_id"
