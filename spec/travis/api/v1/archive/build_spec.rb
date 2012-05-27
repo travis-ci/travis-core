@@ -2,10 +2,10 @@ require 'spec_helper'
 require 'support/formats'
 require 'travis/api/support/stubs'
 
-describe Travis::Api::V0::Archive::Build do
+describe Travis::Api::V1::Archive::Build do
   include Support::Formats, Support::Stubs
 
-  let(:data) { Travis::Api::V0::Archive::Build.new(build).data }
+  let(:data) { Travis::Api::V1::Archive::Build.new(build).data }
 
   it 'data' do
     data.except('matrix', 'repository').should == {

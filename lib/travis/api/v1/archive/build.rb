@@ -1,6 +1,6 @@
 module Travis
   module Api
-    module V0
+    module V1
       module Archive
         class Build
           autoload :Job, 'travis/api/v0/archive/build/job'
