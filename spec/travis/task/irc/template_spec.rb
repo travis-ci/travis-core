@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'support/active_record'
 
-describe Travis::Notifications::Handler::Irc::Template do
+describe Travis::Task::Irc::Template do
   include Support::ActiveRecord
 
   TEMPLATE = %w(repository build_number branch commit author message compare_url build_url).map do |name|
@@ -11,7 +11,7 @@ describe Travis::Notifications::Handler::Irc::Template do
   let(:build)    { Factory(:build, :state => 'finished', :previous_result => nil, :result => 0)}
   let(:user)     { Factory(:user)}
   let(:data)     { Travis::Api.data(build, :for => 'notifications', :version => 'v2') }
-  let(:template) { Travis::Notifications::Handler::Irc::Template.new(TEMPLATE, data) }
+  let(:template) { Travis::Task::Irc::Template.new(TEMPLATE, data) }
 
   before do
     Travis::Features.start
@@ -69,3 +69,4 @@ describe Travis::Notifications::Handler::Irc::Template do
     end
   end
 end
+

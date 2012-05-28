@@ -1,11 +1,11 @@
 require 'core_ext/hash/compact'
 
+# TODO should take the config_url directly instead of dealing with models.
+# It then can also be renamed to something way more general like "HttpGet" or so.
 module Travis
-  module Task
+  class Task
     module Request
-      class Configure
-        include Logging
-
+      class Configure < Task
         attr_reader :http_client, :commit
 
         # Task that retrieves the .travis.yml based using the config_url

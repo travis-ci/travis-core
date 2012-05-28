@@ -1,5 +1,6 @@
 require 'travis/support'
 require 'travis/exceptions'
+require 'core_ext/module/include'
 
 autoload :Artifact,     'travis/model/artifact'
 autoload :Build,        'travis/model/build'

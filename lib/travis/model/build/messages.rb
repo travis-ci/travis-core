@@ -34,14 +34,12 @@ class Build
       :failing => 'The build is still failing.'
     }
 
-    def result_message(build)
-      data = build.is_a?(Build) ? build.attributes : build
-      RESULT_MESSAGES[result_key(data)]
+    def result_message(data = nil)
+      RESULT_MESSAGES[result_key(data || self.attributes)]
     end
 
-    def human_result_message(build)
-      data = build.is_a?(Build) ? build.attributes : build
-      RESULT_MESSAGE_SENTENCES[result_key(data)]
+    def human_result_message(data = nil)
+      RESULT_MESSAGE_SENTENCES[result_key(data || self.attributes)]
     end
   end
 end

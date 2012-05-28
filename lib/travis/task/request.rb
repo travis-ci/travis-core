@@ -1,5 +1,5 @@
 module Travis
-  module Task
+  class Task
     module Request
       autoload :Configure, 'travis/task/request/configure'
     end

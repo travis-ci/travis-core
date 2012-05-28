@@ -8,12 +8,11 @@ describe Travis::Notifications::Subscription do
 
     EVENTS = /build:finished/
 
-    def notify(*args)
-      self.class.notify(*args)
+    def initialize(*args)
+      self.class.events << args
     end
 
-    def self.notify(*args)
-      events << args
+    def call
     end
   end
 
@@ -32,11 +31,11 @@ describe Travis::Notifications::Subscription do
     it "should increment a counter when the event is triggered" do
       expect {
         subscription.notify('build:finished')
-      }.to change {Metriks.meter('travis.notifications.subscription_test_handler.build.finished').count}
+      }.to change { Metriks.meter('travis.notifications.subscription_test_handler.build.finished').count }
     end
-    
+
     it "shouldn't notify when the event doesn't match" do
-      subscription.notify('build:started') 
+      subscription.notify('build:started')
       subscription.subscriber.events.should have(0).items
     end
   end

@@ -1,46 +1,39 @@
-require 'core_ext/module/include'
-require 'active_support/core_ext/module/delegation'
-
 module Travis
   module Notifications
-    module Handler
+    class Handler
 
       # Enqueues a remote job payload so it can be picked up and processed by a
       # Worker.
-      class Worker
+      class Worker < Handler
         API_VERSION = 'v0'
 
         EVENTS = /job:.*:created/
 
-        include Logging
-
         class << self
           def enqueue(job)
-            new.enqueue(job)
+            new(job).notify
           end
         end
 
         include do
-          delegate :queue_for, :payload_for, :to => :'self.class'
-
-          def notify(event, job, *args)
-            ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, job, *args]) do
-              enqueue(job)
+          def call
+            ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, data]) do
+              enqueue(data)
             end
           end
 
-          def enqueue(job)
-            publisher_for(job).publish(payload_for(job), :properties => { :type => job.class.name.demodulize.underscore })
+          def enqueue(object)
+            publisher.publish(payload, :properties => { :type => payload['type'] })
           end
 
           private
 
-            def publisher_for(job)
-              job.is_a?(Job::Configure) ? Travis::Amqp::Publisher.configure : Travis::Amqp::Publisher.builds(job.queue)
+            def publisher
+              object.is_a?(Job::Configure) ? Travis::Amqp::Publisher.configure : Travis::Amqp::Publisher.builds(object.queue)
             end
 
-            def payload_for(job)
-              Api.data(job, :for => 'worker', :type => job.class.name, :version => API_VERSION)
+            def payload
+              Api.data(object, :for => 'worker', :type => object.class.name, :version => API_VERSION)
             end
         end
       end
