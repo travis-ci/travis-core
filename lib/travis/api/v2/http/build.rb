@@ -33,6 +33,7 @@ module Travis
                 'config' => build.config.stringify_keys,
                 'state' => build.state.to_s,
                 'result' => build.result,
+                'previous_result' => build.previous_result,
                 'started_at' => format_date(build.started_at),
                 'finished_at' => format_date(build.finished_at),
                 'duration' => build.duration,

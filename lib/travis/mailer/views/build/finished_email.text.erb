@@ -11,7 +11,7 @@ Message : <%= @commit.message %>
 Notes : <%= notes(@build, "text").html_safe %>
 <% end %>
 
-Status : <%= @build.result_message %>
+Status : <%= @build.result_message(@build) %>
 
 View the changeset : <%= @commit.compare_url %>
 

@@ -37,7 +37,7 @@ module Travis
               Api.data(build, :for => 'notifications', :version => API_VERSION)
             end
 
-              # TODO --- extract ---
+            # TODO --- extract ---
 
             def send(url, data)
               authenticated do

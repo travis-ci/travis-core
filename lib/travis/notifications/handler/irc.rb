@@ -1,4 +1,3 @@
-require 'travis/notifications/handler/template'
 require 'core_ext/module/include'
 require 'irc_client'
 
@@ -8,32 +7,51 @@ module Travis
       # Publishes a build notification to IRC channels as defined in the
       # configuration (`.travis.yml`).
       class Irc
-        attr_reader :build
+        autoload :Template, 'travis/notifications/handler/irc/template'
+
+        API_VERSION = 'v2'
 
         EVENTS = 'build:finished'
 
         include Logging
 
         include do
-          def notify(event, object, *args)
-            @build = object
-            send_irc_notifications if object.send_irc_notifications_on_finish?
+          attr_reader :build
+
+          def notify(event, build, *args)
+            @build = build
+            send(channels, payload) if send?
           end
 
-          protected
-            def send_irc_notifications
+          private
+
+            def send?
+              build.send_irc_notifications_on_finish?
+            end
+
+            def channels
+              build.irc_channels
+            end
+
+            def payload
+              Api.data(build, :for => 'notifications', :version => API_VERSION)
+            end
+
+            # TODO --- extract ---
+
+            def send(channels, data)
               # Notifications to the same host are grouped so that they can be sent with a single connection
-              build.irc_channels.each do |server, channels|
+              channels.each do |server, channels|
                 host, port = *server
                 send_notifications(host, port, channels)
               end
             end
 
             def send_notifications(host, port, channels)
-              irc(host, nick, :port => port) do |irc_client|
+              client(host, nick, :port => port) do |client|
                 channels.each do |channel|
                   begin
-                    send_notification(irc_client, channel, interpolated_messages)
+                    send_notification(client, channel, interpolated_messages)
                     info("Successfully notified #{host}:#{port}##{channel}")
                   rescue StandardError => e
                     error("Could not notify #{host}:#{port}##{channel} : #{e.inspect}")
@@ -42,20 +60,16 @@ module Travis
               end
             end
 
-            def send_notification(irc_client, channel, messages)
-              irc_client.join(channel) if join?
-
-              messages.each do |message|
-                irc_client.say("[travis-ci] #{message}", channel, notice?)
-              end
-
-              irc_client.leave(channel) if join?
+            def send_notification(client, channel, messages)
+              client.join(channel) if join?
+              messages.each { |message| client.say("[travis-ci] #{message}", channel, notice?) }
+              client.leave(channel) if join?
             end
 
-            def irc(host, nick, options, &block)
-              IrcClient.new(host, nick, options).tap do |irc|
-                irc.run(&block) if block_given?
-                irc.quit
+            def client(host, nick, options, &block)
+              IrcClient.new(host, nick, options).tap do |client|
+                client.run(&block) if block_given?
+                client.quit
               end
             end
 
@@ -63,33 +77,25 @@ module Travis
               Travis.config.irc.try(:nick) || 'travis-ci'
             end
 
-            def irc_config
+            def config
               build.config[:notifications][:irc]
             end
 
             def notice?
-              if irc_config.is_a?(Hash)
-                irc_config[:use_notice] || false
-              else
-                false
-              end
+              config.is_a?(Hash) && !!config[:use_notice]
             end
 
             def join?
-              if irc_config.is_a?(Hash)
-                !irc_config[:skip_join]
-              else
-                true
+              config.is_a?(Hash) ? !config[:skip_join] : true
+            end
+
+            def messages
+              @messages ||= templates.map do |template|
+                Template.new(templaet, build).interpolate
               end
             end
 
-            def interpolated_messages
-              @interpolated_messages ||= template.map do |message|
-                Template.new(message, build).interpolate
-              end
-            end
-
-            def template
+            def templates
               @template ||= begin
                 template = (build.config[:notifications] && build.config[:notifications][:irc].is_a?(Hash) && build.config[:notifications][:irc][:template])
                 Array(template || default_template)

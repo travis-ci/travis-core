@@ -1,14 +1,14 @@
 class Build
   module Messages
-    def result_key
-      if state != :finished
+    def result_key(state, previous, current)
+      if state.to_sym != :finished
         :pending
-      elsif previous_result.nil?
-        result == 0 ? :passed : :failed
-      elsif previous_result == 0
-        result == 0 ? :passed : :broken
-      elsif previous_result == 1
-        result == 0 ? :fixed : :still_failing
+      elsif previous.nil?
+        current == 0 ? :passed : :failed
+      elsif previous == 0
+        current == 0 ? :passed : :broken
+      elsif previous == 1
+        current == 0 ? :fixed : :still_failing
       end
     end
 
@@ -32,12 +32,14 @@ class Build
       :failing => 'The build is still failing.'
     }
 
-    def result_message
-      RESULT_MESSAGES[result_key]
+    def result_message(build)
+      key = result_key(state, previous_result, result)
+      RESULT_MESSAGES[key]
     end
 
-    def human_result_message
-      RESULT_MESSAGE_SENTENCES[result_key]
+    def human_result_message(build)
+      key = result_key(state, previous_result, result)
+      RESULT_MESSAGE_SENTENCES[key]
     end
   end
 end
