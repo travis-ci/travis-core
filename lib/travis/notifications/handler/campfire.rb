@@ -1,3 +1,7 @@
+require 'core_ext/module/include'
+# backports 1.9 style string interpolation. can be removed once hub runs in 1.9 mode
+require 'i18n/core_ext/string/interpolate'
+
 module Travis
   module Notifications
     module Handler
@@ -6,86 +10,92 @@ module Travis
       # configuration (`.travis.yml`).
       #
       # Campfire credentials are encrypted using the repository's ssl key.
-      class Campfire < Webhook
+      class Campfire
+        API_VERSION = 'v2'
+
         EVENTS = /build:finished/
 
-        class << self
-          def campfire_url(config)
-            "https://#{config[:subdomain]}.campfirenow.com/room/#{config[:room]}/speak.json"
+        include do
+          attr_reader :build
+
+          def notify(event, build, *args)
+            @build = build # TODO move to initializer
+            send(targets, payload) if send?
           end
 
-          def campfire_config(scheme)
-            scheme =~ /(\w+):(\w+)@(\w+)/
-            { :subdomain => $1, :token => $2, :room => $3 }
-          end
+          protected
 
-          def build_message(build)
-            commit    = build.commit
-            build_url = build_url(build)
+            def send?
+              build.send_campfire_notifications_on_finish?
+            end
 
-            ["[travis-ci] #{build.repository.slug}##{build.number} (#{commit.branch} - #{commit.commit[0, 7]} : #{commit.author_name}): the build has #{build.passed? ? 'passed' : 'failed' }",
-             "[travis-ci] Change view : #{commit.compare_url}",
-             "[travis-ci] Build details : #{build_url}"]
-          end
+            def targets
+              build.campfire_rooms
+            end
 
-          def build_url(build)
-            "#{Travis.config.http_host}/#{build.repository.slug}/builds/#{build.id}"
-          end
-        end
+            def payload
+              Api.data(build, :for => 'notifications', :version => API_VERSION)
+            end
 
-        def notify(event, object, *args)
-          send_campfire(object.campfire_rooms, object) if object.send_campfire_notifications_on_finish?
-        end
+            # TODO --- extract ---
 
-        protected
+            TEMPLATE = [
+              "[travis-ci] %{slug}#%{number} (%{branch} - %{sha} : %{author}): the build has %{result}",
+              "[travis-ci] Change view: %{compare_url}",
+              "[travis-ci] Build details: %{build_url}"
+            ]
 
-          def send_campfire(targets, build)
-            message = build_message(build)
+            def send(targets, data)
+              lines = message(data)
+              targets.each { |target| send_lines(target, lines) }
+            end
 
-            targets.each do |webhook|
-              config = campfire_config(webhook)
-              url    = campfire_url(config)
+            def send_lines(target, lines)
+              url, token = parse(target)
+              client.basic_auth(token, 'X')
+              lines.each { |line| send_line(url, line) }
+            end
 
-              http_client.basic_auth config[:token], 'X'
-
-              message.each do |line|
-                payload = MultiJson.encode({ :message => { :body => line } })
-
-                http_client.post(url) do |req|
-                  req.body = payload
-                  req.headers['Content-Type']  = 'application/json'
-                end
+            def send_line(url, line)
+              client.post(url) do |req|
+                req.body = MultiJson.encode({ :message => { :body => line } })
+                req.headers['Content-Type'] = 'application/json'
               end
             end
-          end
 
-          def http_client
-            @http_client ||= Faraday.new(http_options) do |f|
-              f.adapter :net_http
+            def message(data)
+              args = {
+                :slug   => data['repository']['slug'],
+                :number => data['build']['number'],
+                :branch => data['commit']['branch'],
+                :sha    => data['commit']['sha'][0..7],
+                :author => data['commit']['author_name'],
+                :result => data['build']['result'] == 0 ? 'passed' : 'failed',
+                :compare_url => data['commit']['compare_url'],
+                :build_url => "#{Travis.config.http_host}/#{data['repository']['slug']}/builds/#{data['build']['id']}"
+              }
+              TEMPLATE.map { |line| line % args }
             end
-          end
 
-          def http_options
-            options = {}
+            def client
+              @client ||= Faraday.new(http_options) do |f|
+                f.adapter :net_http
+              end
+            end
 
-            ssl = Travis.config.ssl
-            options[:ssl] = { :ca_path => ssl.ca_path } if ssl.ca_path
-            options[:ssl] = { :ca_file => ssl.ca_file } if ssl.ca_file
+            def http_options
+              options = {}
+              ssl = Travis.config.ssl
+              options[:ssl] = { :ca_path => ssl.ca_path } if ssl.ca_path
+              options[:ssl] = { :ca_file => ssl.ca_file } if ssl.ca_file
+              options
+            end
 
-            options
-          end
-
-          def build_message(build)
-            self.class.build_message(build)
-          end
-
-          def campfire_url(config)
-            self.class.campfire_url(config)
-          end
-
-          def campfire_config(webhook)
-            self.class.campfire_config(webhook)
-          end
+            def parse(target)
+              target =~ /(\w+):(\w+)@(\w+)/
+              ["https://#{$1}.campfirenow.com/room/#{$3}/speak.json", $2]
+            end
+        end
       end
     end
   end
