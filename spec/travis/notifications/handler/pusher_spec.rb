@@ -6,127 +6,128 @@ describe Travis::Notifications::Handler::Pusher do
   include Support::ActiveRecord
 
   let(:channel)   { Support::Mocks::Pusher::Channel.new }
-  let(:receiver)  { Travis::Notifications::Handler::Pusher.new }
-  let(:build)     { Factory(:build, :config => { :rvm => ['1.8.7', '1.9.2'] }) }
+  let(:handler)   { Travis::Notifications::Handler::Pusher.new }
+  let(:build)     { Factory(:build) }
   let(:configure) { Factory(:configure) }
   let(:test)      { Factory(:test) }
-  let(:worker)    { Factory(:worker) }
+  let(:worker)    { Factory.build(:worker) }
 
   before do
     Travis.config.notifications = [:pusher]
-    Travis::Notifications::Handler::Pusher.send(:public, :channels_for, :payload_for)
     Pusher.stubs(:[]).returns(channel)
   end
 
-  # TODO these don't actually match the full behaviour, see Notifications::Handler::Pusher#client_event_for
-  describe 'sends a message to pusher' do
-    before :each do
-      build
+  describe 'subscription' do
+    it 'job:configure:created' do
+      Travis::Notifications::Handler::Pusher.any_instance.expects(:notify).never
+      Travis::Notifications.dispatch('job:configure:created', configure)
     end
 
-    # it 'job:configure:created' do
-    #   Travis::Notifications.dispatch('job:configure:created', configure)
-    #   channel.should have_message('job:created', configure)
-    # end
-
-    # it 'job:configure:finished' do
-    #   Travis::Notifications.dispatch('job:configure:finished', configure)
-    #   channel.should have_message('job:finished', configure)
-    # end
+    it 'job:configure:finished' do
+      Travis::Notifications::Handler::Pusher.any_instance.expects(:notify).never
+      Travis::Notifications.dispatch('job:configure:finished', configure)
+    end
 
     it 'job:test:created' do
+      Travis::Notifications::Handler::Pusher.any_instance.expects(:notify)
       Travis::Notifications.dispatch('job:test:created', test)
+    end
+
+    it 'job:test:started' do
+      Travis::Notifications::Handler::Pusher.any_instance.expects(:notify)
+      Travis::Notifications.dispatch('job:test:started', test)
+    end
+
+    it 'job:log' do
+      Travis::Notifications::Handler::Pusher.any_instance.expects(:notify)
+      Travis::Notifications.dispatch('job:test:log', test)
+    end
+
+    it 'job:test:finished' do
+      Travis::Notifications::Handler::Pusher.any_instance.expects(:notify)
+      Travis::Notifications.dispatch('job:test:finished', test)
+    end
+
+    it 'build:started' do
+      Travis::Notifications::Handler::Pusher.any_instance.expects(:notify)
+      Travis::Notifications.dispatch('build:started', build)
+    end
+
+    it 'build:finished' do
+      Travis::Notifications::Handler::Pusher.any_instance.expects(:notify)
+      Travis::Notifications.dispatch('build:finished', build)
+    end
+
+    it 'worker:started' do
+      Travis::Notifications::Handler::Pusher.any_instance.expects(:notify)
+      Travis::Notifications.dispatch('worker:started', worker)
+    end
+  end
+
+  describe 'subscription' do
+    it 'job:test:created' do
+      handler.notify('job:test:created', test)
       channel.should have_message('job:created', test)
     end
 
     it 'job:test:started' do
-      Travis::Notifications.dispatch('job:test:started', test)
+      handler.notify('job:test:started', test)
       channel.should have_message('job:started', test)
     end
 
     it 'job:log' do
-      Travis::Notifications.dispatch('job:test:log', test)
+      handler.notify('job:test:log', test)
       channel.should have_message('job:log', test)
     end
 
     it 'job:test:finished' do
-      Travis::Notifications.dispatch('job:test:finished', test)
+      handler.notify('job:test:finished', test)
       channel.should have_message('job:finished', test)
     end
 
     it 'build:started' do
-      Travis::Notifications.dispatch('build:started', build)
+      handler.notify('build:started', build)
       channel.should have_message('build:started', build)
     end
 
     it 'build:finished' do
-      Travis::Notifications.dispatch('build:finished', build)
+      handler.notify('build:finished', build)
       channel.should have_message('build:finished', build)
     end
 
     it 'worker:started' do
-      Travis::Notifications.dispatch('worker:started', worker)
+      handler.notify('worker:started', worker)
       channel.should have_message('worker:started', worker)
-    end
-  end
-
-  describe 'payload_for returns the payload required for client side job events' do
-    it 'job:created' do
-      receiver.payload_for('job:created', test).should == Travis::Api::V1::Pusher::Job::Created.new(test).data
-    end
-
-    it 'job:started' do
-      receiver.payload_for('job:started', test).should == Travis::Api::V1::Pusher::Job::Started.new(test).data
-    end
-
-    it 'job:log' do
-      receiver.payload_for('job:log', test, 'log' => 'foo').should == Travis::Api::V1::Pusher::Job::Log.new(test, 'log' => 'foo').data
-    end
-
-    it 'job:finished' do
-      receiver.payload_for('job:finished', test).should == Travis::Api::V1::Pusher::Job::Finished.new(test).data
-    end
-
-    it 'build:started' do
-      receiver.payload_for('build:started', build).should == Travis::Api::V1::Pusher::Build::Started.new(build).data
-    end
-
-    it 'build:finished' do
-      receiver.payload_for('build:finished', build).should == Travis::Api::V1::Pusher::Build::Finished.new(build).data
-     end
-
-    it 'worker:started' do
-      receiver.payload_for('worker:started', worker).should == Travis::Api::V1::Pusher::Worker.new(worker).data
     end
   end
 
   describe 'channels_for' do
     it 'returns "common" for the event "job:created"' do
-      receiver.channels_for('job:created', test).should include('common')
+      handler.send(:channels_for, 'job:created', test).should include('common')
     end
 
     it 'returns "common" for the event "job:started"' do
-      receiver.channels_for('job:started', test).should include('common')
+      handler.send(:channels_for, 'job:started', test).should include('common')
     end
 
     it 'returns "job-1" for the event "job:log"' do
-      receiver.channels_for('job:log', test).should include("job-#{test.id}")
+      handler.send(:channels_for, 'job:log', test).should include("job-#{test.id}")
     end
 
     it 'returns "common" for the event "job:finished"' do
-      receiver.channels_for('job:finished', test).should include('common')
+      handler.send(:channels_for, 'job:finished', test).should include('common')
     end
 
     it 'returns "common" for the event "build:started"' do
-      receiver.channels_for('build:started', build).should include('common')
+      handler.send(:channels_for, 'build:started', build).should include('common')
     end
 
     it 'returns "common" for the event "build:finished"' do
-      receiver.channels_for('build:finished', build).should include('common')
+      handler.send(:channels_for, 'build:finished', build).should include('common')
     end
 
     it 'returns "common" for the event "worker:started"' do
-      receiver.channels_for('worker:created', build).should include('common')
+      handler.send(:channels_for, 'worker:created', build).should include('common')
     end
   end
 end

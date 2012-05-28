@@ -9,40 +9,48 @@ module Travis
       class Pusher
         API_VERSION = 'v1'
 
-        EVENTS = [/build:(started|finished)/, /job:test:(created|started|log|finished)/, /worker:.*/]
+        EVENTS = [/^build:(started|finished)/, /^job:test:(created|started|log|finished)/, /^worker:.*/]
 
         include Logging
 
         include do
-          def notify(event, object, *args)
-            push(event, object, *args)
+          attr_reader :event, :build, :data
+
+          def notify(event, build, *args)
+            @event = event
+            @build = build
+            @data  = args.last.is_a?(Hash) ? args.pop : {}
+
+            push(event, payload)
           end
 
-          protected
+          private
 
-            def push(event, object, *args)
-              data  = args.last.is_a?(Hash) ? args.pop : {}
-              data  = payload_for(event, object, data)
+            def payload
+              Api.data(build, :for => 'pusher', :type => type, :params => data, :version => API_VERSION)
+            end
+
+            def type
+              event =~ /^worker:/ ? 'worker' : event.sub('test:', '').sub(':', '/')
+            end
+
+            def push(event, data)
               event = client_event_for(event)
-
-              channels_for(event, object).each do |channel|
+              channels_for(event, data).each do |channel|
                 trigger(channel, event, data)
               end
             end
 
+            # TODO --- extract ---
+
             def client_event_for(event)
-              case event
-              when /job:.*/
-                event.gsub(/(test|configure):/, '')
-              else
-                event
-              end
+              event =~ /job:.*/ ? event.gsub(/(test|configure):/, '') : event
             end
 
-            def channels_for(event, object)
+            def channels_for(event, data)
               case event
               when 'job:log'
-                ["job-#{object.id}"]
+                ["job-#{data['id']}"]
               else
                 ['common']
               end
@@ -50,19 +58,6 @@ module Travis
 
             def trigger(channel, event, data)
               Travis.pusher[channel].trigger(event, data)
-            end
-
-            def payload_for(event, object, data = {})
-              Api.data(object, :for => 'pusher', :type => type_for(event), :params => data, :version => API_VERSION)
-            end
-
-            def type_for(event)
-              case event
-              when /worker:/
-                'worker'
-              else
-                event.sub('test:', '').sub(':', '/')
-              end
             end
         end
       end

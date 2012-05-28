@@ -28,14 +28,10 @@ RSpec.configure do |c|
   c.include Travis::Support::Testing::Webmock
 
   c.before :each do
-    GH.reset
-  end
-
-  c.after :each do
     Travis.instance_variable_set(:@config, nil)
     Travis::Notifications.instance_variable_set(:@queues, nil)
     Travis::Notifications.instance_variable_set(:@subscriptions, nil)
-    Travis::Notifications::Handler::Pusher.send(:protected, :channels_for, :payload_for)
+    GH.reset
   end
 end
 
