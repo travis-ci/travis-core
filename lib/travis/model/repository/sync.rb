@@ -10,7 +10,7 @@ class Repository
 
       def run
         repo = find_or_create
-        repo.update_attributes!(:private => data['private'])
+        update!(repo, data)
         permit!(repo) unless permitted?(repo)
       end
 
@@ -30,6 +30,13 @@ class Repository
             :repository => repo,
             :admin => data['permissions']['admin']
           )
+        end
+
+        def update!(repo, data)
+          repo.update_attributes!(:private => data['private'])
+        rescue ActiveRecord::RecordInvalid
+          # ignore for now. this seems to happen when multiple syncs (i.e. user sign
+          # in requests are running in parallel?
         end
 
         def owner_name
