@@ -23,9 +23,9 @@ module Travis
         include do
           delegate :queue_for, :payload_for, :to => :'self.class'
 
-          def notify(event, object, *args)
-            ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, *args]) do
-              enqueue(object)
+          def notify(event, job, *args)
+            ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, job, *args]) do
+              enqueue(job)
             end
           end
 
@@ -33,7 +33,7 @@ module Travis
             publisher_for(job).publish(payload_for(job), :properties => { :type => job.class.name.demodulize.underscore })
           end
 
-          protected
+          private
 
             def publisher_for(job)
               job.is_a?(Job::Configure) ? Travis::Amqp::Publisher.configure : Travis::Amqp::Publisher.builds(job.queue)

@@ -8,54 +8,63 @@ module Travis
       # Sends build notifications to webhooks as defined in the configuration
       # (`.travis.yml`).
       class Webhook
+        API_VERSION = 'v1'
+
         EVENTS = /build:(started|finished)/
 
         include Logging
 
-        class << self
-          def http_client
-            @http_client ||= Faraday.new(http_options) do |f|
-              f.request :url_encoded
-              f.adapter :net_http
-            end
-          end
-
-          def http_client=(http_client)
-            @http_client = http_client
-          end
-
-          def http_options
-            options = {}
-            options[:ssl] = { :ca_path => Travis.config.ssl_ca_path } if Travis.config.ssl_ca_path
-            options
-          end
-        end
-
         include do
-          def notify(event, object, *args)
-            case event
-            when "build:started"
-              send_webhooks(object.webhooks, object) if object.send_webhook_notifications_on_start?
-            when "build:finished"
-              send_webhooks(object.webhooks, object) if object.send_webhook_notifications_on_finish?
-            end
+          attr_reader :event, :build
+
+          def notify(event, build, *args)
+            @event = event
+            @build = build
+            call(targets, payload, token) if call?
           end
 
           protected
 
-            def send_webhooks(targets, build)
-              targets.each { |target| send_webhook(target, build) }
-            end
-
-            def send_webhook(target, build)
-              response = http.post(target) do |req|
-                req.body = { :payload => payload_for(build).to_json }
-                req.headers['Authorization'] = authorization(build)
+            def call?
+              case event
+              when 'build:started'
+                build.send_webhook_notifications_on_start?
+              when 'build:finished'
+                build.send_webhook_notifications_on_finish?
               end
-              log_request(build, response)
             end
 
-            def log_request(build, response)
+            def payload
+              Api.data(build, :for => 'webhook', :type => 'build/finished', :version => API_VERSION)
+            end
+
+            def token
+              build.request.token
+            end
+
+            def targets
+              build.webhooks
+            end
+
+            # TODO --- extract ---
+
+            def call(targets, data, token)
+              targets.each { |target| send_webhook(target, data, token) }
+            end
+
+            def send_webhook(target, data, token)
+              response = http.post(target) do |req|
+                req.body = { :payload => data.to_json }
+                req.headers['Authorization'] = authorization(data, token)
+              end
+              log_request(response)
+            end
+
+            def authorization(data, token)
+              Digest::SHA2.hexdigest(data['repository'].values_at('owner_name', 'name').join('/') + token)
+            end
+
+            def log_request(response)
               severity, message = if response.success?
                 [:info, "Successfully notified #{response.env[:url].to_s}."]
               else
@@ -65,19 +74,16 @@ module Travis
             end
 
             def http
-              self.class.http_client
+              @http ||= Faraday.new(http_options) do |f|
+                f.request :url_encoded
+                f.adapter :net_http
+              end
             end
 
-            def authorization(build)
-              Digest::SHA2.hexdigest(build.repository.slug + build.request.token)
-            end
-
-            def payload_for(build)
-              Api.data(build, :for => 'webhook', :type => 'build/finished', :version => version)
-            end
-
-            def version
-              'v1' # can make this configurable in future in case we want to upgrade the webhook api
+            def http_options
+              options = {}
+              options[:ssl] = { :ca_path => Travis.config.ssl_ca_path } if Travis.config.ssl_ca_path
+              options
             end
         end
       end

@@ -7,23 +7,26 @@ describe Travis::Notifications::Handler::Webhook do
   include Support::ActiveRecord
   include Support::Formats
 
-  let(:http)  { Faraday::Adapter::Test::Stubs.new }
-  let(:build) { Factory(:build, :config => { 'notifications' => { 'webhooks' => 'http://example.com/' } }) }
-  let(:io)    { StringIO.new }
+  let(:http)    { Faraday::Adapter::Test::Stubs.new }
+  let(:client)  { Faraday.new { |f| f.request :url_encoded; f.adapter :test, http } }
+  let(:build)   { Factory(:build, :config => { 'notifications' => { 'webhooks' => 'http://example.com/' } }) }
+  let(:io)      { StringIO.new }
+  let(:handler) { Travis::Notifications::Handler::Webhook.new }
 
   before do
     Travis.logger = Logger.new(io)
     Travis.config.notifications = [:webhook]
-
-    Travis::Notifications::Handler::Webhook.http_client = Faraday.new do |f|
-      f.request :url_encoded
-      f.adapter :test, http
-    end
+    handler.stubs(:http).returns(client)
   end
 
-  it "only is set up to accept build:finished and build:started notifications" do
-    Travis::Notifications::Handler::Webhook::EVENTS.should === 'build:finished'
-    Travis::Notifications::Handler::Webhook::EVENTS.should === 'build:started'
+  it 'build:started notifies' do
+    Travis::Notifications::Handler::Webhook.any_instance.expects(:notify)
+    Travis::Notifications.dispatch('build:started', build)
+  end
+
+  it 'build:finish notifies' do
+    Travis::Notifications::Handler::Webhook.any_instance.expects(:notify)
+    Travis::Notifications.dispatch('build:finished', build)
   end
 
   it 'sends webhook notifications to a url given as a string' do
@@ -85,13 +88,13 @@ describe Travis::Notifications::Handler::Webhook do
   describe 'logging' do
     it 'logs a successful request' do
       http.post('/') {[ 200, {}, 'nono.' ]}
-      dispatch('build:finished', build)
+      handler.notify('build:finished', build)
       io.string.should include('[webhook] Successfully notified http://example.com/')
     end
 
     it 'warns about a failed request' do
       http.post('/') {[ 403, {}, 'nono.' ]}
-      dispatch('build:finished', build)
+      handler.notify('build:finished', build)
       io.string.should include('[webhook] Could not notify http://example.com/. Status: 403 ("nono.")')
     end
   end
@@ -117,21 +120,16 @@ describe Travis::Notifications::Handler::Webhook do
       end
     end
 
-    dispatch(event, build)
-
+    handler.notify(event, build)
     http.verify_stubbed_calls
-  end
-
-  def dispatch(event, build)
-    Travis::Notifications.dispatch(event, build)
   end
 
   def payload_from(env)
     JSON.parse(Rack::Utils.parse_query(env[:body])['payload'])
   end
 
-  def authorization_for(object)
-    Travis::Notifications::Handler::Webhook.new.send(:authorization, object)
+  def authorization_for(build)
+    Digest::SHA2.hexdigest(build.repository.slug + build.request.token)
   end
 end
 
