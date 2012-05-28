@@ -15,39 +15,43 @@ module Travis
 
         include Logging
 
-        class << self
-          def payload_for(build)
-            Payload.new(build).to_hash
-          end
-        end
-
         include do
-          def notify(event, object, *args)
-            archive(object)
+          attr_reader :build
+
+          def notify(event, build, *args)
+            @build = build # TODO move to initializer
+            archive(payload)
           end
 
-          protected
+          private
 
-            def archive(build)
-              build.touch(:archived_at) if store(build)
+            def payload
+              Api.data(build, :for => 'archive', :version => API_VERSION)
             end
 
-            def store(build)
-              response = http_client.put(url_for(build), payload_for(build).to_json)
-              log_request(build, response)
+            # TODO --- extract ---
+
+            def archive(data)
+              touch(data) if store(data)
+            end
+
+            def store(data)
+              response = http_client.put(url_for(data), data.to_json)
+              log_request(response)
               response.success?
+            end
+
+            def touch(data)
+              build = Build.find_by_id(data['id'])
+              build.touch(:archived_at) if build
             end
 
             def config
               Travis.config.archive
             end
 
-            def url_for(build)
-              "http://#{config.username}:#{CGI.escape(config.password)}@#{config.host}/builds/#{build.id}"
-            end
-
-            def payload_for(build)
-              Api.data(build, :for => 'archive', :version => API_VERSION)
+            def url_for(data)
+              "http://#{config.username}:#{CGI.escape(config.password)}@#{config.host}/builds/#{data['id']}"
             end
 
             def http_client
@@ -57,7 +61,7 @@ module Travis
               end
             end
 
-            def log_request(build, response)
+            def log_request(response)
               severity, message = if response.success?
                 [:info, "Successfully archived #{response.env[:url].to_s}."]
               else
