@@ -7,29 +7,44 @@ module Travis
 
       # Sends out build notification emails using ActionMailer.
       class Email
+        API_VERSION = 'v2'
+
         EVENTS = 'build:finished'
 
         include Logging
 
         include do
-          def notify(event, object, *args)
-            send_emails(object) if object.send_email_notifications_on_finish?
-          rescue StandardError => e
-            log_exception(e)
+          attr_reader :build
+
+          def notify(event, build, *args)
+            @build = build # TODO move to initializer
+            send(recipients, payload) if send?
           end
 
-          protected
+          private
 
-            def send_emails(object)
-              email(object).deliver
+            def send?
+              build.send_email_notifications_on_finish?
             end
 
-            def email(object)
-              mailer(object).send(:"#{object.state}_email", object, object.email_recipients)
+            def recipients
+              build.email_recipients
             end
 
-            def mailer(object)
-              Travis::Mailer.const_get(object.class.name.gsub('Travis::Model::', ''))
+            def payload
+              Api.data(build, :for => 'notifications', :version => API_VERSION)
+            end
+
+            # TODO --- extract ---
+
+            def send(recipients, data)
+              email(recipients, data).deliver
+            # rescue StandardError => e
+            #   log_exception(e)
+            end
+
+            def email(recipients, data)
+              Travis::Mailer::Build.send(:"#{data['build']['state']}_email", data, recipients)
             end
         end
       end

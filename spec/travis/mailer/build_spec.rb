@@ -18,8 +18,9 @@ describe Travis::Mailer::Build do
     )
   end
 
+  let(:data)       { Travis::Api.data(build, :for => 'notifications', :version => 'v2') }
   let(:recipients) { ['owner@example.com', 'committer@example.com', 'author@example.com'] }
-  let(:email)      { Travis::Mailer::Build.finished_email(build, recipients) }
+  let(:email)      { Travis::Mailer::Build.finished_email(data, recipients) }
 
   before :each do
     Travis::Mailer.setup

@@ -28,8 +28,8 @@ module Travis
             def request_data
               {
                 'request' => {
-                  'head_commit' => build.request.head_commit[0..7],
-                  'base_commit' => build.request.base_commit[0..7]
+                  'head_commit' => (build.request.head_commit || '')[0..7],
+                  'base_commit' => (build.request.base_commit || '')[0..7]
                 }
               }
             end

@@ -16,14 +16,16 @@ describe Travis::Notifications::Handler::Campfire do
     handler.stubs(:client).returns(client)
   end
 
-  subject { lambda { handler.notify('build:finished', build) } }
+  def notify!
+    handler.notify('build:finished', build)
+  end
 
-  it 'build:started does not notify campfire' do
+  it 'build:started does not notify' do
     Travis::Notifications::Handler::Campfire.any_instance.expects(:notify).never
     Travis::Notifications.dispatch('build:started', build)
   end
 
-  it 'build:finish notifies campfire' do
+  it 'build:finish notifies' do
     Travis::Notifications::Handler::Campfire.any_instance.expects(:notify)
     Travis::Notifications.dispatch('build:finished', build)
   end
@@ -36,20 +38,20 @@ describe Travis::Notifications::Handler::Campfire do
       '[travis-ci] Change view: https://github.com/svenfuchs/minimal/compare/master...develop',
       "[travis-ci] Build details: http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}"
     ])
-    subject.call
+    notify!
     http.verify_stubbed_calls
   end
 
   it 'sends campfire notifications to the rooms given as an array' do
     build.config[:notifications][:campfire] = ['account:token@room', 'another-account:another-token@another-room']
     client.expects(:post).times(6)
-    subject.call
+    notify!
   end
 
   it 'sends no campfire notification if the given url is blank' do
     build.config[:notifications][:campfire] = ''
     client.expects(:post).never
-    subject.call
+    notify!
   end
 
   def expect_campfire(account, room, token, body)

@@ -23,16 +23,16 @@ describe Travis::Notifications::Handler::Archive do
     handler.stubs(:http_client).returns(client)
   end
 
-  def archive!
+  def notify!
     handler.notify('build:finished', build)
   end
 
-  it 'build:started does archive the build' do
+  it 'build:started does not notify' do
     Travis::Notifications::Handler::Archive.any_instance.expects(:archive).never
     Travis::Notifications.dispatch('build:started', build)
   end
 
-  it 'build:finish archives the build' do
+  it 'build:finish notifies' do
     Travis::Notifications::Handler::Archive.any_instance.expects(:archive)
     Travis::Notifications.dispatch('build:finished', build)
   end
@@ -43,12 +43,12 @@ describe Travis::Notifications::Handler::Archive do
     end
 
     it 'stores the build payload to the storage' do
-      archive!
+      notify!
       http.verify_stubbed_calls
     end
 
     it 'sets the build to be archived' do
-      archive!
+      notify!
       build.reload.archived_at.should_not be_nil
     end
   end
@@ -56,13 +56,13 @@ describe Travis::Notifications::Handler::Archive do
   describe 'logging' do
     it 'logs a successful request' do
       http.put("/builds/#{build.id}") {[ 200, {}, 'ok' ]}
-      archive!
+      notify!
       io.string.should include("[archive] Successfully archived http://username:password@host/builds/#{build.id}")
     end
 
     it 'warns about a failed request' do
       http.put("/builds/#{build.id}") {[ 403, {}, 'nono.' ]}
-      archive!
+      notify!
       io.string.should include(%([archive] Could not archive to http://username:password@host/builds/#{build.id}. Status: 403 (\"nono.\")))
     end
   end
