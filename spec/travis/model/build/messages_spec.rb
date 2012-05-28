@@ -5,31 +5,38 @@ describe Build::Messages do
 
   describe :result_key do
     it 'returns :pending if the build is pending' do
-      result_key(:created, nil, nil).should == :pending
+      data = { :state => :created, :previous_result => nil, :result => nil }
+      result_key(data).should == :pending
     end
 
     it 'returns :passed if the build has passed for the first time' do
-      result_key(:finished, nil, 0).should == :passed
+      data = { :state => :finished, :previous_result => nil, :result => 0 }
+      result_key(data).should == :passed
     end
 
     it 'returns :failed if the build has failed for the first time' do
-      result_key(:finished, nil, 1).should == :failed
+      data = { :state => :finished, :previous_result => nil, :result => 1 }
+      result_key(data).should == :failed
     end
 
     it 'returns :passed if the build has passed again' do
-      result_key(:finished, 0, 0).should == :passed
+      data = { :state => :finished, :previous_result => 0, :result => 0 }
+      result_key(data).should == :passed
     end
 
     it 'returns :broken if the build was broken' do
-      result_key(:finished, 0, 1).should == :broken
+      data = { :state => :finished, :previous_result => 0, :result => 1 }
+      result_key(data).should == :broken
     end
 
     it 'returns :fixed if the build was fixed' do
-      result_key(:finished, 1, 0).should == :fixed
+      data = { :state => :finished, :previous_result => 1, :result => 0 }
+      result_key(data).should == :fixed
     end
 
     it 'returns :still_failing if the build has failed again' do
-      result_key(:finished, 1, 1).should == :still_failing
+      data = { :state => :finished, :previous_result => 1, :result => 1 }
+      result_key(data).should == :still_failing
     end
   end
 end

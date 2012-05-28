@@ -59,14 +59,14 @@ describe Travis::Mailer::Build do
 
     it 'contains the expected text part' do
       email.text_part.body.should include_lines(%(
-        Build : #1
-        Duration : 1 hour, 17 minutes, and 7 seconds
-        Commit : 62aae5f7 (master)
-        Author : まつもとゆきひろ a.k.a. Matz
-        Message : the commit message
-        Status : Passed
-        View the changeset : https://github.com/svenfuchs/minimal/compare/master...develop
-        View the full build log and details : http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}
+        Build: #1
+        Status: Passed
+        Duration: 1 hour, 17 minutes, and 7 seconds
+        Commit: 62aae5f (master)
+        Author: まつもとゆきひろ a.k.a. Matz
+        Message: the commit message
+        View the changeset: https://github.com/svenfuchs/minimal/compare/master...develop
+        View the full build log and details: http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}
       ))
     end
 
@@ -74,7 +74,7 @@ describe Travis::Mailer::Build do
       email.html_part.body.should include_lines(%(
         https://github.com/svenfuchs/minimal/compare/master...develop
         http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}
-        62aae5f7 (master)
+        62aae5f (master)
         まつもとゆきひろ a.k.a. Matz
         the commit message
         1 hour, 17 minutes, and 7 seconds
@@ -158,10 +158,10 @@ describe Travis::Mailer::Build do
 
       it 'contains the expected text part' do
         email.text_part.body.should include_lines(%(
-          Notes :
-          * Your should create a test database. (1.1 and 1.2) <br />
-          * Your Gemfile is missing Rake. (1.1) <br />
-          * Your test suite has output more than 4194304 Bytes. (1.2) <br />
+          Notes:
+            * Your should create a test database. (1.1 and 1.2)
+            * Your Gemfile is missing Rake. (1.1)
+            * Your test suite has output more than 4194304 Bytes. (1.2)
         ))
       end
 
@@ -170,9 +170,9 @@ describe Travis::Mailer::Build do
           <th>Notes</th>
           <td>
           <ul>
-          <li>Your should create a test database. (1.1 and 1.2)</li>
-          <li>Your Gemfile is missing Rake. (1.1)</li>
-          <li>Your test suite has output more than 4194304 Bytes. (1.2)</li>
+            <li>Your should create a test database. (1.1 and 1.2)</li>
+            <li>Your Gemfile is missing Rake. (1.1)</li>
+            <li>Your test suite has output more than 4194304 Bytes. (1.2)</li>
           </ul>
           </td>
         ))

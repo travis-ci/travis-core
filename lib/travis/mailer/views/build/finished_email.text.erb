@@ -1,21 +1,24 @@
-<%= title(@build) %>
+<%= title(@repository) %>
 <%= '-' * (title(@build).size + 20) %>
 
-Build : #<%= @build.number %>
+Build: #<%= @build.number %>
+Status: <%= result_message(@build) %>
 
-Duration : <%= duration_in_words(@build.started_at, @build.finished_at) %>
-Commit : <%= @commit.commit[0..7] %> (<%= @commit.branch %>)
-Author : <%= @commit.author_name %>
-Message : <%= @commit.message %>
-<% unless @build.passed? or @build.matrix_uniq_tags.blank? %>
-Notes : <%= notes(@build, "text").html_safe %>
+Duration: <%= duration_in_words(@build.started_at, @build.finished_at) %>
+Commit: <%= @commit.sha[0..6] %> (<%= @commit.branch %>)
+Author: <%= @commit.author_name %>
+Message: <%= @commit.message %>
+<% unless (notes = notes_for(@jobs, 'html')).empty? %>
+
+Notes:
+<% notes.each do |note| %>
+  * <%= note[:message] %> (<%= note[:jobs].to_sentence %>)
+<% end %>
 <% end %>
 
-Status : <%= @build.result_message(@build) %>
+View the changeset: <%= @commit.compare_url %>
 
-View the changeset : <%= @commit.compare_url %>
-
-View the full build log and details : <%= repository_build_url(:slug => @build.repository.slug, :id => @build.id) %>
+View the full build log and details: <%= repository_build_url(:slug => @repository.slug, :id => @build.id) %>
 
 --
 

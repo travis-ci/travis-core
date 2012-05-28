@@ -32,8 +32,7 @@ module Travis
           end
 
           def message
-            key = result_key(data['build']['state'], data['build']['previous_result'], data['build']['result'])
-            RESULT_MESSAGE_SENTENCES[key]
+            RESULT_MESSAGE_SENTENCES[result_key(data['build'])]
           end
 
           def compare_url

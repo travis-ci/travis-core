@@ -71,7 +71,8 @@ module Travis
                 'started_at' => format_date(job.started_at),
                 'finished_at' => format_date(job.finished_at),
                 'allow_failure' => job.allow_failure,
-                'sponsor' => job.sponsor
+                'sponsor' => job.sponsor,
+                'tags' => job.tags
               }
             end
         end

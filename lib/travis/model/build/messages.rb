@@ -1,6 +1,8 @@
 class Build
   module Messages
-    def result_key(state, previous, current)
+    def result_key(data)
+      state, previous, current = data.symbolize_keys.values_at(:state, :previous_result, :result)
+
       if state.to_sym != :finished
         :pending
       elsif previous.nil?
@@ -33,13 +35,13 @@ class Build
     }
 
     def result_message(build)
-      key = result_key(state, previous_result, result)
-      RESULT_MESSAGES[key]
+      data = build.is_a?(Build) ? build.attributes : build
+      RESULT_MESSAGES[result_key(data)]
     end
 
     def human_result_message(build)
-      key = result_key(state, previous_result, result)
-      RESULT_MESSAGE_SENTENCES[key]
+      data = build.is_a?(Build) ? build.attributes : build
+      RESULT_MESSAGE_SENTENCES[result_key(data)]
     end
   end
 end

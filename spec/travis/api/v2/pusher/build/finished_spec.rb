@@ -32,6 +32,7 @@ describe Travis::Api::V2::Pusher::Build::Finished do
       'state' => 'finished',
       'config' => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
       'result' => 0,
+      'previous_result' => 0,
       'started_at' => json_format_time(Time.now.utc - 1.minute),
       'finished_at' => json_format_time(Time.now.utc),
       'duration' => 60,

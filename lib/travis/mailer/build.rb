@@ -3,18 +3,25 @@ require 'action_mailer'
 module Travis
   module Mailer
     class Build < ActionMailer::Base
-      helper Helper::Build
+      include ::Build::Messages
 
-      def finished_email(build, recipients)
-        @build  = build
-        @commit = build.commit
+      helper Helper::Build, ::Build::Messages
+
+      attr_reader :build, :commit, :repository, :jobs
+
+      def finished_email(data, recipients)
+        @build = Hashr.new(data['build'])
+        @repository = Hashr.new(data['repository'])
+        @commit = Hashr.new(data['commit'])
+        @jobs   = data['jobs'].map { |job| Hashr.new(job) }
+
         mail(:from => from, :to => recipients, :subject => subject, :template_path => 'build')
       end
 
       private
 
         def subject
-          "[#{@build.result_message(@build)}] #{@build.repository.slug}##{@build.number} (#{@commit.branch} - #{@commit.commit[0, 7]})"
+          "[#{result_message(build)}] #{repository['slug']}##{build['number']} (#{commit['branch']} - #{commit['sha'][0..6]})"
         end
 
         def from

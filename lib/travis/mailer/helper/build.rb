@@ -1,5 +1,6 @@
 require 'base64'
 require 'rack'
+require 'time'
 
 module Travis
   module Mailer
@@ -15,7 +16,7 @@ module Travis
         end
 
         def header_result(build)
-          build.passed? ? 'success' : 'failure'
+          build['result'] == 0 ? 'success' : 'failure'
         end
 
         def encode_image(path)
@@ -29,8 +30,8 @@ module Travis
           [Travis.config.http_host, options[:slug], 'builds', options[:id]].join('/')
         end
 
-        def title(build)
-          "Build Update for #{build.repository.slug}"
+        def title(repository)
+          "Build Update for #{repository.slug}"
         end
 
         # 1 hour, 10 minutes, and 15 seconds
@@ -38,6 +39,9 @@ module Travis
         # 1 minutes and 1 second
         # 15 seconds
         def duration_in_words(started_at, finished_at)
+          started_at  = Time.parse(started_at)  if started_at.is_a?(String)
+          finished_at = Time.parse(finished_at) if finished_at.is_a?(String)
+
           # difference in seconds
           diff = (finished_at - started_at).to_i
 
@@ -69,28 +73,31 @@ module Travis
           diff % ONE_MINUTE
         end
 
-        def notes(build, format)
-          rules = Job::Tagging.rules
-          messages = build.matrix_uniq_tags.map do |tag|
-            ix = rules.index { |rule| rule['tag'] == tag }
-            if ix and message = rules[ix]['message']
-              jobs_list = build.matrix.map do |job|
-                job.number if job.tags =~ /#{tag}/
-              end
-              jobs_list = jobs_list.compact.to_sentence
-              formated_note(format, message, jobs_list)
-            end
-          end
-
-          "\n" + messages.join("\n")
+        def notes_for(jobs, format)
+          tags_for(jobs).map do |tag|
+            rule = rule_for(tag)
+            rule.symbolize_keys.merge(:jobs => numbers_for(jobs, tag)) if rule
+          end.compact
         end
 
-        def formated_note(format, message, jobs_list)
-          case format
-            when "text" then "* #{message} (#{jobs_list}) <br />"
-            when "html" then "<li>#{message} (#{jobs_list})</li>"
-          end
+        def tags_for(jobs)
+          jobs.map(&:tags).join(',').split(',').uniq
         end
+
+        def rule_for(tag)
+          Job::Tagging.rules.detect { |rule| rule['tag'] == tag }
+        end
+
+        def numbers_for(jobs, tag)
+          jobs.map { |job| job.number if job.tags.to_s.include?(tag) }.compact
+        end
+
+        # def formated_note(format, message, numbers)
+        #   case format
+        #     when "text" then "* #{message} (#{numbers}) <br />"
+        #     when "html" then "<li>#{message} (#{numbers})</li>"
+        #   end
+        # end
       end
     end
   end

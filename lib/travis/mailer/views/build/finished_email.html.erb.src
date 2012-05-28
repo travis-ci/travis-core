@@ -17,11 +17,11 @@
           <table>
             <tr>
               <th>Repository</th>
-              <td><%= @build.repository.slug %></td>
+              <td><%= @repository.slug %></td>
             </tr>
             <tr>
               <th>Build #<%= @build.number %></th>
-              <td><%= link_to repository_build_url(:slug => @build.repository.slug, :id => @build.id), repository_build_url(:slug => @build.repository.slug, :id => @build.id) %></td>
+              <td><%= link_to repository_build_url(:slug => @repository.slug, :id => @build.id), repository_build_url(:slug => @repository.slug, :id => @build.id) %></td>
             </tr>
             <tr>
               <th>Changeset</th>
@@ -32,7 +32,7 @@
             </tr>
             <tr>
               <th>Commit</th>
-              <td><%= @commit.commit[0..7] %> (<%= @commit.branch %>)</td>
+              <td><%= @commit.sha[0..6] %> (<%= @commit.branch %>)</td>
             </tr>
             <tr>
               <th>Message</th>
@@ -46,6 +46,18 @@
               <th>Duration</th>
               <td><%= duration_in_words(@build.started_at, @build.finished_at) %></td>
             </tr>
+            <% unless (notes = notes_for(@jobs, 'html')).empty? %>
+              <tr>
+                <th>Notes</th>
+                <td>
+                  <ul>
+                    <% notes.each do |note| %>
+                      <li><%= note[:message] %> (<%= note[:jobs].to_sentence %>)</li>
+                    <% end %>
+                  </ul>
+                </td>
+              <tr>
+            <% end %>
           </table>
         </div>
         <table border="0" class="footer">

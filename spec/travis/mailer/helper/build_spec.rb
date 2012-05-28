@@ -6,12 +6,13 @@ describe Travis::Mailer::Helper::Build do
   include Support::ActiveRecord
 
   let(:build) { Factory(:running_build) }
+  let(:repository) { build.repository }
 
   let(:successful_build) { Factory(:build, :result => 0) }
   let(:failed_build)     { Factory(:build, :result => 1) }
 
   it '#title returns title for the build' do
-    title(build).should == 'Build Update for svenfuchs/running_build'
+    title(repository).should == 'Build Update for svenfuchs/running_build'
   end
 
   describe 'header_result' do

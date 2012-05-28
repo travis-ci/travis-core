@@ -22,7 +22,8 @@ describe Travis::Api::V2::Http::Jobs do
       'result' => 0,
       'queue' => 'builds.common',
       'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4',
-      'sponsor' => {}
+      'sponsor' => {},
+      'tags' => 'tag-a,tag-b'
     }
   end
 

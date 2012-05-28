@@ -58,6 +58,7 @@ module Support
             :config => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
             :result => 0,
             :result_message => 'Passed',
+            :previous_result => 0,
             :state => 'finished',
             :started_at => Time.now.utc - 1.minute,
             :finished_at => Time.now.utc,
@@ -87,6 +88,7 @@ module Support
             :finished_at => Time.now.utc,
             :sponsor => { 'name' => 'Railslove', 'url' => 'http://railslove.de' },
             :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4',
+            :tags => 'tag-a,tag-b'
           }
         end
 

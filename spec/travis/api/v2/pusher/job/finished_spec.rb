@@ -22,7 +22,8 @@ describe Travis::Api::V2::Pusher::Job::Finished do
       'result' => 0,
       'queue' => 'builds.common',
       'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4',
-      'sponsor' => { 'name' => 'Railslove', 'url' => 'http://railslove.de' }
+      'sponsor' => { 'name' => 'Railslove', 'url' => 'http://railslove.de' },
+      'tags' => 'tag-a,tag-b'
     }
   end
 
