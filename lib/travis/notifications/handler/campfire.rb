@@ -68,7 +68,7 @@ module Travis
                 :slug   => data['repository']['slug'],
                 :number => data['build']['number'],
                 :branch => data['commit']['branch'],
-                :sha    => data['commit']['sha'][0..7],
+                :sha    => data['commit']['sha'][0..6],
                 :author => data['commit']['author_name'],
                 :result => data['build']['result'] == 0 ? 'passed' : 'failed',
                 :compare_url => data['commit']['compare_url'],

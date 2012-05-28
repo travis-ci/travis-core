@@ -39,7 +39,11 @@ module Travis
 
             # TODO --- extract ---
 
+            attr_reader :data
+
             def send(channels, data)
+              @channels = channels
+              @data = data
               # Notifications to the same host are grouped so that they can be sent with a single connection
               channels.each do |server, channels|
                 host, port = *server
@@ -50,9 +54,9 @@ module Travis
             def send_notifications(host, port, channels)
               client(host, nick, :port => port) do |client|
                 channels.each do |channel|
-                  begin
-                    send_notification(client, channel, interpolated_messages)
+                    send_notification(client, channel)
                     info("Successfully notified #{host}:#{port}##{channel}")
+                  begin
                   rescue StandardError => e
                     error("Could not notify #{host}:#{port}##{channel} : #{e.inspect}")
                   end
@@ -60,7 +64,7 @@ module Travis
               end
             end
 
-            def send_notification(client, channel, messages)
+            def send_notification(client, channel)
               client.join(channel) if join?
               messages.each { |message| client.say("[travis-ci] #{message}", channel, notice?) }
               client.leave(channel) if join?
@@ -78,7 +82,7 @@ module Travis
             end
 
             def config
-              build.config[:notifications][:irc]
+              data['build']['config']['notifications'][:irc] rescue {}
             end
 
             def notice?
@@ -91,21 +95,21 @@ module Travis
 
             def messages
               @messages ||= templates.map do |template|
-                Template.new(templaet, build).interpolate
+                Template.new(template, data).interpolate
               end
             end
 
             def templates
-              @template ||= begin
-                template = (build.config[:notifications] && build.config[:notifications][:irc].is_a?(Hash) && build.config[:notifications][:irc][:template])
-                Array(template || default_template)
-              end
+              templates = config[:template] rescue nil
+              Array(templates || default_templates)
             end
 
-            def default_template
-              ["%{repository_url}#%{build_number} (%{branch} - %{commit} : %{author}): %{message}",
+            def default_templates
+              [
+                "%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{message}",
                 "Change view : %{compare_url}",
-                "Build details : %{build_url}"]
+                "Build details : %{build_url}"
+              ]
             end
         end
       end

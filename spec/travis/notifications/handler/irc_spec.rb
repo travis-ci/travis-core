@@ -95,10 +95,10 @@ describe Travis::Notifications::Handler::Irc do
   context 'customized template message' do
 
     let(:simple_template) do
-      custom_irc_config({ 'channels' => ["irc.freenode.net:1234#travis"], 'template' => "%{repository_url} (%{commit}): %{message} %{foo} " })
+      custom_irc_config({ 'channels' => ["irc.freenode.net:1234#travis"], 'template' => "%{repository} (%{commit}): %{message} %{foo}" })
     end
     let(:multiple_template) do
-      custom_irc_config({ 'channels' => ["irc.freenode.net:1234#travis"] , 'template' => ["%{repository_url} (%{commit}) : %{message} %{foo} ", "Build details: %{build_url}"] })
+      custom_irc_config({ 'channels' => ["irc.freenode.net:1234#travis"] , 'template' => ["%{repository} (%{commit}) : %{message} %{foo}", "Build details: %{build_url}"] })
     end
 
     it "should print a multiple line messages" do
@@ -111,7 +111,7 @@ describe Travis::Notifications::Handler::Irc do
 
       expected = [
         "JOIN #travis",
-        "PRIVMSG #travis :[travis-ci] svenfuchs/successful_build (62aae5f) : The build passed.",
+        "PRIVMSG #travis :[travis-ci] svenfuchs/successful_build (62aae5f) : The build passed. ",
         "PRIVMSG #travis :[travis-ci] Build details: http://trvs.io/#{expect_code}"
       ]
       expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
@@ -126,7 +126,7 @@ describe Travis::Notifications::Handler::Irc do
 
       expected = [
         'JOIN #travis',
-        'PRIVMSG #travis :[travis-ci] svenfuchs/successful_build (62aae5f): The build passed.',
+        'PRIVMSG #travis :[travis-ci] svenfuchs/successful_build (62aae5f): The build passed. ',
       ]
       expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
     end
