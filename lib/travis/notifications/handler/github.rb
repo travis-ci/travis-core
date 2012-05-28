@@ -1,49 +1,68 @@
+require 'core_ext/module/include'
+# backports 1.9 style string interpolation. can be removed once hub runs in 1.9 mode
+require 'i18n/core_ext/string/interpolate'
+
 module Travis
   module Notifications
     module Handler
 
       # Adds a comment with a build notification to the pull-request the request
       # belongs to.
-      class Github < Webhook
+      class Github
+        API_VERSION = 'v2'
+
         EVENTS = /build:finished/
 
-        def notify(event, build, *args)
-          add_comment(build) if build.request.pull_request?
-        end
+        include Logging
 
-        protected
+        include do
+          attr_reader :build
 
-          def add_comment(build)
-            url  = build.request.comments_url
-            authenticated do
-              GH.post(url, :body => comment(build))
+          def notify(event, build, *args)
+            @build = build
+            send(url, payload) if send?
+          end
+
+          private
+
+            def send?
+              build.request.pull_request?
             end
-            info "Successfully commented on #{url}."
-          rescue Faraday::Error::ClientError => e
-            message = e.message
-            message += ": #{e.response[:status]} #{e.response[:body]}" if e.response
-            error "Could not comment on #{url} (#{message})."
-          end
 
-          def self.http_options
-            super.merge(:token => Travis.config.github.token)
-          end
+            def url
+              build.request.comments_url
+            end
 
-          def http_options
-            self.class.http_options
-          end
+            def payload
+              Api.data(build, :for => 'notifications', :version => API_VERSION)
+            end
 
-          def authenticated(&block)
-            GH.with(http_options, &block)
-          end
+              # TODO --- extract ---
 
-          def comment(build)
-            "This pull request [#{build.passed? ? 'passes' : 'fails' }](#{build_url(build)}) (merged #{build.request.head_commit[0..7]} into #{build.request.base_commit[0..7]})."
-          end
+            def send(url, data)
+              authenticated do
+                GH.post(url, :body => message(data))
+              end
+              info "Successfully commented on #{url}."
+            rescue Faraday::Error::ClientError => e
+              error "Could not comment on #{url} (#{e.response[:status]} #{e.response[:body]})."
+            end
 
-          def build_url(build)
-            "#{Travis.config.http_host}/#{build.repository.slug}/builds/#{build.id}"
-          end
+            def authenticated(&block)
+              GH.with(:token => Travis.config.github.token, &block)
+            end
+
+            TEMPLATE = 'This pull request [%{result}](%{url}) (merged %{head} into %{base}).'
+
+            def message(data)
+              TEMPLATE % {
+                :result => build.passed? ? 'passes' : 'fails',
+                :url => "#{Travis.config.http_host}/#{data['repository']['slug']}/builds/#{data['build']['id']}",
+                :head => data['request']['head_commit'][0..7],
+                :base => data['request']['base_commit'][0..7]
+              }
+            end
+        end
       end
     end
   end

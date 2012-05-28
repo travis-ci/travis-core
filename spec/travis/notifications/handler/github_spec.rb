@@ -24,19 +24,19 @@ describe Travis::Notifications::Handler::Github do
     end
 
     it 'it does not add a github comment' do
-      Travis::Notifications::Handler::Github.any_instance.expects(:add_comment).never
+      Travis::Notifications::Handler::Github.any_instance.expects(:send).never
       Travis::Notifications.dispatch('build:finished', build)
     end
   end
 
   describe 'given the request is a pull_request event' do
     it 'it adds a github comment' do
-      Travis::Notifications::Handler::Github.any_instance.expects(:add_comment).with(build)
+      Travis::Notifications::Handler::Github.any_instance.expects(:notify).with('build:finished', build)
       Travis::Notifications.dispatch('build:finished', build)
     end
   end
 
-  describe 'add_comment' do
+  describe 'send' do
     let(:url) { build.request.comments_url }
 
     it 'posts to the request comments_url' do
