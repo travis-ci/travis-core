@@ -6,7 +6,7 @@ class Worker
     extend ActiveSupport::Concern
 
     included do
-      include SimpleStates, Travis::Notifications
+      include SimpleStates, Travis::Event
 
       states :created, :starting, :ready, :working, :stopping, :stopped, :errored
 

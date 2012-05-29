@@ -21,7 +21,7 @@ class Job
       FINISHING_ATTRIBUTES = [:status, :result, :finished_at]
 
       included do
-        include SimpleStates, Job::States, Travis::Notifications
+        include SimpleStates, Job::States, Travis::Event
 
         states :created, :started, :finished # :cloned, :installed, ...
 

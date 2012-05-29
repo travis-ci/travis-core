@@ -26,7 +26,7 @@ describe Build::States do
         end
 
         it 'notifies observers' do
-          Travis::Notifications.expects(:dispatch).with('build:started', build, data)
+          Travis::Event.expects(:dispatch).with('build:started', build, data)
           build.start(data)
         end
 
@@ -46,7 +46,7 @@ describe Build::States do
 
         it 'does not notify observers' do
           build.stubs(:started?).returns(true)
-          Travis::Notifications.expects(:dispatch).never
+          Travis::Event.expects(:dispatch).never
           build.start(data)
         end
       end
@@ -71,7 +71,7 @@ describe Build::States do
         end
 
         it 'does not notify observers' do
-          Travis::Notifications.expects(:dispatch).never
+          Travis::Event.expects(:dispatch).never
           build.finish(data)
         end
       end
@@ -97,7 +97,7 @@ describe Build::States do
         end
 
         it 'notifies observers' do
-          Travis::Notifications.expects(:dispatch).with('build:started', build, data)
+          Travis::Event.expects(:dispatch).with('build:started', build, data)
           build.start(data)
         end
       end

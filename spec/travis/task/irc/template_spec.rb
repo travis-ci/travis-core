@@ -10,7 +10,7 @@ describe Travis::Task::Irc::Template do
 
   let(:build)    { Factory(:build, :state => 'finished', :previous_result => nil, :result => 0)}
   let(:user)     { Factory(:user)}
-  let(:data)     { Travis::Api.data(build, :for => 'notifications', :version => 'v2') }
+  let(:data)     { Travis::Api.data(build, :for => 'event', :version => 'v2') }
   let(:template) { Travis::Task::Irc::Template.new(TEMPLATE, data) }
 
   before do

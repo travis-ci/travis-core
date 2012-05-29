@@ -9,7 +9,7 @@ describe Travis::Task::Github do
   let(:url)     { 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments' }
   let(:request) { Factory(:request, :head_commit => 'head', :base_commit => 'base') }
   let(:build)   { Factory(:build, :request => request) }
-  let(:data)    { Travis::Api.data(build, :for => 'notifications', :version => 'v2') }
+  let(:data)    { Travis::Api.data(build, :for => 'event', :version => 'v2') }
   let(:io)      { StringIO.new }
 
   before do

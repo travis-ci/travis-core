@@ -44,7 +44,7 @@ module Travis
   #   inside.foo.travis, scope: #<Foo:0x007f9bbb838d18>, something: 42
   #   outside.foo.travis, scope: #<Foo:0x007f9bbb838d18>, duration: 2 (in milliseconds), something: 42
   #
-  # TODO: merge with or use in Travis::Notifications
+  # TODO: merge with or use in Travis::Event
   module EventLogger
     # DSL method corresponding to EventLogger.
     #

@@ -33,7 +33,7 @@ describe Job::Configure::States do
       end
 
       it 'notifies observers' do
-        Travis::Notifications.expects(:dispatch).with('job:configure:started', job)
+        Travis::Event.expects(:dispatch).with('job:configure:started', job)
         job.start!
       end
     end
@@ -52,12 +52,12 @@ describe Job::Configure::States do
       it 'notifies observers' do
         data = { :result => 0, :config => config, :finished_at => Time.now.utc }
 
-        Travis::Notifications.expects(:dispatch).with('job:configure:started', job)
-        Travis::Notifications.expects(:dispatch).with('job:configure:finished', job, data)
+        Travis::Event.expects(:dispatch).with('job:configure:started', job)
+        Travis::Event.expects(:dispatch).with('job:configure:finished', job, data)
 
         # TODO
-        # Travis::Notifications.expects(:dispatch).with('request:configured', job, config) # not implemented
-        # Travis::Notifications.expects(:dispatch).with('job:test:created', instance_of(Job::Test)).times(2)
+        # Travis::Event.expects(:dispatch).with('request:configured', job, config) # not implemented
+        # Travis::Event.expects(:dispatch).with('job:test:created', instance_of(Job::Test)).times(2)
 
         job.start!
         job.finish!(data)

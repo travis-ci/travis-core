@@ -25,7 +25,7 @@ describe Worker::States do
     end
 
     it 'notifies observers' do
-      Travis::Notifications.expects(:dispatch).with('worker:updated', job)
+      Travis::Event.expects(:dispatch).with('worker:updated', job)
       job.ping(data)
     end
   end

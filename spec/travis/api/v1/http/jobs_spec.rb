@@ -1,6 +1,5 @@
 require 'spec_helper'
-require 'travis/api'
-require 'travis/api/support/stubs'
+require 'support/stubs'
 
 describe Travis::Api::V1::Http::Jobs do
   include Support::Stubs, Support::Formats

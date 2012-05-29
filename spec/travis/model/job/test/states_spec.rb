@@ -46,7 +46,7 @@ describe Job::Test::States do
       end
 
       it 'notifies observers' do
-        Travis::Notifications.expects(:dispatch).with('job:test:started', job, data)
+        Travis::Event.expects(:dispatch).with('job:test:started', job, data)
         job.start(data)
       end
 
@@ -65,7 +65,7 @@ describe Job::Test::States do
       end
 
       it 'notifies observers' do
-        Travis::Notifications.expects(:dispatch).with('job:test:finished', job, data)
+        Travis::Event.expects(:dispatch).with('job:test:finished', job, data)
         job.finish(data)
       end
 
@@ -112,7 +112,7 @@ describe Job::Test::States do
       end
 
       it 'notifies observers' do
-        Travis::Notifications.expects(:dispatch).with('job:test:log', job, :_log => 'chars')
+        Travis::Event.expects(:dispatch).with('job:test:log', job, :_log => 'chars')
         job.append_log!('chars')
       end
     end

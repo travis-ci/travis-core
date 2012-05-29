@@ -23,27 +23,27 @@ require 'core_ext/hash/deep_symbolize_keys'
 #
 # Build is split up to several modules:
 #
-#  * Build         - ActiveRecord structure, validations and scopes
-#  * States        - state definitions and events
-#  * Denormalize   - some state changes denormalize attributes to the build's
-#                    repository (e.g. Build#started_at gets propagated to
-#                    Repository#last_started_at)
-#  * Matrix        - logic related to expanding the build matrix, normalizing
-#                    configuration for Job::Test instances, evaluating the
-#                    final build result etc.
-#  * Messages      - helpers for evaluating human readable result messages
-#                    (e.g. "Still Failing")
-#  * Notifications - helpers that are used by notification handlers (and that
-#                    TODO probably should be cleaned up and moved to
-#                    travis/notification)
+#  * Build       - ActiveRecord structure, validations and scopes
+#  * States      - state definitions and events
+#  * Denormalize - some state changes denormalize attributes to the build's
+#                  repository (e.g. Build#started_at gets propagated to
+#                  Repository#last_started_at)
+#  * Matrix      - logic related to expanding the build matrix, normalizing
+#                  configuration for Job::Test instances, evaluating the
+#                  final build result etc.
+#  * Messages    - helpers for evaluating human readable result messages
+#                  (e.g. "Still Failing")
+#  * Events      - helpers that are used by notification handlers (and that
+#                  TODO probably should be cleaned up and moved to
+#                  travis/notification)
 class Build < ActiveRecord::Base
-  autoload :Compat,        'travis/model/build/compat'
-  autoload :Denormalize,   'travis/model/build/denormalize'
-  autoload :Matrix,        'travis/model/build/matrix'
-  autoload :Metrics,       'travis/model/build/metrics'
-  autoload :Messages,      'travis/model/build/messages'
-  autoload :Notifications, 'travis/model/build/notifications'
-  autoload :States,        'travis/model/build/states'
+  autoload :Compat,      'travis/model/build/compat'
+  autoload :Denormalize, 'travis/model/build/denormalize'
+  autoload :Matrix,      'travis/model/build/matrix'
+  autoload :Metrics,     'travis/model/build/metrics'
+  autoload :Messages,    'travis/model/build/messages'
+  autoload :Event,       'travis/model/build/event'
+  autoload :States,      'travis/model/build/states'
 
   include Compat, Matrix, States, Messages
 

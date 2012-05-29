@@ -14,7 +14,7 @@ class Job
       extend ActiveSupport::Concern
 
       included do
-        include SimpleStates, Job::States, Travis::Notifications
+        include SimpleStates, Job::States, Travis::Event
 
         states :created, :started, :finished
 

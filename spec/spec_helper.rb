@@ -29,8 +29,8 @@ RSpec.configure do |c|
 
   c.before :each do
     Travis.instance_variable_set(:@config, nil)
-    Travis::Notifications.instance_variable_set(:@queues, nil)
-    Travis::Notifications.instance_variable_set(:@subscriptions, nil)
+    Travis::Event.instance_variable_set(:@queues, nil)
+    Travis::Event.instance_variable_set(:@subscriptions, nil)
     GH.reset
   end
 end

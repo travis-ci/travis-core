@@ -19,7 +19,7 @@ end
 # TODO this looks like a very weird matcher
 RSpec::Matchers.define :send_email_notification_on do |event|
   match do |build|
-    dispatch =  lambda { Travis::Notifications.dispatch(event, build) }
+    dispatch =  lambda { Travis::Event.dispatch(event, build) }
     dispatch.call
     dispatch.should change(ActionMailer::Base.deliveries, :size).by(1)
     ActionMailer::Base.deliveries.last
@@ -71,7 +71,7 @@ RSpec::Matchers.define :be_queued do |*args|
   match do |job|
     @options = args.last.is_a?(Hash) ? args.pop : {}
     @queue = args.first || @options[:queue] || 'builds'
-    @expected = job.is_a?(Job) ? Travis::Notifications::Worker.payload_for(job, :queue => 'builds') : job
+    @expected = job.is_a?(Job) ? Travis::Event::Worker.payload_for(job, :queue => 'builds') : job
     @actual = job ? self.job['args'].last.deep_symbolize_keys : nil
 
     @actual == @expected

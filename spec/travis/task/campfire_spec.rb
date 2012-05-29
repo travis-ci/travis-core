@@ -8,7 +8,7 @@ describe Travis::Task::Campfire do
   let(:http)    { Faraday::Adapter::Test::Stubs.new }
   let(:client)  { Faraday.new { |f| f.request :url_encoded; f.adapter :test, http } }
   let(:build)   { Factory(:build, :config => { 'notifications' => { 'campfire' => 'account:token@room' } }) }
-  let(:data)    { Travis::Api.data(build, :for => 'notifications', :version => 'v2') }
+  let(:data)    { Travis::Api.data(build, :for => 'event', :version => 'v2') }
 
   before do
     Travis.logger = Logger.new(io)

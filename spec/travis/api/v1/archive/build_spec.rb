@@ -1,6 +1,5 @@
 require 'spec_helper'
-require 'support/formats'
-require 'travis/api/support/stubs'
+require 'support/stubs'
 
 describe Travis::Api::V1::Archive::Build do
   include Support::Formats, Support::Stubs

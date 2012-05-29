@@ -20,7 +20,7 @@ describe Request::States do
 
   describe :create_build! do
     xit 'notifies about a created event for each test job in the build matrix' do
-      Travis::Notifications.expects(:dispatch).with('job:test:created', anything).once
+      Travis::Event.expects(:dispatch).with('job:test:created', anything).once
       request.create_build!
     end
   end

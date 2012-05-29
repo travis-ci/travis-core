@@ -4,7 +4,7 @@ require 'support/active_record'
 require 'support/mocks/irc'
 require 'irc_client'
 
-describe Travis::Notifications::Handler::Irc do
+describe Travis::Event::Handler::Irc do
   include Support::ActiveRecord
 
   attr_reader :irc
@@ -19,10 +19,10 @@ describe Travis::Notifications::Handler::Irc do
   let(:irc)  { Support::Mocks::Irc.new }
   let(:user) { Factory(:user, :email => 'owner@example.com') }
   let(:repository) { Factory(:repository, :owner_email => 'owner@example.com') }
-  let(:common_irc_config) { { 'notifications' => { 'irc' => "irc.freenode.net:1234#travis" } } }
+  let(:common_irc_config) { { 'event' => { 'irc' => "irc.freenode.net:1234#travis" } } }
 
   def run(build)
-    data = Travis::Api.data(build, :for => 'notifications', :version => 'v2')
+    data = Travis::Api.data(build, :for => 'event', :version => 'v2')
     Travis::Task::Irc.new(build.irc_channels, data).run
   end
 
