@@ -10,6 +10,12 @@ module Travis
       autoload :Webhook,  'travis/notifications/handler/webhook'
       autoload :Worker,   'travis/notifications/handler/worker'
 
+      class << self
+        def call(event, object, data = {})
+          new(event, object, data).call
+        end
+      end
+
       include Logging
 
       attr_reader :event, :object, :data

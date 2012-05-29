@@ -1,16 +1,8 @@
 require 'spec_helper'
-require 'support/active_record'
-require 'support/mocks/pusher'
 
 describe Travis::Notifications::Handler::Pusher do
-  include Support::ActiveRecord
-
-  let(:build)     { Factory.build(:build) }
-  let(:configure) { Factory.build(:configure) }
-  let(:test)      { Factory.build(:test) }
-  let(:worker)    { Factory.build(:worker) }
+  let(:object)    { stub('object') }
   let(:handler)   { Travis::Notifications::Handler::Pusher.any_instance }
-
 
   before do
     Travis.config.notifications = [:pusher]
@@ -19,47 +11,47 @@ describe Travis::Notifications::Handler::Pusher do
   describe 'subscription' do
     it 'job:configure:created' do
       handler.expects(:call).never
-      Travis::Notifications.dispatch('job:configure:created', configure)
+      Travis::Notifications.dispatch('job:configure:created', object)
     end
 
     it 'job:configure:finished' do
       handler.expects(:call).never
-      Travis::Notifications.dispatch('job:configure:finished', configure)
+      Travis::Notifications.dispatch('job:configure:finished', object)
     end
 
     it 'job:test:created' do
       handler.expects(:call)
-      Travis::Notifications.dispatch('job:test:created', test)
+      Travis::Notifications.dispatch('job:test:created', object)
     end
 
     it 'job:test:started' do
       handler.expects(:call)
-      Travis::Notifications.dispatch('job:test:started', test)
+      Travis::Notifications.dispatch('job:test:started', object)
     end
 
     it 'job:log' do
       handler.expects(:call)
-      Travis::Notifications.dispatch('job:test:log', test)
+      Travis::Notifications.dispatch('job:test:log', object)
     end
 
     it 'job:test:finished' do
       handler.expects(:call)
-      Travis::Notifications.dispatch('job:test:finished', test)
+      Travis::Notifications.dispatch('job:test:finished', object)
     end
 
     it 'build:started' do
       handler.expects(:call)
-      Travis::Notifications.dispatch('build:started', build)
+      Travis::Notifications.dispatch('build:started', object)
     end
 
     it 'build:finished' do
       handler.expects(:call)
-      Travis::Notifications.dispatch('build:finished', build)
+      Travis::Notifications.dispatch('build:finished', object)
     end
 
     it 'worker:started' do
       handler.expects(:call)
-      Travis::Notifications.dispatch('worker:started', worker)
+      Travis::Notifications.dispatch('worker:started', object)
     end
   end
 end

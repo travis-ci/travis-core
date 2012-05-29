@@ -8,13 +8,15 @@ describe Travis::Notifications::Handler::Email do
     Travis.config.notifications = [:email]
   end
 
-  it 'build:started does not call' do
-    handler.expects(:call).never
-    Travis::Notifications.dispatch('build:started', build)
-  end
+  describe 'subscription' do
+    it 'build:started does not call' do
+      handler.expects(:call).never
+      Travis::Notifications.dispatch('build:started', build)
+    end
 
-  it 'build:finish notifies' do
-    handler.expects(:call)
-    Travis::Notifications.dispatch('build:finished', build)
+    it 'build:finish notifies' do
+      handler.expects(:call)
+      Travis::Notifications.dispatch('build:finished', build)
+    end
   end
 end

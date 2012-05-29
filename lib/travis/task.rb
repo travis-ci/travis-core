@@ -1,4 +1,5 @@
 require 'faraday'
+require 'core_ext/hash/compact'
 
 module Travis
   class Task
@@ -21,11 +22,7 @@ module Travis
     end
 
     def http_options
-      ssl = Travis.config.ssl
-      options = {}
-      options[:ssl] = { :ca_path => ssl.ca_path } if ssl.ca_path
-      options[:ssl] = { :ca_file => ssl.ca_file } if ssl.ca_file
-      options
+      { :ssl => Travis.config.ssl.compact }
     end
   end
 end
