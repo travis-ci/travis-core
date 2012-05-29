@@ -1,28 +1,21 @@
 require 'spec_helper'
-require 'support/active_record'
 
 describe Travis::Mailer::Helper::Build do
-  include Travis::Mailer::Helper::Build
-  include Support::ActiveRecord
-
-  let(:build) { Factory(:running_build) }
-  let(:repository) { build.repository }
-
-  let(:successful_build) { Factory(:build, :result => 0) }
-  let(:failed_build)     { Factory(:build, :result => 1) }
+  include Travis::Mailer::Helper::Build, Support::Stubs
 
   it '#title returns title for the build' do
-    title(repository).should == 'Build Update for svenfuchs/running_build'
+    title(repository).should == 'Build Update for svenfuchs/minimal'
   end
 
   describe 'header_result' do
-    it 'returns failure header class for a failed build' do
-      header_result(failed_build).should == 'failure'
+    it 'returns success header class for a successful build' do
+      build.stubs(:result).returns(0)
+      header_result(build).should == 'success'
     end
 
-    it 'returns success header class for a successful build' do
-      header_result(successful_build).should == 'success'
+    it 'returns failure header class for a failed build' do
+      build.stubs(:result).returns(1)
+      header_result(build).should == 'failure'
     end
   end
 end
-

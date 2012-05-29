@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'support/payloads'
 
 describe Travis::Task::Request::Configure do
   let(:response) { stub('response', :success? => true, :body => 'foo: Foo') }

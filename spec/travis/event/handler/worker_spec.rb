@@ -1,18 +1,13 @@
 require 'spec_helper'
-require 'support/active_record'
 
 describe Travis::Event::Handler::Worker do
-  include Support::ActiveRecord
-
-  let(:handler)   { Travis::Event::Handler::Worker.new(:start, test) }
-  let(:builds)    { stub('builds', :publish => true) }
-  let(:repo)      { Factory(:repository) }
-  let(:commit)    { Factory(:commit, :repository => repo) }
-  let(:configure) { Factory(:configure, :repository => repo, :commit => commit) }
-  let(:test)      { Factory(:test, :repository => repo) }
-  let(:payload)   { Travis::Api.data(test, :for => 'worker', :type => 'Job::Test', :version => 'v0') }
+  include Support::Stubs
 
   describe 'call' do
+    let(:handler) { Travis::Event::Handler::Worker.new(:start, test) }
+    let(:builds)  { stub('builds', :publish => true) }
+    let(:payload) { Travis::Api.data(test, :for => 'worker', :type => 'Job::Test', :version => 'v0') }
+
     before :each do
       Travis::Amqp::Publisher.stubs(:builds).returns(builds)
     end

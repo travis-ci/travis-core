@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'support/active_record'
 
 describe Build::Event do
   include Support::ActiveRecord # TODO why do we need active_record here?

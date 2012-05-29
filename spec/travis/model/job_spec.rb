@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'support/active_record'
 
 describe Job do
   include Support::ActiveRecord

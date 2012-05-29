@@ -1,8 +1,7 @@
 require 'spec_helper'
-require 'support/stubs'
 
 describe Travis::Api::V2::Pusher::Worker do
-  include Support::Stubs, Support::Formats
+  include Support::Stubs
 
   let(:data)   { Travis::Api::V2::Pusher::Worker.new(worker).data }
 

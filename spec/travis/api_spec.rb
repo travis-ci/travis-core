@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'travis/api'
 
 describe Travis::Api do
   describe 'data' do

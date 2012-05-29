@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'support/active_record'
 
 describe Repository::Sync do
   include Support::ActiveRecord

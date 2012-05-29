@@ -1,20 +1,15 @@
 require 'spec_helper'
-require 'support/active_record'
-require 'support/formats'
 
 describe Travis::Task::Github do
-  include Support::ActiveRecord
-  include Support::Formats
+  include Support::Stubs, Support::Formats
 
   let(:url)     { 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments' }
-  let(:request) { Factory(:request, :head_commit => 'head', :base_commit => 'base') }
-  let(:build)   { Factory(:build, :request => request) }
   let(:data)    { Travis::Api.data(build, :for => 'event', :version => 'v2') }
   let(:io)      { StringIO.new }
 
   before do
     Travis.logger = Logger.new(io)
-    stub_request(:post, 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments').to_return(:status => 200, :body => '{}')
+    WebMock.stub_request(:post, 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments').to_return(:status => 200, :body => '{}')
   end
 
   def run

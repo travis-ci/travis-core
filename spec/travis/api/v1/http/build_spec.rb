@@ -1,8 +1,7 @@
 require 'spec_helper'
-require 'support/stubs'
 
 describe Travis::Api::V1::Http::Build do
-  include Support::Formats, Support::Stubs
+  include Support::Stubs, Support::Formats
 
   let(:data) { Travis::Api::V1::Http::Build.new(build).data }
 

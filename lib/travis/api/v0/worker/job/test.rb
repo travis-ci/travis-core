@@ -17,14 +17,13 @@ module Travis
             end
 
             def job_data
-              data = {
+              {
                 'id' => job.id,
                 'number' => job.number,
                 'commit' => commit.commit,
-                'branch' => commit.branch
+                'branch' => commit.branch,
+                'ref' => commit.pull_request? ? commit.ref : nil
               }
-              data.merge!('ref' => commit.ref) if commit.pull_request?
-              data
             end
 
             def repository_data

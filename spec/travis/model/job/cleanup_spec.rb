@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'support/active_record'
 
 describe Job::Cleanup do
   include Support::ActiveRecord

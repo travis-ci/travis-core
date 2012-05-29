@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'core_ext/module/include'
 
 class BuildMetricsMock
   include do

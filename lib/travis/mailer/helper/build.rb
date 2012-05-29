@@ -16,7 +16,7 @@ module Travis
         end
 
         def header_result(build)
-          build['result'] == 0 ? 'success' : 'failure'
+          build.result == 0 ? 'success' : 'failure'
         end
 
         def encode_image(path)

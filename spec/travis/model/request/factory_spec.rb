@@ -1,6 +1,4 @@
 require 'spec_helper'
-require 'support/payloads'
-require 'support/active_record'
 
 describe Request do
   include Support::ActiveRecord

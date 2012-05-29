@@ -1,13 +1,11 @@
 require 'spec_helper'
-require 'support/active_record'
 
 describe Travis::Task::Campfire do
-  include Support::ActiveRecord
+  include Support::Stubs
 
   let(:io)      { StringIO.new }
   let(:http)    { Faraday::Adapter::Test::Stubs.new }
   let(:client)  { Faraday.new { |f| f.request :url_encoded; f.adapter :test, http } }
-  let(:build)   { Factory(:build, :config => { 'notifications' => { 'campfire' => 'account:token@room' } }) }
   let(:data)    { Travis::Api.data(build, :for => 'event', :version => 'v2') }
 
   before do
@@ -23,7 +21,7 @@ describe Travis::Task::Campfire do
     targets = ['account:token@room']
 
     expect_campfire('account', 'room', 'token', [
-      '[travis-ci] svenfuchs/minimal#1 (master - 62aae5f : Sven Fuchs): the build has passed',
+      '[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): the build has passed',
       '[travis-ci] Change view: https://github.com/svenfuchs/minimal/compare/master...develop',
       "[travis-ci] Build details: http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}"
     ])

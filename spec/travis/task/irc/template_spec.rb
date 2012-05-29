@@ -1,20 +1,20 @@
 require 'spec_helper'
-require 'support/active_record'
 
 describe Travis::Task::Irc::Template do
-  include Support::ActiveRecord
+  include Support::Stubs
 
   TEMPLATE = %w(repository build_number branch commit author message compare_url build_url).map do |name|
     "#{name}=%{#{name}}"
   end.join(' ')
 
-  let(:build)    { Factory(:build, :state => 'finished', :previous_result => nil, :result => 0)}
-  let(:user)     { Factory(:user)}
   let(:data)     { Travis::Api.data(build, :for => 'event', :version => 'v2') }
   let(:template) { Travis::Task::Irc::Template.new(TEMPLATE, data) }
 
   before do
-    Travis::Features.start
+    # TODO remove this db dependency
+    Repository.stubs(:find).returns(repository)
+    Travis::Features.stubs(:active?).with(:short_urls, repository).returns(true)
+    Url.stubs(:shorten).returns(url)
   end
 
   describe 'interpolation' do
@@ -41,10 +41,6 @@ describe Travis::Task::Irc::Template do
     end
 
     describe 'with shortening enabled' do
-      before do
-        Travis::Features.activate_user(:short_urls, build.repository.owner)
-      end
-
       it 'replaces the build url in short form' do
         result.should =~ %r(build_url=http://trvs.io/)
       end
@@ -56,7 +52,7 @@ describe Travis::Task::Irc::Template do
 
     describe 'with shortening disabled' do
       before do
-        Travis::Features.deactivate_user(:short_urls, build.repository.owner)
+        Travis::Features.stubs(:active?).with(:short_urls, repository).returns(false)
       end
 
       it 'replaces the compare url the full form' do

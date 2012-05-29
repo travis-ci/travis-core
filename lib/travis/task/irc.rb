@@ -1,10 +1,9 @@
-require 'irc_client'
-
 module Travis
   class Task
     # Publishes a build notification to IRC channels as defined in the
     # configuration (`.travis.yml`).
     class Irc < Task
+      autoload :Client,   'travis/task/irc/client'
       autoload :Template, 'travis/task/irc/template'
 
       TEMPLATES = [
@@ -70,7 +69,7 @@ module Travis
           end
 
           def client(host, nick, options, &block)
-            IrcClient.new(host, nick, options).tap do |client|
+            Client.new(host, nick, options).tap do |client|
               client.run(&block) if block_given?
               client.quit
             end

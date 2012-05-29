@@ -1,10 +1,6 @@
 require 'spec_helper'
-require 'travis/features'
-require 'support/active_record'
-require 'support/mocks/irc'
-require 'irc_client'
 
-describe Travis::Event::Handler::Irc do
+describe Travis::Task::Irc do
   include Support::ActiveRecord
 
   attr_reader :irc
@@ -31,12 +27,12 @@ describe Travis::Event::Handler::Irc do
   end
 
   def expect_irc(host, options = {}, count = 1)
-    IrcClient.expects(:new).times(count).with(host, 'travis-ci', { :port => nil }.merge(options)).returns(irc)
+    Travis::Task::Irc::Client.expects(:new).times(count).with(host, 'travis-ci', { :port => nil }.merge(options)).returns(irc)
   end
 
   it "no irc notifications" do
     build = Factory(:build)
-    IrcClient.expects(:new).never
+    Travis::Task::Irc::Client.expects(:new).never
     run(build)
   end
 

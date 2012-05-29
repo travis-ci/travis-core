@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'support/active_record'
 
 describe Build, 'denormalization' do
   include Support::ActiveRecord

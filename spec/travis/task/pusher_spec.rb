@@ -1,6 +1,4 @@
 require 'spec_helper'
-require 'support/active_record'
-require 'support/mocks/pusher'
 
 describe Travis::Task::Pusher do
   include Support::ActiveRecord

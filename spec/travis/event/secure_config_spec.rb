@@ -1,8 +1,6 @@
 require 'spec_helper'
-require 'support/active_record'
 
 describe Travis::Event::SecureConfig do
-
   let(:key)            { SslKey.new.tap { |key| key.generate_keys } }
   let(:secure_config)  { Travis::Event::SecureConfig.new(key)}
   let(:crypted)        { Base64.encode64(key.encrypt('hello world')) }

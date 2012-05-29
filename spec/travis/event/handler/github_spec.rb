@@ -1,11 +1,11 @@
 require 'spec_helper'
-require 'support/active_record'
 
 describe Travis::Event::Handler::Github do
-  include Support::ActiveRecord
+  include Support::Stubs
+  # include Support::ActiveRecord
 
-  let(:request) { Factory(:request, :event_type => 'pull_request', :comments_url => 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments', :base_commit => 'a3585bf3f9691ba396c38194c4b4920e51f1490b', :head_commit => '1317692c01d0c3a20b89ea634d06cd66b8c517d3') }
-  let(:build)   { Factory(:build, :request => request) }
+  # let(:request) { Factory(:request, :event_type => 'pull_request', :comments_url => 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments', :base_commit => 'a3585bf3f9691ba396c38194c4b4920e51f1490b', :head_commit => '1317692c01d0c3a20b89ea634d06cd66b8c517d3') }
+  # let(:build)   { Factory(:build, :request => request) }
 
   before do
     Travis.config.notifications = [:github]
@@ -25,11 +25,11 @@ describe Travis::Event::Handler::Github do
     end
   end
 
-  describe 'given the request is a push event' do
+  describe 'given the request is not a pull_request event' do
     let(:handler) { Travis::Event::Handler::Github.new('build:finished', build) }
 
     before :each do
-      build.request.event_type = 'push'
+      build.request.stubs(:pull_request? => false)
     end
 
     it 'does not handle the call' do
@@ -42,7 +42,7 @@ describe Travis::Event::Handler::Github do
     let(:handler) { Travis::Event::Handler::Github.new('build:finished', build) }
 
     before :each do
-      build.request.event_type = 'pull_request'
+      build.request.stubs(:pull_request? => true)
     end
 
     it 'handles the call' do

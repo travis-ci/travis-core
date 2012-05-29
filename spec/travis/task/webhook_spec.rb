@@ -1,11 +1,8 @@
 require 'spec_helper'
-require 'support/active_record'
-require 'support/formats'
 require 'rack'
 
 describe Travis::Task::Webhook do
-  include Support::ActiveRecord
-  include Support::Formats
+  include Support::ActiveRecord, Support::Formats
 
   let(:http)    { Faraday::Adapter::Test::Stubs.new }
   let(:client)  { Faraday.new { |f| f.request :url_encoded; f.adapter :test, http } }

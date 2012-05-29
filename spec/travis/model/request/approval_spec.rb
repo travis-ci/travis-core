@@ -1,6 +1,4 @@
 require 'spec_helper'
-require 'support/active_record'
- # && !rails_fork?
 
 describe Request::Approval do
   include Support::ActiveRecord

@@ -1,8 +1,7 @@
 require 'spec_helper'
-require 'support/stubs'
 
 describe Travis::Api::V0::Worker::Job::Configure do
-  include Support::Stubs, Support::Formats
+  include Support::Stubs
 
   let(:data) { Travis::Api::V0::Worker::Job::Configure.new(test).data }
 

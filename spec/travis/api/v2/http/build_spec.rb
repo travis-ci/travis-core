@@ -1,8 +1,7 @@
 require 'spec_helper'
-require 'support/stubs'
 
 describe Travis::Api::V2::Http::Build do
-  include Support::Formats, Support::Stubs
+  include Support::Stubs, Support::Formats
 
   let(:data) { Travis::Api::V2::Http::Build.new(build).data }
 
@@ -11,7 +10,7 @@ describe Travis::Api::V2::Http::Build do
       'id' => 1,
       'repository_id' => 1,
       'commit_id' => 1,
-      'job_ids' => [1],
+      'job_ids' => [1, 2],
       'number' => 2,
       'state' => 'finished',
       'config' => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },

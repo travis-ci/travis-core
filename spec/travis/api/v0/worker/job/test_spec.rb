@@ -1,8 +1,7 @@
 require 'spec_helper'
-require 'support/stubs'
 
 describe Travis::Api::V0::Worker::Job::Test do
-  include Support::Stubs, Support::Formats
+  include Support::Stubs
 
   let(:data) { Travis::Api::V0::Worker::Job::Test.new(test).data }
 
@@ -19,14 +18,16 @@ describe Travis::Api::V0::Worker::Job::Test do
           'id' => 1,
           'number' => '2.1',
           'commit' => '62aae5f70ceee39123ef',
-          'branch' => 'master'
+          'branch' => 'master',
+          'ref' => nil
         },
         # TODO legacy. remove this once workers respond to a 'job' key
         'build' => {
           'id' => 1,
           'number' => '2.1',
           'commit' => '62aae5f70ceee39123ef',
-          'branch' => 'master'
+          'branch' => 'master',
+          'ref' => nil
         },
         'repository' => {
           'id' => 1,

@@ -1,6 +1,4 @@
-require 'travis/features'
 require 'spec_helper'
-require 'support/active_record'
 
 describe Travis::Features do
   describe "connecting" do

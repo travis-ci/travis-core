@@ -1,7 +1,6 @@
 require 'spec_helper'
-require 'irc_client'
 
-describe IrcClient do
+describe Travis::Task::Irc::Client do
   let(:socket)   { stub(:puts => true, :get => true, :eof? => true) }
   let(:server)   { 'irc.freenode.net' }
   let(:nick)     { 'travis_bot' }
@@ -13,14 +12,14 @@ describe IrcClient do
     describe 'with no port specified' do
       it 'should open a socket on the server for port 6667' do
         TCPSocket.expects(:open).with(server, 6667).returns socket
-        IrcClient.new(server, nick)
+        Travis::Task::Irc::Client.new(server, nick)
       end
     end
 
     describe 'with port specified' do
       it 'should open a socket on the server for the given port' do
         TCPSocket.expects(:open).with(server, 1234).returns socket
-        IrcClient.new(server, nick, :port => 1234)
+        Travis::Task::Irc::Client.new(server, nick, :port => 1234)
       end
     end
 
@@ -38,7 +37,7 @@ describe IrcClient do
       describe 'without a password' do
         it 'by sending NICK then USER' do
           expect_standard_sequence
-          IrcClient.new(server, nick)
+          Travis::Task::Irc::Client.new(server, nick)
         end
       end
 
@@ -46,7 +45,7 @@ describe IrcClient do
         it 'by sending PASS then NICK then USER' do
           @socket.expects(:puts).with("PASS #{password}")
           expect_standard_sequence
-          IrcClient.new(server, nick, :password => password)
+          Travis::Task::Irc::Client.new(server, nick, :password => password)
         end
       end
     end
@@ -67,7 +66,7 @@ describe IrcClient do
       describe "without a password" do
         it 'by sending NICK then USER' do
           expect_standard_sequence
-          IrcClient.new(server, nick)
+          Travis::Task::Irc::Client.new(server, nick)
           # this sleep is here so that the ping thread has a chance to run
           sleep 0.5
         end
@@ -82,7 +81,7 @@ describe IrcClient do
 
     before(:each) do
       TCPSocket.stubs(:open).returns socket
-      @client = IrcClient.new(server, nick)
+      @client = Travis::Task::Irc::Client.new(server, nick)
     end
 
     it 'can message a channel before joining' do

@@ -1,12 +1,10 @@
 require 'spec_helper'
-require 'support/active_record'
 
 describe Travis::Task::Email do
-  include Support::ActiveRecord
+  include Support::Stubs
 
   let(:email)      { stub('email', :deliver => true) }
   let(:mailer)     { Travis::Mailer::Build }
-  let(:build)      { Factory(:build, :state => 'finished') }
   let(:data)       { Travis::Api.data(build, :for => 'event', :version => 'v2') }
   let(:recipients) { ['svenfuchs@artweb-design.de'] }
 

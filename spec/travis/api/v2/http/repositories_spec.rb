@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'support/stubs'
 
 describe Travis::Api::V2::Http::Repositories do
   include Support::Stubs, Support::Formats

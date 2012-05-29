@@ -1,5 +1,3 @@
-require 'support/formats'
-
 RSpec::Matchers.define :contain_recipients do |expected|
   match do |actual|
     actual = Array(actual).join(',').split(',')
