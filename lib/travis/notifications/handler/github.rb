@@ -25,8 +25,12 @@ module Travis
             error "Could not comment on #{url} (#{message})."
           end
 
+          def http_options
+            super.merge(:token => Travis.config.github.token)
+          end
+
           def authenticated(&block)
-            GH.with(:token => Travis.config.github.token, &block)
+            GH.with(http_options, &block)
           end
 
           def comment(build)
