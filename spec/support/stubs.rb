@@ -81,7 +81,7 @@ module Support
         :started_at => Time.now.utc - 1.minute,
         :finished_at => Time.now.utc,
         :duration => 60,
-        :pull_request? => false,
+        :pull_request? => false
       )
     end
 
@@ -129,7 +129,7 @@ module Support
         :finished? => true,
         :queue => 'builds.configure',
         :started_at => Time.now.utc - 1.minute,
-        :finished_at => Time.now.utc,
+        :finished_at => Time.now.utc
       )
     end
 
