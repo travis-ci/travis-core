@@ -2,12 +2,9 @@ require 'spec_helper'
 
 describe Travis::Task::Pusher do
   include Support::ActiveRecord
+  include Support::Stubs
 
-  let(:channel)   { Support::Mocks::Pusher::Channel.new }
-  let(:build)     { Factory(:build) }
-  let(:configure) { Factory(:configure) }
-  let(:test)      { Factory(:test) }
-  let(:worker)    { Factory.build(:worker) }
+  let(:channel) { Support::Mocks::Pusher::Channel.new }
 
   before do
     Travis.config.notifications = [:pusher]
@@ -69,7 +66,8 @@ describe Travis::Task::Pusher do
     end
 
     it 'returns "job-1" for the event "job:log"' do
-      handler.send(:channels_for, 'job:log', test).should include("job-#{test.id}")
+      data = Travis::Api.data(test, :for => 'pusher', :type => 'job/log', :version => 'v1')
+      handler.send(:channels_for, 'job:log', data).should include("job-#{test.id}")
     end
 
     it 'returns "common" for the event "job:finished"' do

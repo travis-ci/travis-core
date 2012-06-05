@@ -12,7 +12,7 @@ module Travis
 
           attr_reader :job
 
-          def initialize(job)
+          def initialize(job, options = {})
             @job = job
           end
 

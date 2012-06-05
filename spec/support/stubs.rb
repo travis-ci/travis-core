@@ -41,6 +41,7 @@ module Support
         :event_type => 'push',
         :head_commit => 'head-commit',
         :base_commit => 'base-commit',
+        :token => 'token'
       )
     end
 

@@ -2,17 +2,17 @@ require 'spec_helper'
 require 'rack'
 
 describe Travis::Task::Webhook do
-  include Support::ActiveRecord, Support::Formats
+  include Support::Stubs, Support::Formats
 
   let(:http)    { Faraday::Adapter::Test::Stubs.new }
   let(:client)  { Faraday.new { |f| f.request :url_encoded; f.adapter :test, http } }
-  let(:build)   { Factory(:build, :config => { 'notifications' => { 'webhooks' => 'http://example.com/' } }) }
   let(:io)      { StringIO.new }
 
   before do
     Travis.logger = Logger.new(io)
     Travis.config.notifications = [:webhook]
     Travis::Task::Webhook.any_instance.stubs(:http).returns(client)
+    build.config[:notifications] = { :webhooks => 'http://example.com' }
   end
 
   def run(targets, payload)

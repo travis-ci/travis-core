@@ -1,3 +1,5 @@
+require 'json'
+
 module Travis
   class Task
 
