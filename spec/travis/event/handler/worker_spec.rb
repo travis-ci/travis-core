@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Travis::Event::Handler::Worker do
   include Support::Stubs
 
-  describe 'call' do
+  describe 'notify' do
     let(:handler) { Travis::Event::Handler::Worker.new(:start, test) }
     let(:builds)  { stub('builds', :publish => true) }
     let(:payload) { Travis::Api.data(test, :for => 'worker', :type => 'Job::Test', :version => 'v0') }
@@ -14,12 +14,12 @@ describe Travis::Event::Handler::Worker do
 
     it 'fetches a publisher for the given queue name (routing_key)' do
       Travis::Amqp::Publisher.expects(:builds).with('builds.common').returns(builds)
-      handler.call
+      handler.notify
     end
 
     it 'publishes the payload to the publisher' do
       builds.expects(:publish).with(payload, :properties => { :type => 'test' })
-      handler.call
+      handler.notify
     end
   end
 

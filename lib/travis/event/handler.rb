@@ -11,8 +11,8 @@ module Travis
       autoload :Worker,   'travis/event/handler/worker'
 
       class << self
-        def call(event, object, data = {})
-          new(event, object, data).call
+        def notify(event, object, data = {})
+          new(event, object, data).notify
         end
       end
 
@@ -24,14 +24,6 @@ module Travis
         @event = event
         @object = object
         @data = data
-      end
-
-      def call
-        handle if handle?
-      end
-
-      def handle?
-        true
       end
     end
   end

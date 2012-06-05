@@ -17,8 +17,8 @@ module Travis
         end
       end
 
-      def notify(event, *args)
-        instrument(event, *args) do
+      def notify(*args)
+        instrument(*args) do
           super
         end
       end
@@ -27,9 +27,9 @@ module Travis
         ActiveSupport::Notifications.subscribe("#{name.to_s}.notifications.travis", &method(:log_notification))
       end
 
-      def instrument(event, *args, &block)
+      def instrument(*args, &block)
         instrument_name = self.class.name.demodulize.downcase
-        ActiveSupport::Notifications.instrument("#{instrument_name}.notifications.travis", :target => self, :args => args, &block)
+        ActiveSupport::Notifications.instrument("#{instrument_name}.notifications.travis", :target => self, :args => [event, object, data] + args, &block)
       end
     end
   end

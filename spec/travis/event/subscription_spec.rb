@@ -12,7 +12,7 @@ describe Travis::Event::Subscription do
       self.class.events << args
     end
 
-    def call
+    def notify
     end
   end
 

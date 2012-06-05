@@ -1,3 +1,4 @@
+require 'core_ext/module/include'
 require 'active_support/core_ext/string/inflections'
 
 module Travis

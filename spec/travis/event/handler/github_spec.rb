@@ -14,13 +14,13 @@ describe Travis::Event::Handler::Github do
   describe 'subscription' do
     let(:handler) { Travis::Event::Handler::Github.any_instance }
 
-    it 'build:started does not call' do
-      handler.expects(:call).never
+    it 'build:started does not notify' do
+      handler.expects(:notify).never
       Travis::Event.dispatch('build:started', build)
     end
 
     it 'build:finish notifies' do
-      handler.expects(:call)
+      handler.expects(:notify)
       Travis::Event.dispatch('build:finished', build)
     end
   end
@@ -32,9 +32,9 @@ describe Travis::Event::Handler::Github do
       build.request.stubs(:pull_request? => false)
     end
 
-    it 'does not handle the call' do
+    it 'does not handle the notification' do
       handler.expects(:handle).never
-      handler.call
+      handler.notify
     end
   end
 
@@ -45,9 +45,9 @@ describe Travis::Event::Handler::Github do
       build.request.stubs(:pull_request? => true)
     end
 
-    it 'handles the call' do
+    it 'handles the notification' do
       handler.expects(:handle)
-      handler.call
+      handler.notify
     end
   end
 end

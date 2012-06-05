@@ -10,12 +10,12 @@ describe Travis::Event::Handler::Webhook do
 
   describe 'subscription' do
     it 'build:started notifies' do
-      handler.expects(:call)
+      handler.expects(:notify)
       Travis::Event.dispatch('build:started', build)
     end
 
     it 'build:finish notifies' do
-      handler.expects(:call)
+      handler.expects(:notify)
       Travis::Event.dispatch('build:finished', build)
     end
   end

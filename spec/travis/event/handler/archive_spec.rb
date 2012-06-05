@@ -9,13 +9,13 @@ describe Travis::Event::Handler::Archive do
   end
 
   describe 'subscription' do
-    it 'build:started does not call' do
-      handler.expects(:call).never
+    it 'build:started does not notify' do
+      handler.expects(:notify).never
       Travis::Event.dispatch('build:started', build)
     end
 
-    it 'build:finish calls' do
-      handler.expects(:call)
+    it 'build:finish notifies' do
+      handler.expects(:notify)
       Travis::Event.dispatch('build:finished', build)
     end
   end
