@@ -3,7 +3,7 @@ class Build
     def result_key(data)
       state, previous, current = data.symbolize_keys.values_at(:state, :previous_result, :result)
 
-      if state.to_sym != :finished
+      if current.nil?
         :pending
       elsif previous.nil?
         current == 0 ? :passed : :failed

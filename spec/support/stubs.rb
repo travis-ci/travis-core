@@ -63,7 +63,7 @@ module Support
 
     def stub_build(attributes = {})
       stub 'build', attributes.reverse_merge(
-        :class => Build,
+        :class => stub('Build', :name => 'Build', :base_class => stub('Build', :name => 'Build')),
         :id => 1,
         :repository_id => repository.id,
         :repository => repository,
@@ -80,13 +80,13 @@ module Support
         :started_at => Time.now.utc - 1.minute,
         :finished_at => Time.now.utc,
         :duration => 60,
-        :pull_request? => false
+        :pull_request? => false,
       )
     end
 
     def stub_test(attributes = {})
       stub 'test', attributes.reverse_merge(
-        :class => Job::Test,
+        :class => stub('Job::Test', :name => 'Job::Test', :base_class => stub('Job', :name => 'Job')),
         :id => 1,
         :repository_id => 1,
         :repository => repository,
@@ -165,8 +165,9 @@ module Support
 
     def stub_url(attributes = {})
       stub 'url', attributes.reverse_merge(
+        :class => stub('Url', :name => 'Url'),
         :id => 1,
-        :short_url => 'http://trvs.io/foo'
+        :short_url => 'http://trvs.io/short'
       )
     end
   end
