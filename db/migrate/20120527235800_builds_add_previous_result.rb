@@ -1,7 +1,7 @@
-class BuildsAddLastResult < ActiveRecord::Migration
+class BuildsAddPreviousResult < ActiveRecord::Migration
   def change
     change_table :builds do |t|
-      t.integer :last_result
+      t.integer :previous_result
     end
   end
 end
