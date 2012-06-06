@@ -21,14 +21,14 @@ module Travis
             end
 
             def handle
-              Task::Github.new(url, data).run
+              Task::Github.new(url, payload).run
             end
 
             def url
               object.request.comments_url
             end
 
-            def data
+            def payload
               Api.data(object, :for => 'event', :version => API_VERSION)
             end
         end

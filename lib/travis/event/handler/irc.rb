@@ -20,14 +20,14 @@ module Travis
             end
 
             def handle
-              Task::Irc.new(channels, data).run
+              Task::Irc.new(channels, payload).run
             end
 
             def channels
               object.irc_channels
             end
 
-            def data
+            def payload
               Api.data(object, :for => 'event', :version => API_VERSION)
             end
         end

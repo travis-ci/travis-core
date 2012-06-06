@@ -18,10 +18,10 @@ module Travis
             end
 
             def handle
-              Task::Archive.new(data).run
+              Task::Archive.new(payload).run
             end
 
-            def data
+            def payload
               Api.data(object, :for => 'archive', :version => API_VERSION)
             end
         end

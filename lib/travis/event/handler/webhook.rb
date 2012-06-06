@@ -28,7 +28,7 @@ module Travis
             end
 
             def handle
-              Task::Webhook.new(targets, data, token).run
+              Task::Webhook.new(targets, payload, token).run
             end
 
             def payload

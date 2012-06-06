@@ -20,14 +20,14 @@ module Travis
             end
 
             def handle
-              Task::Email.new(recipients, data).run
+              Task::Email.new(recipients, payload).run
             end
 
             def recipients
               object.email_recipients
             end
 
-            def data
+            def payload
               Api.data(object, :for => 'event', :version => API_VERSION)
             end
         end

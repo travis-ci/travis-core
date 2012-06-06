@@ -23,7 +23,7 @@ module Travis
         end
       end
 
-      %w(archive email github irc pusher webhook).each do |name| # TODO where can we hook in best?
+      %w(archive campfire email github hub irc pusher webhook worker).each do |name| # TODO where can we hook in best?
         ActiveSupport::Notifications.subscribe("#{name.to_s}.notifications.travis", &method(:log_notification))
       end
 

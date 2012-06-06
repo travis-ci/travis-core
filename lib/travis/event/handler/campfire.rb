@@ -23,14 +23,14 @@ module Travis
             end
 
             def handle
-              Task::Campfire.new(targets, data).run if handle?
+              Task::Campfire.new(targets, payload).run if handle?
             end
 
             def targets
               object.campfire_rooms
             end
 
-            def data
+            def payload
               Api.data(object, :for => 'event', :version => API_VERSION)
             end
         end

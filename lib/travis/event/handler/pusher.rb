@@ -20,10 +20,10 @@ module Travis
             end
 
             def handle
-              Task::Pusher.new(event, data).run
+              Task::Pusher.new(event, payload).run
             end
 
-            def data
+            def payload
               Api.data(object, :for => 'pusher', :type => type, :params => data, :version => API_VERSION)
             end
 
