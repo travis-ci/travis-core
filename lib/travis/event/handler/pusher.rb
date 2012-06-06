@@ -5,7 +5,7 @@ module Travis
       # Notifies registered clients about various state changes through Pusher.
       class Pusher < Handler
         include do
-          API_VERSION = 'v2'
+          API_VERSION = 'v1'
 
           EVENTS = [/^build:(started|finished)/, /^job:test:(created|started|log|finished)/, /^worker:.*/]
 

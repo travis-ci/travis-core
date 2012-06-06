@@ -28,7 +28,7 @@ module Travis
           def channels
             case event
             when 'job:log'
-              ["job-#{data['job']['id']}"]
+              ["job-#{data['id']}"]
             else
               ['common']
             end

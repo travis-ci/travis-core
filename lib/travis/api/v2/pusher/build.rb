@@ -10,7 +10,7 @@ module Travis
 
           attr_reader :build, :repository
 
-          def initialize(build, options = {})
+          def initialize(build)
             @build = build
             @repository = build.repository
           end
