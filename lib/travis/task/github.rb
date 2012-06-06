@@ -21,13 +21,15 @@ module Travis
           end
           info "Successfully commented on #{url}."
         rescue Faraday::Error::ClientError => e
-          error "Could not comment on #{url} (#{e.response[:status]} #{e.response[:body]})."
+          message = e.message
+          message += ": #{e.response[:status]} #{e.response[:body]}" if e.response
+          error "Could not comment on #{url} (#{message})."
         end
 
         private
 
           def authenticated(&block)
-            GH.with(:token => Travis.config.github.token, &block)
+            GH.with(http_options, &block)
           end
 
           TEMPLATE = 'This pull request [%{result}](%{url}) (merged %{head} into %{base}).'
@@ -39,6 +41,10 @@ module Travis
               :head => data['request']['head_commit'][0..7],
               :base => data['request']['base_commit'][0..7]
             }
+          end
+
+          def http_options
+            super.merge(:token => Travis.config.github.token)
           end
       end
     end

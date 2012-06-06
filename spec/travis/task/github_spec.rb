@@ -46,7 +46,7 @@ describe Travis::Task::Github do
     it 'warns about a failed request' do
       GH.stubs(:with).raises(Faraday::Error::ClientError.new(:status => 403, :body => 'nono.'))
       run
-      io.string.should include('[github] Could not comment on https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments (403 nono.)')
+      io.string.should include('[github] Could not comment on https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments (the server responded with status 403: 403 nono.)')
     end
   end
 end

@@ -2,10 +2,6 @@ require 'spec_helper'
 
 describe Travis::Event::Handler::Github do
   include Support::Stubs
-  # include Support::ActiveRecord
-
-  # let(:request) { Factory(:request, :event_type => 'pull_request', :comments_url => 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments', :base_commit => 'a3585bf3f9691ba396c38194c4b4920e51f1490b', :head_commit => '1317692c01d0c3a20b89ea634d06cd66b8c517d3') }
-  # let(:build)   { Factory(:build, :request => request) }
 
   before do
     Travis.config.notifications = [:github]

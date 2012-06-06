@@ -16,8 +16,8 @@ module Travis
 
         def run
           email(recipients, data).deliver
-        # rescue StandardError => e
-        #   log_exception(e)
+        rescue StandardError => e
+          log_exception(e)
         end
 
         private
