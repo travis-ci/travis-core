@@ -7,9 +7,9 @@ class Build
         :pending
       elsif previous.nil?
         current == 0 ? :passed : :failed
-      elsif previous == 0
+      elsif previous.to_i == 0
         current == 0 ? :passed : :broken
-      elsif previous == 1
+      elsif previous.to_i == 1
         current == 0 ? :fixed : :failing
       end
     end
@@ -29,8 +29,8 @@ class Build
       :pending => 'The build is pending.',
       :passed  => 'The build passed.',
       :failed  => 'The build failed.',
-      :broken  => 'The build was fixed.',
-      :fixed   => 'The build was broken.',
+      :broken  => 'The build was broken.',
+      :fixed   => 'The build was fixed.',
       :failing => 'The build is still failing.'
     }
 
