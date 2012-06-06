@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Api::V2::Http::Build do
-  include Support::Stubs
+  include Travis::Testing::Stubs
 
   let(:data) { Travis::Api::V2::Http::Artifact.new(log).data }
 

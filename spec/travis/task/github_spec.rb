@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Task::Github do
-  include Support::Stubs, Support::Formats
+  include Travis::Testing::Stubs, Support::Formats
 
   let(:url)     { 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments' }
   let(:data)    { Travis::Api.data(build, :for => 'event', :version => 'v2') }

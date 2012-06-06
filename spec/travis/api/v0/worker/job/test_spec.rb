@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Api::V0::Worker::Job::Test do
-  include Support::Stubs
+  include Travis::Testing::Stubs
 
   let(:data) { Travis::Api::V0::Worker::Job::Test.new(test).data }
 

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Api::V1::Archive::Build do
-  include Support::Stubs, Support::Formats
+  include Travis::Testing::Stubs, Support::Formats
 
   let(:data) { Travis::Api::V1::Archive::Build.new(build).data }
 

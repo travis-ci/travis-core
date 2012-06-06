@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Task::Irc do
-  include Support::Stubs
+  include Travis::Testing::Stubs
 
   let(:tcp)    { stub('tcp', :eof? => true, :close => true) }
   let(:seq)    { sequence('tcp') }

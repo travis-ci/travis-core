@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Event::Handler::Worker do
-  include Support::Stubs
+  include Travis::Testing::Stubs
 
   describe 'notify' do
     let(:handler) { Travis::Event::Handler::Worker.new(:start, test) }

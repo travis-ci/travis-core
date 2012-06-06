@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Task::Campfire do
-  include Support::Stubs
+  include Travis::Testing::Stubs
 
   let(:io)      { StringIO.new }
   let(:http)    { Faraday::Adapter::Test::Stubs.new }

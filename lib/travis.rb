@@ -55,6 +55,7 @@ module Travis
   autoload :Model,       'travis/model'
   autoload :Event,       'travis/event'
   autoload :Task,        'travis/task'
+  autoload :Testing,     'travis/testing'
 
   class << self
     def env

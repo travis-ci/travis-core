@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Api::V1::Http::Jobs do
-  include Support::Stubs
+  include Travis::Testing::Stubs
 
   let(:data) { Travis::Api::V1::Http::Jobs.new([test]).data }
 

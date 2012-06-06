@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Event::Handler::Github do
-  include Support::Stubs
+  include Travis::Testing::Stubs
 
   before do
     Travis.config.notifications = [:github]

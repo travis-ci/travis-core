@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Task::Email do
-  include Support::Stubs
+  include Travis::Testing::Stubs
 
   let(:email)      { stub('email', :deliver => true) }
   let(:mailer)     { Travis::Mailer::Build }

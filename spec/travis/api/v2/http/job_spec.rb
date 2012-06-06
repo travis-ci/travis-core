@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Api::V2::Http::Job do
-  include Support::Stubs, Support::Formats
+  include Travis::Testing::Stubs, Support::Formats
 
   let(:data) { Travis::Api::V2::Http::Job.new(test).data }
 

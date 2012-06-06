@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Task::Archive do
-  include Support::Stubs, Support::Formats
+  include Travis::Testing::Stubs, Support::Formats
 
   let(:io)       { StringIO.new }
   let(:http)     { Faraday::Adapter::Test::Stubs.new }

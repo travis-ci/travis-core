@@ -2,8 +2,7 @@
 require 'spec_helper'
 
 describe Travis::Mailer::Build do
-  # include Support::ActiveRecord
-  include Support::Stubs
+  include Travis::Testing::Stubs
 
   let(:data)       { Travis::Api.data(build, :for => 'event', :version => 'v2') }
   let(:recipients) { ['owner@example.com', 'committer@example.com', 'author@example.com'] }

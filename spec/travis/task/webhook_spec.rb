@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'rack'
 
 describe Travis::Task::Webhook do
-  include Support::Stubs, Support::Formats
+  include Travis::Testing::Stubs, Support::Formats
 
   let(:http)    { Faraday::Adapter::Test::Stubs.new }
   let(:client)  { Faraday.new { |f| f.request :url_encoded; f.adapter :test, http } }

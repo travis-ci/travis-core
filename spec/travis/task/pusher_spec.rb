@@ -1,8 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Task::Pusher do
-  include Support::ActiveRecord
-  include Support::Stubs
+  include Travis::Testing::Stubs
 
   let(:channel) { Support::Mocks::Pusher::Channel.new }
 
@@ -56,7 +55,8 @@ describe Travis::Task::Pusher do
 
   describe 'channels' do
     it 'returns "common" for the event "job:created"' do
-      handler = Travis::Task::Pusher.new('job:created', {})
+      data = Travis::Api.data(test, :for => 'pusher', :type => 'job/created', :version => 'v1')
+      handler = Travis::Task::Pusher.new('job:created', data)
       handler.send(:channels).should include('common')
     end
 

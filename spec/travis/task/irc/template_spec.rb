@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Task::Irc::Template do
-  include Support::Stubs
+  include Travis::Testing::Stubs
 
   TEMPLATE = %w(repository build_number branch commit author message compare_url build_url).map do |name|
     "#{name}=%{#{name}}"
