@@ -5,7 +5,7 @@ module Travis
         class Worker
           attr_reader :worker
 
-          def initialize(worker)
+          def initialize(worker, options = {})
             @worker = worker
           end
 
