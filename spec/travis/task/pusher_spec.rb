@@ -54,36 +54,46 @@ describe Travis::Task::Pusher do
     end
   end
 
-  describe 'channels_for' do
-    let(:handler) { Travis::Task::Pusher.new('event', test) }
-
+  describe 'channels' do
     it 'returns "common" for the event "job:created"' do
-      handler.send(:channels_for, 'job:created', test).should include('common')
+      handler = Travis::Task::Pusher.new('job:created', {})
+      handler.send(:channels).should include('common')
     end
 
     it 'returns "common" for the event "job:started"' do
-      handler.send(:channels_for, 'job:started', test).should include('common')
+      data = Travis::Api.data(test, :for => 'pusher', :type => 'job/started', :version => 'v1')
+      handler = Travis::Task::Pusher.new('job:started', data)
+      handler.send(:channels).should include('common')
     end
 
     it 'returns "job-1" for the event "job:log"' do
       data = Travis::Api.data(test, :for => 'pusher', :type => 'job/log', :version => 'v1')
-      handler.send(:channels_for, 'job:log', data).should include("job-#{test.id}")
+      handler = Travis::Task::Pusher.new('job:log', data)
+      handler.send(:channels).should include("job-#{test.id}")
     end
 
     it 'returns "common" for the event "job:finished"' do
-      handler.send(:channels_for, 'job:finished', test).should include('common')
+      data = Travis::Api.data(test, :for => 'pusher', :type => 'job/finished', :version => 'v1')
+      handler = Travis::Task::Pusher.new('job:finished', data)
+      handler.send(:channels).should include('common')
     end
 
     it 'returns "common" for the event "build:started"' do
-      handler.send(:channels_for, 'build:started', build).should include('common')
+      data = Travis::Api.data(build, :for => 'pusher', :type => 'build/started', :version => 'v1')
+      handler = Travis::Task::Pusher.new('build:started', data)
+      handler.send(:channels).should include('common')
     end
 
     it 'returns "common" for the event "build:finished"' do
-      handler.send(:channels_for, 'build:finished', build).should include('common')
+      data = Travis::Api.data(build, :for => 'pusher', :type => 'build/finished', :version => 'v1')
+      handler = Travis::Task::Pusher.new('build:finished', data)
+      handler.send(:channels).should include('common')
     end
 
     it 'returns "common" for the event "worker:started"' do
-      handler.send(:channels_for, 'worker:created', build).should include('common')
+      data = Travis::Api.data(worker, :for => 'pusher', :type => 'worker', :version => 'v1')
+      handler = Travis::Task::Pusher.new('worker:created', data)
+      handler.send(:channels).should include('common')
     end
   end
 end

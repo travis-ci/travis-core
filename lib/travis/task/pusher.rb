@@ -14,7 +14,7 @@ module Travis
         end
 
         def run
-          channels_for(event, data).each do |channel|
+          channels.each do |channel|
             trigger(channel, event, data)
           end
         end
@@ -25,7 +25,7 @@ module Travis
             event =~ /job:.*/ ? event.gsub(/(test|configure):/, '') : event
           end
 
-          def channels_for(event, data)
+          def channels
             case event
             when 'job:log'
               ["job-#{data['id']}"]
