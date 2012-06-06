@@ -36,7 +36,7 @@ describe Build::Messages do
 
     it 'returns :still_failing if the build has failed again' do
       data = { :state => :finished, :previous_result => 1, :result => 1 }
-      result_key(data).should == :still_failing
+      result_key(data).should == :failing
     end
   end
 end

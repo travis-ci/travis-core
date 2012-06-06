@@ -23,7 +23,6 @@ module Travis
 
         def notify(event, *args)
           if matches?(event)
-            p subscriber
             subscriber.new(event, *args).notify
             increment_counter(event)
           end

@@ -10,7 +10,7 @@ class Build
       elsif previous == 0
         current == 0 ? :passed : :broken
       elsif previous == 1
-        current == 0 ? :fixed : :still_failing
+        current == 0 ? :fixed : :failing
       end
     end
 
