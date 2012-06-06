@@ -21,22 +21,32 @@ module Travis
       end
 
       def fetch
-        authenticated do
-          repos = resources_for(user).map do |resource|
-            fetch_resource(resource)
-          end.flatten.compact
-          filter(repos.flatten)
-        end
+        repos = with_github { fetch_resources }
+        repos = repos.map(&:to_a).flatten.compact
+        filter(repos)
       end
 
       private
 
-        def authenticated(&block)
-          GH.with(:token => user.github_oauth_token, &block)
+        def with_github(&block)
+          # TODO in_parallel should return the block's result in a future version
+          result = nil
+          GH.with(:token => user.github_oauth_token) do
+            GH.in_parallel do
+              result = yield
+            end
+          end
+          result
+        end
+
+        def fetch_resources
+          resources_for(user).map do |resource|
+            fetch_resource(resource)
+          end
         end
 
         def fetch_resource(resource)
-          GH["#{resource}"].to_a # should be: ?type=#{self.class.type}
+          GH[resource] # should be: ?type=#{self.class.type}
         rescue Faraday::Error::ResourceNotFound => e
           log_exception(e)
         end
