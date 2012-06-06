@@ -8,6 +8,7 @@ module Travis
               {
                 'id' => job.id,
                 'build_id' => job.source_id,
+                'repository_id' => job.repository_id,
                 'started_at' => format_date(job.started_at),
                 'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4',
                 'sponsor' => {

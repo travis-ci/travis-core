@@ -7,6 +7,8 @@ module Travis
             def data
               {
                 'id' => job.id,
+                'build_id' => job.source_id,
+                'repository_id' => job.repository_id,
                 '_log' => options[:_log]
               }
             end
