@@ -12,10 +12,6 @@ module Travis
 
           EVENTS = /build:(started|finished)/
 
-          def notify
-            handle if handle?
-          end
-
           private
 
             def handle?
@@ -28,7 +24,7 @@ module Travis
             end
 
             def handle
-              Task::Webhook.new(targets, payload, token).run
+              Task.run(:webhook, targets, payload)
             end
 
             def payload

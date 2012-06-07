@@ -12,78 +12,76 @@ module Travis
         "Build details : %{build_url}"
       ]
 
-      include do
-        attr_reader :channels, :data
+      attr_reader :channels, :data
 
-        def initialize(channels, data)
-          @channels = channels
-          @data = data
+      def initialize(channels, data)
+        @channels = channels
+        @data = data
+      end
+
+      def run
+        # Notifications to the same host are grouped so that they can be sent with a single connection
+        channels.each do |server, channels|
+          host, port = *server
+          send_messages(host, port, channels)
         end
+      end
 
-        def run
-          # Notifications to the same host are grouped so that they can be sent with a single connection
-          channels.each do |server, channels|
-            host, port = *server
-            send_messages(host, port, channels)
-          end
-        end
+      private
 
-        private
-
-          def send_messages(host, port, channels)
-            client(host, nick, :port => port) do |client|
-              channels.each do |channel|
-                  send_message(client, channel)
-                  info("Successfully notified #{host}:#{port}##{channel}")
-                begin
-                rescue StandardError => e
-                  error("Could not notify #{host}:#{port}##{channel} : #{e.inspect}")
-                end
+        def send_messages(host, port, channels)
+          client(host, nick, :port => port) do |client|
+            channels.each do |channel|
+                send_message(client, channel)
+                info("Successfully notified #{host}:#{port}##{channel}")
+              begin
+              rescue StandardError => e
+                error("Could not notify #{host}:#{port}##{channel} : #{e.inspect}")
               end
             end
           end
+        end
 
-          def send_message(client, channel)
-            client.join(channel) if join?
-            messages.each { |message|
-              client.say("[travis-ci] #{message}", channel, notice?) }
-            client.leave(channel) if join?
-          end
+        def send_message(client, channel)
+          client.join(channel) if join?
+          messages.each { |message|
+            client.say("[travis-ci] #{message}", channel, notice?) }
+          client.leave(channel) if join?
+        end
 
-          def notice?
-            config.is_a?(Hash) && !!config[:use_notice]
-          end
+        def notice?
+          config.is_a?(Hash) && !!config[:use_notice]
+        end
 
-          def join?
-            config.is_a?(Hash) ? !config[:skip_join] : true
-          end
+        def join?
+          config.is_a?(Hash) ? !config[:skip_join] : true
+        end
 
-          def messages
-            @messages ||= templates.map do |template|
-              Template.new(template, data).interpolate
-            end
+        def messages
+          @messages ||= templates.map do |template|
+            Template.new(template, data).interpolate
           end
+        end
 
-          def templates
-            templates = config[:template] rescue nil
-            Array(templates || TEMPLATES)
-          end
+        def templates
+          templates = config[:template] rescue nil
+          Array(templates || TEMPLATES)
+        end
 
-          def client(host, nick, options, &block)
-            Client.new(host, nick, options).tap do |client|
-              client.run(&block) if block_given?
-              client.quit
-            end
+        def client(host, nick, options, &block)
+          Client.new(host, nick, options).tap do |client|
+            client.run(&block) if block_given?
+            client.quit
           end
+        end
 
-          def nick
-            Travis.config.irc.try(:nick) || 'travis-ci'
-          end
+        def nick
+          Travis.config.irc.try(:nick) || 'travis-ci'
+        end
 
-          def config
-            data['build']['config']['notifications'][:irc] rescue {}
-          end
-      end
+        def config
+          data['build']['config']['notifications'][:irc] rescue {}
+        end
     end
   end
 end

@@ -10,10 +10,6 @@ module Travis
 
           EVENTS = /build:finished/
 
-          def notify
-            handle if handle?
-          end
-
           private
 
             def handle?
@@ -21,7 +17,7 @@ module Travis
             end
 
             def handle
-              Task::Github.new(url, payload).run
+              Task.run(:github, url, payload)
             end
 
             def url

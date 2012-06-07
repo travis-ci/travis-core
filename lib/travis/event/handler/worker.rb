@@ -16,10 +16,6 @@ module Travis
             end
           end
 
-          def notify
-            handle if handle?
-          end
-
           private
 
             def handle?
@@ -27,12 +23,6 @@ module Travis
             end
 
             def handle
-              ActiveSupport::Notifications.instrument('notify', :target => self, :args => [event, object, data]) do
-                enqueue
-              end
-            end
-
-            def enqueue
               publisher.publish(payload, :properties => { :type => payload['type'] })
             end
 

@@ -18,7 +18,7 @@ describe Travis::Task::Archive do
   end
 
   def run
-    Travis::Task::Archive.new(data).run
+    Travis::Task.run(:archive, data)
   end
 
   describe 'run' do

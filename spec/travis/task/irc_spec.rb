@@ -21,7 +21,7 @@ describe Travis::Task::Irc do
 
   def run(build)
     data = Travis::Api.data(build, :for => 'event', :version => 'v2')
-    Travis::Task::Irc.new(build.irc_channels, data).run
+    Travis::Task.run(:irc, build.irc_channels, data)
   end
 
   it "one irc notification" do

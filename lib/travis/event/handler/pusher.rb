@@ -9,10 +9,6 @@ module Travis
 
           EVENTS = [/^build:(started|finished)/, /^job:test:(created|started|log|finished)/, /^worker:.*/]
 
-          def notify
-            handle if handle?
-          end
-
           private
 
             def handle?
@@ -20,7 +16,7 @@ module Travis
             end
 
             def handle
-              Task::Pusher.new(event, payload).run
+              Task.run(:pusher, event, payload)
             end
 
             def payload

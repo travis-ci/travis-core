@@ -16,7 +16,7 @@ describe Travis::Task::Webhook do
   end
 
   def run(targets, payload)
-    Travis::Task::Webhook.new(targets, payload, build.request.token).run
+    Travis::Task.run(:webhook, targets, payload, build.request.token)
   end
 
   it 'sends webhook notifications to a url given as a string' do

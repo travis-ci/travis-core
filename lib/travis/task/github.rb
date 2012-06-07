@@ -7,15 +7,16 @@ module Travis
     # Adds a comment with a build notification to the pull-request the request
     # belongs to.
     class Github < Task
-      include do
-        attr_reader :url, :data
+      attr_reader :url, :data
 
-        def initialize(url, data)
-          @url = url
-          @data = data
-        end
+      def initialize(url, data)
+        @url = url
+        @data = data
+      end
 
-        def run
+      private
+
+        def process
           authenticated do
             GH.post(url, :body => message(data))
           end
@@ -26,27 +27,24 @@ module Travis
           error "Could not comment on #{url} (#{message})."
         end
 
-        private
+        def authenticated(&block)
+          GH.with(http_options, &block)
+        end
 
-          def authenticated(&block)
-            GH.with(http_options, &block)
-          end
+        TEMPLATE = 'This pull request [%{result}](%{url}) (merged %{head} into %{base}).'
 
-          TEMPLATE = 'This pull request [%{result}](%{url}) (merged %{head} into %{base}).'
+        def message(data)
+          TEMPLATE % {
+            :result => data['build']['result'] ? 'passes' : 'fails',
+            :url => "#{Travis.config.http_host}/#{data['repository']['slug']}/builds/#{data['build']['id']}",
+            :head => data['request']['head_commit'][0..7],
+            :base => data['request']['base_commit'][0..7]
+          }
+        end
 
-          def message(data)
-            TEMPLATE % {
-              :result => data['build']['result'] ? 'passes' : 'fails',
-              :url => "#{Travis.config.http_host}/#{data['repository']['slug']}/builds/#{data['build']['id']}",
-              :head => data['request']['head_commit'][0..7],
-              :base => data['request']['base_commit'][0..7]
-            }
-          end
-
-          def http_options
-            super.merge(:token => Travis.config.github.token)
-          end
-      end
+        def http_options
+          super.merge(:token => Travis.config.github.token)
+        end
     end
   end
 end

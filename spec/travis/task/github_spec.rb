@@ -13,7 +13,7 @@ describe Travis::Task::Github do
   end
 
   def run
-    Travis::Task::Github.new(url, data).run
+    Travis::Task.run(:github, url, data)
   end
 
   describe 'run' do

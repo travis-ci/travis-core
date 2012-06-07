@@ -9,10 +9,6 @@ module Travis
 
           EVENTS = 'build:finished'
 
-          def notify
-            handle if handle?
-          end
-
           private
 
             def handle?
@@ -20,7 +16,7 @@ module Travis
             end
 
             def handle
-              Task::Irc.new(channels, payload).run
+              Task.run(:irc, channels, payload)
             end
 
             def channels

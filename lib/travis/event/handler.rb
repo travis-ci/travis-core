@@ -1,3 +1,5 @@
+require 'core_ext/module/async'
+
 module Travis
   module Event
     class Handler
@@ -10,13 +12,14 @@ module Travis
       autoload :Webhook,  'travis/event/handler/webhook'
       autoload :Worker,   'travis/event/handler/worker'
 
+      include Logging
+      extend  Instrumentation # Exceptions::Handling, Async
+
       class << self
         def notify(event, object, data = {})
           new(event, object, data).notify
         end
       end
-
-      include Logging
 
       attr_reader :event, :object, :data
 
@@ -25,6 +28,13 @@ module Travis
         @object = object
         @data = data
       end
+
+      def notify
+        handle if handle?
+      end
+      instrument :notify
+      # rescues :notify, :from => Exception
+      # async :notify
     end
   end
 end

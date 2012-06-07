@@ -1,6 +1,4 @@
 require 'travis/support'
-require 'travis/exceptions'
-require 'core_ext/module/include'
 
 autoload :Artifact,     'travis/model/artifact'
 autoload :Build,        'travis/model/build'
@@ -45,17 +43,23 @@ autoload :Worker,       'travis/model/worker'
 # (needed in travis-hub in order to connect to the database) and Travis::Renderer
 # (our inferior layer on top of Rabl).
 module Travis
-  autoload :Api,         'travis/api'
-  autoload :Config,      'travis/config'
-  autoload :Database,    'travis/database'
-  autoload :EventLogger, 'travis/event_logger'
-  autoload :Features,    'travis/features'
-  autoload :Github,      'travis/github'
-  autoload :Mailer,      'travis/mailer'
-  autoload :Model,       'travis/model'
-  autoload :Event,       'travis/event'
-  autoload :Task,        'travis/task'
-  autoload :Testing,     'travis/testing'
+  autoload :Api,             'travis/api'
+  autoload :Async,           'travis/async'
+  autoload :Config,          'travis/config'
+  autoload :Database,        'travis/database'
+  autoload :Exceptions,      'travis/exceptions'
+  autoload :Features,        'travis/features'
+  autoload :Github,          'travis/github'
+  autoload :Instrumentation, 'travis/instrumentation'
+  autoload :Mailer,          'travis/mailer'
+  autoload :Model,           'travis/model'
+  autoload :Event,           'travis/event'
+  autoload :Task,            'travis/task'
+  autoload :Testing,         'travis/testing'
+
+
+  class UnknownRepository < StandardError; end
+  class GithubApiError < StandardError; end
 
   class << self
     def env

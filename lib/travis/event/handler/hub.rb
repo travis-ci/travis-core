@@ -9,10 +9,6 @@ module Travis
 
           EVENTS = [/^build:(started|finished)/, /^job:test:(created|started|log|finished)/, /^worker:.*/]
 
-          def notify
-            handle if handle?
-          end
-
           private
 
             def handle?

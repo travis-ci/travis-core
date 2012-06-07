@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'travis/event_logger'
 
 describe Travis::EventLogger do
   let(:notifications) { [] }

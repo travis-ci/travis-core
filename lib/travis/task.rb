@@ -1,5 +1,6 @@
 require 'faraday'
 require 'core_ext/hash/compact'
+require 'active_support/core_ext/string'
 
 module Travis
   class Task
@@ -13,16 +14,33 @@ module Travis
     autoload :Webhook,  'travis/task/webhook'
 
     include Logging
+    extend  Instrumentation, Exceptions::Handling, Async
 
-    def http
-      @http ||= Faraday.new(http_options) do |f|
-        f.request :url_encoded
-        f.adapter :net_http
+    class << self
+      def run(type, *args)
+        const_get(type.to_s.camelize).new(*args).run
       end
     end
 
-    def http_options
-      { :ssl => Travis.config.ssl.compact }
+    def run
+      process
     end
+
+    instrument :run
+    rescues :run, :from => Exception
+    async :run
+
+    private
+
+      def http
+        @http ||= Faraday.new(http_options) do |f|
+          f.request :url_encoded
+          f.adapter :net_http
+        end
+      end
+
+      def http_options
+        { :ssl => Travis.config.ssl.compact }
+      end
   end
 end

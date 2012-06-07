@@ -12,10 +12,6 @@ module Travis
 
           EVENTS = /build:finished/
 
-          def notify
-            handle if handle?
-          end
-
           private
 
             def handle?
@@ -23,7 +19,7 @@ module Travis
             end
 
             def handle
-              Task::Campfire.new(targets, payload).run if handle?
+              Task.run(:campfire, targets, payload)
             end
 
             def targets

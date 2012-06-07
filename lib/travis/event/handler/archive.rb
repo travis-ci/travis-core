@@ -2,29 +2,23 @@ module Travis
   module Event
     class Handler
       class Archive < Handler
-        include do
-          API_VERSION = 'v1'
+        API_VERSION = 'v1'
 
-          EVENTS = 'build:finished'
+        EVENTS = 'build:finished'
 
-          def notify
-            handle if handle?
+        private
+
+          def handle?
+            true
           end
 
-          private
+          def handle
+            Task.run(:archive, payload)
+          end
 
-            def handle?
-              true
-            end
-
-            def handle
-              Task::Archive.new(payload).run
-            end
-
-            def payload
-              Api.data(object, :for => 'archive', :version => API_VERSION)
-            end
-        end
+          def payload
+            Api.data(object, :for => 'archive', :version => API_VERSION)
+          end
       end
     end
   end
