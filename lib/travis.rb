@@ -44,28 +44,19 @@ autoload :Worker,       'travis/model/worker'
 # (our inferior layer on top of Rabl).
 module Travis
   autoload :Api,             'travis/api'
-  autoload :Async,           'travis/async'
   autoload :Config,          'travis/config'
-  autoload :Database,        'travis/database'
-  autoload :Exceptions,      'travis/exceptions'
   autoload :Features,        'travis/features'
   autoload :Github,          'travis/github'
-  autoload :Instrumentation, 'travis/instrumentation'
   autoload :Mailer,          'travis/mailer'
   autoload :Model,           'travis/model'
   autoload :Event,           'travis/event'
   autoload :Task,            'travis/task'
   autoload :Testing,         'travis/testing'
 
-
   class UnknownRepository < StandardError; end
   class GithubApiError < StandardError; end
 
   class << self
-    def env
-     ENV['ENV'] || ENV['RAILS_ENV'] || ENV['RACK_ENV'] || 'development'
-    end
-
     def config
       @config ||= Config.new
     end

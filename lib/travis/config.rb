@@ -80,7 +80,6 @@ module Travis
             :assets        => { :host => HOSTS[Travis.env.to_sym], :version => defined?(Travis::Assets) ? Travis::Assets.version : 'asset-id', :interval => 15 },
             :amqp          => { :username => 'guest', :password => 'guest', :host => 'localhost', :prefetch => 1 },
             :database      => { :adapter => 'postgresql', :database => "travis_#{Travis.env}", :encoding => 'unicode', :min_messages => 'warning' },
-            :airbrake      => { :key => 'airbrake-api_key' },
             :pusher        => { :app_id => 'app-id', :key => 'key', :secret => 'secret' },
             :smtp          => { :user_name => 'postmark-api_key' },
             :github        => { :token => 'travisbot-token' },
