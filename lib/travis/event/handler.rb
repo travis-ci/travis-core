@@ -13,7 +13,7 @@ module Travis
       autoload :Worker,   'travis/event/handler/worker'
 
       include Logging
-      extend  Instrumentation # Exceptions::Handling, Async
+      extend  Instrumentation
 
       class << self
         def notify(event, object, data = {})

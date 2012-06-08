@@ -1,11 +1,12 @@
 require 'spec_helper'
 
 describe Travis::Event::Handler::Pusher do
-  let(:object)    { stub('object') }
-  let(:handler)   { Travis::Event::Handler::Pusher.any_instance }
+  let(:object)  { stub('object') }
+  let(:handler) { Travis::Event::Handler::Pusher.any_instance }
 
   before do
     Travis.config.notifications = [:pusher]
+    handler.stubs(:handle => true, :handle? => true)
   end
 
   describe 'subscription' do
@@ -52,6 +53,20 @@ describe Travis::Event::Handler::Pusher do
     it 'worker:started' do
       handler.expects(:notify)
       Travis::Event.dispatch('worker:started', object)
+    end
+  end
+
+  describe 'instrumentation' do
+    it 'instruments with "pusher.handler.event.travis"' do
+      ActiveSupport::Notifications.expects(:instrument).with do |event, data|
+        event == 'pusher.handler.event.travis' && data[:target].is_a?(Travis::Event::Handler::Pusher)
+      end
+      Travis::Event.dispatch('build:finished', object)
+    end
+
+    it 'meters on "pusher.handler.event.travis"' do
+      Metriks.expects(:timer).with('pusher.handler.event.travis').returns(stub('timer', :update => true))
+      Travis::Event.dispatch('build:finished', object)
     end
   end
 end

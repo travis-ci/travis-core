@@ -6,6 +6,7 @@ describe Travis::Event::Handler::Webhook do
 
   before do
     Travis.config.notifications = [:webhook]
+    handler.stubs(:handle => true, :handle? => true)
   end
 
   describe 'subscription' do
@@ -16,6 +17,20 @@ describe Travis::Event::Handler::Webhook do
 
     it 'build:finish notifies' do
       handler.expects(:notify)
+      Travis::Event.dispatch('build:finished', build)
+    end
+  end
+
+  describe 'instrumentation' do
+    it 'instruments with "webhook.handler.event.travis"' do
+      ActiveSupport::Notifications.expects(:instrument).with do |event, data|
+        event == 'webhook.handler.event.travis' && data[:target].is_a?(Travis::Event::Handler::Webhook)
+      end
+      Travis::Event.dispatch('build:finished', build)
+    end
+
+    it 'meters on "webhook.handler.event.travis"' do
+      Metriks.expects(:timer).with('webhook.handler.event.travis').returns(stub('timer', :update => true))
       Travis::Event.dispatch('build:finished', build)
     end
   end

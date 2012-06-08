@@ -5,6 +5,7 @@ describe Travis::Event::Handler::Github do
 
   before do
     Travis.config.notifications = [:github]
+    handler.stubs(:handle => true, :handle? => true)
   end
 
   describe 'subscription' do
@@ -44,6 +45,22 @@ describe Travis::Event::Handler::Github do
     it 'handles the notification' do
       handler.expects(:handle)
       handler.notify
+    end
+  end
+
+  describe 'instrumentation' do
+    let(:handler) { Travis::Event::Handler::Github.any_instance }
+
+    it 'instruments with "github.handler.event.travis"' do
+      ActiveSupport::Notifications.expects(:instrument).with do |event, data|
+        event == 'github.handler.event.travis' && data[:target].is_a?(Travis::Event::Handler::Github)
+      end
+      Travis::Event.dispatch('build:finished', build)
+    end
+
+    it 'meters on "github.handler.event.travis"' do
+      Metriks.expects(:timer).with('github.handler.event.travis').returns(stub('timer', :update => true))
+      Travis::Event.dispatch('build:finished', build)
     end
   end
 end
