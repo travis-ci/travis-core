@@ -24,7 +24,7 @@ module Travis
             end
 
             def handle
-              Task.run(:webhook, targets, payload)
+              Task.run(:webhook, targets, payload, token)
             end
 
             def payload

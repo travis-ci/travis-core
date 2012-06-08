@@ -26,8 +26,8 @@ module Travis
       process
     end
 
-    instrument :run
     rescues :run, :from => Exception
+    instrument :run
     async :run
 
     private
