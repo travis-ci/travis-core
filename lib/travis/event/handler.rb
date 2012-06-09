@@ -32,7 +32,8 @@ module Travis
       def notify
         handle if handle?
       end
-      instrument :notify
+      # TODO ask mathias about the scope
+      instrument :notify # , :scope => :event
     end
   end
 end

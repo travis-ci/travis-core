@@ -19,11 +19,15 @@ module Travis
         end
 
         def run
-          { 'config' => fetch }
+          process
         end
         instrument :run
 
         private
+
+          def process
+            { 'config' => fetch }
+          end
 
           def fetch
             if response.success?
