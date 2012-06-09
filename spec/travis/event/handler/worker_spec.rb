@@ -50,6 +50,10 @@ describe Travis::Event::Handler::Worker do
   describe 'instrumentation' do
     let(:handler) { Travis::Event::Handler::Worker.new(:start, test) }
 
+    before :each do
+      handler.stubs(:handle)
+    end
+
     it 'instruments with "notify.worker.handler.event.travis"' do
       ActiveSupport::Notifications.expects(:instrument).with do |event, data|
         event == 'notify.worker.handler.event.travis' && data[:target].is_a?(Travis::Event::Handler::Worker)
