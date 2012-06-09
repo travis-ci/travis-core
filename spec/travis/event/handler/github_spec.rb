@@ -51,15 +51,15 @@ describe Travis::Event::Handler::Github do
   describe 'instrumentation' do
     let(:handler) { Travis::Event::Handler::Github.any_instance }
 
-    it 'instruments with "github.handler.event.travis"' do
+    it 'instruments with "notify.github.handler.event.travis"' do
       ActiveSupport::Notifications.expects(:instrument).with do |event, data|
-        event == 'github.handler.event.travis' && data[:target].is_a?(Travis::Event::Handler::Github)
+        event == 'notify.github.handler.event.travis' && data[:target].is_a?(Travis::Event::Handler::Github)
       end
       Travis::Event.dispatch('build:finished', build)
     end
 
-    it 'meters on "github.handler.event.travis"' do
-      Metriks.expects(:timer).with('github.handler.event.travis').returns(stub('timer', :update => true))
+    it 'meters on "notify.github.handler.event.travis"' do
+      Metriks.expects(:timer).with('notify.github.handler.event.travis').returns(stub('timer', :update => true))
       Travis::Event.dispatch('build:finished', build)
     end
   end

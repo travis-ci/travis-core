@@ -21,6 +21,7 @@ module Travis
         def run
           { 'config' => fetch }
         end
+        instrument :run
 
         private
 

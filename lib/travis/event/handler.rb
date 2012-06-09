@@ -33,8 +33,6 @@ module Travis
         handle if handle?
       end
       instrument :notify
-      # rescues :notify, :from => Exception
-      # async :notify
     end
   end
 end

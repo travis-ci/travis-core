@@ -22,15 +22,15 @@ describe Travis::Event::Handler::Irc do
   end
 
   describe 'instrumentation' do
-    it 'instruments with "irc.handler.event.travis"' do
+    it 'instruments with "notify.irc.handler.event.travis"' do
       ActiveSupport::Notifications.expects(:instrument).with do |event, data|
-        event == 'irc.handler.event.travis' && data[:target].is_a?(Travis::Event::Handler::Irc)
+        event == 'notify.irc.handler.event.travis' && data[:target].is_a?(Travis::Event::Handler::Irc)
       end
       Travis::Event.dispatch('build:finished', build)
     end
 
-    it 'meters on "irc.handler.event.travis"' do
-      Metriks.expects(:timer).with('irc.handler.event.travis').returns(stub('timer', :update => true))
+    it 'meters on "notify.irc.handler.event.travis"' do
+      Metriks.expects(:timer).with('notify.irc.handler.event.travis').returns(stub('timer', :update => true))
       Travis::Event.dispatch('build:finished', build)
     end
   end

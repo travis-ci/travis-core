@@ -22,15 +22,15 @@ describe Travis::Event::Handler::Archive do
   end
 
   describe 'instrumentation' do
-    it 'instruments with "archive.handler.event.travis"' do
+    it 'instruments with "notify.archive.handler.event.travis"' do
       ActiveSupport::Notifications.expects(:instrument).with do |event, data|
-        event == 'archive.handler.event.travis' && data[:target].is_a?(Travis::Event::Handler::Archive)
+        event == 'notify.archive.handler.event.travis' && data[:target].is_a?(Travis::Event::Handler::Archive)
       end
       Travis::Event.dispatch('build:finished', build)
     end
 
-    it 'meters on "archive.handler.event.travis"' do
-      Metriks.expects(:timer).with('archive.handler.event.travis').returns(stub('timer', :update => true))
+    it 'meters on "notify.archive.handler.event.travis"' do
+      Metriks.expects(:timer).with('notify.archive.handler.event.travis').returns(stub('timer', :update => true))
       Travis::Event.dispatch('build:finished', build)
     end
   end
