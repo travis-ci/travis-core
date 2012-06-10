@@ -5,7 +5,7 @@ describe Travis::Event::Handler::Archive do
   let(:build)   { stub('build') }
 
   before do
-    Travis.config.notifications = [:archive]
+    Travis::Event.stubs(:subscribers).returns [:archive]
     handler.stubs(:handle)
   end
 
@@ -29,8 +29,8 @@ describe Travis::Event::Handler::Archive do
       Travis::Event.dispatch('build:finished', build)
     end
 
-    it 'meters on "notify.archive.handler.event.travis"' do
-      Metriks.expects(:timer).with('notify.archive.handler.event.travis').returns(stub('timer', :update => true))
+    it 'meters on "travis.event.handler.archive.notify"' do
+      Metriks.expects(:timer).with('travis.event.handler.archive.notify').returns(stub('timer', :update => true))
       Travis::Event.dispatch('build:finished', build)
     end
   end

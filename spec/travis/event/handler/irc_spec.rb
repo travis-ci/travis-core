@@ -5,7 +5,7 @@ describe Travis::Event::Handler::Irc do
   let(:build) { stub('build') }
 
   before do
-    Travis.config.notifications = [:irc]
+    Travis::Event.stubs(:subscribers).returns [:irc]
     handler.stubs(:handle => true, :handle? => true)
   end
 
@@ -29,8 +29,8 @@ describe Travis::Event::Handler::Irc do
       Travis::Event.dispatch('build:finished', build)
     end
 
-    it 'meters on "notify.irc.handler.event.travis"' do
-      Metriks.expects(:timer).with('notify.irc.handler.event.travis').returns(stub('timer', :update => true))
+    it 'meters on "travis.event.handler.irc.notify"' do
+      Metriks.expects(:timer).with('travis.event.handler.irc.notify').returns(stub('timer', :update => true))
       Travis::Event.dispatch('build:finished', build)
     end
   end

@@ -33,6 +33,7 @@ RSpec.configure do |c|
     Travis.instance_variable_set(:@config, nil)
     Travis::Event.instance_variable_set(:@queues, nil)
     Travis::Event.instance_variable_set(:@subscriptions, nil)
+    Travis::Event.stubs(:subscribers).returns []
     GH.reset
   end
 end

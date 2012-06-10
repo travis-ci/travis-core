@@ -7,29 +7,27 @@ module Travis
       #
       # Campfire credentials are encrypted using the repository's ssl key.
       class Campfire < Handler
-        include do
-          API_VERSION = 'v2'
+        API_VERSION = 'v2'
 
-          EVENTS = /build:finished/
+        EVENTS = /build:finished/
 
-          private
+        private
 
-            def handle?
-              object.send_campfire_notifications_on_finish?
-            end
+          def handle?
+            object.send_campfire_notifications_on_finish?
+          end
 
-            def handle
-              Task.run(:campfire, targets, payload)
-            end
+          def handle
+            Task.run(:campfire, targets, payload)
+          end
 
-            def targets
-              object.campfire_rooms
-            end
+          def targets
+            object.campfire_rooms
+          end
 
-            def payload
-              Api.data(object, :for => 'event', :version => API_VERSION)
-            end
-        end
+          def payload
+            Api.data(object, :for => 'event', :version => API_VERSION)
+          end
       end
     end
   end

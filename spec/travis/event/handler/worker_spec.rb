@@ -9,6 +9,7 @@ describe Travis::Event::Handler::Worker do
     let(:payload) { Travis::Api.data(test, :for => 'worker', :type => 'Job::Test', :version => 'v0') }
 
     before :each do
+      Travis::Event.stubs(:subscribers).returns [:worker]
       Travis::Amqp::Publisher.stubs(:builds).returns(builds)
     end
 
@@ -61,8 +62,8 @@ describe Travis::Event::Handler::Worker do
       handler.notify
     end
 
-    it 'meters on "notify.worker.handler.event.travis"' do
-      Metriks.expects(:timer).with('notify.worker.handler.event.travis').returns(stub('timer', :update => true))
+    it 'meters on "travis.event.handler.worker.notify"' do
+      Metriks.expects(:timer).with('travis.event.handler.worker.notify').returns(stub('timer', :update => true))
       handler.notify
     end
   end

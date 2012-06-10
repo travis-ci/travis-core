@@ -19,11 +19,13 @@ module Travis
     autoload :Subscription, 'travis/event/subscription'
     autoload :SecureConfig, 'travis/event/secure_config'
 
+    SUBSCRIBERS = %w(configure request test worker)
+
     class << self
       include Logging
 
       def subscriptions
-        @subscriptions ||= Travis.config.notifications.map do |name|
+        @subscriptions ||= subscribers.map do |name|
           Subscription.new(name)
         end
       end
@@ -32,6 +34,10 @@ module Travis
         subscriptions.each do |subscription|
           subscription.notify(event, *args)
         end
+      end
+
+      def subscribers
+        (SUBSCRIBERS + Travis.config.notifications).uniq
       end
     end
 

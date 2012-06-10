@@ -5,7 +5,7 @@ describe Travis::Event::Handler::Email do
   let(:build)   { stub('build') }
 
   before do
-    Travis.config.notifications = [:email]
+    Travis::Event.stubs(:subscribers).returns [:email]
     handler.stubs(:handle => true, :handle? => true)
   end
 
@@ -29,8 +29,8 @@ describe Travis::Event::Handler::Email do
       Travis::Event.dispatch('build:finished', build)
     end
 
-    it 'meters on "notify.email.handler.event.travis"' do
-      Metriks.expects(:timer).with('notify.email.handler.event.travis').returns(stub('timer', :update => true))
+    it 'meters on "travis.event.handler.email.notify"' do
+      Metriks.expects(:timer).with('travis.event.handler.email.notify').returns(stub('timer', :update => true))
       Travis::Event.dispatch('build:finished', build)
     end
   end

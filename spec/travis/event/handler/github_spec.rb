@@ -4,7 +4,7 @@ describe Travis::Event::Handler::Github do
   include Travis::Testing::Stubs
 
   before do
-    Travis.config.notifications = [:github]
+    Travis::Event.stubs(:subscribers).returns [:github]
     handler.stubs(:handle => true, :handle? => true)
   end
 
@@ -58,8 +58,8 @@ describe Travis::Event::Handler::Github do
       Travis::Event.dispatch('build:finished', build)
     end
 
-    it 'meters on "notify.github.handler.event.travis"' do
-      Metriks.expects(:timer).with('notify.github.handler.event.travis').returns(stub('timer', :update => true))
+    it 'meters on "travis.event.handler.github.notify"' do
+      Metriks.expects(:timer).with('travis.event.handler.github.notify').returns(stub('timer', :update => true))
       Travis::Event.dispatch('build:finished', build)
     end
   end

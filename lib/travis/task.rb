@@ -14,7 +14,7 @@ module Travis
     autoload :Webhook,  'travis/task/webhook'
 
     include Logging
-    extend  Instrumentation, Exceptions::Handling, Async
+    extend  Instrumentation, NewRelic, Exceptions::Handling, Async
 
     class << self
       def run(type, *args)
@@ -26,9 +26,10 @@ module Travis
       process
     end
 
-    rescues :run, :from => Exception
+    rescues    :run, :from => Exception
     instrument :run
-    async :run
+    new_relic  :run, :category => :task
+    async      :run
 
     private
 

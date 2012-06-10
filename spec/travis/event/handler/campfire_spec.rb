@@ -5,7 +5,7 @@ describe Travis::Event::Handler::Campfire do
   let(:build)   { stub('build') }
 
   before do
-    Travis.config.notifications = [:campfire]
+    Travis::Event.stubs(:subscribers).returns [:campfire]
     handler.stubs(:handle => true, :handle? => true)
   end
 
@@ -29,8 +29,8 @@ describe Travis::Event::Handler::Campfire do
       Travis::Event.dispatch('build:finished', build)
     end
 
-    it 'meters on "notify.campfire.handler.event.travis"' do
-      Metriks.expects(:timer).with('notify.campfire.handler.event.travis').returns(stub('timer', :update => true))
+    it 'meters on "travis.event.handler.campfire.notify"' do
+      Metriks.expects(:timer).with('travis.event.handler.campfire.notify').returns(stub('timer', :update => true))
       Travis::Event.dispatch('build:finished', build)
     end
   end

@@ -7,38 +7,36 @@ module Travis
       # Sends build notifications to webhooks as defined in the configuration
       # (`.travis.yml`).
       class Webhook < Handler
-        include do
-          API_VERSION = 'v1'
+        API_VERSION = 'v1'
 
-          EVENTS = /build:(started|finished)/
+        EVENTS = /build:(started|finished)/
 
-          private
+        private
 
-            def handle?
-              case event
-              when 'build:started'
-                object.send_webhook_notifications_on_start?
-              when 'build:finished'
-                object.send_webhook_notifications_on_finish?
-              end
+          def handle?
+            case event
+            when 'build:started'
+              object.send_webhook_notifications_on_start?
+            when 'build:finished'
+              object.send_webhook_notifications_on_finish?
             end
+          end
 
-            def handle
-              Task.run(:webhook, targets, payload, token)
-            end
+          def handle
+            Task.run(:webhook, targets, payload, token)
+          end
 
-            def payload
-              Api.data(object, :for => 'webhook', :type => 'build/finished', :version => API_VERSION)
-            end
+          def payload
+            Api.data(object, :for => 'webhook', :type => 'build/finished', :version => API_VERSION)
+          end
 
-            def token
-              object.request.token
-            end
+          def token
+            object.request.token
+          end
 
-            def targets
-              object.webhooks
-            end
-        end
+          def targets
+            object.webhooks
+          end
       end
     end
   end

@@ -5,7 +5,7 @@ describe Travis::Event::Handler::Pusher do
   let(:handler) { Travis::Event::Handler::Pusher.any_instance }
 
   before do
-    Travis.config.notifications = [:pusher]
+    Travis::Event.stubs(:subscribers).returns [:pusher]
     handler.stubs(:handle => true, :handle? => true)
   end
 
@@ -64,8 +64,8 @@ describe Travis::Event::Handler::Pusher do
       Travis::Event.dispatch('build:finished', object)
     end
 
-    it 'meters on "notify.pusher.handler.event.travis"' do
-      Metriks.expects(:timer).with('notify.pusher.handler.event.travis').returns(stub('timer', :update => true))
+    it 'meters on "travis.event.handler.pusher.notify"' do
+      Metriks.expects(:timer).with('travis.event.handler.pusher.notify').returns(stub('timer', :update => true))
       Travis::Event.dispatch('build:finished', object)
     end
   end

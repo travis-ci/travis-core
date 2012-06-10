@@ -1,3 +1,4 @@
+require 'active_support/inflector/inflections.rb'
 require 'metriks'
 
 module Travis
@@ -14,29 +15,28 @@ module Travis
     class Subscription
       attr_reader :name, :subscriber, :patterns
 
-      include Module.new {
-        def initialize(name)
-          @name = name
-          @subscriber = Handler.const_get(name.to_s.camelize)
-          @patterns = Array(subscriber::EVENTS)
-        end
+      def initialize(name)
+        @name = name
+        @subscriber = Handler.const_get(name.to_s.camelize)
+        @patterns = Array(subscriber::EVENTS)
+      end
 
-        def notify(event, *args)
-          if matches?(event)
-            subscriber.new(event, *args).notify
-            increment_counter(event)
-          end
+      def notify(event, *args)
+        if matches?(event)
+          subscriber.new(event, *args).notify
+          increment_counter(event)
         end
+      end
 
-        def matches?(event)
-          patterns.any? { |patterns| patterns.is_a?(Regexp) ? patterns.match(event) : patterns == event }
-        end
+      def matches?(event)
+        patterns.any? { |patterns| patterns.is_a?(Regexp) ? patterns.match(event) : patterns == event }
+      end
 
-        def increment_counter(event)
-          metric = "travis.notifications.#{name}.#{event.gsub(/:/, '.')}"
-          Metriks.meter(metric).mark
-        end
-      }
+      def increment_counter(event)
+        # TODO ask mathias about this metric
+        metric = "travis.notifications.#{name}.#{event.gsub(/:/, '.')}"
+        Metriks.meter(metric).mark
+      end
     end
   end
 end
