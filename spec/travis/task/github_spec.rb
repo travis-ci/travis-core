@@ -3,23 +3,17 @@ require 'spec_helper'
 describe Travis::Task::Github do
   include Travis::Testing::Stubs, Support::Formats
 
-  let(:passing_build) { build }
-  let(:failing_build) { stub_build(:result => 1) }
-
-  let(:url)     { 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments' }
-  let(:io)      { StringIO.new }
-
-  def data(build)
-    Travis::Api.data(build, :for => 'event', :version => 'v2')
-  end
+  let(:url)  { 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments' }
+  let(:data) { Travis::Api.data(build, :for => 'event', :version => 'v2') }
+  let(:io)   { StringIO.new }
 
   before do
     Travis.logger = Logger.new(io)
     WebMock.stub_request(:post, 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments').to_return(:status => 200, :body => '{}')
   end
 
-  def run(build = passing_build)
-    Travis::Task.run(:github, url, data(build))
+  def run
+    Travis::Task.run(:github, url, data)
   end
 
   describe 'run' do
@@ -29,8 +23,12 @@ describe Travis::Task::Github do
     end
 
     describe 'using a passing build' do
+      before :each do
+        build.stubs(:result).returns(0)
+      end
+
       it 'posts a comment to github' do
-        comment = "This pull request [passes](http://travis-ci.org/svenfuchs/minimal/builds/#{passing_build.id}) (merged #{request.head_commit[0..7]} into #{request.base_commit[0..7]})."
+        comment = "This pull request [passes](http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}) (merged #{request.head_commit[0..7]} into #{request.base_commit[0..7]})."
         body = lambda { |request| ActiveSupport::JSON.decode(request.body)['body'].should == comment }
 
         run
@@ -39,11 +37,15 @@ describe Travis::Task::Github do
     end
 
     describe 'using a failing build' do
+      before :each do
+        build.stubs(:result).returns(1)
+      end
+
       it 'posts a comment to github' do
-        comment = "This pull request [fails](http://travis-ci.org/svenfuchs/minimal/builds/#{failing_build.id}) (merged #{request.head_commit[0..7]} into #{request.base_commit[0..7]})."
+        comment = "This pull request [fails](http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}) (merged #{request.head_commit[0..7]} into #{request.base_commit[0..7]})."
         body = lambda { |request| ActiveSupport::JSON.decode(request.body)['body'].should == comment }
 
-        run(failing_build)
+        run
         a_request(:post, url).with(&body).should have_been_made
       end
     end
