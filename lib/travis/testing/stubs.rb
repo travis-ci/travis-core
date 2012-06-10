@@ -1,3 +1,5 @@
+require 'active_support/core_ext/numeric/time'
+
 module Travis
   module Testing
     module Stubs
