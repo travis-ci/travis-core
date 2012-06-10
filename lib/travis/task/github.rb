@@ -35,7 +35,7 @@ module Travis
 
         def message(data)
           TEMPLATE % {
-            :result => data['build']['result'] ? 'passes' : 'fails',
+            :result => pretty_result,
             :url => "#{Travis.config.http_host}/#{data['repository']['slug']}/builds/#{data['build']['id']}",
             :head => data['request']['head_commit'][0..7],
             :base => data['request']['base_commit'][0..7]
@@ -44,6 +44,10 @@ module Travis
 
         def http_options
           super.merge(:token => Travis.config.github.token)
+        end
+
+        def pretty_result
+          data['build']['result'] == 0 ? 'passes' : 'fails'
         end
     end
   end
