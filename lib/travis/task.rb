@@ -10,7 +10,6 @@ module Travis
     autoload :Github,   'travis/task/github'
     autoload :Irc,      'travis/task/irc'
     autoload :Pusher,   'travis/task/pusher'
-    autoload :Request,  'travis/task/request'
     autoload :Webhook,  'travis/task/webhook'
 
     include Logging
