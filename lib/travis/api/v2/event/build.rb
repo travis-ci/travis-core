@@ -22,14 +22,14 @@ module Travis
             end
 
             def repository_data
-              Http::Repository.new(build.repository).data
+              Http::Repository.new(repository).data
             end
 
             def request_data
               {
                 'request' => {
-                  'head_commit' => (build.request.head_commit || '')[0..7],
-                  'base_commit' => (build.request.base_commit || '')[0..7]
+                  'head_commit' => (request.head_commit || '')[0..7],
+                  'base_commit' => (request.base_commit || '')[0..7]
                 }
               }
             end
