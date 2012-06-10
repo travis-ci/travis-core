@@ -19,15 +19,15 @@ module Travis
         @data = data
       end
 
-      def run
-        # Notifications to the same host are grouped so that they can be sent with a single connection
-        channels.each do |server, channels|
-          host, port = *server
-          send_messages(host, port, channels)
-        end
-      end
-
       private
+
+        def process
+          # Notifications to the same host are grouped so that they can be sent with a single connection
+          channels.each do |server, channels|
+            host, port = *server
+            send_messages(host, port, channels)
+          end
+        end
 
         def send_messages(host, port, channels)
           client(host, nick, :port => port) do |client|

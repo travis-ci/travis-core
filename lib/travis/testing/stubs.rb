@@ -30,7 +30,7 @@ module Travis
           :key => stub('key', :id => 1, :public_key => '-----BEGIN PUBLIC KEY-----'),
           :last_build_id => 1,
           :last_build_number => 2,
-          :last_build_started_at => Time.now.utc - 1.minute,
+          :last_build_started_at => Time.now.utc - 60,
           :last_build_finished_at => Time.now.utc,
           :last_build_result => 0,
           :last_build_result_on => 0,
@@ -58,7 +58,7 @@ module Travis
           :author_email => 'svenfuchs@artweb-design.de',
           :committer_name => 'Sven Fuchs',
           :committer_email => 'svenfuchs@artweb-design.de',
-          :committed_at => Time.now.utc - 1.hour,
+          :committed_at => Time.now.utc - 3600,
           :compare_url => 'https://github.com/svenfuchs/minimal/compare/master...develop',
           :config_url => 'https://raw.github.com/svenfuchs/minimal/62aae5f70ceee39123ef/.travis.yml',
           :pull_request? => false
@@ -81,7 +81,7 @@ module Travis
           :result_message => 'Passed',
           :previous_result => 0,
           :state => 'finished',
-          :started_at => Time.now.utc - 1.minute,
+          :started_at => Time.now.utc - 60,
           :finished_at => Time.now.utc,
           :duration => 60,
           :pull_request? => false
@@ -106,7 +106,7 @@ module Travis
           :finished? => true,
           :queue => 'builds.common',
           :allow_failure => false,
-          :started_at => Time.now.utc - 1.minute,
+          :started_at => Time.now.utc - 60,
           :finished_at => Time.now.utc,
           :sponsor => { 'name' => 'Railslove', 'url' => 'http://railslove.de' },
           :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4',
@@ -131,7 +131,7 @@ module Travis
           :started? => true,
           :finished? => true,
           :queue => 'builds.configure',
-          :started_at => Time.now.utc - 1.minute,
+          :started_at => Time.now.utc - 60,
           :finished_at => Time.now.utc
         )
       end

@@ -13,7 +13,7 @@ module Travis
       autoload :Worker,   'travis/event/handler/worker'
 
       include Logging
-      extend  Instrumentation # Exceptions::Handling, Async
+      extend  Instrumentation
 
       class << self
         def notify(event, object, data = {})
@@ -32,9 +32,8 @@ module Travis
       def notify
         handle if handle?
       end
-      instrument :notify
-      # rescues :notify, :from => Exception
-      # async :notify
+      # TODO ask mathias about the scope
+      instrument :notify # , :scope => :event
     end
   end
 end
