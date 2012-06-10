@@ -68,7 +68,7 @@ class User < ActiveRecord::Base
     gravatar_id.presence || (email? && Digest::MD5.hexdigest(email)) || '0' * 32
   end
 
-  def github_service_hooks
+  def service_hooks
     repositories.administratable.order('owner_name, name').map do |repo|
       ServiceHook.new(
         :uid => [repo.owner_name, repo.name].join(':'),
@@ -81,6 +81,7 @@ class User < ActiveRecord::Base
       )
     end.compact
   end
+  alias_method :github_service_hooks, :service_hooks
 
   def authenticated_on_github(&block)
     fail "we don't have a github token for #{inspect}" if github_oauth_token.blank?

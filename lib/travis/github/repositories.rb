@@ -2,6 +2,7 @@ require 'active_support/core_ext/class/attribute'
 
 module Travis
   module Github
+    # encapsulates fetching repositories for a given user
     class Repositories
       include Logging
 

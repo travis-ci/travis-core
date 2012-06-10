@@ -2,6 +2,7 @@ require 'gh'
 
 module Travis
   module Github
+    autoload :Config,       'travis/github/config'
     autoload :Payload,      'travis/github/payload'
     autoload :Repositories, 'travis/github/repositories'
 

@@ -8,7 +8,6 @@ module Travis
           let(:commit)     { stub_commit }
           let(:build)      { stub_build }
           let(:test)       { stub_test }
-          let(:configure)  { stub_configure }
           let(:log)        { stub_log }
           let(:worker)     { stub_worker }
           let(:user)       { stub_user }
@@ -26,6 +25,7 @@ module Travis
           :url => 'http://github.com/svenfuchs/minimal',
           :source_url => 'git://github.com/svenfuchs/minimal.git',
           :key => stub('key', :id => 1, :public_key => '-----BEGIN PUBLIC KEY-----'),
+          :private? => false,
           :last_build_id => 1,
           :last_build_number => 2,
           :last_build_started_at => Time.now.utc - 60,
@@ -39,6 +39,9 @@ module Travis
 
       def stub_request(attributes = {})
         stub 'request', attributes.reverse_merge(
+          :repository => stub_repository(),
+          :commit => stub_commit(),
+          :config => {},
           :event_type => 'push',
           :head_commit => 'head-commit',
           :base_commit => 'base-commit',
@@ -51,6 +54,7 @@ module Travis
           :id => 1,
           :commit => '62aae5f70ceee39123ef',
           :branch => 'master',
+          :ref => 'refs/master',
           :message => 'the commit message',
           :author_name => 'Sven Fuchs',
           :author_email => 'svenfuchs@artweb-design.de',
@@ -109,28 +113,6 @@ module Travis
           :sponsor => { 'name' => 'Railslove', 'url' => 'http://railslove.de' },
           :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4',
           :tags => 'tag-a,tag-b'
-        )
-      end
-
-      def stub_configure(attributes = {})
-        stub 'configure', attributes.reverse_merge(
-          :class => Job::Configure,
-          :id => 1,
-          :repository_id => 1,
-          :repository => repository,
-          :source_id => 1,
-          :commit_id => commit.id,
-          :commit => commit,
-          :log => log,
-          :number => '2.1',
-          :config => nil,
-          :result => 0,
-          :state => :finished,
-          :started? => true,
-          :finished? => true,
-          :queue => 'builds.configure',
-          :started_at => Time.now.utc - 60,
-          :finished_at => Time.now.utc
         )
       end
 

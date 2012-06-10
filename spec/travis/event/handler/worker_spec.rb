@@ -25,11 +25,6 @@ describe Travis::Event::Handler::Worker do
   end
 
   describe 'publisher' do
-    it 'returns a publisher for "builds.configure" for a configure job' do
-      handler = Travis::Event::Handler::Worker.new(:start, configure)
-      handler.send(:publisher).routing_key.should == 'builds.configure'
-    end
-
     it 'returns a publisher for "builds.common" for a test job' do
       handler = Travis::Event::Handler::Worker.new(:start, test)
       handler.send(:publisher).routing_key.should == test.queue
@@ -37,11 +32,6 @@ describe Travis::Event::Handler::Worker do
   end
 
   describe 'payload_for' do
-    it 'returns Travis::Event::Worker::Job::Configure for a configure job' do
-      handler = Travis::Event::Handler::Worker.new(:start, configure)
-      handler.send(:payload).should == Travis::Api::V0::Worker::Job::Configure.new(configure).data
-    end
-
     it 'returns Travis::Event::Worker::Job::Test for a test job' do
       handler = Travis::Event::Handler::Worker.new(:start, test)
       handler.send(:payload).should == Travis::Api::V0::Worker::Job::Test.new(test).data

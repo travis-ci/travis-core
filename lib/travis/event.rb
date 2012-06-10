@@ -4,8 +4,7 @@ require 'active_support/core_ext/string/inflections'
 module Travis
 
   # Event handlers register to events that are issued from state change
-  # events on the core domain models (such as Request, Build, Job::Configure,
-  # Job::Test).
+  # events on the core domain models (such as Request, Build and Job::Test).
   #
   # Handler registrations are defined in Travis.config so they can be added or
   # removed easily for different environments.

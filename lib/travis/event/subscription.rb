@@ -5,7 +5,7 @@ module Travis
   module Event
 
     # Event handlers subscribe to events issued from core models (such
-    # as Build, Job::Configure and Job::Test).
+    # as Build and Job::Test).
     #
     # Subscriptions are defined in Travis.config so they can easily be
     # added/removed for an environment.

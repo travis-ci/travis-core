@@ -122,8 +122,4 @@ class Repository < ActiveRecord::Base
     n = branches.map { |branch| builds.last_finished_on_branch(branch) }.compact
     n.sort { |a, b| b.finished_at <=> a.finished_at }
   end
-
-  def rails_fork?
-    slug != 'rails/rails' && slug =~ %r(/rails$)
-  end
 end

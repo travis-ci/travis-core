@@ -118,7 +118,7 @@ describe User do
     end
   end
 
-  describe 'github_service_hooks' do
+  describe 'service_hooks' do
     let(:own_repo)   { Factory(:repository, :name => 'own-repo', :description => 'description', :active => true) }
     let(:admin_repo) { Factory(:repository, :name => 'admin-repo') }
     let(:other_repo) { Factory(:repository, :name => 'other-repo') }
@@ -130,7 +130,7 @@ describe User do
     end
 
     it "contains repositories where the user has an admin role" do
-      service_hook = user.github_service_hooks.last
+      service_hook = user.service_hooks.last
       service_hook.uid.should == 'svenfuchs:own-repo'
       service_hook.owner_name.should == 'svenfuchs'
       service_hook.name.should == 'own-repo'
@@ -140,7 +140,7 @@ describe User do
     end
 
     it "does not contain repositories where the user does not have an admin role" do
-      service_hooks = user.github_service_hooks
+      service_hooks = user.service_hooks
       service_hooks.any? { |s| s.name == 'other-repo' }.should be_false
     end
   end

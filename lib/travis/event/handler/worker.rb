@@ -26,7 +26,7 @@ module Travis
           end
 
           def publisher
-            object.is_a?(Job::Configure) ? Travis::Amqp::Publisher.configure : Travis::Amqp::Publisher.builds(object.queue)
+            Travis::Amqp::Publisher.builds(object.queue)
           end
 
           def payload

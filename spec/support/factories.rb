@@ -23,12 +23,6 @@ FactoryGirl.define do
     compare_url 'https://github.com/svenfuchs/minimal/compare/master...develop'
   end
 
-  factory :configure, :class => 'Job::Configure' do
-    repository { Repository.first || Factory(:repository) }
-    commit     { Factory(:commit) }
-    source     { Factory(:request) }
-  end
-
   factory :test, :class => 'Job::Test' do
     repository { Repository.first || Factory(:repository) }
     commit     { Factory(:commit) }

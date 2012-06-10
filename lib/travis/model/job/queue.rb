@@ -3,8 +3,6 @@ class Job
   # Encapsulates logic for figuring out which queue a given job needs to go
   # into.
   #
-  # The queue name for Job::Configure instances always is 'builds.configure'.
-  #
   # Queue names for Job::Test instances are configured in `Travis.config` and
   # are determined based on the repository slug (e.g. 'rails/rails' has its own
   # queue) or the language given in the configuration (`.travis.yml`) and
@@ -12,13 +10,9 @@ class Job
   class Queue
     class << self
       def for(job)
-        if job.is_a?(Job::Configure)
-          configure
-        else
-          slug = job.repository.try(:slug)
-          language = job.config[:language]
-          queues.detect { |queue| queue.send(:matches?, slug, language) } || default
-        end
+        slug = job.repository.try(:slug)
+        language = job.config[:language]
+        queues.detect { |queue| queue.send(:matches?, slug, language) } || default
       end
 
       protected
@@ -27,10 +21,6 @@ class Job
           @queues ||= Array(Travis.config.queues).compact.map do |queue|
             Queue.new(*queue.values_at(*[:queue, :slug, :language]))
           end
-        end
-
-        def configure
-          @configure || new('builds.configure')
         end
 
         def default
