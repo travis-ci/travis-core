@@ -163,6 +163,21 @@ describe Build, 'matrix' do
     yml
     }
 
+    let(:multiple_tests_config_with_inclusion) {
+      YAML.load <<-yml
+      rvm:
+        - 1.8.7
+        - 1.9.2
+      env:
+        - FOO=bar
+        - BAR=baz
+      matrix:
+        include:
+          - rvm: 1.9.2
+            env: BAR=xyzzy
+    yml
+    }
+
     let(:multiple_tests_config_with_allow_failures) {
       YAML.load <<-yml
       rvm:
@@ -293,6 +308,26 @@ describe Build, 'matrix' do
           ]
         end
       end
+    end
+
+    describe :include_matrix_config do
+      it 'includes a matrix config' do
+          build = Factory(:build, :config => multiple_tests_config_with_inclusion)
+
+          matrix_inclusion = {
+            :include => [
+              { :rvm => '1.9.2', :env => 'BAR=xyzzy' }
+            ]
+          }
+
+          build.matrix.map(&:config).should == [
+            { :rvm => '1.8.7', :env => 'FOO=bar', :matrix => matrix_inclusion },
+            { :rvm => '1.8.7', :env => 'BAR=baz', :matrix => matrix_inclusion },
+            { :rvm => '1.9.2', :env => 'FOO=bar', :matrix => matrix_inclusion },
+            { :rvm => '1.9.2', :env => 'BAR=baz', :matrix => matrix_inclusion },
+            { :rvm => '1.9.2', :env => 'BAR=xyzzy', :matrix => matrix_inclusion },
+          ]
+        end
     end
 
     describe :matrix_config do
