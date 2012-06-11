@@ -26,7 +26,7 @@ class Request
     end
 
     def finish
-      build_build if approved?
+      build_build if was_configured? && approved?
     end
 
     protected
