@@ -17,7 +17,7 @@ class Request < ActiveRecord::Base
     def create_from(type, data, token)
       Metriks.meter('github.requests.received').mark
       request = Factory.new(type, data, token).request
-      request.start!
+      request.start! if request
     end
 
     def last_by_head_commit(head_commit)
