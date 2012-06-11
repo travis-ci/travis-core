@@ -20,9 +20,9 @@ describe Travis::Notification::Instrument::Event::Handler::Webhook do
       :request_id => 1,
       :object_id => 1,
       :object_type => 'Build',
+      :result => nil,
       :event => 'build:finished',
-      :targets => 'http://example.com',
-      :result => nil
+      :targets => 'http://example.com'
     }
     event[:payload].should_not be_nil
   end

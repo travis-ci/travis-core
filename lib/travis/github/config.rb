@@ -5,28 +5,26 @@ module Travis
     # encapsulates fetching a .travis.yml from a given commit's config_url
     class Config
       include Logging
+      extend Instrumentation
 
-      attr_accessor :commit
+      attr_accessor :url
 
-      def initialize(commit)
-        @commit = commit
+      def initialize(url)
+        @url = url
       end
 
-      def config
-        fetch
+      def fetch
+        if response.success?
+          parse(response.body)
+        elsif response.status == 404
+          { '.result' => 'not_found' }
+        else
+          { '.result' => 'server_error' }
+        end
       end
+      instrument :fetch
 
       private
-
-        def fetch
-          if response.success?
-            parse(response.body)
-          elsif response.status == 404
-            { '.result' => 'not_found' }
-          else
-            { '.result' => 'server_error' }
-          end
-        end
 
         def parse(yaml)
           YAML.load(yaml).merge('.result' => 'configured')
@@ -36,7 +34,7 @@ module Travis
         end
 
         def response
-          @response ||= http.get(commit.config_url)
+          @response ||= http.get(url)
         end
 
         def http
@@ -48,6 +46,8 @@ module Travis
         def http_options
           { :ssl => Travis.config.ssl.compact }
         end
+
+        Notification::Instrument::Github::Config.attach_to(self)
     end
   end
 end

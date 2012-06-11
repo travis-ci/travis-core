@@ -20,9 +20,9 @@ describe Travis::Notification::Instrument::Event::Handler::Irc do
       :request_id => 1,
       :object_id => 1,
       :object_type => 'Build',
+      :result => nil,
       :event => 'build:finished',
-      :channels => { ['irc.freenode.net', 1234] => ['travis'] },
-      :result => nil
+      :channels => { ['irc.freenode.net', 1234] => ['travis'] }
     }
     event[:payload].should_not be_nil
   end

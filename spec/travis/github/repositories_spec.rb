@@ -1,8 +1,10 @@
 require 'spec_helper'
 
 describe Travis::Github::Repositories do
+  include Travis::Testing::Stubs
+
   let(:org)  { stub('org', :login => 'the-org') }
-  let(:user) { stub('user', :organizations => [org], :github_oauth_token => 'token') }
+  let(:user) { stub_user(:organizations => [org]) }
 
   before :each do
     GH.stubs(:[]).returns([

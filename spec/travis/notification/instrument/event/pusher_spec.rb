@@ -21,9 +21,9 @@ describe Travis::Notification::Instrument::Event::Handler::Pusher do
         :repository => 'svenfuchs/minimal',
         :request_id => 1,
         :object_id => 1,
+        :result => nil,
         :object_type => 'Job::Test',
-        :event => 'job:test:started',
-        :result => nil
+        :event => 'job:test:started'
       }
       event[:payload].should_not be_nil
     end
@@ -38,9 +38,9 @@ describe Travis::Notification::Instrument::Event::Handler::Pusher do
         :repository => 'svenfuchs/minimal',
         :request_id => 1,
         :object_id => 1,
+        :result => nil,
         :object_type => 'Build',
-        :event => 'build:finished',
-        :result => nil
+        :event => 'build:finished'
       }
       event[:payload].should_not be_nil
     end

@@ -155,10 +155,11 @@ module Travis
       def stub_user(attributes = {})
         stub 'user', attributes.reverse_merge(
           :id => 1,
+          :organizations => [],
           :name => 'Sven Fuchs',
           :login => 'svenfuchs',
           :email => 'svenfuchs@artweb-design.de',
-          :github_oauth_token => 'token'
+          :github_oauth_token => 'token',
         )
       end
 

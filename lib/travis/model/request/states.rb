@@ -22,7 +22,7 @@ class Request
     end
 
     def configure
-      self.config = Travis::Github::Config.new(commit).config
+      self.config = Travis::Github::Config.new(commit.config_url).fetch
     end
 
     def finish

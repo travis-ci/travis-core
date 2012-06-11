@@ -3,10 +3,11 @@ require 'spec_helper'
 describe Travis::Github::Config do
   include Travis::Testing::Stubs
 
-  let(:subject)  { Travis::Github::Config.new(commit) }
+  let(:url)      { 'https://raw.github.com/svenfuchs/minimal/62aae5f70ceee39123ef/.travis.yml' }
+  let(:subject)  { Travis::Github::Config.new(url) }
   let(:response) { stub('response', :success? => true, :body => 'foo: Foo') }
   let(:http)     { stub('http', :get => response) }
-  let(:result)   { subject.config }
+  let(:result)   { subject.fetch }
 
   before :each do
     subject.stubs(:http).returns(http)
@@ -40,11 +41,6 @@ describe Travis::Github::Config do
     it "returns { '.result' => 'parsing_error' } if the .travis.yml is invalid" do
       YAML.stubs(:load).raises(StandardError)
       result['.result'].should == 'parsing_failed'
-    end
-
-    it "uses the commits's config_url" do
-      commit.expects(:config_url)
-      result
     end
   end
 

@@ -20,8 +20,8 @@ describe Travis::Notification::Instrument::Event::Handler::Archive do
       :request_id => 1,
       :object_id => 1,
       :object_type => 'Build',
-      :event => 'build:finished',
-      :result => nil
+      :result => nil,
+      :event => 'build:finished'
     }
     event[:payload].should_not be_nil
   end

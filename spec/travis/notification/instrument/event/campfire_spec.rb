@@ -20,9 +20,9 @@ describe Travis::Notification::Instrument::Event::Handler::Campfire do
       :request_id => 1,
       :object_id => 1,
       :object_type => 'Build',
+      :result => nil,
       :event => 'build:finished',
-      :targets => 'campfire_room',
-      :result => nil
+      :targets => 'campfire_room'
     }
     event[:payload].should_not be_nil
   end

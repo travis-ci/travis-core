@@ -5,6 +5,7 @@ module Travis
     # encapsulates fetching repositories for a given user
     class Repositories
       include Logging
+      extend Instrumentation
 
       class_attribute :type
       self.type = 'public'
@@ -26,6 +27,7 @@ module Travis
         repos = repos.map(&:to_a).flatten.compact
         filter(repos)
       end
+      instrument :fetch
 
       private
 
@@ -60,6 +62,8 @@ module Travis
         def filter(repos)
           repos.select { |repo| repo['private'] == self.class.private? }
         end
+
+        Notification::Instrument::Github::Repositories.attach_to(self)
     end
   end
 end

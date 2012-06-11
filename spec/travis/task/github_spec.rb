@@ -31,7 +31,7 @@ describe Travis::Task::Github do
         comment = "This pull request [passes](http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}) (merged #{request.head_commit[0..7]} into #{request.base_commit[0..7]})."
         body = lambda { |request| ActiveSupport::JSON.decode(request.body)['body'].should == comment }
 
-        GH.expects(:post).with(url, Anything)
+        GH.expects(:post).with { |url, message| url == self.url }
         run
       end
     end

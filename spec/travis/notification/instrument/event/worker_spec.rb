@@ -20,9 +20,9 @@ describe Travis::Notification::Instrument::Event::Handler::Worker do
       :request_id => 1,
       :object_id => 1,
       :object_type => 'Job::Test',
+      :result => nil,
       :event => 'job:test:created',
-      :queue => 'builds.common',
-      :result => nil
+      :queue => 'builds.common'
     }
     event[:payload].should_not be_nil
   end

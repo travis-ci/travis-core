@@ -1,8 +1,9 @@
 module Travis
   module Notification
     class Instrument
-      autoload :Event,     'travis/notification/instrument/event'
-      autoload :Task,      'travis/notification/instrument/task'
+      autoload :Event,  'travis/notification/instrument/event'
+      autoload :Github, 'travis/notification/instrument/github'
+      autoload :Task,   'travis/notification/instrument/task'
 
       class << self
         def attach_to(const)
@@ -25,17 +26,18 @@ module Travis
         end
       end
 
-      attr_reader :payload
+      attr_reader :payload, :target, :result, :exception
 
       def initialize(payload)
         @payload = payload
+        @target, @result, @exception = payload.values_at(:target, :result, :exception)
       end
 
       private
 
-        def publish(event)
-          event.merge!(:result => payload[:result])
-          event.merge!(:exception => payload[:exception]) if payload.key?(:exception)
+        def publish(event = {})
+          event.merge!(:result => result)
+          event.merge!(:exception => exception) if exception
           Notification.publish(event)
         end
     end

@@ -21,9 +21,9 @@ describe Travis::Notification::Instrument::Event::Handler::Github do
       :request_id => 1,
       :object_id => 1,
       :object_type => 'Build',
+      :result => nil,
       :event => 'build:finished',
-      :url => 'http://github.com/path/to/comments',
-      :result => nil
+      :url => 'http://github.com/path/to/comments'
     }
     event[:payload].should_not be_nil
   end

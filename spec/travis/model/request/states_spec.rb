@@ -12,7 +12,7 @@ describe Request::States do
   let(:config)     { { :from => '.travis.yml' } }
 
   before :each do
-    github.stubs(:config).returns(config)
+    github.stubs(:fetch).returns(config)
     request.stubs(:build_build) # can't stub on the stupic association?
   end
 
@@ -66,7 +66,7 @@ describe Request::States do
 
   describe 'configure' do
     it 'fetches the .travis.yml config from Github' do
-      github.expects(:config).returns(config)
+      github.expects(:fetch).returns(config)
       request.configure
     end
 

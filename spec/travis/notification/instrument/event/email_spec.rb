@@ -20,9 +20,9 @@ describe Travis::Notification::Instrument::Event::Handler::Email do
       :request_id => 1,
       :object_id => 1,
       :object_type => 'Build',
+      :result => nil,
       :event => 'build:finished',
-      :recipients => %w(svenfuchs@artweb-design.de),
-      :result => nil
+      :recipients => %w(svenfuchs@artweb-design.de)
     }
     event[:payload].should_not be_nil
   end
