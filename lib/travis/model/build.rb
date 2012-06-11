@@ -153,7 +153,7 @@ class Build < ActiveRecord::Base
   end
 
   def config=(config)
-    super(config.deep_symbolize_keys)
+    super(config ? config.deep_symbolize_keys : {})
   end
 
   def pull_request?
