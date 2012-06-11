@@ -8,23 +8,23 @@ module Travis
 
         EVENTS = 'build:finished'
 
-        private
+        def handle?
+          object.send_email_notifications_on_finish?
+        end
 
-          def handle?
-            object.send_email_notifications_on_finish?
-          end
+        def handle
+          Task.run(:email, recipients, payload)
+        end
 
-          def handle
-            Task.run(:email, recipients, payload)
-          end
+        def recipients
+          object.email_recipients
+        end
 
-          def recipients
-            object.email_recipients
-          end
+        def payload
+          @payload ||= Api.data(object, :for => 'event', :version => API_VERSION)
+        end
 
-          def payload
-            Api.data(object, :for => 'event', :version => API_VERSION)
-          end
+        Instrument::Event::Handler::Email.attach_to(self)
       end
     end
   end

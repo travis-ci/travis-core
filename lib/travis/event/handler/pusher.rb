@@ -8,23 +8,23 @@ module Travis
 
         EVENTS = [/^build:(started|finished)/, /^job:test:(created|started|log|finished)/, /^worker:.*/]
 
-        private
+        def handle?
+          true
+        end
 
-          def handle?
-            true
-          end
+        def handle
+          Task.run(:pusher, event, payload)
+        end
 
-          def handle
-            Task.run(:pusher, event, payload)
-          end
+        def payload
+          @payload ||= Api.data(object, :for => 'pusher', :type => type, :params => data, :version => API_VERSION)
+        end
 
-          def payload
-            Api.data(object, :for => 'pusher', :type => type, :params => data, :version => API_VERSION)
-          end
+        def type
+          event =~ /^worker:/ ? 'worker' : event.sub('test:', '').sub(':', '/')
+        end
 
-          def type
-            event =~ /^worker:/ ? 'worker' : event.sub('test:', '').sub(':', '/')
-          end
+        Instrument::Event::Handler::Pusher.attach_to(self)
       end
     end
   end

@@ -35,6 +35,8 @@ class Job < ActiveRecord::Base
 
   serialize :config
 
+  delegate :request_id, :to => :commit # TODO denormalize
+
   after_initialize do
     self.config = {} if config.nil?
   end

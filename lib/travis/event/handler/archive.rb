@@ -6,19 +6,19 @@ module Travis
 
         EVENTS = 'build:finished'
 
-        private
+        def handle?
+          true
+        end
 
-          def handle?
-            true
-          end
+        def handle
+          Task.run(:archive, payload)
+        end
 
-          def handle
-            Task.run(:archive, payload)
-          end
+        def payload
+          @payload ||= Api.data(object, :for => 'archive', :version => API_VERSION)
+        end
 
-          def payload
-            Api.data(object, :for => 'archive', :version => API_VERSION)
-          end
+        Instrument::Event::Handler::Archive.attach_to(self)
       end
     end
   end

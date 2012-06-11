@@ -9,23 +9,23 @@ module Travis
 
         EVENTS = /build:finished/
 
-        private
+        def handle?
+          object.request.pull_request?
+        end
 
-          def handle?
-            object.request.pull_request?
-          end
+        def handle
+          Task.run(:github, url, payload)
+        end
 
-          def handle
-            Task.run(:github, url, payload)
-          end
+        def url
+          object.request.comments_url
+        end
 
-          def url
-            object.request.comments_url
-          end
+        def payload
+          @payload ||= Api.data(object, :for => 'event', :version => API_VERSION)
+        end
 
-          def payload
-            Api.data(object, :for => 'event', :version => API_VERSION)
-          end
+        Instrument::Event::Handler::Github.attach_to(self)
       end
     end
   end

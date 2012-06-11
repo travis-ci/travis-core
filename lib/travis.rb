@@ -43,15 +43,16 @@ autoload :Worker,       'travis/model/worker'
 # (needed in travis-hub in order to connect to the database) and Travis::Renderer
 # (our inferior layer on top of Rabl).
 module Travis
-  autoload :Api,             'travis/api'
-  autoload :Config,          'travis/config'
-  autoload :Features,        'travis/features'
-  autoload :Github,          'travis/github'
-  autoload :Mailer,          'travis/mailer'
-  autoload :Model,           'travis/model'
-  autoload :Event,           'travis/event'
-  autoload :Task,            'travis/task'
-  autoload :Testing,         'travis/testing'
+  autoload :Api,        'travis/api'
+  autoload :Config,     'travis/config'
+  autoload :Features,   'travis/features'
+  autoload :Github,     'travis/github'
+  autoload :Instrument, 'travis/instrument'
+  autoload :Mailer,     'travis/mailer'
+  autoload :Model,      'travis/model'
+  autoload :Event,      'travis/event'
+  autoload :Task,       'travis/task'
+  autoload :Testing,    'travis/testing'
 
   class UnknownRepository < StandardError; end
   class GithubApiError < StandardError; end

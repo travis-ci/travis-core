@@ -1,5 +1,7 @@
 class Request
   class Factory
+    extend Travis::Instrumentation
+
     attr_reader :type, :data, :token
 
     def initialize(type, data, token)

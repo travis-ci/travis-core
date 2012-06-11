@@ -41,13 +41,15 @@ module Travis
 
       def stub_request(attributes = {})
         stub 'request', attributes.reverse_merge(
+          :id => 1,
           :repository => stub_repository(),
           :commit => stub_commit(),
           :config => {},
           :event_type => 'push',
           :head_commit => 'head-commit',
           :base_commit => 'base-commit',
-          :token => 'token'
+          :token => 'token',
+          :comments_url => 'http://github.com/path/to/comments'
         )
       end
 
@@ -75,6 +77,7 @@ module Travis
           :id => 1,
           :repository_id => repository.id,
           :repository => repository,
+          :request_id => request.id,
           :request => request,
           :commit_id => commit.id,
           :commit => commit,
@@ -88,7 +91,10 @@ module Travis
           :started_at => Time.now.utc - 60,
           :finished_at => Time.now.utc,
           :duration => 60,
-          :pull_request? => false
+          :pull_request? => false,
+          :email_recipients => %w(svenfuchs@artweb-design.de),         # TODO remove
+          :irc_channels => {['irc.freenode.net', 1234] => ['travis']}, # TODO remove
+          :webhooks => 'http://example.com'                            # TODO remove
         )
       end
 
@@ -99,6 +105,7 @@ module Travis
           :repository_id => 1,
           :repository => repository,
           :source_id => 1,
+          :request_id => 1,
           :commit_id => commit.id,
           :commit => commit,
           :log => log,

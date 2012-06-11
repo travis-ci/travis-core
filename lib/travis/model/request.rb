@@ -14,8 +14,7 @@ class Request < ActiveRecord::Base
   include States
 
   class << self
-    def create_from(type, data, token)
-      Metriks.meter('github.requests.received').mark
+    def receive(type, data, token)
       request = Factory.new(type, data, token).request
       request.start! if request
     end

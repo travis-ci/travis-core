@@ -11,32 +11,32 @@ module Travis
 
         EVENTS = /build:(started|finished)/
 
-        private
-
-          def handle?
-            case event
-            when 'build:started'
-              object.send_webhook_notifications_on_start?
-            when 'build:finished'
-              object.send_webhook_notifications_on_finish?
-            end
+        def handle?
+          case event
+          when 'build:started'
+            object.send_webhook_notifications_on_start?
+          when 'build:finished'
+            object.send_webhook_notifications_on_finish?
           end
+        end
 
-          def handle
-            Task.run(:webhook, targets, payload, token)
-          end
+        def handle
+          Task.run(:webhook, targets, payload, token)
+        end
 
-          def payload
-            Api.data(object, :for => 'webhook', :type => 'build/finished', :version => API_VERSION)
-          end
+        def payload
+          @payload ||= Api.data(object, :for => 'webhook', :type => 'build/finished', :version => API_VERSION)
+        end
 
-          def token
-            object.request.token
-          end
+        def token
+          object.request.token
+        end
 
-          def targets
-            object.webhooks
-          end
+        def targets
+          object.webhooks
+        end
+
+        Instrument::Event::Handler::Webhook.attach_to(self)
       end
     end
   end

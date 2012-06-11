@@ -45,15 +45,15 @@ describe Travis::Event::Handler::Worker do
       handler.stubs(:handle)
     end
 
-    it 'instruments with "notify.worker.handler.event.travis"' do
+    it 'instruments with "travis.event.handler.worker.notify:call"' do
       ActiveSupport::Notifications.expects(:instrument).with do |event, data|
-        event == 'notify.worker.handler.event.travis' && data[:target].is_a?(Travis::Event::Handler::Worker)
+        event == 'travis.event.handler.worker.notify:call' && data[:target].is_a?(Travis::Event::Handler::Worker)
       end
       handler.notify
     end
 
-    it 'meters on "travis.event.handler.worker.notify"' do
-      Metriks.expects(:timer).with('travis.event.handler.worker.notify').returns(stub('timer', :update => true))
+    it 'meters on "travis.event.handler.worker.notify:call"' do
+      Metriks.expects(:timer).with('travis.event.handler.worker.notify:call').returns(stub('timer', :update => true))
       handler.notify
     end
   end
