@@ -12,11 +12,21 @@ module Travis
         "Build details : %{build_url}"
       ]
 
+      def channels
+        options[:channels]
+      end
+
+      def messages
+        @messages ||= templates.map do |template|
+          Template.new(template, data).interpolate
+        end
+      end
+
       private
 
         def process
           # Notifications to the same host are grouped so that they can be sent with a single connection
-          options[:channels].each do |server, channels|
+          channels.each do |server, channels|
             host, port = *server
             send_messages(host, port, channels)
           end
@@ -37,8 +47,7 @@ module Travis
 
         def send_message(client, channel)
           client.join(channel) if join?
-          messages.each { |message|
-            client.say("[travis-ci] #{message}", channel, notice?) }
+          messages.each { |message| client.say("[travis-ci] #{message}", channel, notice?) }
           client.leave(channel) if join?
         end
 
@@ -48,12 +57,6 @@ module Travis
 
         def join?
           config.is_a?(Hash) ? !config[:skip_join] : true
-        end
-
-        def messages
-          @messages ||= templates.map do |template|
-            Template.new(template, data).interpolate
-          end
         end
 
         def templates
@@ -75,6 +78,8 @@ module Travis
         def config
           data['build']['config']['notifications'][:irc] rescue {}
         end
+
+        Notification::Instrument::Task::Irc.attach_to(self)
     end
   end
 end

@@ -24,7 +24,7 @@ module Travis
           event =~ /^worker:/ ? 'worker' : event.sub('test:', '').sub(':', '/')
         end
 
-        Instrument::Event::Handler::Pusher.attach_to(self)
+        Notification::Instrument::Event::Handler::Pusher.attach_to(self)
       end
     end
   end

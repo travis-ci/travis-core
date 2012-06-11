@@ -92,7 +92,12 @@ module Travis
           :finished_at => Time.now.utc,
           :duration => 60,
           :pull_request? => false,
-          :campfire_rooms => 'campfire_room',
+          :queue => 'builds.common',                                   # TODO remove
+          :send_campfire_notifications_on_finish? => true,             # TODO remove
+          :send_email_notifications_on_finish? => true,                # TODO remove
+          :send_irc_notifications_on_finish? => true,                  # TODO remove
+          :send_webhook_notifications_on_finish? => true,              # TODO remove
+          :campfire_rooms => 'campfire_room',                          # TODO remove
           :email_recipients => %w(svenfuchs@artweb-design.de),         # TODO remove
           :irc_channels => {['irc.freenode.net', 1234] => ['travis']}, # TODO remove
           :webhooks => 'http://example.com'                            # TODO remove

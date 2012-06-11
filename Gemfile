@@ -6,6 +6,7 @@ gemspec
 gem 'travis-support', :path => '~/Development/projects/travis/travis-support'
 gem 'gh',             :git => 'git://github.com/rkh/gh'
 gem 'newrelic_rpm',   '~> 3.3.2'
+gem 'hubble',         :git => 'git://github.com/mattmatt/hubble'
 
 platform :mri do
   gem 'bunny',          '~> 0.7.9'

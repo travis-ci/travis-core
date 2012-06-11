@@ -18,7 +18,7 @@ module Travis
           @payload ||= Api.data(object, :for => 'archive', :version => API_VERSION)
         end
 
-        Instrument::Event::Handler::Archive.attach_to(self)
+        Notification::Instrument::Event::Handler::Archive.attach_to(self)
       end
     end
   end

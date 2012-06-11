@@ -16,7 +16,7 @@ module Travis
         end
 
         def handle
-          Task.run(:campfire, targets, payload, :targets => targets)
+          # Task.run(:campfire, payload, :targets => targets)
         end
 
         def targets
@@ -27,7 +27,7 @@ module Travis
           @payload ||= Api.data(object, :for => 'event', :version => API_VERSION)
         end
 
-        Instrument::Event::Handler::Campfire.attach_to(self)
+        Notification::Instrument::Event::Handler::Campfire.attach_to(self)
       end
     end
   end

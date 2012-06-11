@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Travis::Task::Irc do
   include Travis::Testing::Stubs
 
-  let(:tcp)   { stub('tcp', :eof? => true, :close => true) }
-  let(:seq)   { sequence('tcp') }
+  let(:tcp) { stub('tcp', :eof? => true, :close => true) }
+  let(:seq) { sequence('tcp') }
   # let(:build) { stub_build(:irc_channels => { ['irc.freenode.net', 1234] => ['travis'] }) }
 
   before do

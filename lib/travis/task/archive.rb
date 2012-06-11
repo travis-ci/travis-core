@@ -40,7 +40,7 @@ module Travis
           send(severity, message)
         end
 
-        Instrument::Task::Archive.attach_to(self)
+        Notification::Instrument::Task::Archive.attach_to(self)
     end
   end
 end

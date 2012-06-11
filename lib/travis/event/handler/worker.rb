@@ -31,7 +31,7 @@ module Travis
           @payload ||= Api.data(object, :for => 'worker', :type => object.class.name, :version => API_VERSION)
         end
 
-        Instrument::Event::Handler::Worker.attach_to(self)
+        Notification::Instrument::Event::Handler::Worker.attach_to(self)
       end
     end
   end

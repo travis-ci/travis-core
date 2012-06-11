@@ -84,7 +84,7 @@ describe Travis::Task::Webhook do
   end
 
   def verify_notifications(event, build, *urls)
-    payload = Travis::Api::V1::Webhook::Build::Finished.new(build).data
+    payload = Travis::Api.data(build, :for => 'webhook', :type => event.gsub('/', '.'), :version => 'v1')
 
     urls.each do |url|
       uri = URI.parse(url)

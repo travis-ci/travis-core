@@ -10,7 +10,7 @@ module Travis
         EVENTS = /build:finished/
 
         def handle?
-          object.request.pull_request?
+          object.pull_request?
         end
 
         def handle
@@ -25,7 +25,7 @@ module Travis
           @payload ||= Api.data(object, :for => 'event', :version => API_VERSION)
         end
 
-        Instrument::Event::Handler::Github.attach_to(self)
+        Notification::Instrument::Event::Handler::Github.attach_to(self)
       end
     end
   end

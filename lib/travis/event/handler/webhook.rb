@@ -36,7 +36,7 @@ module Travis
           object.webhooks
         end
 
-        Instrument::Event::Handler::Webhook.attach_to(self)
+        Notification::Instrument::Event::Handler::Webhook.attach_to(self)
       end
     end
   end

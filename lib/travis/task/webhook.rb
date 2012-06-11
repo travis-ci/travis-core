@@ -6,10 +6,14 @@ module Travis
     # Sends build notifications to webhooks as defined in the configuration
     # (`.travis.yml`).
     class Webhook < Task
+      def targets
+        options[:targets]
+      end
+
       private
 
         def process
-          options[:targets].each { |target| send_webhook(target) }
+          targets.each { |target| send_webhook(target) }
         end
 
         def send_webhook(target)
@@ -32,6 +36,8 @@ module Travis
           end
           send(severity, message)
         end
+
+        Notification::Instrument::Task::Webhook.attach_to(self)
     end
   end
 end

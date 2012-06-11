@@ -24,7 +24,7 @@ module Travis
           @payload ||= Api.data(object, :for => 'event', :version => API_VERSION)
         end
 
-        Instrument::Event::Handler::Irc.attach_to(self)
+        Notification::Instrument::Event::Handler::Irc.attach_to(self)
       end
     end
   end
