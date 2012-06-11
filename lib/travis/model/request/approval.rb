@@ -17,7 +17,7 @@ class Request
     end
 
     def approved?
-      branches.included?(commit.branch) && !branches.excluded?(commit.branch)
+      accepted? && branches.included?(commit.branch) && !branches.excluded?(commit.branch)
     end
 
     private
