@@ -13,7 +13,7 @@ module Travis
         end
 
         def handle
-          Task.run(:pusher, event, payload)
+          Task.run(:pusher, payload, :event => event)
         end
 
         def payload

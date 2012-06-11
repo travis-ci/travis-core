@@ -5,27 +5,22 @@ module Travis
 
     # Notifies registered clients about various state changes through Pusher.
     class Pusher < Task
-      attr_reader :event, :data
-
-      def initialize(event, data)
-        @event = client_event_for(event)
-        @data = data
-      end
-
       private
 
         def process
-          channels.each do |channel|
-            trigger(channel, event, data)
-          end
+          channels.each { |channel| trigger(channel, data) }
         end
 
-        def client_event_for(event)
-          event =~ /job:.*/ ? event.gsub(/(test|configure):/, '') : event
+        def event
+          options[:event]
+        end
+
+        def client_event
+          @client_event ||= (event =~ /job:.*/ ? event.gsub(/(test|configure):/, '') : event)
         end
 
         def channels
-          case event
+          case client_event
           when 'job:log'
             ["job-#{data['id']}"]
           else
@@ -33,8 +28,8 @@ module Travis
           end
         end
 
-        def trigger(channel, event, data)
-          Travis.pusher[channel].trigger(event, data)
+        def trigger(channel, data)
+          Travis.pusher[channel].trigger(client_event, data)
         end
     end
   end

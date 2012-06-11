@@ -6,12 +6,6 @@ module Travis
     # Archives a Build to a couchdb once it is finished so we can purge old
     # build data at any time.
     class Archive < Task
-      attr_reader :data
-
-      def initialize(data)
-        @data = data
-      end
-
       private
 
         def process
@@ -45,6 +39,8 @@ module Travis
           end
           send(severity, message)
         end
+
+        Instrument::Task::Archive.attach_to(self)
     end
   end
 end

@@ -9,7 +9,7 @@ describe Travis::Task::Email do
   let(:recipients) { ['svenfuchs@artweb-design.de'] }
 
   def run
-    Travis::Task.run(:email, recipients, data)
+    Travis::Task.run(:email, data, :recipients => recipients)
   end
 
   describe 'run' do

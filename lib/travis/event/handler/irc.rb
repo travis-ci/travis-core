@@ -13,7 +13,7 @@ module Travis
         end
 
         def handle
-          Task.run(:irc, channels, payload)
+          Task.run(:irc, payload, :channels => channels)
         end
 
         def channels

@@ -14,7 +14,7 @@ module Travis
         end
 
         def handle
-          Task.run(:github, url, payload)
+          Task.run(:github, payload, :url => url)
         end
 
         def url

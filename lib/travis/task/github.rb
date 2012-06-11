@@ -7,12 +7,7 @@ module Travis
     # Adds a comment with a build notification to the pull-request the request
     # belongs to.
     class Github < Task
-      attr_reader :url, :data
-
-      def initialize(url, data)
-        @url = url
-        @data = data
-      end
+      TEMPLATE = 'This pull request [%{result}](%{url}) (merged %{head} into %{base}).'
 
       private
 
@@ -27,11 +22,13 @@ module Travis
           error "Could not comment on #{url} (#{message})."
         end
 
+        def url
+          options[:url]
+        end
+
         def authenticated(&block)
           GH.with(http_options, &block)
         end
-
-        TEMPLATE = 'This pull request [%{result}](%{url}) (merged %{head} into %{base}).'
 
         def message(data)
           TEMPLATE % {

@@ -3,9 +3,9 @@ require 'spec_helper'
 describe Travis::Task::Irc do
   include Travis::Testing::Stubs
 
-  let(:tcp)    { stub('tcp', :eof? => true, :close => true) }
-  let(:seq)    { sequence('tcp') }
-  let(:build) { stub_build(:irc_channels => { ['irc.freenode.net', 1234] => ['travis'] }) }
+  let(:tcp)   { stub('tcp', :eof? => true, :close => true) }
+  let(:seq)   { sequence('tcp') }
+  # let(:build) { stub_build(:irc_channels => { ['irc.freenode.net', 1234] => ['travis'] }) }
 
   before do
     Travis.config.notifications = [:irc]
@@ -21,7 +21,7 @@ describe Travis::Task::Irc do
 
   def run(build)
     data = Travis::Api.data(build, :for => 'event', :version => 'v2')
-    Travis::Task.run(:irc, build.irc_channels, data)
+    Travis::Task.run(:irc, data, :channels => build.irc_channels)
   end
 
   it "one irc notification" do

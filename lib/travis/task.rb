@@ -21,6 +21,13 @@ module Travis
       end
     end
 
+    attr_reader :data, :options
+
+    def initialize(data, options = {})
+      @data = data
+      @options = options
+    end
+
     def run
       process
     end

@@ -14,18 +14,11 @@ module Travis
         "[travis-ci] Build details: %{build_url}"
       ]
 
-      attr_reader :targets, :data
-
-      def initialize(targets, data)
-        @targets = targets
-        @data = data
-      end
-
       private
 
         def process
           lines = message(data)
-          targets.each { |target| send_lines(target, lines) }
+          options[:targets].each { |target| send_lines(target, lines) }
         end
 
         def send_lines(target, lines)

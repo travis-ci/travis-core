@@ -6,17 +6,10 @@ module Travis
 
     # Sends out build notification emails using ActionMailer.
     class Email < Task
-      attr_reader :recipients, :data
-
-      def initialize(recipients, data)
-        @recipients = recipients
-        @data = data
-      end
-
       private
 
         def process
-          Travis::Mailer::Build.send(:"#{data['build']['state']}_email", data, recipients).deliver
+          Travis::Mailer::Build.send(:"#{data['build']['state']}_email", data, options[:recipients]).deliver
         end
     end
   end

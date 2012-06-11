@@ -6,18 +6,10 @@ module Travis
     # Sends build notifications to webhooks as defined in the configuration
     # (`.travis.yml`).
     class Webhook < Task
-      attr_reader :targets, :data, :token
-
-      def initialize(targets, data, token)
-        @targets = targets
-        @data = data
-        @token = token
-      end
-
-      protected
+      private
 
         def process
-          targets.each { |target| send_webhook(target) }
+          options[:targets].each { |target| send_webhook(target) }
         end
 
         def send_webhook(target)
@@ -29,7 +21,7 @@ module Travis
         end
 
         def authorization
-          Digest::SHA2.hexdigest(data['repository'].values_at('owner_name', 'name').join('/') + token)
+          Digest::SHA2.hexdigest(data['repository'].values_at('owner_name', 'name').join('/') + options[:token])
         end
 
         def log_request(response)

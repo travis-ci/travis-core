@@ -12,18 +12,11 @@ module Travis
         "Build details : %{build_url}"
       ]
 
-      attr_reader :channels, :data
-
-      def initialize(channels, data)
-        @channels = channels
-        @data = data
-      end
-
       private
 
         def process
           # Notifications to the same host are grouped so that they can be sent with a single connection
-          channels.each do |server, channels|
+          options[:channels].each do |server, channels|
             host, port = *server
             send_messages(host, port, channels)
           end

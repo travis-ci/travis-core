@@ -92,6 +92,7 @@ module Travis
           :finished_at => Time.now.utc,
           :duration => 60,
           :pull_request? => false,
+          :campfire_rooms => 'campfire_room',
           :email_recipients => %w(svenfuchs@artweb-design.de),         # TODO remove
           :irc_channels => {['irc.freenode.net', 1234] => ['travis']}, # TODO remove
           :webhooks => 'http://example.com'                            # TODO remove

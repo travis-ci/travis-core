@@ -14,7 +14,7 @@ describe Travis::Task::Campfire do
   end
 
   def run(targets, data)
-    Travis::Task.run(:campfire, targets, data)
+    Travis::Task.run(:campfire, data, :targets => targets)
   end
 
   it 'sends campfire notifications to the room' do
