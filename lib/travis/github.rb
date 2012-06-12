@@ -5,6 +5,7 @@ module Travis
     autoload :Config,       'travis/github/config'
     autoload :Payload,      'travis/github/payload'
     autoload :Repositories, 'travis/github/repositories'
+    autoload :Sync,         'travis/github/sync'
 
     class << self
       def repositories_for(user)

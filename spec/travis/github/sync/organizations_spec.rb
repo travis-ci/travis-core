@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Organization do
+describe Travis::Github::Sync::Organizations do
   include Support::ActiveRecord
 
   before :each do
@@ -11,7 +11,7 @@ describe Organization do
 
   describe 'sync_for' do
     let(:user)   { Factory(:user, :login => 'sven', :github_oauth_token => '123456') }
-    let(:action) { lambda { Organization.sync_for(user) } }
+    let(:action) { lambda { Travis::Github::Sync::Organizations.new(user).run } }
 
     it 'finds existing organizations' do
       Organization.create!(:github_id => 1)

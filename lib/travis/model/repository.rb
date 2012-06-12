@@ -12,7 +12,6 @@ require 'active_record'
 # hooks on Github.
 class Repository < ActiveRecord::Base
   autoload :Compat, 'travis/model/repository/compat'
-  autoload :Sync,   'travis/model/repository/sync'
 
   include Compat
 
@@ -41,10 +40,6 @@ class Repository < ActiveRecord::Base
   delegate :public_key, :to => :key
 
   class << self
-    def sync_for(user)
-      Sync.new(user).run
-    end
-
     def timeline
       where(arel_table[:last_build_started_at].not_eq(nil)).order(arel_table[:last_build_started_at].desc)
     end

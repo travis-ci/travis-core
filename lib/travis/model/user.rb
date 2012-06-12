@@ -2,8 +2,6 @@ require 'active_record'
 require 'gh'
 
 class User < ActiveRecord::Base
-  autoload :Sync, 'travis/model/user/sync'
-
   has_many :tokens
   has_many :memberships
   has_many :organizations, :through => :memberships
@@ -46,7 +44,7 @@ class User < ActiveRecord::Base
   end
 
   def sync
-    Sync.new(self).run
+    Travis::Github::Sync::User.new(self).run
   end
 
   def organization_ids

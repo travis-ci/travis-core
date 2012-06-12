@@ -18,6 +18,24 @@ module Travis
             )
           end
         end
+
+        module Sync
+          class Organizations < Instrument
+            def run
+              publish(
+                :msg => %(#{target.class.name}#run for #<User id=#{target.user.id} login="#{target.user.login}">),
+              )
+            end
+          end
+
+          class Repositories < Instrument
+            def run
+              publish(
+                :msg => %(#{target.class.name}#run for #<User id=#{target.user.id} login="#{target.user.login}">),
+              )
+            end
+          end
+        end
       end
     end
   end

@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe Repository::Sync do
+describe Travis::Github::Sync::Repositories do
   include Support::ActiveRecord
 
   let(:user) { Factory(:user, :github_oauth_token => 'token' ) }
   let(:repo) { { 'name' => 'minimal', 'owner' => { 'login' => 'sven' }, 'permissions' => { 'admin' => true } } }
 
-  subject { lambda { Repository::Sync.new(user).run } }
+  subject { lambda { Travis::Github::Sync::Repositories.new(user).run } }
 
   before :each do
     Travis::Github.stubs(:repositories_for).returns([repo])
