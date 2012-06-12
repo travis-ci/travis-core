@@ -11,11 +11,16 @@ class Request
     end
 
     def request
-      if payload.accept?
+      if accept?
         data = payload.request
         data.merge!(:state => :created, :commit => commit, :owner => owner, :token => token, :event_type => type)
         repository.requests.create!(data)
       end
+    end
+    instrument :request
+
+    def accept?
+      payload.accept?
     end
 
     private
@@ -38,7 +43,7 @@ class Request
           Repository.find_or_create_by_owner_name_and_name(owner.login, data[:name]).tap do |repo|
             repo.update_attributes! data.merge(:owner => owner)
           end
-         end
+        end
       end
 
       def commit
@@ -46,5 +51,7 @@ class Request
           Commit.create!(data.merge(:repository_id => repository.id))
         end
       end
+
+      Travis::Notification::Instrument::Request::Factory.attach_to(self)
   end
 end

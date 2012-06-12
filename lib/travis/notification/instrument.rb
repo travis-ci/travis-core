@@ -1,9 +1,10 @@
 module Travis
   module Notification
     class Instrument
-      autoload :Event,  'travis/notification/instrument/event'
-      autoload :Github, 'travis/notification/instrument/github'
-      autoload :Task,   'travis/notification/instrument/task'
+      autoload :Event,   'travis/notification/instrument/event'
+      autoload :Github,  'travis/notification/instrument/github'
+      autoload :Request, 'travis/notification/instrument/request'
+      autoload :Task,    'travis/notification/instrument/task'
 
       class << self
         def attach_to(const)
