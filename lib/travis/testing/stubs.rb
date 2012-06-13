@@ -161,7 +161,7 @@ module Travis
           :name => 'Sven Fuchs',
           :login => 'svenfuchs',
           :email => 'svenfuchs@artweb-design.de',
-          :github_oauth_token => 'token',
+          :github_oauth_token => 'token'
         )
       end
 

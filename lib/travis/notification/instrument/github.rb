@@ -14,7 +14,7 @@ module Travis
         class Repositories < Instrument
           def fetch
             publish(
-              :msg => %(#{target.class.name}#fetch for #<User id=#{target.user.id} login="#{target.user.login}">),
+              :msg => %(#{target.class.name}#fetch for #<User id=#{target.user.id} login="#{target.user.login}">)
             )
           end
         end
@@ -23,7 +23,7 @@ module Travis
           class Organizations < Instrument
             def run
               publish(
-                :msg => %(#{target.class.name}#run for #<User id=#{target.user.id} login="#{target.user.login}">),
+                :msg => %(#{target.class.name}#run for #<User id=#{target.user.id} login="#{target.user.login}">)
               )
             end
           end
@@ -31,7 +31,7 @@ module Travis
           class Repositories < Instrument
             def run
               publish(
-                :msg => %(#{target.class.name}#run for #<User id=#{target.user.id} login="#{target.user.login}">),
+                :msg => %(#{target.class.name}#run for #<User id=#{target.user.id} login="#{target.user.login}">)
               )
             end
           end
