@@ -70,7 +70,6 @@ module Travis
               end
             end
           end
-
       end
     end
   end
