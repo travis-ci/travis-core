@@ -12,9 +12,14 @@ class Request
 
     def request
       if accept?
-        data = payload.request
-        data.merge!(:state => :created, :commit => commit, :owner => owner, :token => token, :event_type => type)
-        repository.requests.create!(data)
+        attrs = payload.request.merge(
+          :state => :created,
+          :commit => commit,
+          :owner => owner,
+          :token => token,
+          :event_type => type
+        )
+        repository.requests.create!(attrs)
       end
     end
     instrument :request

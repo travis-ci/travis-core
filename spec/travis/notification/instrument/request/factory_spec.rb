@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Travis::Notification::Instrument::Request::Factory do
   include Support::ActiveRecord
 
-  let(:data)      { GITHUB_PAYLOADS['pull-request'] }
+  let(:data)      { JSON.parse(GITHUB_PAYLOADS['pull-request']) }
   let(:factory)   { Request::Factory.new('pull_request', data, 'token') }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events.first }

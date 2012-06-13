@@ -8,6 +8,7 @@ module Travis
 
           if level == :error || Travis.logger.level == Logger::DEBUG
             event.each do |key, value|
+              level = event.key?(:exception) ? :error : :debug
               log(level, "  #{key}: #{value.inspect}")
             end
           end
