@@ -84,7 +84,7 @@ module Travis
             :smtp          => { :user_name => 'postmark-api_key' },
             :github        => { :token => 'travisbot-token' },
             :async         => {},
-            :notifications => [],
+            :notifications => [], # TODO rename to event.handlers
             :queues        => [],
             :workers       => { :prune => { :after => 15, :interval => 5 } },
             :jobs          => { :retry => { :after => 60 * 60 * 2, :max_attempts => 1, :interval => 60 * 5 } },

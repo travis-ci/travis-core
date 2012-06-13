@@ -6,6 +6,11 @@ module Travis
     autoload :Publisher,  'travis/notification/publisher'
 
     class << self
+      def setup
+        Travis::Instrumentation.setup
+        publishers << Publisher::Log.new
+      end
+
       def publishers
         @@publishers ||= []
       end
