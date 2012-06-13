@@ -20,7 +20,8 @@ describe Travis::Notification::Instrument::Github::Config do
     event.should == {
       :msg => 'Travis::Github::Config#fetch https://raw.github.com/svenfuchs/minimal/62aae5f70ceee39123ef/.travis.yml',
       :url => 'https://raw.github.com/svenfuchs/minimal/62aae5f70ceee39123ef/.travis.yml',
-      :result => { 'foo' => 'Foo', '.result' => 'configured'}
+      :result => { 'foo' => 'Foo', '.result' => 'configured' },
+      :uuid => Travis.uuid
     }
   end
 end

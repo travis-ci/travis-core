@@ -25,7 +25,8 @@ describe Travis::Notification::Instrument::Task::Pusher do
         :result => nil,
         :channels => ['common'],
         :event => 'job:test:started',
-        :client_event => 'job:started'
+        :client_event => 'job:started',
+        :uuid => Travis.uuid
       }
       event[:data].should_not be_nil
     end
@@ -44,7 +45,8 @@ describe Travis::Notification::Instrument::Task::Pusher do
         :result => nil,
         :channels => ['common'],
         :event => 'build:finished',
-        :client_event => 'build:finished'
+        :client_event => 'build:finished',
+        :uuid => Travis.uuid
       }
       event[:data].should_not be_nil
     end

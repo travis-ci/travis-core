@@ -19,6 +19,7 @@ module Travis
 
       def stub_repository(attributes = {})
         stub 'repository', attributes.reverse_merge(
+          :class => stub('Repository', :name => 'Repository', :base_class => stub('Repository', :name => 'Repository')),
           :id => 1,
           :owner_name => 'svenfuchs',
           :name => 'minimal',
@@ -154,6 +155,7 @@ module Travis
 
       def stub_user(attributes = {})
         stub 'user', attributes.reverse_merge(
+          :class => stub('User', :name => 'User', :base_class => stub('User', :name => 'User')),
           :id => 1,
           :organizations => [],
           :name => 'Sven Fuchs',

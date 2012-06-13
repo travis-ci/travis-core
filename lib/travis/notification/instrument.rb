@@ -14,8 +14,7 @@ module Travis
           methods = consts.map { |const| const.public_instance_methods(false) }.flatten.uniq
 
           methods.each do |event|
-            event = [namespace, event].join('.')
-            ActiveSupport::Notifications.subscribe(/^#{event}:call/) do |message, *args|
+            ActiveSupport::Notifications.subscribe(/^#{namespace}(\..+)?.#{event}:call/) do |message, *args|
               begin
                 method, event = message.split('.').last.split(':')
                 new(args.last).send(method)
@@ -37,9 +36,18 @@ module Travis
       private
 
         def publish(event = {})
-          event.merge!(:result => result)
+          event.merge!(:result => serialize(result), :uuid => Travis.uuid)
           event.merge!(:exception => exception) if exception
           Notification.publish(event)
+        end
+
+        def serialize(object)
+          case object
+          when NilClass, TrueClass, FalseClass, String, Symbol, Numeric, Array, Hash
+            object
+          else
+            Travis::Api.data(object, :for => 'notification', :version => 'v0')
+          end
         end
     end
   end

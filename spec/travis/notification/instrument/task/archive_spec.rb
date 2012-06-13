@@ -20,7 +20,8 @@ describe Travis::Notification::Instrument::Task::Archive do
       :repository => 'svenfuchs/minimal',
       :object_id => 1,
       :object_type => 'Build',
-      :result => nil
+      :result => nil,
+      :uuid => Travis.uuid
     }
     event[:data].should_not be_nil
   end

@@ -21,7 +21,8 @@ describe Travis::Notification::Instrument::Event::Handler::Archive do
       :object_id => 1,
       :object_type => 'Build',
       :result => nil,
-      :event => 'build:finished'
+      :event => 'build:finished',
+      :uuid => Travis.uuid
     }
     event[:payload].should_not be_nil
   end

@@ -22,7 +22,8 @@ describe Travis::Notification::Instrument::Event::Handler::Campfire do
       :object_type => 'Build',
       :result => nil,
       :event => 'build:finished',
-      :targets => 'campfire_room'
+      :targets => 'campfire_room',
+      :uuid => Travis.uuid
     }
     event[:payload].should_not be_nil
   end

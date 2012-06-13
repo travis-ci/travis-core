@@ -21,7 +21,8 @@ describe Travis::Notification::Instrument::Task::Webhook do
       :object_id => 1,
       :object_type => 'Build',
       :targets => 'http://example.com',
-      :result => nil
+      :result => nil,
+      :uuid => Travis.uuid
     }
     event[:data].should_not be_nil
   end

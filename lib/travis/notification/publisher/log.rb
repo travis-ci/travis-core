@@ -3,9 +3,15 @@ module Travis
     module Publisher
       class Log
         def publish(event)
-          # somehow publish event to Redis or whatever so we can display it on a simple web interface
-          puts event.delete(:msg)
-          event.each { |key, value| puts "  #{key}: #{value}" }
+          level = event.key?(:exception) ? :warn : :info
+          log(level, event.delete(:msg))
+          event.each do |key, value|
+            log(level, "  #{key}: #{value}")
+          end
+        end
+
+        def log(level, msg)
+          Travis.logger.send(level, msg)
         end
       end
     end

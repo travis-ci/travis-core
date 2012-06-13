@@ -22,7 +22,8 @@ describe Travis::Notification::Instrument::Task::Github do
       :object_type => 'Build',
       :message => 'This pull request [passes](http://travis-ci.org/svenfuchs/minimal/builds/1) (merged head-com into base-com).',
       :url => 'https://api.github.com/repos/svenfuchs/minimal/issues/1/comments',
-      :result => nil
+      :result => nil,
+      :uuid => Travis.uuid
     }
     event[:data].should_not be_nil
   end

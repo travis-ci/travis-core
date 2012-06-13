@@ -26,7 +26,8 @@ describe Travis::Notification::Instrument::Task::Campfire do
         '[travis-ci] Change view: https://github.com/svenfuchs/minimal/compare/master...develop',
         '[travis-ci] Build details: http://travis-ci.org/svenfuchs/minimal/builds/1'
       ],
-      :result => nil
+      :result => nil,
+      :uuid => Travis.uuid
     }
     event[:data].should_not be_nil
   end

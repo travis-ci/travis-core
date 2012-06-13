@@ -22,7 +22,8 @@ describe Travis::Notification::Instrument::Event::Handler::Irc do
       :object_type => 'Build',
       :result => nil,
       :event => 'build:finished',
-      :channels => { ['irc.freenode.net', 1234] => ['travis'] }
+      :channels => { ['irc.freenode.net', 1234] => ['travis'] },
+      :uuid => Travis.uuid
     }
     event[:payload].should_not be_nil
   end

@@ -20,7 +20,8 @@ describe Travis::Notification::Instrument::Request::Factory do
       :token => 'token',
       :accept? => true,
       :data => data,
-      :result => nil
+      :result => nil,
+      :uuid => Travis.uuid
     }
   end
 end

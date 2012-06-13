@@ -19,7 +19,8 @@ describe Travis::Notification::Instrument::Github::Sync::Repositories do
   it 'publishes a payload' do
     event.should == {
       :msg => %(Travis::Github::Sync::Repositories#run for #<User id=#{user.id} login="sven">),
-      :result => [repo]
+      :result => [repo],
+      :uuid => Travis.uuid
     }
   end
 end

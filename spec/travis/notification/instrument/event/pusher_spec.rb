@@ -23,7 +23,8 @@ describe Travis::Notification::Instrument::Event::Handler::Pusher do
         :object_id => 1,
         :result => nil,
         :object_type => 'Job::Test',
-        :event => 'job:test:started'
+        :event => 'job:test:started',
+        :uuid => Travis.uuid
       }
       event[:payload].should_not be_nil
     end
@@ -40,7 +41,8 @@ describe Travis::Notification::Instrument::Event::Handler::Pusher do
         :object_id => 1,
         :result => nil,
         :object_type => 'Build',
-        :event => 'build:finished'
+        :event => 'build:finished',
+        :uuid => Travis.uuid
       }
       event[:payload].should_not be_nil
     end

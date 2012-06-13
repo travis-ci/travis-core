@@ -19,7 +19,8 @@ describe Travis::Notification::Instrument::Github::Sync::Organizations do
   it 'publishes a payload' do
     event.should == {
       :msg => %(Travis::Github::Sync::Organizations#run for #<User id=#{user.id} login="sven">),
-      :result => [org]
+      :result => [org],
+      :uuid => Travis.uuid
     }
   end
 end

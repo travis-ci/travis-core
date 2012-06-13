@@ -31,7 +31,8 @@ describe Travis::Notification::Instrument::Task::Irc do
         'Change view : http://trvs.io/short',
         'Build details : http://trvs.io/short'
       ],
-      :result => nil
+      :result => nil,
+      :uuid => Travis.uuid
     }
     event[:data].should_not be_nil
   end

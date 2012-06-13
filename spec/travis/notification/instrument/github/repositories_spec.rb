@@ -16,7 +16,8 @@ describe Travis::Notification::Instrument::Github::Repositories do
   it 'publishes a payload' do
     event.should == {
       :msg => 'Travis::Github::Repositories#fetch for #<User id=1 login="svenfuchs">',
-      :result => []
+      :result => [],
+      :uuid => Travis.uuid
     }
   end
 end

@@ -22,7 +22,8 @@ describe Travis::Notification::Instrument::Task::Email do
       :object_type => 'Build',
       :email => :finished_email,
       :recipients => %w(svenfuchs@artweb-design.de),
-      :result => nil
+      :result => nil,
+      :uuid => Travis.uuid
     }
     event[:data].should_not be_nil
   end
