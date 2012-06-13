@@ -20,8 +20,8 @@ module Travis
           ssl_context = OpenSSL::SSL::SSLContext.new
           ssl_context.verify_mode = OpenSSL::SSL::VERIFY_NONE # XXX
           OpenSSL::SSL::SSLSocket.new(socket, ssl_context).tap do |sock|
-            socket.sync = true
-            socket.connect
+            sock.sync = true
+            sock.connect
           end
         end
 
