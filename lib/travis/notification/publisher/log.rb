@@ -3,10 +3,13 @@ module Travis
     module Publisher
       class Log
         def publish(event)
-          level = event.key?(:exception) ? :warn : :info
+          level = event.key?(:exception) ? :error : :info
           log(level, event.delete(:msg))
-          event.each do |key, value|
-            log(level, "  #{key}: #{value}")
+
+          if level == :error || Travis.logger.level == Logger::DEBUG
+            event.each do |key, value|
+              log(level, "  #{key}: #{value.inspect}")
+            end
           end
         end
 
