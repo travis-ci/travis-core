@@ -38,8 +38,9 @@ class User < ActiveRecord::Base
       }
     end
 
-    def authenticate_by_token(login, token)
-      includes(:tokens).where(:login => login, 'tokens.token' => token).first
+    def authenticate_by(options)
+      options = options.symbolize_keys
+      includes(:tokens).where(:login => options[:login], 'tokens.token' => options[:token]).first
     end
   end
 

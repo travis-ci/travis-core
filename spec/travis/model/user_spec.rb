@@ -98,22 +98,22 @@ describe User do
     end
   end
 
-  describe 'authenticate_by_token' do
+  describe 'authenticate_by' do
     describe 'given a valid token and login' do
       it 'authenticates the user' do
-        User.authenticate_by_token(user.login, user.tokens.first.token).should == user
+        User.authenticate_by('login' => user.login, 'token' => user.tokens.first.token).should == user
       end
     end
 
     describe 'given a wrong token' do
       it 'does not authenticate the user' do
-        User.authenticate_by_token('someone-else', user.tokens.first.token).should be_nil
+        User.authenticate_by('login' => 'someone-else', 'token' => user.tokens.first.token).should be_nil
       end
     end
 
     describe 'given a wrong login' do
       it 'does not authenticate the user' do
-        User.authenticate_by_token(user.login, 'some-other-token').should be_nil
+        User.authenticate_by('login' => user.login, 'token' => 'some-other-token').should be_nil
       end
     end
   end
