@@ -1,3 +1,4 @@
+require "addressable/uri"
 module Travis
   module Event
     class Config
@@ -10,9 +11,13 @@ module Travis
       def channels
         @channels ||= notification_values(:irc, :channels).inject(Hash.new([])) do |servers, url|
           # TODO parsing irc urls should probably happen in the client class
-          server_and_port, channel = url.split('#', 2)
-          server, port = server_and_port.split(':')
-          servers[[server, port]] += [channel]
+          u = Addressable::URI.heuristic_parse(url, scheme: 'irc')
+          port_str_for_compat = u.port.nil? ? nil : u.port.to_s
+          if u.scheme == 'irc'
+            servers[[u.host, port_str_for_compat]] += [u.fragment]
+          else
+            servers[[u.host, port_str_for_compat, :ssl]] += [u.fragment]
+          end
           servers
         end
       end
