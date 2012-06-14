@@ -97,7 +97,7 @@ module Travis
           :finished_at => Time.now.utc,
           :duration => 60,
           :pull_request? => false,
-          :queue => 'builds.common',                                   # TODO remove
+          :queue => 'builds.common'
         )
       end
 
