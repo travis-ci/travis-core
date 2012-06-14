@@ -38,7 +38,7 @@ class Request
         @owner ||= begin
           data = payload.owner
           type = data[:type].constantize
-          type.find_by_login(data[:login]) || type.create_from_github(data[:login])
+          type.find_by_login(data[:login]) || Travis::Github.send(:"create_#{data[:type].underscore}", data[:login])
         end
       end
 

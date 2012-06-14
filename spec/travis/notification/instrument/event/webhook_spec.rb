@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Travis::Notification::Instrument::Event::Handler::Webhook do
   include Travis::Testing::Stubs
 
+  let(:build)     { stub_build(:config => { :notifications => { :webhooks => 'http://example.com' } }) }
   let(:handler)   { Travis::Event::Handler::Webhook.new('build:finished', build) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events.first }
@@ -22,7 +23,7 @@ describe Travis::Notification::Instrument::Event::Handler::Webhook do
       :object_type => 'Build',
       :result => nil,
       :event => 'build:finished',
-      :targets => 'http://example.com',
+      :targets => ['http://example.com'],
       :uuid => Travis.uuid
     }
     event[:payload].should_not be_nil

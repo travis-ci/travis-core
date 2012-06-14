@@ -38,11 +38,11 @@ require 'core_ext/hash/deep_symbolize_keys'
 #                  travis/notification)
 class Build < ActiveRecord::Base
   autoload :Compat,      'travis/model/build/compat'
+  autoload :Config,      'travis/model/build/config'
   autoload :Denormalize, 'travis/model/build/denormalize'
   autoload :Matrix,      'travis/model/build/matrix'
   autoload :Metrics,     'travis/model/build/metrics'
   autoload :Messages,    'travis/model/build/messages'
-  autoload :Event,       'travis/model/build/event'
   autoload :States,      'travis/model/build/states'
 
   include Compat, Matrix, States, Messages
@@ -163,6 +163,10 @@ class Build < ActiveRecord::Base
   def previous_result
     # TODO remove once previous_result has been populated
     read_attribute(:previous_result) || repository.builds.on_branch(commit.branch).previous(self).try(:result)
+  end
+
+  def previous_passed?
+    previous_result == 0
   end
 
   private

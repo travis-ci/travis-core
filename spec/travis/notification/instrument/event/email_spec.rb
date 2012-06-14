@@ -22,7 +22,7 @@ describe Travis::Notification::Instrument::Event::Handler::Email do
       :object_type => 'Build',
       :result => nil,
       :event => 'build:finished',
-      :recipients => %w(svenfuchs@artweb-design.de),
+      :recipients => 'svenfuchs@artweb-design.de',
       :uuid => Travis.uuid
     }
     event[:payload].should_not be_nil

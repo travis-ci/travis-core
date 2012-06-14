@@ -21,12 +21,6 @@ describe User do
     end
   end
 
-  describe 'user_data_from_oauth' do
-    it 'returns required data' do
-      User.user_data_from_oauth(payload).should == GITHUB_OAUTH_DATA
-    end
-  end
-
   describe 'organization_ids' do
     let!(:travis)  { Factory(:org, :login => 'travis') }
     let!(:sinatra) { Factory(:org, :login => 'sinatra') }

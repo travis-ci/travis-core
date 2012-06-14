@@ -2,6 +2,8 @@ require 'active_record'
 require 'gh'
 
 class User < ActiveRecord::Base
+  autoload :Oauth, 'travis/model/user/oauth'
+
   has_many :tokens
   has_many :memberships
   has_many :organizations, :through => :memberships
@@ -14,33 +16,13 @@ class User < ActiveRecord::Base
   after_create :create_a_token
 
   class << self
-    def create_from_github(name)
-      # TODO ask @rkh about this
-      data = GH["users/#{name}"] || raise(Travis::GithubApiError)
-      create!(:name => data['name'], :login => data['login'], :email => data['email'], :github_id => data['id'], :gravatar_id => data['gravatar_id'])
-    end
-
-    def find_or_create_for_oauth(payload)
-      data = user_data_from_oauth(payload)
-      user = User.find_by_github_id(data['github_id'])
-      user ? user.update_attributes(data) : user = create!(data)
-      user
-    end
-
-    def user_data_from_oauth(payload) # TODO move this to a OauthPayload
-      {
-        'name'               => payload['info']['name'],
-        'email'              => payload['info']['email'],
-        'login'              => payload['info']['nickname'],
-        'github_id'          => payload['uid'].to_i,
-        'github_oauth_token' => payload['credentials']['token'],
-        'gravatar_id'        => payload['extra']['raw_info']['gravatar_id']
-      }
-    end
-
     def authenticate_by(options)
       options = options.symbolize_keys
       includes(:tokens).where(:login => options[:login], 'tokens.token' => options[:token]).first
+    end
+
+    def find_or_create_for_oauth(payload)
+      Oauth.find_or_create_by(payload)
     end
   end
 
@@ -83,8 +65,7 @@ class User < ActiveRecord::Base
   alias_method :github_service_hooks, :service_hooks
 
   def authenticated_on_github(&block)
-    fail "we don't have a github token for #{inspect}" if github_oauth_token.blank?
-    GH.with(:token => github_oauth_token, &block)
+    Travis::Github.authenticated(self, &block)
   end
 
   protected

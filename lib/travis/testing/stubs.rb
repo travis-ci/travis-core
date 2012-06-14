@@ -22,6 +22,7 @@ module Travis
           :class => stub('Repository', :name => 'Repository', :base_class => stub('Repository', :name => 'Repository')),
           :id => 1,
           :owner_name => 'svenfuchs',
+          :owner_email => 'svenfuchs@artweb-design.de',
           :name => 'minimal',
           :slug => 'svenfuchs/minimal',
           :description => 'the repo description',
@@ -87,21 +88,16 @@ module Travis
           :config => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
           :result => 0,
           :result_message => 'Passed',
+          :passed? => true,
+          :failed? => false,
           :previous_result => 0,
+          :previous_passed? => true,
           :state => 'finished',
           :started_at => Time.now.utc - 60,
           :finished_at => Time.now.utc,
           :duration => 60,
           :pull_request? => false,
           :queue => 'builds.common',                                   # TODO remove
-          :send_campfire_notifications_on_finish? => true,             # TODO remove
-          :send_email_notifications_on_finish? => true,                # TODO remove
-          :send_irc_notifications_on_finish? => true,                  # TODO remove
-          :send_webhook_notifications_on_finish? => true,              # TODO remove
-          :campfire_rooms => 'campfire_room',                          # TODO remove
-          :email_recipients => %w(svenfuchs@artweb-design.de),         # TODO remove
-          :irc_channels => {['irc.freenode.net', 1234] => ['travis']}, # TODO remove
-          :webhooks => 'http://example.com'                            # TODO remove
         )
       end
 

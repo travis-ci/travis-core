@@ -14,9 +14,9 @@ module Travis
         def handle?
           case event
           when 'build:started'
-            object.send_webhook_notifications_on_start?
+            config.send_on_start?
           when 'build:finished'
-            object.send_webhook_notifications_on_finish?
+            config.send_on_finish?
           end
         end
 
@@ -33,7 +33,11 @@ module Travis
         end
 
         def targets
-          object.webhooks
+          config.webhooks
+        end
+
+        def config
+          @config ||= Config::Webhook.new(object)
         end
 
         Notification::Instrument::Event::Handler::Webhook.attach_to(self)

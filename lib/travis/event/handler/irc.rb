@@ -9,19 +9,23 @@ module Travis
         EVENTS = 'build:finished'
 
         def handle?
-          object.send_irc_notifications_on_finish?
+          config.send_on_finish?
         end
 
         def handle
           Task.run(:irc, payload, :channels => channels)
         end
 
-        def channels
-          object.irc_channels
-        end
-
         def payload
           @payload ||= Api.data(object, :for => 'event', :version => API_VERSION)
+        end
+
+        def channels
+          config.channels
+        end
+
+        def config
+          @config ||= Config::Irc.new(object)
         end
 
         Notification::Instrument::Event::Handler::Irc.attach_to(self)

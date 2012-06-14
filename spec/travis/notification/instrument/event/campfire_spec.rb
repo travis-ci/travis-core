@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Travis::Notification::Instrument::Event::Handler::Campfire do
   include Travis::Testing::Stubs
 
+  let(:build)     { stub_build(:config => { :notifications => { :campfire => 'campfire_room' } }) }
   let(:handler)   { Travis::Event::Handler::Campfire.new('build:finished', build) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events.first }
@@ -22,7 +23,7 @@ describe Travis::Notification::Instrument::Event::Handler::Campfire do
       :object_type => 'Build',
       :result => nil,
       :event => 'build:finished',
-      :targets => 'campfire_room',
+      :targets => ['campfire_room'],
       :uuid => Travis.uuid
     }
     event[:payload].should_not be_nil

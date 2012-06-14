@@ -12,7 +12,7 @@ module Travis
         EVENTS = /build:finished/
 
         def handle?
-          object.send_campfire_notifications_on_finish?
+          config.send_on_finish?
         end
 
         def handle
@@ -20,11 +20,15 @@ module Travis
         end
 
         def targets
-          @targets ||= object.campfire_rooms
+          @targets ||= config.rooms
         end
 
         def payload
           @payload ||= Api.data(object, :for => 'event', :version => API_VERSION)
+        end
+
+        def config
+          @config ||= Config::Campfire.new(object)
         end
 
         Notification::Instrument::Event::Handler::Campfire.attach_to(self)

@@ -1,11 +1,12 @@
 require 'spec_helper'
 
 describe Travis::Task::Irc do
+  include Support::ActiveRecord
   include Travis::Testing::Stubs
 
   let(:tcp) { stub('tcp', :eof? => true, :close => true) }
   let(:seq) { sequence('tcp') }
-  # let(:build) { stub_build(:irc_channels => { ['irc.freenode.net', 1234] => ['travis'] }) }
+  let(:channels) { { ['irc.freenode.net', 1234] => ['travis'] } }
 
   before do
     Travis.config.notifications = [:irc]
@@ -19,9 +20,9 @@ describe Travis::Task::Irc do
     messages.each { |message| tcp.expects(:puts).with(message).in_sequence(seq) }
   end
 
-  def run(build)
+  def run(build, channels = nil)
     data = Travis::Api.data(build, :for => 'event', :version => 'v2')
-    Travis::Task.run(:irc, data, :channels => build.irc_channels)
+    Travis::Task.run(:irc, data, :channels => channels || self.channels)
   end
 
   it "one irc notification" do
@@ -98,8 +99,6 @@ describe Travis::Task::Irc do
   end
 
   it 'with two irc notifications to different hosts' do
-    build.stubs(:irc_channels => { ['irc.freenode.net', 1234] => ['travis'], ['irc.example.com', 6667] => ['example'] })
-
     [['irc.freenode.net', 1234, 'travis'], ['irc.example.com', 6667, 'example']].each do |host, port, channel|
       expect_irc host, port, channel, [
         'NICK travis-ci',
@@ -112,12 +111,10 @@ describe Travis::Task::Irc do
         'QUIT'
       ]
     end
-    run(build)
+    run(build, ['irc.freenode.net', 1234] => ['travis'], ['irc.example.com', 6667] => ['example'])
   end
 
   it 'does not disconnect for notifications to channels on the same host' do
-    build.stubs(:irc_channels => { ['irc.freenode.net', 6667] => ['travis', 'example'] })
-
     expect_irc 'irc.freenode.net', 6667, 'travis', [
       'NICK travis-ci',
       'USER travis-ci travis-ci travis-ci :travis-ci',
@@ -133,6 +130,6 @@ describe Travis::Task::Irc do
       'PART #example',
       'QUIT'
     ]
-    run(build)
+    run(build, ['irc.freenode.net', 6667] => ['travis', 'example'])
   end
 end

@@ -18,7 +18,7 @@ class Build
     extend ActiveSupport::Concern
 
     included do
-      include SimpleStates, Denormalize, Event, Travis::Event
+      include SimpleStates, Denormalize, Travis::Event
 
       states :created, :started, :finished
 
