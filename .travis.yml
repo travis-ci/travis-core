@@ -4,14 +4,15 @@ rvm:
   - 1.9.3
   - jruby-18mode
   - jruby-19mode
-  - jruby-head
 matrix:
   allow_failures:
     - rvm: jruby-19mode
     - rvm: jruby-head
   include:
     - rvm: jruby-head
-      env: JRUBY_OPT=--1.8
+      env: JRUBY_OPTS=--1.9
+    - rvm: jruby-head
+      env: JRUBY_OPTS=--1.8
 before_script:
   - 'RAILS_ENV=test rake db:create db:schema:load --trace'
 notifications:
