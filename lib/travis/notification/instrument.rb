@@ -43,7 +43,7 @@ module Travis
 
         def serialize(object)
           case object
-          when NilClass, TrueClass, FalseClass, String, Symbol, Numeric, Array, Hash
+          when NilClass, TrueClass, FalseClass, String, Symbol, Numeric, Array, Hash, Mail::Message
             object
           else
             Travis::Api.data(object, :for => 'notification', :version => 'v0')
