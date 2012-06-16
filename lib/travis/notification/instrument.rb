@@ -1,3 +1,5 @@
+require 'mail'
+
 module Travis
   module Notification
     class Instrument
