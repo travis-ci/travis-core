@@ -58,15 +58,16 @@ module Travis
           end
 
           def publish(event = {})
-            super(event.reverse_merge(
+            event = event.reverse_merge(
               :msg => "#{handler.class.name}#notify(#{handler.event}) for #<#{object.class.name} id=#{object.id}>",
-              :repository => object.repository.slug,
               :request_id => object.request_id,
               :object_type => object.class.name,
               :object_id => object.id,
               :event => handler.event,
               :payload => handler.payload
-            ))
+            )
+            event[:repository] = object.repository.slug if object.respond_to?(:repository)
+            super(event)
           end
         end
       end
