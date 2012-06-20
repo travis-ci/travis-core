@@ -8,7 +8,7 @@ module Travis
     class << self
       def setup
         Travis::Instrumentation.setup
-        publishers << Publisher::Log.new
+        publishers << Publisher::Log.new << Publisher::Redis.new
       end
 
       def publishers
