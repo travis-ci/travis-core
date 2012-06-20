@@ -21,7 +21,7 @@ module Travis
             redis.publish "events", payload
             redis.multi do
               redis.persist(list)
-              redis.rpush(payload)
+              redis.rpush(list, payload)
               redis.expire(list, ttl)
             end
           end
