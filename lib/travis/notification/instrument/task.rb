@@ -109,7 +109,7 @@ module Travis
 
         attr_reader :task, :data
 
-        def initialize(payload)
+        def initialize(message, payload)
           @task = payload[:target]
           @data = task.data
           super

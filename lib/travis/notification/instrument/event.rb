@@ -47,7 +47,7 @@ module Travis
 
           attr_reader :handler, :object, :args, :result
 
-          def initialize(payload)
+          def initialize(message, payload)
             @handler, @args, @result = payload.values_at(:target, :args, :result)
             @object = handler.object
             super

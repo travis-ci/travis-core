@@ -15,16 +15,19 @@ describe Travis::Notification::Instrument::Task::Webhook do
   end
 
   it 'publishes a payload' do
-    event.except(:data).should == {
+    event.except(:payload).should == {
+      :message => "travis.task.webhook.run:call",
+      :result => nil,
+      :uuid => Travis.uuid
+    }
+    event[:payload].except(:data).should == {
       :msg => 'Travis::Task::Webhook#run for #<Build id=1>',
       :repository => 'svenfuchs/minimal',
       :object_id => 1,
       :object_type => 'Build',
-      :targets => 'http://example.com',
-      :result => nil,
-      :uuid => Travis.uuid
+      :targets => 'http://example.com'
     }
-    event[:data].should_not be_nil
+    event[:payload][:data].should_not be_nil
   end
 end
 
