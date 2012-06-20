@@ -21,11 +21,11 @@ class Request
     private
 
       def included
-        config[:only]
+        config['only']
       end
 
       def excluded
-        config[:except]
+        config['except']
       end
 
       def includes?(branches, branch)
@@ -38,7 +38,7 @@ class Request
       end
 
       def config
-        @config ||= case branches = request.config.try(:[], :branches)
+        @config ||= case branches = request.config.try(:[], 'branches')
           when Array
             { :only => branches }
           when String
