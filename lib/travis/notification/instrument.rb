@@ -28,12 +28,12 @@ module Travis
         end
       end
 
-      attr_reader :config, :target
+      attr_reader :config, :target, :result, :exception, :message
 
       def initialize(message, payload)
-        @target = payload[:target]
-        @config = { :result => serialize(payload[:result]), :message => message }
-        @config[:exception] = payload[:exception] if payload.include? :exception
+        @target, @result, @exception = payload.values_at(:target, :result, :exception)
+        @config = { :result => serialize(result), :message => message }
+        @config[:exception] = exception if exception
       end
 
       private
