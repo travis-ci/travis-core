@@ -19,7 +19,7 @@ module Travis
             ActiveSupport::Notifications.subscribe(/^#{namespace}(\..+)?.#{event}:call/) do |message, *args|
               begin
                 method, event = message.split('.').last.split(':')
-                new(args.last).send(method)
+                new(message, args.last).send(method)
               # rescue Exception => e
               #   Travis.logger.error "Could not notify about #{message.inspect} event. #{e.class}: #{e.message}\\n#{e.backtrace}"
               end
@@ -28,19 +28,19 @@ module Travis
         end
       end
 
-      attr_reader :payload, :target, :result, :exception
+      attr_reader :config, :target
 
-      def initialize(payload)
-        @payload = payload
-        @target, @result, @exception = payload.values_at(:target, :result, :exception)
+      def initialize(message, payload)
+        @target = payload[:target]
+        @config = { :result => serialize(payload[:result]), :message => message }
+        @config[:exception] = payload[:exception] if payload.include? :exception
       end
 
       private
 
         def publish(event = {})
-          event.merge!(:result => serialize(result), :uuid => Travis.uuid)
-          event.merge!(:exception => exception) if exception
-          Notification.publish(event)
+          payload = config.merge(:uuid => Travis.uuid, :payload => event)
+          Notification.publish(payload)
         end
 
         def serialize(object)

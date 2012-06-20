@@ -15,17 +15,20 @@ describe Travis::Notification::Instrument::Task::Email do
   end
 
   it 'publishes a payload' do
-    event.except(:data).should == {
+    event.except(:payload).should == {
+      :message => "travis.task.email.run:call",
+      :result => nil,
+      :uuid => Travis.uuid
+    }
+    event[:payload].except(:data).should == {
       :msg => 'Travis::Task::Email#run for #<Build id=1>',
       :repository => 'svenfuchs/minimal',
       :object_id => 1,
       :object_type => 'Build',
       :email => :finished_email,
-      :recipients => %w(svenfuchs@artweb-design.de),
-      :result => nil,
-      :uuid => Travis.uuid
+      :recipients => %w(svenfuchs@artweb-design.de)
     }
-    event[:data].should_not be_nil
+    event[:payload][:data].should_not be_nil
   end
 end
 

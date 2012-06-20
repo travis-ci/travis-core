@@ -16,16 +16,19 @@ describe Travis::Notification::Instrument::Event::Handler::Irc do
 
   it 'publishes a payload' do
     event.except(:payload).should == {
+      :message => "travis.event.handler.irc.notify:call",
+      :result => nil,
+      :uuid => Travis.uuid
+    }
+    event[:payload].except(:payload).should == {
       :msg => 'Travis::Event::Handler::Irc#notify(build:finished) for #<Build id=1>',
       :repository => 'svenfuchs/minimal',
       :request_id => 1,
       :object_id => 1,
       :object_type => 'Build',
-      :result => nil,
       :event => 'build:finished',
       :channels => { ['irc.freenode.net', '1234'] => ['travis'] },
-      :uuid => Travis.uuid
     }
-    event[:payload].should_not be_nil
+    event[:payload][:payload].should_not be_nil
   end
 end
