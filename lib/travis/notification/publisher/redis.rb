@@ -17,8 +17,8 @@ module Travis
           payload = MultiJson.encode(event)
           list    = "events:" << event[:uuid]
 
-          redis.pipeline do
-            redis.publish key, payload
+          redis.pipelined do
+            redis.publish "events", payload
             redis.multi do
               redis.persist(list)
               redis.rpush(payload)
