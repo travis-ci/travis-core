@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Travis::Task::Irc::Template do
   include Travis::Testing::Stubs
 
-  TEMPLATE = %w(repository build_number branch commit author message compare_url build_url).map do |name|
+  TEMPLATE = %w(repository build_number branch commit author commit_message message compare_url build_url).map do |name|
     "#{name}=%{#{name}}"
   end.join(' ')
 
@@ -34,6 +34,10 @@ describe Travis::Task::Irc::Template do
 
     it 'replaces the author' do
       result.should =~ /author=Sven Fuchs/
+    end
+
+    it 'replaces the commit message' do
+      result.should =~ /commit_message=the commit message/
     end
 
     it 'replaces the message' do
