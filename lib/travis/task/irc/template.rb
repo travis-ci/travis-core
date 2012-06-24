@@ -24,6 +24,7 @@ module Travis
             :branch         => data['commit']['branch'],
             :commit         => data['commit']['sha'][0..6],
             :author         => data['commit']['author_name'],
+            :commit_message => data['commit']['message'],
             :message        => message,
             :compare_url    => compare_url,
             :build_url      => build_url
