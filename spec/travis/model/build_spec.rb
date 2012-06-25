@@ -34,6 +34,12 @@ describe Build do
 
         Build.on_branch('master,develop').map(&:commit).map(&:branch).sort.should == ['develop', 'master']
       end
+
+      it 'does not include pull requests' do
+        Factory(:build, :commit => Factory(:commit, :branch => 'no-pull'), :request => Factory(:request, :event_type => 'pull_request'))
+        Factory(:build, :commit => Factory(:commit, :branch => 'no-pull'), :request => Factory(:request, :event_type => 'push'))
+        Build.on_branch('no-pull').count.should be == 1
+      end
     end
 
     describe 'older_than' do

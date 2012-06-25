@@ -71,7 +71,7 @@ class Build < ActiveRecord::Base
 
     def on_branch(branches)
       branches = normalize_to_array(branches)
-      joins(:commit).where(branches.present? ? ["commits.branch IN (?)", branches] : [])
+      pushes.joins(:commit).where(branches.present? ? ["commits.branch IN (?)", branches] : [])
     end
 
     def by_event_type(event_type)
