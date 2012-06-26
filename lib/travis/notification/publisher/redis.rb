@@ -18,7 +18,7 @@ module Travis
           list    = "events:" << event[:uuid]
 
           redis.pipelined do
-            redis.publish "events", payload
+            redis.publish list, payload
             redis.multi do
               redis.persist(list)
               redis.rpush(list, payload)

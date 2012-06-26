@@ -5,6 +5,10 @@ describe Travis::Notification::Publisher::Redis do
   let(:redis) { Redis.connect(:url => Travis.config.redis.url) }
   let(:key) { "events:#{Travis.uuid}" }
 
+  around do |example|
+    Timeout.timeout(10) { example.run }
+  end
+
   before do
     redis.del key
   end
@@ -42,7 +46,7 @@ describe Travis::Notification::Publisher::Redis do
   it 'sends out events over pubsub' do
     event = nil
 
-    redis.subscribe(:events) do |on|
+    redis.subscribe(key) do |on|
       on.message do |channel, message|
         event = MultiJson.decode(message)
         redis.unsubscribe
