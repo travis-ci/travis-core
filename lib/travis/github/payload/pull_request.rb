@@ -11,6 +11,8 @@ module Travis
 
           GH.reset # FIXME: solve this somehow differently
           @gh = GH.load(payload)
+          @repo = gh['repository']
+          @repo_owner = @repo['owner']
         end
 
         def action
@@ -27,20 +29,20 @@ module Travis
 
         def repository
           @repository ||= {
-            :name        => gh['repository']['name'],
-            :description => gh['repository']['description'],
-            :url         => gh['repository']['_links']['html']['href'],
-            :owner_type  => gh['repository']['owner']['type'],
-            :owner_name  => gh['repository']['owner']['login'],
-            :owner_email => gh['repository']['owner']['email'],
-            :private     => !!gh['repository']['private']
+            :name        => @repo['name'],
+            :description => @repo['description'],
+            :url         => @repo['_links']['html']['href'],
+            :owner_type  => @repo_owner['type'],
+            :owner_name  => @repo_owner['login'],
+            :owner_email => @repo_owner['email'],
+            :private     => !!@repo['private']
           }
         end
 
         def owner
           @owner ||= {
-            :type  => gh['repository']['owner']['type'],
-            :login => gh['repository']['owner']['login']
+            :type  => @repo_owner['type'],
+            :login => @repo_owner['login']
           }
         end
 
