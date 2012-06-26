@@ -6,7 +6,7 @@ module Travis
           level = event.key?(:exception) ? :error : :info
           log(level, event[:payload][:msg])
 
-          if level == :error || Travis.logger.level == Logger::DEBUG
+          if level == :error || Travis.logger.level == ::Logger::DEBUG
             event[:payload].each do |key, value|
               next if key == :msg
               level = event.key?(:exception) ? :error : :debug
