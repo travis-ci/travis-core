@@ -11,7 +11,7 @@ module Travis
       def channels
         @channels ||= notification_values(:irc, :channels).inject(Hash.new([])) do |servers, url|
           # TODO parsing irc urls should probably happen in the client class
-          u = Addressable::URI.heuristic_parse(url, scheme: 'irc')
+          u = Addressable::URI.heuristic_parse(url, :scheme => 'irc')
           port_str_for_compat = u.port.nil? ? nil : u.port.to_s
           if u.scheme == 'irc'
             servers[[u.host, port_str_for_compat]] += [u.fragment]
