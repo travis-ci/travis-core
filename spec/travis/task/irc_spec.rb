@@ -138,13 +138,11 @@ describe Travis::Task::Irc do
   end
 
   context 'when configured to IRC+SSL server' do
-    let(:build) { stub_build(:irc_channels => { ['irc.freenode.net', 1234, :ssl] => ['travis'] }) }
-
     it "should wrap socket with ssl (in client private)" do
       Travis::Task::Irc::Client.expects(:wrap_ssl).with(tcp).returns(tcp)
 
       expect_irc 'irc.freenode.net', 1234, 'travis', simple_irc_notfication_messages
-      run(build)
+      run(build, ['irc.freenode.net', 1234, :ssl] => ['travis'])
     end
   end
 
