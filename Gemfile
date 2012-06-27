@@ -2,7 +2,7 @@ source :rubygems
 
 gemspec
 
-gem 'travis-support', :git => 'git://github.com/travis-ci/travis-support', :ref => '1708befb297283946d8bcdbed7e382fafe0cb178'
+gem 'travis-support', :git => 'git://github.com/travis-ci/travis-support'
 gem 'gh',             :git => 'git://github.com/rkh/gh'
 gem 'newrelic_rpm',   '~> 3.3.2'
 gem 'hubble',         :git => 'git://github.com/roidrage/hubble'
