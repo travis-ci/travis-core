@@ -23,11 +23,21 @@ module Travis
 
       private
 
+        def arel_relation?(resource)
+          resource.respond_to? :klass
+        end
+
+        def lookalike(resource)
+          if arel_relation?(resource)
+            resource.klass
+          else
+            klass = resource.class
+            klass.respond_to?(:base_class) ? klass.base_class : klass
+          end
+        end
+
         def type_for(resource)
-          type = resource.class
-          type = type.klass      if type.respond_to? :klass
-          type = type.base_class if type.respond_to? :base_class
-          type.name.split('::').last
+          lookalike(resource).name.split('::').last
         end
     end
   end
