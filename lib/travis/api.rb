@@ -21,19 +21,23 @@ module Travis
 
       private
 
-        def arel_relation?(resource)
-          resource.respond_to? :klass
-        end
-
         def type_for(resource)
           if arel_relation?(resource)
             type = resource.klass.name.pluralize
           else
             type = resource.class
-            type = type.base_class if type.respond_to?(:base_class)
+            type = type.base_class if active_record?(type)
             type = type.name
           end
           type.split('::').last
+        end
+
+        def arel_relation?(object)
+          object.respond_to?(:klass)
+        end
+
+        def active_record?(object)
+          object.respond_to?(:base_class)
         end
     end
   end
