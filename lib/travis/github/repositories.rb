@@ -35,9 +35,9 @@ module Travis
           # TODO in_parallel should return the block's result in a future version
           result = nil
           GH.with(:token => user.github_oauth_token) do
-            GH.in_parallel do
+            # GH.in_parallel do
               result = yield
-            end
+            # end
           end
           result
         end

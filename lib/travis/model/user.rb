@@ -77,9 +77,4 @@ class User < ActiveRecord::Base
     def create_a_token
       self.tokens.create!
     end
-
-    def repositories_for(login)
-      @repos ||= {}
-      @repos[login] ||= Repository.where(:owner_name => login).by_name
-    end
 end

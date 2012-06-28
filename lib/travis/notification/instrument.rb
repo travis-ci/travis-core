@@ -1,3 +1,5 @@
+require 'mail'
+
 module Travis
   module Notification
     class Instrument
@@ -17,7 +19,7 @@ module Travis
             ActiveSupport::Notifications.subscribe(/^#{namespace}(\..+)?.#{event}:call$/) do |message, *args|
               begin
                 method, event = message.split('.').last.split(':')
-                new(args.last).send(method)
+                new(message, args.last).send(method)
               # rescue Exception => e
               #   Travis.logger.error "Could not notify about #{message.inspect} event. #{e.class}: #{e.message}\\n#{e.backtrace}"
               end
@@ -26,24 +28,24 @@ module Travis
         end
       end
 
-      attr_reader :payload, :target, :result, :exception
+      attr_reader :config, :target, :result, :exception, :message
 
-      def initialize(payload)
-        @payload = payload
+      def initialize(message, payload)
         @target, @result, @exception = payload.values_at(:target, :result, :exception)
+        @config = { :result => serialize(result), :message => message }
+        @config[:exception] = exception if exception
       end
 
       private
 
         def publish(event = {})
-          event.merge!(:result => serialize(result), :uuid => Travis.uuid)
-          event.merge!(:exception => exception) if exception
-          Notification.publish(event)
+          payload = config.merge(:uuid => Travis.uuid, :payload => event)
+          Notification.publish(payload)
         end
 
         def serialize(object)
           case object
-          when NilClass, TrueClass, FalseClass, String, Symbol, Numeric, Array, Hash
+          when NilClass, TrueClass, FalseClass, String, Symbol, Numeric, Array, Hash, Mail::Message
             object
           else
             Travis::Api.data(object, :for => 'notification', :version => 'v0')

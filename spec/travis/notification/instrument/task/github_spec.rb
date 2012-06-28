@@ -15,17 +15,20 @@ describe Travis::Notification::Instrument::Task::Github do
   end
 
   it 'publishes a payload' do
-    event.except(:data).should == {
+    event.except(:payload).should == {
+      :message => "travis.task.github.run:call",
+      :result => nil,
+      :uuid => Travis.uuid
+    }
+    event[:payload].except(:data).should == {
       :msg => 'Travis::Task::Github#run for #<Build id=1>',
       :repository => 'svenfuchs/minimal',
       :object_id => 1,
       :object_type => 'Build',
       :message => 'This pull request [passes](http://travis-ci.org/svenfuchs/minimal/builds/1) (merged head-com into base-com).',
-      :url => 'https://api.github.com/repos/svenfuchs/minimal/issues/1/comments',
-      :result => nil,
-      :uuid => Travis.uuid
+      :url => 'https://api.github.com/repos/svenfuchs/minimal/issues/1/comments'
     }
-    event[:data].should_not be_nil
+    event[:payload][:data].should_not be_nil
   end
 end
 

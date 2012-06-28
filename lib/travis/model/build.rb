@@ -38,11 +38,10 @@ require 'core_ext/hash/deep_symbolize_keys'
 #                  travis/notification)
 class Build < ActiveRecord::Base
   autoload :Compat,      'travis/model/build/compat'
-  autoload :Config,      'travis/model/build/config'
   autoload :Denormalize, 'travis/model/build/denormalize'
   autoload :Matrix,      'travis/model/build/matrix'
-  autoload :Metrics,     'travis/model/build/metrics'
   autoload :Messages,    'travis/model/build/messages'
+  autoload :Metrics,     'travis/model/build/metrics'
   autoload :States,      'travis/model/build/states'
 
   include Compat, Matrix, States, Messages
@@ -72,7 +71,7 @@ class Build < ActiveRecord::Base
 
     def on_branch(branches)
       branches = normalize_to_array(branches)
-      joins(:commit).where(branches.present? ? ["commits.branch IN (?)", branches] : [])
+      pushes.joins(:commit).where(branches.present? ? ["commits.branch IN (?)", branches] : [])
     end
 
     def by_event_type(event_type)

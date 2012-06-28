@@ -15,13 +15,16 @@ describe Travis::Notification::Instrument::Request::Factory do
 
   it 'publishes a payload' do
     event.should == {
-      :msg => 'Request::Factory#request type="pull_request"',
-      :type => 'pull_request',
-      :token => 'token',
-      :accept? => true,
-      :data => data,
+      :message => "request.factory.request:call",
       :result => nil,
-      :uuid => Travis.uuid
+      :uuid => Travis.uuid,
+      :payload => {
+        :msg => 'Request::Factory#request type="pull_request"',
+        :type => 'pull_request',
+        :token => 'token',
+        :accept? => true,
+        :data => data
+      }
     }
   end
 end

@@ -15,15 +15,18 @@ describe Travis::Notification::Instrument::Task::Archive do
   end
 
   it 'publishes a payload' do
-    event.except(:data).should == {
-      :msg => 'Travis::Task::Archive#run for #<Build id=1>',
-      :repository => 'svenfuchs/minimal',
-      :object_id => 1,
-      :object_type => 'Build',
+    event.except(:payload).should == {
+      :message => "travis.task.archive.run:call",
       :result => nil,
       :uuid => Travis.uuid
     }
-    event[:data].should_not be_nil
+    event[:payload].except(:data).should == {
+      :msg => 'Travis::Task::Archive#run for #<Build id=1>',
+      :repository => 'svenfuchs/minimal',
+      :object_id => 1,
+      :object_type => 'Build'
+    }
+    event[:payload][:data].should_not be_nil
   end
 end
 

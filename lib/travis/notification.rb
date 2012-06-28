@@ -6,18 +6,18 @@ module Travis
     autoload :Publisher,  'travis/notification/publisher'
 
     class << self
+      attr_accessor :publishers
+
       def setup
         Travis::Instrumentation.setup
-        publishers << Publisher::Log.new
-      end
-
-      def publishers
-        @@publishers ||= []
+        publishers << Publisher::Log.new << Publisher::Redis.new
       end
 
       def publish(event)
         publishers.each { |publisher| publisher.publish(event) }
       end
     end
+
+    self.publishers ||= []
   end
 end

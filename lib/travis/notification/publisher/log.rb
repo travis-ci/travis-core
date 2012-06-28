@@ -4,10 +4,11 @@ module Travis
       class Log
         def publish(event)
           level = event.key?(:exception) ? :error : :info
-          log(level, event.delete(:msg))
+          log(level, event[:payload][:msg])
 
-          if level == :error || Travis.logger.level == Logger::DEBUG
-            event.each do |key, value|
+          if level == :error || Travis.logger.level == ::Logger::DEBUG
+            event[:payload].each do |key, value|
+              next if key == :msg
               level = event.key?(:exception) ? :error : :debug
               log(level, "  #{key}: #{value.inspect}")
             end

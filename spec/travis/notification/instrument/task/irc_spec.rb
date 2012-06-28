@@ -20,7 +20,12 @@ describe Travis::Notification::Instrument::Task::Irc do
   end
 
   it 'publishes a payload' do
-    event.except(:data).should == {
+    event.except(:payload).should == {
+      :message => "travis.task.irc.run:call",
+      :result => nil,
+      :uuid => Travis.uuid
+    }
+    event[:payload].except(:data).should == {
       :msg => 'Travis::Task::Irc#run for #<Build id=1>',
       :repository => 'svenfuchs/minimal',
       :object_id => 1,
@@ -30,11 +35,9 @@ describe Travis::Notification::Instrument::Task::Irc do
         'svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.',
         'Change view : http://trvs.io/short',
         'Build details : http://trvs.io/short'
-      ],
-      :result => nil,
-      :uuid => Travis.uuid
+      ]
     }
-    event[:data].should_not be_nil
+    event[:payload][:data].should_not be_nil
   end
 end
 

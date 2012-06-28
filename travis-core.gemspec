@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
 
   # db
   s.add_dependency 'data_migrations',   '~> 0.0.1'
-  s.add_dependency 'redis',             '~> 2.2.2'
+  s.add_dependency 'redis',             '~> 3.0'
 
 
   # structures
@@ -39,4 +39,5 @@ Gem::Specification.new do |s|
   # apis
   s.add_dependency 'pusher',            '~> 0.9.2'
   s.add_dependency 'gh'
+  s.add_dependency 'multi_json'
 end

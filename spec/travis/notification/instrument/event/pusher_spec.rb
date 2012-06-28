@@ -17,16 +17,19 @@ describe Travis::Notification::Instrument::Event::Handler::Pusher do
 
     it 'publishes a payload' do
       event.except(:payload).should == {
+        :message => "travis.event.handler.pusher.notify:call",
+        :result => nil,
+        :uuid => Travis.uuid
+      }
+      event[:payload].except(:payload).should == {
         :msg => 'Travis::Event::Handler::Pusher#notify(job:test:started) for #<Job::Test id=1>',
         :repository => 'svenfuchs/minimal',
         :request_id => 1,
         :object_id => 1,
-        :result => nil,
         :object_type => 'Job::Test',
         :event => 'job:test:started',
-        :uuid => Travis.uuid
       }
-      event[:payload].should_not be_nil
+      event[:payload][:payload].should_not be_nil
     end
   end
 
@@ -35,16 +38,19 @@ describe Travis::Notification::Instrument::Event::Handler::Pusher do
 
     it 'publishes a payload' do
       event.except(:payload).should == {
+        :message => "travis.event.handler.pusher.notify:call",
+        :result => nil,
+        :uuid => Travis.uuid
+      }
+      event[:payload].except(:payload).should == {
         :msg => 'Travis::Event::Handler::Pusher#notify(build:finished) for #<Build id=1>',
         :repository => 'svenfuchs/minimal',
         :request_id => 1,
         :object_id => 1,
-        :result => nil,
         :object_type => 'Build',
         :event => 'build:finished',
-        :uuid => Travis.uuid
       }
-      event[:payload].should_not be_nil
+      event[:payload][:payload].should_not be_nil
     end
   end
 end
