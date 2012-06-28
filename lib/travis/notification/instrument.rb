@@ -45,7 +45,15 @@ module Travis
 
         def serialize(object)
           case object
-          when NilClass, TrueClass, FalseClass, String, Symbol, Numeric, Array, Hash, Mail::Message
+          when Mail::Message
+            object.to_s
+          when Array
+            object.map { |element| serialize(element) }
+          when Hash
+            hash = object.class.new
+            object.each_pair { |key, value| hash[serialize(key)] = serialize(value) }
+            hash
+          when NilClass, TrueClass, FalseClass, String, Symbol, Numeric
             object
           else
             Travis::Api.data(object, :for => 'notification', :version => 'v0')
