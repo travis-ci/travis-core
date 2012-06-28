@@ -56,7 +56,8 @@ module Travis
           when NilClass, TrueClass, FalseClass, String, Symbol, Numeric
             object
           else
-            Travis::Api.data(object, :for => 'notification', :version => 'v0')
+            api = Travis::Api.builder(object, :for => 'notification', :version => 'v0')
+            api ? api.new(object).data : object
           end
         end
     end

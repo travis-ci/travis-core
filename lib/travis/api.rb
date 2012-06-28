@@ -7,21 +7,27 @@ module Travis
 
     class << self
       def data(resource, options = {})
-        builder(resource, options).new(resource, options[:params] || {}).data
+        builder = builder(resource, options)
+        raise ArgumentError, "cannot serialize #{resource.inspect}" unless builder
+        builder.new(resource, options[:params] || {}).data
+      end
+
+      def builder(resource, options = {})
+        target  = (options[:for] || 'http').to_s.camelize
+        version = (options[:version] || 'v1').to_s.camelize
+        type    = (options[:type] || type_for(resource)).to_s.camelize.split('::')
+        [version, target, *type].inject(self) do |base, const|
+          base.const_get(const) if base and base.const_defined? const, false
+        end
       end
 
       private
 
-        def builder(resource, options = {})
-          target  = (options[:for] || 'http').to_s.camelize
-          version = (options[:version] || 'v1').to_s.camelize
-          type    = (options[:type] || type_for(resource)).to_s.camelize
-          "#{name}::#{version}::#{target}::#{type}".constantize
-        end
-
         def type_for(resource)
-          type = resource.respond_to?(:klass) ? resource.klass.name.pluralize : resource.class.base_class.name
-          type = type.to_s.split('::').last
+          type = resource.class
+          type = type.klass      if type.respond_to? :klass
+          type = type.base_class if type.respond_to? :base_class
+          type.name.split('::').last
         end
     end
   end
