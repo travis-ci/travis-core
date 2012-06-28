@@ -25,8 +25,8 @@ describe Travis::Task::Irc do
     Travis::Task.run(:irc, data, :channels => channels || self.channels)
   end
 
-  it "one irc notification" do
-    expect_irc 'irc.freenode.net', 1234, 'travis', [
+  let(:simple_irc_notfication_messages) do
+    [
       'NICK travis-ci',
       'USER travis-ci travis-ci travis-ci :travis-ci',
       'JOIN #travis',
@@ -36,6 +36,10 @@ describe Travis::Task::Irc do
       'PART #travis',
       'QUIT'
     ]
+  end
+
+  it "one irc notification" do
+    expect_irc 'irc.freenode.net', 1234, 'travis', simple_irc_notfication_messages
     run(build)
   end
 
@@ -132,4 +136,14 @@ describe Travis::Task::Irc do
     ]
     run(build, ['irc.freenode.net', 6667] => ['travis', 'example'])
   end
+
+  context 'when configured to IRC+SSL server' do
+    it "should wrap socket with ssl (in client private)" do
+      Travis::Task::Irc::Client.expects(:wrap_ssl).with(tcp).returns(tcp)
+
+      expect_irc 'irc.freenode.net', 1234, 'travis', simple_irc_notfication_messages
+      run(build, ['irc.freenode.net', 1234, :ssl] => ['travis'])
+    end
+  end
+
 end

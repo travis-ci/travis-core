@@ -27,13 +27,13 @@ module Travis
         def process
           # Notifications to the same host are grouped so that they can be sent with a single connection
           channels.each do |server, channels|
-            host, port = *server
-            send_messages(host, port, channels)
+            host, port, ssl = *server
+            send_messages(host, port, ssl, channels)
           end
         end
 
-        def send_messages(host, port, channels)
-          client(host, nick, :port => port) do |client|
+        def send_messages(host, port, ssl, channels)
+          client(host, nick, :port => port, :ssl => (ssl == :ssl)) do |client|
             channels.each do |channel|
                 send_message(client, channel)
                 info("Successfully notified #{host}:#{port}##{channel}")

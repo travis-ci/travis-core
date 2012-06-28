@@ -52,5 +52,22 @@ describe Travis::Event::Config::Irc do
         ["irc.example.com",  nil]    => ['travis-3']
       }
     end
+
+    it 'groups irc channels by host, port & ssl flag' do
+      build.stubs(:config => { :notifications => { :irc => %w(
+        irc.freenode.net:1234#travis
+        irc.freenode.net#rails
+        irc.freenode.net:1234#travis-2
+        irc.example.com#travis-3
+        ircs://irc.example.com:2345#travis-4
+        irc://irc.freenode.net:1234#travis-5
+      )}})
+      config.channels.should == {
+        ["irc.freenode.net", '1234'] => ['travis', 'travis-2', 'travis-5'],
+        ["irc.freenode.net", nil]    => ['rails'],
+        ["irc.example.com",  nil]    => ['travis-3'],
+        ["irc.example.com",  '2345', :ssl]    => ['travis-4'],
+      }
+    end
   end
 end
