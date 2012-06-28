@@ -15,10 +15,8 @@ module Travis
       def builder(resource, options = {})
         target  = (options[:for] || 'http').to_s.camelize
         version = (options[:version] || 'v1').to_s.camelize
-        type    = (options[:type] || type_for(resource)).to_s.camelize.split('::')
-        [version, target, *type].inject(self) do |base, const|
-          base.const_get(const) if base and base.const_defined? const, false
-        end
+        type    = (options[:type] || type_for(resource)).to_s.camelize
+        [name, version, target, type].join("::").constantize rescue nil
       end
 
       private
@@ -27,17 +25,15 @@ module Travis
           resource.respond_to? :klass
         end
 
-        def lookalike(resource)
-          if arel_relation?(resource)
-            resource.klass
-          else
-            klass = resource.class
-            klass.respond_to?(:base_class) ? klass.base_class : klass
-          end
-        end
-
         def type_for(resource)
-          lookalike(resource).name.split('::').last
+          if arel_relation?(resource)
+            type = resource.klass.name.pluralize
+          else
+            type = resource.class
+            type = type.base_class if type.respond_to?(:base_class)
+            type = type.name
+          end
+          type.split('::').last
         end
     end
   end
