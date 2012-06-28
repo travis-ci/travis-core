@@ -14,7 +14,7 @@ module Travis
           methods = consts.map { |const| const.public_instance_methods(false) }.flatten.uniq
 
           methods.each do |event|
-            ActiveSupport::Notifications.subscribe(/^#{namespace}(\..+)?.#{event}:call/) do |message, *args|
+            ActiveSupport::Notifications.subscribe(/^#{namespace}(\..+)?.#{event}:call$/) do |message, *args|
               begin
                 method, event = message.split('.').last.split(':')
                 new(args.last).send(method)
