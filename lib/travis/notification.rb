@@ -10,7 +10,7 @@ module Travis
 
       def setup
         Travis::Instrumentation.setup
-        publishers << Publisher::Log.new << Publisher::Redis.new
+        publishers << Publisher::Log.new # << Publisher::Redis.new
       end
 
       def publish(event)
