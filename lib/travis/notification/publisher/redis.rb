@@ -1,6 +1,5 @@
 require 'redis'
 require 'multi_json'
-require 'active_support/time'
 
 module Travis
   module Notification
@@ -10,7 +9,7 @@ module Travis
 
         def initialize(options = {})
           @redis = options[:redis] || ::Redis.connect(:url => Travis.config.redis.url)
-          @ttl   = options[:ttl]   || 5.days.to_i
+          @ttl   = options[:ttl]   || 120
         end
 
         def publish(event)
