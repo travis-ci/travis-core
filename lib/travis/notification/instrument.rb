@@ -18,7 +18,7 @@ module Travis
           methods.each do |event|
             ActiveSupport::Notifications.subscribe(/^#{namespace}(\..+)?.#{event}:call$/) do |message, *args|
               method, event = message.split('.').last.split(':')
-              #new(message, args.last).send(method)
+              new(message, args.last).send(method)
             end
           end
         end
@@ -28,7 +28,8 @@ module Travis
 
       def initialize(message, payload)
         @target, @result, @exception = payload.values_at(:target, :result, :exception)
-        @config = { :result => serialize(result), :message => message }
+        #@config = { :result => serialize(result), :message => message }
+        @config = { :result => result, :message => message }
         @config[:exception] = exception if exception
       end
 
