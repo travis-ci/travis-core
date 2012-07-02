@@ -15,16 +15,12 @@ module Travis
           consts = ancestors.select { |const| const.name[0..5] == 'Travis' }
           methods = consts.map { |const| const.public_instance_methods(false) }.flatten.uniq
 
-          # methods.each do |event|
-          #             ActiveSupport::Notifications.subscribe(/^#{namespace}(\..+)?.#{event}:call$/) do |message, *args|
-          #               begin
-          #                 method, event = message.split('.').last.split(':')
-          #                 new(message, args.last).send(method)
-          #               # rescue Exception => e
-          #               #   Travis.logger.error "Could not notify about #{message.inspect} event. #{e.class}: #{e.message}\\n#{e.backtrace}"
-          #               end
-          #             end
-          #           end
+          methods.each do |event|
+            ActiveSupport::Notifications.subscribe(/^#{namespace}(\..+)?.#{event}:call$/) do |message, *args|
+              method, event = message.split('.').last.split(':')
+              #new(message, args.last).send(method)
+            end
+          end
         end
       end
 
