@@ -28,8 +28,7 @@ module Travis
 
       def initialize(message, payload)
         @target, @result, @exception = payload.values_at(:target, :result, :exception)
-        #@config = { :result => serialize(result), :message => message }
-        @config = { :result => result, :message => message }
+        @config = { :result => serialize(result), :message => message }
         @config[:exception] = exception if exception
       end
 
@@ -44,13 +43,7 @@ module Travis
           case object
           when Mail::Message
             object.to_s
-          when Array
-            object.map { |element| serialize(element) }
-          when Hash
-            hash = object.class.new
-            object.each_pair { |key, value| hash[serialize(key)] = serialize(value) }
-            hash
-          when NilClass, TrueClass, FalseClass, String, Symbol, Numeric
+          when NilClass, TrueClass, FalseClass, String, Symbol, Numeric, Hash, Array
             object
           else
             api = Travis::Api.builder(object, :for => 'notification', :version => 'v0')
