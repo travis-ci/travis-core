@@ -1,8 +1,8 @@
 module Travis
   module Notification
     class Instrument
-      module Github
-        class Config < Instrument
+      class Github < Instrument
+        class Config < Github
           def fetch
             publish(
               :msg => "#{target.class.name}#fetch #{target.url}",
@@ -11,7 +11,7 @@ module Travis
           end
         end
 
-        class Repositories < Instrument
+        class Repositories < Github
           def fetch
             publish(
               :msg => %(#{target.class.name}#fetch for #<User id=#{target.user.id} login="#{target.user.login}">)
@@ -20,7 +20,7 @@ module Travis
         end
 
         module Sync
-          class Organizations < Instrument
+          class Organizations < Github
             def run
               publish(
                 :msg => %(#{target.class.name}#run for #<User id=#{target.user.id} login="#{target.user.login}">)
@@ -28,7 +28,7 @@ module Travis
             end
           end
 
-          class Repositories < Instrument
+          class Repositories < Github
             def run
               publish(
                 :msg => %(#{target.class.name}#run for #<User id=#{target.user.id} login="#{target.user.login}">)
@@ -36,6 +36,12 @@ module Travis
             end
           end
         end
+
+        private
+
+          def publish(event)
+            super event.merge(:result => result)
+          end
       end
     end
   end

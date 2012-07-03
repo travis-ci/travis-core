@@ -27,9 +27,8 @@ describe Travis::Notification::Publisher::Redis do
   end
 
   it 'encodes the payload in json' do
-    instrument(:result => 42).publish(:foo => 'bar')
+    publish(:foo => 'bar')
     MultiJson.decode(redis.lindex(key, 0)).should be == {
-      "result"  => 42,
       "message" => "",
       "uuid"    => Travis.uuid,
       "payload" => { "foo" => "bar" }
@@ -52,13 +51,10 @@ describe Travis::Notification::Publisher::Redis do
         redis.unsubscribe
       end
 
-      on.subscribe do
-        instrument(:result => 42).publish(:foo => 'bar')
-      end
+      on.subscribe { publish(:foo => 'bar') }
     end
 
     event.should be == {
-      "result"  => 42,
       "message" => "",
       "uuid"    => Travis.uuid,
       "payload" => { "foo" => "bar" }

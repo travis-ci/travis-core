@@ -16,7 +16,6 @@ describe Travis::Notification::Instrument::Event::Handler::Archive do
   it 'publishes a payload' do
     event.except(:payload).should == {
       :message => "travis.event.handler.archive.notify:call",
-      :result => nil,
       :uuid => Travis.uuid
     }
     payload = event[:payload]

@@ -17,7 +17,6 @@ describe Travis::Notification::Instrument::Event::Handler::Github do
   it 'publishes a payload' do
     event.except(:payload).should == {
       :message => "travis.event.handler.github.notify:call",
-      :result => nil,
       :uuid => Travis.uuid
     }
     event[:payload].except(:payload).should == {
