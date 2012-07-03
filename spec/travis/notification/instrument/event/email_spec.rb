@@ -16,7 +16,6 @@ describe Travis::Notification::Instrument::Event::Handler::Email do
   it 'publishes a payload' do
     event.except(:payload).should == {
       :message => "travis.event.handler.email.notify:call",
-      :result => nil,
       :uuid => Travis.uuid
     }
     event[:payload].except(:payload).should == {

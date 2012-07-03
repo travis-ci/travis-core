@@ -19,9 +19,9 @@ describe Travis::Notification::Instrument::Github::Config do
   it 'publishes a payload' do
     event.should == {
       :message => "travis.github.config.fetch:call",
-      :result => { 'foo' => 'Foo', '.result' => 'configured' },
       :uuid => Travis.uuid,
       :payload => {
+        :result => { 'foo' => 'Foo', '.result' => 'configured' },
         :msg => 'Travis::Github::Config#fetch https://raw.github.com/svenfuchs/minimal/62aae5f70ceee39123ef/.travis.yml',
         :url => 'https://raw.github.com/svenfuchs/minimal/62aae5f70ceee39123ef/.travis.yml'
       }

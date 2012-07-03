@@ -25,6 +25,7 @@ describe Travis::Event::Handler::Archive do
   describe 'instrumentation' do
     it 'instruments with "travis.event.handler.archive.notify:call"' do
       ActiveSupport::Notifications.expects(:instrument).with('travis.event.handler.archive.notify:call', anything)
+      require 'debugger'
       Travis::Event.dispatch('build:finished', build)
     end
 
