@@ -28,7 +28,7 @@ module Travis
 
       def initialize(message, payload)
         @target, @result, @exception = payload.values_at(:target, :result, :exception)
-        @config = { :result => serialize(result), :message => message }
+        @config = { :message => message }
         @config[:exception] = exception if exception
       end
 
@@ -37,18 +37,6 @@ module Travis
         def publish(event = {})
           payload = config.merge(:uuid => Travis.uuid, :payload => event)
           Notification.publish(payload)
-        end
-
-        def serialize(object)
-          case object
-          when Mail::Message
-            object.to_s
-          when NilClass, TrueClass, FalseClass, String, Symbol, Numeric, Hash, Array
-            object
-          else
-            api = Travis::Api.builder(object, :for => 'notification', :version => 'v0')
-            api ? api.new(object).data : object
-          end
         end
     end
   end
