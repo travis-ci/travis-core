@@ -195,6 +195,10 @@ describe Build, 'matrix' do
     }
 
     describe :expand_matrix_config do
+      def encrypt_config_env(config, repository)
+        config['env'] = config.delete('env').map { |env| repository.key.secure.encrypt(env) }
+      end
+
       it 'expands the build matrix configuration (single test config)' do
         build = Factory(:build, :config => single_test_config)
         build.expand_matrix_config(build.matrix_config.to_a).should == [
@@ -204,11 +208,100 @@ describe Build, 'matrix' do
 
       it 'decrypts a secure env configuration (single test config)' do
         repository = Factory(:repository)
-        single_test_config['env'] = single_test_config.delete('env').map { |env| repository.key.secure.encrypt(env) }
-        build = Factory(:build, :config => single_test_config, :repository => repository)
+
+        encrypt_config_env(single_test_config, repository)
+
+        build      = Factory(:build, :config => single_test_config, :repository => repository)
         build.expand_matrix_config(build.matrix_config.to_a).should == [
-                                                                        [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'SECURE USE_GIT_REPOS=true']],
-                                                                       ]
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'], [:env, 'SECURE USE_GIT_REPOS=true']]
+        ]
+      end
+
+      it 'leaves unencrypted env vars for pull_requests (single test config)' do
+        repository = Factory(:repository)
+        request    = Factory(:request)
+
+        single_test_config['env'] << repository.key.secure.encrypt("FOO=bar")
+
+        request.expects(:pull_request?).at_least_once.returns(true)
+        build = Factory(:build, :config => single_test_config,
+                                :repository => repository,
+                                :request => request)
+
+        build.expand_matrix_config(build.matrix_config.to_a).should == [
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'], [:env, 'USE_GIT_REPOS=true']]
+        ]
+      end
+
+
+      it 'removes encrypted env vars instead of decrypting them for pull_requests (single test config)' do
+        repository = Factory(:repository)
+        request    = Factory(:request)
+
+        encrypt_config_env(single_test_config, repository)
+
+        request.expects(:pull_request?).at_least_once.returns(true)
+        build = Factory(:build, :config => single_test_config,
+                                :repository => repository,
+                                :request => request)
+
+        build.expand_matrix_config(build.matrix_config.to_a).should == [
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6']]
+        ]
+      end
+
+      it 'leaves unencrypted env vars for pull_requests (multiple test config)' do
+        repository = Factory(:repository)
+        request    = Factory(:request)
+
+        multiple_tests_config['env'] << repository.key.secure.encrypt("FOO=bar")
+
+        request.expects(:pull_request?).at_least_once.returns(true)
+        build = Factory(:build, :config => multiple_tests_config,
+                                :repository => repository,
+                                :request => request)
+
+        build.expand_matrix_config(build.matrix_config.to_a).should == [
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.7'],      [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3-0-stable'], [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-master'],     [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-3.0.7'],      [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-3-0-stable'], [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-master'],     [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-3.0.7'],      [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-3-0-stable'], [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-master'],     [:env, 'USE_GIT_REPOS=true']]
+         ]
+      end
+
+      it 'removes encrypted env vars instead of decrypting them for pull_requests (multiple test config)' do
+        repository = Factory(:repository)
+        request    = Factory(:request)
+
+        encrypt_config_env(multiple_tests_config, repository)
+
+        request.expects(:pull_request?).at_least_once.returns(true)
+        build = Factory(:build, :config => multiple_tests_config,
+                                :repository => repository,
+                                :request => request)
+
+        build.expand_matrix_config(build.matrix_config.to_a).should == [
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6']     ],
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.7']     ],
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3-0-stable']],
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-master']    ],
+          [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-3.0.6']     ],
+          [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-3.0.7']     ],
+          [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-3-0-stable']],
+          [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-master']    ],
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-3.0.6']     ],
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-3.0.7']     ],
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-3-0-stable']],
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-master']    ]
+         ]
       end
 
       it 'expands the build matrix configuration (multiple tests config)' do

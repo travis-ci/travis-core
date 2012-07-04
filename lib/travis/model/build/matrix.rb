@@ -87,6 +87,8 @@ class Build
       end
 
       def matrix_config
+        # TODO: I think that at this point it may be good to extract it to
+        #       separate class
         @matrix_config ||= begin
           config = self.config || {}
           keys   = ENV_KEYS & config.keys.map(&:to_sym)
@@ -95,15 +97,34 @@ class Build
           keys.inject([]) do |result, key|
             values = config[key]
             values = [values] unless values.is_a?(Array)
-            decrypt_env(values) if key == :env
-            values += [values.last] * (size - values.size) if values.size < size
-            result << values.map { |value| [key, value] }
+            values = process_env(values) if key == :env
+
+            if values
+              values += [values.last] * (size - values.size) if values.size < size
+              result << values.map { |value| [key, value] }
+            end
+
+            result
           end
         end
       end
 
+      def process_env(values)
+        values = if pull_request?
+          remove_encrypted_env_vars(values)
+        else
+          decrypt_env(values)
+        end
+      end
+
+      def remove_encrypted_env_vars(values)
+        values.reject do |value|
+          value.is_a?(Hash) && value.has_key?(:secure)
+        end.presence
+      end
+
       def decrypt_env(values)
-        values.collect! do |value|
+        values.collect do |value|
           repository.key.secure.decrypt(value) do |env|
             env.insert(0, 'SECURE ')
           end
