@@ -16,7 +16,7 @@ describe Travis::Notification::Instrument::Event::Handler::Irc do
 
   it 'publishes a payload' do
     event.except(:payload).should == {
-      :message => "travis.event.handler.irc.notify:call",
+      :message => "travis.event.handler.irc.notify:completed",
       :uuid => Travis.uuid
     }
     event[:payload].except(:payload).should == {

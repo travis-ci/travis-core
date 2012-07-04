@@ -15,7 +15,7 @@ describe Travis::Notification::Instrument::Request::Factory do
 
   it 'publishes a payload' do
     event.should == {
-      :message => "request.factory.request:call",
+      :message => "request.factory.request:completed",
       :uuid => Travis.uuid,
       :payload => {
         :msg => 'Request::Factory#request type="pull_request"',

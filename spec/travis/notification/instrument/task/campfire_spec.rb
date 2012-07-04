@@ -16,7 +16,7 @@ describe Travis::Notification::Instrument::Task::Campfire do
 
   it 'publishes a payload' do
     event.except(:payload).should == {
-      :message => "travis.task.campfire.run:call",
+      :message => "travis.task.campfire.run:completed",
       :uuid => Travis.uuid
     }
     event[:payload].except(:data).should == {

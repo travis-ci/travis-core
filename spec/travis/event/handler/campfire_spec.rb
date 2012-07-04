@@ -23,15 +23,16 @@ describe Travis::Event::Handler::Campfire do
   end
 
   describe 'instrumentation' do
-    it 'instruments with "notify.campfire.handler.event.travis:call"' do
-      ActiveSupport::Notifications.expects(:instrument).with do |event, data|
-        event == 'travis.event.handler.campfire.notify:call' && data[:target].is_a?(Travis::Event::Handler::Campfire)
+    it 'instruments with notify.campfire.handler.event.travis' do
+      ActiveSupport::Notifications.stubs(:publish)
+      ActiveSupport::Notifications.expects(:publish).with do |event, data|
+        event =~ /travis.event.handler.campfire.notify/ && data[:target].is_a?(Travis::Event::Handler::Campfire)
       end
       Travis::Event.dispatch('build:finished', build)
     end
 
-    it 'meters on "travis.event.handler.campfire.notify:call"' do
-      Metriks.expects(:timer).with('travis.event.handler.campfire.notify:call').returns(stub('timer', :update => true))
+    it 'meters on "travis.event.handler.campfire.notify:completed"' do
+      Metriks.expects(:timer).with('travis.event.handler.campfire.notify:completed').returns(stub('timer', :update => true))
       Travis::Event.dispatch('build:finished', build)
     end
   end

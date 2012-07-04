@@ -23,15 +23,16 @@ describe Travis::Event::Handler::Webhook do
   end
 
   describe 'instrumentation' do
-    it 'instruments with "travis.event.handler.webhook.notify:call"' do
-      ActiveSupport::Notifications.expects(:instrument).with do |event, data|
-        event == 'travis.event.handler.webhook.notify:call' && data[:target].is_a?(Travis::Event::Handler::Webhook)
+    it 'instruments with "travis.event.handler.webhook.notify"' do
+      ActiveSupport::Notifications.stubs(:publish)
+      ActiveSupport::Notifications.expects(:publish).with do |event, data|
+        event =~ /travis.event.handler.webhook.notify/ && data[:target].is_a?(Travis::Event::Handler::Webhook)
       end
       Travis::Event.dispatch('build:finished', build)
     end
 
-    it 'meters on "travis.event.handler.webhook.notify:call"' do
-      Metriks.expects(:timer).with('travis.event.handler.webhook.notify:call').returns(stub('timer', :update => true))
+    it 'meters on "travis.event.handler.webhook.notify:completed"' do
+      Metriks.expects(:timer).with('travis.event.handler.webhook.notify:completed').returns(stub('timer', :update => true))
       Travis::Event.dispatch('build:finished', build)
     end
   end

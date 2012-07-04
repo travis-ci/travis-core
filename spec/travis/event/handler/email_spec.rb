@@ -23,15 +23,16 @@ describe Travis::Event::Handler::Email do
   end
 
   describe 'instrumentation' do
-    it 'instruments with "travis.event.handler.email.notify:call"' do
-      ActiveSupport::Notifications.expects(:instrument).with do |event, data|
-        event == 'travis.event.handler.email.notify:call' && data[:target].is_a?(Travis::Event::Handler::Email)
+    it 'instruments with "travis.event.handler.email.notify"' do
+      ActiveSupport::Notifications.stubs(:publish)
+      ActiveSupport::Notifications.expects(:publish).with do |event, data|
+        event =~ /travis.event.handler.email.notify/ && data[:target].is_a?(Travis::Event::Handler::Email)
       end
       Travis::Event.dispatch('build:finished', build)
     end
 
-    it 'meters on "travis.event.handler.email.notify:call"' do
-      Metriks.expects(:timer).with('travis.event.handler.email.notify:call').returns(stub('timer', :update => true))
+    it 'meters on "travis.event.handler.email.notify:completed"' do
+      Metriks.expects(:timer).with('travis.event.handler.email.notify:completed').returns(stub('timer', :update => true))
       Travis::Event.dispatch('build:finished', build)
     end
   end
