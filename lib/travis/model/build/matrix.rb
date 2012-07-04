@@ -71,12 +71,20 @@ class Build
           attributes.merge!(
             :owner => owner,
             :number => "#{number}.#{ix + 1}",
-            :config => config.merge(Hash[*row.flatten]),
+            :config => config.merge(build_config_hash(row)),
             :log => Artifact::Log.new
           )
           matrix.build(attributes)
         end
         matrix_allow_failures # TODO should be able to join this with the loop above
+      end
+
+      def build_config_hash(row)
+        hash = {}
+        row.each do |key, values|
+          hash[key] = values
+        end
+        hash
       end
 
       def matrix_allow_failures
@@ -118,16 +126,24 @@ class Build
       end
 
       def remove_encrypted_env_vars(values)
-        values.reject do |value|
-          value.is_a?(Hash) && value.has_key?(:secure)
-        end.presence
+        values.map do |value|
+          value = [value] unless value.is_a? Array
+          result = value.reject do |var|
+            var.is_a?(Hash) && var.has_key?(:secure)
+          end
+          result.length <= 1 ? result.first : result
+        end.compact.presence
       end
 
       def decrypt_env(values)
         values.collect do |value|
-          repository.key.secure.decrypt(value) do |env|
-            env.insert(0, 'SECURE ')
+          value = [value] unless value.is_a? Array
+          result = value.map do |var|
+            repository.key.secure.decrypt(var) do |env|
+              env.insert(0, 'SECURE ') unless env.include?('SECURE ')
+            end
           end
+          result.length == 1 ? result.first : result
         end
       end
 

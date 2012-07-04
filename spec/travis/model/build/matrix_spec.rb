@@ -98,6 +98,18 @@ describe Build, 'matrix' do
     yml
     }
 
+    let(:encrypted_and_unencrypted_config) {
+    YAML.load <<-yml
+      script: "rake ci"
+      rvm:
+        - 1.8.7
+      gemfile:
+        - gemfiles/rails-3.0.6
+      env:
+        - ["TO=ENCRYPT", "FOO=BAR"]
+    yml
+    }
+
     let(:single_test_config) {
       YAML.load <<-yml
       script: "rake ci"
@@ -206,6 +218,22 @@ describe Build, 'matrix' do
         ]
       end
 
+      it 'decrypts only the part of env setting that needs to be decrypted' do
+        repository = Factory(:repository)
+
+        # Encrypt first of given values
+        env = encrypted_and_unencrypted_config['env'][0]
+        env[0] = repository.key.secure.encrypt(env[0])
+
+        # Ensure that first env var is encrypted
+        encrypted_and_unencrypted_config['env'][0][0].should have_key('secure')
+
+        build      = Factory(:build, :config => encrypted_and_unencrypted_config, :repository => repository)
+        build.expand_matrix_config(build.matrix_config.to_a).should == [
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'], [:env, ["SECURE TO=ENCRYPT", "FOO=BAR"]]]
+        ]
+      end
+
       it 'decrypts a secure env configuration (single test config)' do
         repository = Factory(:repository)
 
@@ -247,6 +275,26 @@ describe Build, 'matrix' do
 
         build.expand_matrix_config(build.matrix_config.to_a).should == [
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6']]
+        ]
+      end
+
+      it 'removes encrypted env vars instead of decrypting them for pull_requests (encrypted and unencrypted values in env)' do
+        repository = Factory(:repository)
+        request    = Factory(:request)
+
+        # Encrypt first of given values
+        env = encrypted_and_unencrypted_config['env'][0]
+        env[0] = repository.key.secure.encrypt(env[0])
+
+        # Ensure that first env var is encrypted
+        encrypted_and_unencrypted_config['env'][0][0].should have_key('secure')
+
+        request.expects(:pull_request?).at_least_once.returns(true)
+        build      = Factory(:build, :config => encrypted_and_unencrypted_config,
+                                     :repository => repository,
+                                     :request => request)
+        build.expand_matrix_config(build.matrix_config.to_a).should == [
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'], [:env, "FOO=BAR"]]
         ]
       end
 
