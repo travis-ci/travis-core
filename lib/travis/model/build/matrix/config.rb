@@ -1,18 +1,23 @@
 class Build
   module Matrix
     class Config
-      attr_reader :build
+      attr_reader :build, :config
 
       def initialize(build)
-        @build = build
+        @build  = build
+        @config = build.config || {}
       end
 
-      def config
-        @config ||= begin
-          config = build.config || {}
-          keys   = Build::ENV_KEYS & config.keys.map(&:to_sym)
-          size   = config.slice(*keys).values.select { |value| value.is_a?(Array) }.max { |lft, rgt| lft.size <=> rgt.size }.try(:size) || 1
+      def keys
+        @keys ||= Build::ENV_KEYS & config.keys.map(&:to_sym)
+      end
 
+      def size
+        @size ||= config.slice(*keys).values.select { |value| value.is_a?(Array) }.max { |lft, rgt| lft.size <=> rgt.size }.try(:size) || 1
+      end
+
+      def to_a
+        @as_array ||= begin
           keys.inject([]) do |result, key|
             values = config[key]
             values = [values] unless values.is_a?(Array)
@@ -27,10 +32,6 @@ class Build
           end
         end
       end
-
-      def to_a
-        config.to_a
-      end
       alias to_ary to_a
 
       # TODO: I'm lazy and I don't want to change tests for now,
@@ -40,33 +41,34 @@ class Build
         to_a == other
       end
 
-      def process_env(values)
-        values = if build.pull_request?
-          remove_encrypted_env_vars(values)
-        else
-          decrypt_env(values)
-        end
-      end
+      def process_env(env_groups)
+        env_groups.map do |env_group|
+          env_group = [env_group] unless env_group.is_a? Array
 
-      def remove_encrypted_env_vars(values)
-        values.map do |value|
-          value = [value] unless value.is_a? Array
-          result = value.reject do |var|
-            var.is_a?(Hash) && var.has_key?(:secure)
+          result = if build.pull_request?
+            remove_encrypted_env_vars(env_group)
+          else
+            decrypt_env(env_group)
           end
+
+          # For backwards compatibility, if you start with one env var
+          # instead of array, return one item or nil, I think we can get
+          # rid of this later and always treat env values as arrays
           result.length <= 1 ? result.first : result
         end.compact.presence
       end
 
-      def decrypt_env(values)
-        values.collect do |value|
-          value = [value] unless value.is_a? Array
-          result = value.map do |var|
-            decrypt(var) do |env|
-              env.insert(0, 'SECURE ') unless env.include?('SECURE ')
-            end
+      def remove_encrypted_env_vars(env)
+        env.reject do |var|
+          var.is_a?(Hash) && var.has_key?(:secure)
+        end
+      end
+
+      def decrypt_env(env)
+        env.map do |var|
+          decrypt(var) do |var|
+            var.insert(0, 'SECURE ') unless var.include?('SECURE ')
           end
-          result.length == 1 ? result.first : result
         end
       end
 
@@ -81,7 +83,7 @@ class Build
           base = base.dup
           base.empty? ? [result] : base.shift.map { |value| matrix.call(base, result + [value]) }.flatten(1)
         end
-        expanded = matrix.call(config).uniq
+        expanded = matrix.call(to_a).uniq
         include_matrix_configs(exclude_matrix_configs(expanded))
       end
 

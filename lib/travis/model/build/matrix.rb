@@ -65,7 +65,7 @@ class Build
 
       # expand the matrix (i.e. create test jobs) and update the config for each job
       def expand_matrix
-        expand_matrix_config(matrix_config).each_with_index do |row, ix|
+        matrix_config.expand.each_with_index do |row, ix|
           attributes = self.attributes.slice(*Job.column_names).symbolize_keys
           # TODO remove this once migration to the :result column is done
           attributes.delete(:status)
@@ -93,6 +93,8 @@ class Build
         @matrix_config ||= Config.new(self)
       end
 
+      # TODO: this is used in tests, fix this, it's not needed anymore, there is
+      #       you can use matrix_config.expand method
       def expand_matrix_config(config)
         config.expand
       end
