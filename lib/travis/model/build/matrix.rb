@@ -18,9 +18,10 @@ class Build
   #  * an arbitrary env key that can be used from within the test suite in
   #    order to branch out specific variations of the test run
   module Matrix
+    autoload :Config, 'travis/model/build/matrix/config'
     extend ActiveSupport::Concern
-
     ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl]
+
 
     module ClassMethods
       def matrix?(config)
@@ -64,14 +65,14 @@ class Build
 
       # expand the matrix (i.e. create test jobs) and update the config for each job
       def expand_matrix
-        expand_matrix_config(matrix_config.to_a).each_with_index do |row, ix|
+        expand_matrix_config(matrix_config).each_with_index do |row, ix|
           attributes = self.attributes.slice(*Job.column_names).symbolize_keys
           # TODO remove this once migration to the :result column is done
           attributes.delete(:status)
           attributes.merge!(
             :owner => owner,
             :number => "#{number}.#{ix + 1}",
-            :config => config.merge(build_config_hash(row)),
+            :config => expand_config(row),
             :log => Artifact::Log.new
           )
           matrix.build(attributes)
@@ -79,106 +80,28 @@ class Build
         matrix_allow_failures # TODO should be able to join this with the loop above
       end
 
-      def build_config_hash(row)
+      def expand_config(row)
         hash = {}
         row.each do |key, values|
           hash[key] = values
         end
-        hash
-      end
 
-      def matrix_allow_failures
-        allow_configs = config_matrix_settings[:allow_failures] || []
-        allow_configs.each do |config|
-          matrix_for(config).each { |m| m.allow_failure = true }
-        end
+        config.merge(hash)
       end
 
       def matrix_config
-        # TODO: I think that at this point it may be good to extract it to
-        #       separate class
-        @matrix_config ||= begin
-          config = self.config || {}
-          keys   = ENV_KEYS & config.keys.map(&:to_sym)
-          size   = config.slice(*keys).values.select { |value| value.is_a?(Array) }.max { |lft, rgt| lft.size <=> rgt.size }.try(:size) || 1
-
-          keys.inject([]) do |result, key|
-            values = config[key]
-            values = [values] unless values.is_a?(Array)
-            values = process_env(values) if key == :env
-
-            if values
-              values += [values.last] * (size - values.size) if values.size < size
-              result << values.map { |value| [key, value] }
-            end
-
-            result
-          end
-        end
-      end
-
-      def process_env(values)
-        values = if pull_request?
-          remove_encrypted_env_vars(values)
-        else
-          decrypt_env(values)
-        end
-      end
-
-      def remove_encrypted_env_vars(values)
-        values.map do |value|
-          value = [value] unless value.is_a? Array
-          result = value.reject do |var|
-            var.is_a?(Hash) && var.has_key?(:secure)
-          end
-          result.length <= 1 ? result.first : result
-        end.compact.presence
-      end
-
-      def decrypt_env(values)
-        values.collect do |value|
-          value = [value] unless value.is_a? Array
-          result = value.map do |var|
-            repository.key.secure.decrypt(var) do |env|
-              env.insert(0, 'SECURE ') unless env.include?('SECURE ')
-            end
-          end
-          result.length == 1 ? result.first : result
-        end
+        @matrix_config ||= Config.new(self)
       end
 
       def expand_matrix_config(config)
-        # recursively builds up permutations of values in the rows of a nested array
-        matrix = lambda do |*args|
-          base, result = args.shift, args.shift || []
-          base = base.dup
-          base.empty? ? [result] : base.shift.map { |value| matrix.call(base, result + [value]) }.flatten(1)
+        config.expand
+      end
+
+      def matrix_allow_failures
+        allow_configs = matrix_config.matrix_settings[:allow_failures] || []
+        allow_configs.each do |config|
+          matrix_for(config).each { |m| m.allow_failure = true }
         end
-        expanded = matrix.call(config).uniq
-        include_matrix_configs(exclude_matrix_configs(expanded))
-      end
-
-      def exclude_matrix_configs(matrix)
-        matrix.reject { |config| exclude_config?(config) }
-      end
-
-      def exclude_config?(config)
-        # gotta make the first key a string for 1.8 :/
-        exclude_configs = config_matrix_settings[:exclude] || []
-        exclude_configs = exclude_configs.map(&:stringify_keys).map(&:to_a).map(&:sort)
-        config = config.map { |config| [config[0].to_s, *config[1..-1]] }.sort
-        exclude_configs.to_a.any? { |excluded| excluded == config }
-      end
-
-      def include_matrix_configs(matrix)
-        include_configs = config_matrix_settings[:include] || []
-        include_configs = include_configs.map(&:to_a).map(&:sort)
-        matrix + include_configs
-      end
-
-      def config_matrix_settings
-        config = self.config || {}
-        config[:matrix] || {}
       end
   end
 end

@@ -213,7 +213,7 @@ describe Build, 'matrix' do
 
       it 'expands the build matrix configuration (single test config)' do
         build = Factory(:build, :config => single_test_config)
-        build.expand_matrix_config(build.matrix_config.to_a).should == [
+        build.expand_matrix_config(build.matrix_config).should == [
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'], [:env, 'USE_GIT_REPOS=true']],
         ]
       end
@@ -229,7 +229,7 @@ describe Build, 'matrix' do
         encrypted_and_unencrypted_config['env'][0][0].should have_key('secure')
 
         build      = Factory(:build, :config => encrypted_and_unencrypted_config, :repository => repository)
-        build.expand_matrix_config(build.matrix_config.to_a).should == [
+        build.expand_matrix_config(build.matrix_config).should == [
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'], [:env, ["SECURE TO=ENCRYPT", "FOO=BAR"]]]
         ]
       end
@@ -240,7 +240,7 @@ describe Build, 'matrix' do
         encrypt_config_env(single_test_config, repository)
 
         build      = Factory(:build, :config => single_test_config, :repository => repository)
-        build.expand_matrix_config(build.matrix_config.to_a).should == [
+        build.expand_matrix_config(build.matrix_config).should == [
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'], [:env, 'SECURE USE_GIT_REPOS=true']]
         ]
       end
@@ -256,7 +256,7 @@ describe Build, 'matrix' do
                                 :repository => repository,
                                 :request => request)
 
-        build.expand_matrix_config(build.matrix_config.to_a).should == [
+        build.expand_matrix_config(build.matrix_config).should == [
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'], [:env, 'USE_GIT_REPOS=true']]
         ]
       end
@@ -273,7 +273,7 @@ describe Build, 'matrix' do
                                 :repository => repository,
                                 :request => request)
 
-        build.expand_matrix_config(build.matrix_config.to_a).should == [
+        build.expand_matrix_config(build.matrix_config).should == [
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6']]
         ]
       end
@@ -293,7 +293,7 @@ describe Build, 'matrix' do
         build      = Factory(:build, :config => encrypted_and_unencrypted_config,
                                      :repository => repository,
                                      :request => request)
-        build.expand_matrix_config(build.matrix_config.to_a).should == [
+        build.expand_matrix_config(build.matrix_config).should == [
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'], [:env, "FOO=BAR"]]
         ]
       end
@@ -309,7 +309,7 @@ describe Build, 'matrix' do
                                 :repository => repository,
                                 :request => request)
 
-        build.expand_matrix_config(build.matrix_config.to_a).should == [
+        build.expand_matrix_config(build.matrix_config).should == [
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'USE_GIT_REPOS=true']],
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.7'],      [:env, 'USE_GIT_REPOS=true']],
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3-0-stable'], [:env, 'USE_GIT_REPOS=true']],
@@ -336,7 +336,7 @@ describe Build, 'matrix' do
                                 :repository => repository,
                                 :request => request)
 
-        build.expand_matrix_config(build.matrix_config.to_a).should == [
+        build.expand_matrix_config(build.matrix_config).should == [
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6']     ],
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.7']     ],
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3-0-stable']],
@@ -354,7 +354,7 @@ describe Build, 'matrix' do
 
       it 'expands the build matrix configuration (multiple tests config)' do
         build = Factory(:build, :config => multiple_tests_config)
-        build.expand_matrix_config(build.matrix_config.to_a).should == [
+        build.expand_matrix_config(build.matrix_config).should == [
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'USE_GIT_REPOS=true']],
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.7'],      [:env, 'USE_GIT_REPOS=true']],
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3-0-stable'], [:env, 'USE_GIT_REPOS=true']],
