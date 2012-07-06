@@ -16,7 +16,7 @@ describe Travis::Notification::Instrument::Task::Webhook do
 
   it 'publishes a payload' do
     event.except(:payload).should == {
-      :message => "travis.task.webhook.run:call",
+      :message => "travis.task.webhook.run:completed",
             :uuid => Travis.uuid
     }
     event[:payload].except(:data).should == {

@@ -18,7 +18,7 @@ describe Travis::Notification::Instrument::Task::Pusher do
 
     it 'publishes a payload' do
       event.except(:payload).should == {
-        :message => "travis.task.pusher.run:call",
+        :message => "travis.task.pusher.run:completed",
                 :uuid => Travis.uuid
       }
       event[:payload].except(:data).should == {
@@ -40,7 +40,7 @@ describe Travis::Notification::Instrument::Task::Pusher do
 
     it 'publishes a payload' do
       event.except(:payload).should == {
-        :message => "travis.task.pusher.run:call",
+        :message => "travis.task.pusher.run:completed",
                 :uuid => Travis.uuid
       }
       event[:payload].except(:data).should == {

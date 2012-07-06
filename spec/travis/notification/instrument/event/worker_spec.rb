@@ -15,7 +15,7 @@ describe Travis::Notification::Instrument::Event::Handler::Worker do
 
   it 'publishes a payload' do
     event.except(:payload).should == {
-      :message => "travis.event.handler.worker.notify:call",
+      :message => "travis.event.handler.worker.notify:completed",
       :uuid => Travis.uuid
     }
     event[:payload].except(:payload).should == {

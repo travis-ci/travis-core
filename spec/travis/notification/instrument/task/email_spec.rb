@@ -16,7 +16,7 @@ describe Travis::Notification::Instrument::Task::Email do
 
   it 'publishes a payload' do
     event.except(:payload).should == {
-      :message => "travis.task.email.run:call",
+      :message => "travis.task.email.run:completed",
             :uuid => Travis.uuid
     }
     event[:payload].except(:data).should == {

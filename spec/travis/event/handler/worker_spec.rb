@@ -43,17 +43,19 @@ describe Travis::Event::Handler::Worker do
 
     before :each do
       handler.stubs(:handle)
+      Travis::Event.stubs(:subscribers).returns [:worker]
     end
 
-    it 'instruments with "travis.event.handler.worker.notify:call"' do
-      ActiveSupport::Notifications.expects(:instrument).with do |event, data|
-        event == 'travis.event.handler.worker.notify:call' && data[:target].is_a?(Travis::Event::Handler::Worker)
+    it 'instruments with "travis.event.handler.worker.notify:*"' do
+      ActiveSupport::Notifications.stubs(:publish)
+      ActiveSupport::Notifications.expects(:publish).with do |event, data|
+        event =~ /travis.event.handler.worker.notify/ && data[:target].is_a?(Travis::Event::Handler::Worker)
       end
-      handler.notify
+      Travis::Event.dispatch('job:test:created', test)
     end
 
-    it 'meters on "travis.event.handler.worker.notify:call"' do
-      Metriks.expects(:timer).with('travis.event.handler.worker.notify:call').returns(stub('timer', :update => true))
+    it 'meters on "travis.event.handler.worker.notify:completed"' do
+      Metriks.expects(:timer).with('travis.event.handler.worker.notify:completed').returns(stub('timer', :update => true))
       handler.notify
     end
   end

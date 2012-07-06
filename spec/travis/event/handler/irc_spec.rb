@@ -23,15 +23,16 @@ describe Travis::Event::Handler::Irc do
   end
 
   describe 'instrumentation' do
-    it 'instruments with "travis.event.handler.irc.notify:call"' do
-      ActiveSupport::Notifications.expects(:instrument).with do |event, data|
-        event == 'travis.event.handler.irc.notify:call' && data[:target].is_a?(Travis::Event::Handler::Irc)
+    it 'instruments with "travis.event.handler.irc.notify"' do
+      ActiveSupport::Notifications.stubs(:publish)
+      ActiveSupport::Notifications.expects(:publish).with do |event, data|
+        event =~ /travis.event.handler.irc.notify/ && data[:target].is_a?(Travis::Event::Handler::Irc)
       end
       Travis::Event.dispatch('build:finished', build)
     end
 
-    it 'meters on "travis.event.handler.irc.notify:call"' do
-      Metriks.expects(:timer).with('travis.event.handler.irc.notify:call').returns(stub('timer', :update => true))
+    it 'meters on "travis.event.handler.irc.notify:completed"' do
+      Metriks.expects(:timer).with('travis.event.handler.irc.notify:completed').returns(stub('timer', :update => true))
       Travis::Event.dispatch('build:finished', build)
     end
   end
