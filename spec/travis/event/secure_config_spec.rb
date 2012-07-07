@@ -15,6 +15,10 @@ describe Travis::Event::SecureConfig do
     secure_config.decrypt(:secure => crypted).should eql('hello world')
   end
 
+  it "decrypts with a string as a key" do
+    secure_config.decrypt('secure' => crypted).should eql('hello world')
+  end
+
   it "decrypts an array with a secure entry and a string" do
     secure_config.decrypt([{ :secure => crypted }, "hola mundo"]).should eql(['hello world', 'hola mundo'])
   end

@@ -37,7 +37,7 @@ module Travis
         def decrypt_element(key, element)
           if element.is_a?(Array) || element.is_a?(Hash)
             decrypt(element)
-          elsif key == :secure
+          elsif secure_key?(key)
             decrypt_value(element)
           else
             element
@@ -63,7 +63,7 @@ module Travis
         end
 
         def secure_key?(key)
-          key && key == :secure
+          key && (key == :secure || key == 'secure')
         end
     end
   end

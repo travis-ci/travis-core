@@ -23,6 +23,7 @@ class Job < ActiveRecord::Base
   end
 
   include Cleanup, Compat
+  include Travis::Model::EnvHelpers
 
   has_one    :log, :class_name => 'Artifact::Log', :conditions => { :type => 'Artifact::Log' }, :dependent => :destroy
   has_many   :artifacts
