@@ -40,4 +40,14 @@ describe Travis::Api::V2::Http::Job do
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
     }
   end
+
+  context 'with encrypted env vars' do
+    let(:test) do
+      stub_test(:obfuscated_config => { 'env' => 'FOO=[secure]' })
+    end
+
+    it 'shows encrypted env vars in human readable way' do
+      data['job']['config']['env'].should == 'FOO=[secure]'
+    end
+  end
 end

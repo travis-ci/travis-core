@@ -30,7 +30,7 @@ module Travis
                 'repository_id' => build.repository_id,
                 'commit_id' => build.commit_id,
                 'number' => build.number,
-                'config' => build.config.stringify_keys,
+                'config' => build.obfuscated_config.stringify_keys,
                 'state' => build.state.to_s,
                 'result' => build.result,
                 'previous_result' => build.previous_result,
