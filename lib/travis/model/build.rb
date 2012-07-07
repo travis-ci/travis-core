@@ -155,6 +155,16 @@ class Build < ActiveRecord::Base
     super(config ? config.deep_symbolize_keys : {})
   end
 
+  def obfuscated_config
+    self.config.dup.tap do |config|
+      if env_group = config[:env]
+        config[:env] = env_group.map do |env_vars|
+          obfuscate_env_vars(env_vars)
+        end
+      end
+    end
+  end
+
   def pull_request?
     request.pull_request?
   end

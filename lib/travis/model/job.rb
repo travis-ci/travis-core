@@ -51,6 +51,18 @@ class Job < ActiveRecord::Base
     started_at && finished_at ? finished_at - started_at : nil
   end
 
+  def config=(config)
+    super(config ? config.deep_symbolize_keys : {})
+  end
+
+  def obfuscated_config
+    self.config.dup.tap do |config|
+      if config[:env]
+        config[:env] = obfuscate_env_vars(config[:env])
+      end
+    end
+  end
+
   def matrix_config?(config)
     config = config.to_hash.symbolize_keys
     Build.matrix_keys_for(config).map do |key|
