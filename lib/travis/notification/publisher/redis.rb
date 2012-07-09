@@ -9,7 +9,7 @@ module Travis
 
         def initialize(options = {})
           @redis = options[:redis] || ::Redis.connect(:url => Travis.config.redis.url)
-          @ttl   = options[:ttl]   || 60
+          @ttl   = options[:ttl]   || 10
         end
 
         def publish(event)
