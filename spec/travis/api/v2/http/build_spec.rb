@@ -38,5 +38,15 @@ describe Travis::Api::V2::Http::Build do
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
     }
   end
+
+  context 'with encrypted env vars' do
+    let(:build) do
+      stub_build(:obfuscated_config => { 'env' => 'FOO=[secure]' })
+    end
+
+    it 'shows encrypted env vars in human readable way' do
+      data['build']['config']['env'].should == 'FOO=[secure]'
+    end
+  end
 end
 

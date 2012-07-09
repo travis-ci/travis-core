@@ -83,4 +83,29 @@ describe Job do
       job.reload.tags.should == "rake_not_bundled"
     end
   end
+
+  describe 'obfuscated config' do
+    it 'leaves regular vars untouched' do
+      job = Job.new(:repository => Factory(:repository))
+      job.config = { :rvm => '1.8.7', :env => 'FOO=foo' }
+
+      job.obfuscated_config.should == {
+        :rvm => '1.8.7',
+        :env => 'FOO=foo'
+      }
+    end
+
+    it 'obfuscates env vars' do
+      job    = Job.new(:repository => Factory(:repository))
+      config = { :rvm => '1.8.7',
+                 :env => [job.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo']
+               }
+      job.config = config
+
+      job.obfuscated_config.should == {
+        :rvm => '1.8.7',
+        :env => 'BAR=[secure] FOO=foo'
+      }
+    end
+  end
 end

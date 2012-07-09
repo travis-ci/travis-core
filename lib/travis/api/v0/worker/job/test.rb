@@ -22,7 +22,8 @@ module Travis
                 'number' => job.number,
                 'commit' => commit.commit,
                 'branch' => commit.branch,
-                'ref' => commit.pull_request? ? commit.ref : nil
+                'ref' => commit.pull_request? ? commit.ref : nil,
+                'pull_request' => !!commit.pull_request?
               }
             end
 

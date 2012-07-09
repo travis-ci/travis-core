@@ -8,15 +8,13 @@ module Travis
     #
     # This is used so people can add encrypted sensitive data to their
     # `.travis.yml` file.
-    class SecureConfig
+    class SecureConfig < Struct.new(:key)
       def self.decrypt(config, key)
         self.new(key).decrypt(config)
       end
 
-      attr_reader :key
-
-      def initialize(key)
-        @key = key
+      def self.encrypt(config, key)
+        self.new(key).encrypt(config)
       end
 
       def decrypt(config)
@@ -24,8 +22,14 @@ module Travis
 
         config.inject(config.class.new) do |result, element|
           key, element = element if result.is_a?(Hash)
-          process(result, key, decrypt_element(key, element))
+          value = process(result, key, decrypt_element(key, element))
+          yield value if block_given?
+          value
         end
+      end
+
+      def encrypt(config)
+        { 'secure' => key.encode(config) }
       end
 
       private
@@ -33,7 +37,7 @@ module Travis
         def decrypt_element(key, element)
           if element.is_a?(Array) || element.is_a?(Hash)
             decrypt(element)
-          elsif key == :secure
+          elsif secure_key?(key)
             decrypt_value(element)
           else
             element
@@ -59,7 +63,7 @@ module Travis
         end
 
         def secure_key?(key)
-          key && key == :secure
+          key && (key == :secure || key == 'secure')
         end
     end
   end

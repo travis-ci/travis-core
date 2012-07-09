@@ -169,6 +169,31 @@ describe Build do
       end
     end
 
+    describe 'obfuscated config' do
+    it 'leaves regular vars untouched' do
+      build = Build.new(:repository => Factory(:repository))
+      build.config = { :rvm => ['1.8.7'], :env => ['FOO=foo'] }
+
+      build.obfuscated_config.should == {
+        :rvm => ['1.8.7'],
+        :env => ['FOO=foo']
+      }
+    end
+
+      it 'obfuscates env vars' do
+        build  = Build.new(:repository => Factory(:repository))
+        config = { :rvm => ['1.8.7'],
+                   :env => [[build.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo'], 'BAR=baz']
+                 }
+        build.config = config
+
+        build.obfuscated_config.should == {
+          :rvm => ['1.8.7'],
+          :env => ['BAR=[secure] FOO=foo', 'BAR=baz']
+        }
+      end
+    end
+
     describe :pending? do
       it 'returns true if the build is finished' do
         build = Factory(:build, :state => :finished)

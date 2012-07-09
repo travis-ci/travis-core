@@ -18,7 +18,7 @@ module Travis
                 'id' => job.id,
                 'repository_id' => job.repository_id,
                 'number' => job.number,
-                'config' => job.config.stringify_keys,
+                'config' => job.obfuscated_config.stringify_keys,
                 'result' => job.result,
                 'started_at' => format_date(job.started_at),
                 'finished_at' => format_date(job.finished_at),
