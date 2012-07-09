@@ -6,7 +6,7 @@ describe Travis::Notification::Instrument::Event::Handler::Webhook do
   let(:build)     { stub_build(:config => { :notifications => { :webhooks => 'http://example.com' } }) }
   let(:handler)   { Travis::Event::Handler::Webhook.new('build:finished', build) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
-  let(:event)     { publisher.events.first }
+  let(:event)     { publisher.events[1] }
 
   before :each do
     Travis::Notification.publishers.replace([publisher])

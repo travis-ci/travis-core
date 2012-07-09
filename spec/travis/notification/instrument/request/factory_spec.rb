@@ -6,7 +6,7 @@ describe Travis::Notification::Instrument::Request::Factory do
   let(:data)      { JSON.parse(GITHUB_PAYLOADS['pull-request']) }
   let(:factory)   { Request::Factory.new('pull_request', data, 'token') }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
-  let(:event)     { publisher.events.first }
+  let(:event)     { publisher.events[1] }
 
   before :each do
     Travis::Notification.publishers.replace([publisher])

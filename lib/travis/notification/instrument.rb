@@ -1,4 +1,5 @@
 require 'mail'
+require 'active_support/core_ext/object/try'
 
 module Travis
   module Notification
@@ -9,6 +10,12 @@ module Travis
       autoload :Task,    'travis/notification/instrument/task'
 
       class << self
+        def method_added(method)
+          return unless event = method.to_s.match(/^(.*)_completed$/).try(:captures).try(:first)
+          define_method("#{event}_received") { send(method) rescue publish } unless method_defined? "#{event}_received"
+          define_method("#{event}_failed") { send(method) rescue publish } unless method_defined? "#{event}_failed"
+        end
+
         def attach_to(const)
           namespace = const.name.underscore.gsub('/', '.')
           # TODO could instead somehow figure out or keep track of instrumented methods?

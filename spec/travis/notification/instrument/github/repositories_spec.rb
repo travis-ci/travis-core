@@ -5,7 +5,7 @@ describe Travis::Notification::Instrument::Github::Repositories do
 
   let(:repos)     { Travis::Github::Repositories.new(user) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
-  let(:event)     { publisher.events.first }
+  let(:event)     { publisher.events[1] }
 
   before :each do
     Travis::Notification.publishers.replace([publisher])

@@ -6,7 +6,7 @@ describe Travis::Notification::Instrument::Task::Email do
   let(:data)      { Travis::Api.data(build, :for => 'event', :version => 'v2') }
   let(:task)      { Travis::Task::Email.new(data, :recipients => %w(svenfuchs@artweb-design.de)) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
-  let(:event)     { publisher.events.first }
+  let(:event)     { publisher.events[1] }
 
   before :each do
     Travis::Notification.publishers.replace([publisher])

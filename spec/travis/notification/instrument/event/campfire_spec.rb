@@ -6,7 +6,7 @@ describe Travis::Notification::Instrument::Event::Handler::Campfire do
   let(:build)     { stub_build(:config => { :notifications => { :campfire => 'campfire_room' } }) }
   let(:handler)   { Travis::Event::Handler::Campfire.new('build:finished', build) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
-  let(:event)     { publisher.events.first }
+  let(:event)     { publisher.events[1] }
 
   before :each do
     Travis::Notification.publishers.replace([publisher])

@@ -4,7 +4,7 @@ describe Travis::Notification::Instrument::Task::Pusher do
   include Travis::Testing::Stubs
 
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
-  let(:event)     { publisher.events.first }
+  let(:event)     { publisher.events[1] }
 
   before :each do
     Travis::Notification.publishers.replace([publisher])

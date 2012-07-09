@@ -7,7 +7,7 @@ describe Travis::Notification::Instrument::Github::Sync::Organizations do
   let(:org)       { { 'id' => 1, 'name' => 'The Org', 'login' => 'the-org'  } }
 
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
-  let(:event)     { publisher.events.first }
+  let(:event)     { publisher.events[1] }
   let(:sync)      { Travis::Github::Sync::Organizations.new(user) }
 
   before :each do
