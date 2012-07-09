@@ -32,7 +32,7 @@ describe Travis::Event::Handler::Webhook do
     end
 
     it 'meters on "travis.event.handler.webhook.notify:completed"' do
-      Metriks.expects(:timer).with('travis.event.handler.webhook.notify:completed').returns(stub('timer', :update => true))
+      Metriks.expects(:timer).with('v1.travis.event.handler.webhook.notify:completed').returns(stub('timer', :update => true))
       Travis::Event.dispatch('build:finished', build)
     end
   end

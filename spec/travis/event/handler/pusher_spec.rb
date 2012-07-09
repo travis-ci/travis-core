@@ -57,7 +57,7 @@ describe Travis::Event::Handler::Pusher do
     end
 
     it 'meters on "travis.event.handler.pusher.notify:completed"' do
-      Metriks.expects(:timer).with('travis.event.handler.pusher.notify:completed').returns(stub('timer', :update => true))
+      Metriks.expects(:timer).with('v1.travis.event.handler.pusher.notify:completed').returns(stub('timer', :update => true))
       Travis::Event.dispatch('build:finished', build)
     end
   end

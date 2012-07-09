@@ -60,7 +60,7 @@ describe Travis::Event::Handler::Github do
     end
 
     it 'meters on "travis.event.handler.github.notify:complete"' do
-      Metriks.expects(:timer).with('travis.event.handler.github.notify:completed').returns(stub('timer', :update => true))
+      Metriks.expects(:timer).with('v1.travis.event.handler.github.notify:completed').returns(stub('timer', :update => true))
       Travis::Event.dispatch('build:finished', build)
     end
   end

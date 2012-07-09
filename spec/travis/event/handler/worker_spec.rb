@@ -55,7 +55,7 @@ describe Travis::Event::Handler::Worker do
     end
 
     it 'meters on "travis.event.handler.worker.notify:completed"' do
-      Metriks.expects(:timer).with('travis.event.handler.worker.notify:completed').returns(stub('timer', :update => true))
+      Metriks.expects(:timer).with('v1.travis.event.handler.worker.notify:completed').returns(stub('timer', :update => true))
       handler.notify
     end
   end

@@ -30,7 +30,7 @@ describe Travis::Event::Handler::Archive do
     end
 
     it 'meters on "travis.event.handler.archive.notify"' do
-      Metriks.expects(:timer).with('travis.event.handler.archive.notify:completed').returns(stub('timer', :update => true))
+      Metriks.expects(:timer).with('v1.travis.event.handler.archive.notify:completed').returns(stub('timer', :update => true))
       Travis::Event.dispatch('build:finished', build)
     end
   end
