@@ -98,6 +98,18 @@ describe Build, 'matrix' do
     yml
     }
 
+    let(:encrypted_and_unencrypted_config) {
+    YAML.load <<-yml
+      script: "rake ci"
+      rvm:
+        - 1.8.7
+      gemfile:
+        - gemfiles/rails-3.0.6
+      env:
+        - ["TO=ENCRYPT", "FOO=BAR"]
+    yml
+    }
+
     let(:single_test_config) {
       YAML.load <<-yml
       script: "rake ci"
@@ -195,16 +207,154 @@ describe Build, 'matrix' do
     }
 
     describe :expand_matrix_config do
+      def encrypt_config_env(config, repository)
+        config['env'] = config.delete('env').map { |env| repository.key.secure.encrypt(env) }
+      end
+
       it 'expands the build matrix configuration (single test config)' do
         build = Factory(:build, :config => single_test_config)
-        build.expand_matrix_config(build.matrix_config.to_a).should == [
+        build.expand_matrix_config(build.matrix_config).should == [
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'], [:env, 'USE_GIT_REPOS=true']],
         ]
       end
 
+      it 'decrypts only the part of env setting that needs to be decrypted' do
+        repository = Factory(:repository)
+
+        # Encrypt first of given values
+        env = encrypted_and_unencrypted_config['env'][0]
+        env[0] = repository.key.secure.encrypt(env[0])
+
+        # Ensure that first env var is encrypted
+        encrypted_and_unencrypted_config['env'][0][0].should have_key('secure')
+
+        build      = Factory(:build, :config => encrypted_and_unencrypted_config, :repository => repository)
+        build.expand_matrix_config(build.matrix_config).should == [
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'], [:env, ["SECURE TO=ENCRYPT", "FOO=BAR"]]]
+        ]
+      end
+
+      it 'decrypts a secure env configuration (single test config)' do
+        repository = Factory(:repository)
+
+        encrypt_config_env(single_test_config, repository)
+
+        build      = Factory(:build, :config => single_test_config, :repository => repository)
+        build.expand_matrix_config(build.matrix_config).should == [
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'], [:env, 'SECURE USE_GIT_REPOS=true']]
+        ]
+      end
+
+      it 'leaves unencrypted env vars for pull_requests (single test config)' do
+        repository = Factory(:repository)
+        request    = Factory(:request)
+
+        single_test_config['env'] << repository.key.secure.encrypt("FOO=bar")
+
+        request.expects(:pull_request?).at_least_once.returns(true)
+        build = Factory(:build, :config => single_test_config,
+                                :repository => repository,
+                                :request => request)
+
+        build.expand_matrix_config(build.matrix_config).should == [
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'], [:env, 'USE_GIT_REPOS=true']]
+        ]
+      end
+
+
+      it 'removes encrypted env vars instead of decrypting them for pull_requests (single test config)' do
+        repository = Factory(:repository)
+        request    = Factory(:request)
+
+        encrypt_config_env(single_test_config, repository)
+
+        request.expects(:pull_request?).at_least_once.returns(true)
+        build = Factory(:build, :config => single_test_config,
+                                :repository => repository,
+                                :request => request)
+
+        build.expand_matrix_config(build.matrix_config).should == [
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6']]
+        ]
+      end
+
+      it 'removes encrypted env vars instead of decrypting them for pull_requests (encrypted and unencrypted values in env)' do
+        repository = Factory(:repository)
+        request    = Factory(:request)
+
+        # Encrypt first of given values
+        env = encrypted_and_unencrypted_config['env'][0]
+        env[0] = repository.key.secure.encrypt(env[0])
+
+        # Ensure that first env var is encrypted
+        encrypted_and_unencrypted_config['env'][0][0].should have_key('secure')
+
+        request.expects(:pull_request?).at_least_once.returns(true)
+        build      = Factory(:build, :config => encrypted_and_unencrypted_config,
+                                     :repository => repository,
+                                     :request => request)
+        build.expand_matrix_config(build.matrix_config).should == [
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'], [:env, "FOO=BAR"]]
+        ]
+      end
+
+      it 'leaves unencrypted env vars for pull_requests (multiple test config)' do
+        repository = Factory(:repository)
+        request    = Factory(:request)
+
+        multiple_tests_config['env'] << repository.key.secure.encrypt("FOO=bar")
+
+        request.expects(:pull_request?).at_least_once.returns(true)
+        build = Factory(:build, :config => multiple_tests_config,
+                                :repository => repository,
+                                :request => request)
+
+        build.expand_matrix_config(build.matrix_config).should == [
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.7'],      [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3-0-stable'], [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-master'],     [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-3.0.7'],      [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-3-0-stable'], [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-master'],     [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-3.0.7'],      [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-3-0-stable'], [:env, 'USE_GIT_REPOS=true']],
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-master'],     [:env, 'USE_GIT_REPOS=true']]
+         ]
+      end
+
+      it 'removes encrypted env vars instead of decrypting them for pull_requests (multiple test config)' do
+        repository = Factory(:repository)
+        request    = Factory(:request)
+
+        encrypt_config_env(multiple_tests_config, repository)
+
+        request.expects(:pull_request?).at_least_once.returns(true)
+        build = Factory(:build, :config => multiple_tests_config,
+                                :repository => repository,
+                                :request => request)
+
+        build.expand_matrix_config(build.matrix_config).should == [
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6']     ],
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.7']     ],
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3-0-stable']],
+          [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-master']    ],
+          [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-3.0.6']     ],
+          [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-3.0.7']     ],
+          [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-3-0-stable']],
+          [[:rvm, '1.9.1'], [:gemfile, 'gemfiles/rails-master']    ],
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-3.0.6']     ],
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-3.0.7']     ],
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-3-0-stable']],
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-master']    ]
+         ]
+      end
+
       it 'expands the build matrix configuration (multiple tests config)' do
         build = Factory(:build, :config => multiple_tests_config)
-        build.expand_matrix_config(build.matrix_config.to_a).should == [
+        build.expand_matrix_config(build.matrix_config).should == [
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.6'],      [:env, 'USE_GIT_REPOS=true']],
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3.0.7'],      [:env, 'USE_GIT_REPOS=true']],
           [[:rvm, '1.8.7'], [:gemfile, 'gemfiles/rails-3-0-stable'], [:env, 'USE_GIT_REPOS=true']],
@@ -331,6 +481,8 @@ describe Build, 'matrix' do
     end
 
     describe :matrix_config do
+      let(:repository) { Factory(:repository) }
+
       it 'with string values' do
         build = Factory(:build, :config => { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-2.3.x', :env => 'FOO=bar' })
         expected = [
@@ -338,6 +490,16 @@ describe Build, 'matrix' do
           [[:gemfile, 'gemfiles/rails-2.3.x']],
           [[:env,     'FOO=bar']]
         ]
+        build.matrix_config.should == expected
+      end
+
+      it 'strings with a secure env' do
+        build = Factory(:build, :repository => repository, :config => { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-2.3.x', :env => repository.key.secure.encrypt('FOO=bar') })
+        expected = [
+                    [[:rvm,     '1.8.7']],
+                    [[:gemfile, 'gemfiles/rails-2.3.x']],
+                    [[:env,     'SECURE FOO=bar']]
+                   ]
         build.matrix_config.should == expected
       end
 
@@ -365,6 +527,16 @@ describe Build, 'matrix' do
           [[:rvm, '1.8.7'], [:rvm, '1.9.2']],
           [[:gemfile, 'gemfiles/rails-2.3.x'], [:gemfile, 'gemfiles/rails-2.3.x']]
         ]
+      end
+
+      it 'with secure and insecure envs' do
+        build = Factory(:build, :repository => repository, :config => { :rvm => '1.8.7', :gemfile => 'gemfiles/rails-2.3.x', :env => [repository.key.secure.encrypt('FOO=bar'), 'FOO=baz'] })
+        expected = [
+                    [[:rvm, '1.8.7'], [:rvm, '1.8.7']],
+                    [[:gemfile, 'gemfiles/rails-2.3.x'], [:gemfile, 'gemfiles/rails-2.3.x']],
+                    [[:env, 'SECURE FOO=bar'], [:env, 'FOO=baz']]
+                   ]
+        build.matrix_config.should == expected
       end
     end
   end

@@ -45,6 +45,7 @@ class Build < ActiveRecord::Base
   autoload :States,      'travis/model/build/states'
 
   include Compat, Matrix, States, Messages
+  include Travis::Model::EnvHelpers
 
   belongs_to :commit
   belongs_to :request
@@ -153,6 +154,16 @@ class Build < ActiveRecord::Base
 
   def config=(config)
     super(config ? config.deep_symbolize_keys : {})
+  end
+
+  def obfuscated_config
+    self.config.dup.tap do |config|
+      if env_group = config[:env]
+        config[:env] = env_group.map do |env_vars|
+          obfuscate_env_vars(env_vars)
+        end
+      end
+    end
   end
 
   def pull_request?

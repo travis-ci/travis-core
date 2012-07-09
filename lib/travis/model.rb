@@ -7,6 +7,7 @@ module Travis
     autoload :Artifact,    'travis/model/artifact'
     autoload :Build,       'travis/model/build'
     autoload :Commit,      'travis/model/commit'
+    autoload :EnvHelpers,  'travis/model/env_helpers'
     autoload :Job,         'travis/model/job'
     autoload :Permission,  'travis/model/permission'
     autoload :Repository,  'travis/model/repository'

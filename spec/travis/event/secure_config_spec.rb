@@ -5,7 +5,7 @@ describe Travis::Event::SecureConfig do
 
   let(:key)            { SslKey.new.tap { |key| key.generate_keys } }
   let(:secure_config)  { Travis::Event::SecureConfig.new(key)}
-  let(:crypted)        { Base64.encode64(key.encrypt('hello world')) }
+  let(:crypted)        { key.encode('hello world') }
 
   it "returns the original value if the config is not a hash" do
     secure_config.decrypt('hello world').should eql('hello world')
@@ -13,6 +13,10 @@ describe Travis::Event::SecureConfig do
 
   it "decrypts a string" do
     secure_config.decrypt(:secure => crypted).should eql('hello world')
+  end
+
+  it "decrypts with a string as a key" do
+    secure_config.decrypt('secure' => crypted).should eql('hello world')
   end
 
   it "decrypts an array with a secure entry and a string" do

@@ -19,7 +19,8 @@ describe Travis::Api::V0::Worker::Job::Test do
           'number' => '2.1',
           'commit' => '62aae5f70ceee39123ef',
           'branch' => 'master',
-          'ref' => nil
+          'ref' => nil,
+          'pull_request' => false
         },
         # TODO legacy. remove this once workers respond to a 'job' key
         'build' => {
@@ -27,7 +28,8 @@ describe Travis::Api::V0::Worker::Job::Test do
           'number' => '2.1',
           'commit' => '62aae5f70ceee39123ef',
           'branch' => 'master',
-          'ref' => nil
+          'ref'    => nil,
+          'pull_request' => false
         },
         'repository' => {
           'id' => 1,
@@ -57,7 +59,8 @@ describe Travis::Api::V0::Worker::Job::Test do
           'number' => '2.1',
           'commit' => '62aae5f70ceee39123ef',
           'branch' => 'master',
-          'ref'    => 'refs/pull/180/merge'
+          'ref'    => 'refs/pull/180/merge',
+          'pull_request' => true
         },
         # TODO legacy. remove this once workers respond to a 'job' key
         'build' => {
@@ -65,7 +68,8 @@ describe Travis::Api::V0::Worker::Job::Test do
           'number' => '2.1',
           'commit' => '62aae5f70ceee39123ef',
           'branch' => 'master',
-          'ref'    => 'refs/pull/180/merge'
+          'ref'    => 'refs/pull/180/merge',
+          'pull_request' => true
         },
         'repository' => {
           'id' => 1,

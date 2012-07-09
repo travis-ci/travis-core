@@ -44,7 +44,7 @@ describe Travis::Task::Irc do
   end
 
   it "one irc notification using notice" do
-    build.config[:notifications] = { :irc => { :use_notice => true } }
+    build.obfuscated_config[:notifications] = { :irc => { :use_notice => true } }
 
     expect_irc 'irc.freenode.net', 1234, 'travis', [
       'NICK travis-ci',
@@ -60,7 +60,7 @@ describe Travis::Task::Irc do
   end
 
   it "one irc notification without joining the channel" do
-    build.config[:notifications] = { :irc => { :skip_join => true } }
+    build.obfuscated_config[:notifications] = { :irc => { :skip_join => true } }
 
     expect_irc 'irc.freenode.net', 1234, 'travis', [
       'NICK travis-ci',
@@ -74,7 +74,7 @@ describe Travis::Task::Irc do
   end
 
   it 'with a custom message template' do
-    build.config[:notifications] = { :irc => { :template => '%{repository} %{commit}' } }
+    build.obfuscated_config[:notifications] = { :irc => { :template => '%{repository} %{commit}' } }
 
     expect_irc 'irc.freenode.net', 1234, 'travis', [
       'NICK travis-ci',
@@ -88,7 +88,7 @@ describe Travis::Task::Irc do
   end
 
   it 'with multiple custom message templates' do
-    build.config[:notifications] = { :irc => { :template => ['%{repository} %{commit}', '%{message}'] } }
+    build.obfuscated_config[:notifications] = { :irc => { :template => ['%{repository} %{commit}', '%{message}'] } }
 
     expect_irc 'irc.freenode.net', 1234, 'travis', [
       'NICK travis-ci',

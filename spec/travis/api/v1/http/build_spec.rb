@@ -43,5 +43,15 @@ describe Travis::Api::V1::Http::Build do
       'allow_failure' => false
     }
   end
+
+  context 'with encrypted env vars' do
+    let(:build) do
+      stub_build(:obfuscated_config => { 'env' => 'FOO=[secure]' })
+    end
+
+    it 'shows encrypted env vars in human readable way' do
+      data['config']['env'].should == 'FOO=[secure]'
+    end
+  end
 end
 

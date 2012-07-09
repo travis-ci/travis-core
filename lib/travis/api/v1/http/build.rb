@@ -20,7 +20,7 @@ module Travis
               'id' => build.id,
               'repository_id' => build.repository_id,
               'number' => build.number,
-              'config' => build.config.stringify_keys,
+              'config' => build.obfuscated_config.stringify_keys,
               'state' => build.state.to_s,
               'result' => build.result,
               'status' => build.result,

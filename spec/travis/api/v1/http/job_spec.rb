@@ -31,4 +31,14 @@ describe Travis::Api::V1::Http::Job do
       'sponsor' => { 'name' => 'Railslove', 'url' => 'http://railslove.de' }
     }
   end
+
+  context 'with encrypted env vars' do
+    let(:test) do
+      stub_test(:obfuscated_config => { 'env' => 'FOO=[secure]' })
+    end
+
+    it 'shows encrypted env vars in human readable way' do
+      data['config']['env'].should == 'FOO=[secure]'
+    end
+  end
 end

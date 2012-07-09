@@ -16,11 +16,9 @@ module Travis
             {
               'id' => job.id,
               'number' => job.number,
-              'config' => job.config.stringify_keys,
+              'config' => job.obfuscated_config.stringify_keys,
               'repository_id' => job.repository_id,
               'build_id' => job.source_id,
-              'number' => job.number,
-              'config' => job.config.stringify_keys,
               'state' => job.state.to_s,
               'result' => job.result,
               'status' => job.result,

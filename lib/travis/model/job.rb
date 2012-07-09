@@ -23,6 +23,7 @@ class Job < ActiveRecord::Base
   end
 
   include Cleanup, Compat
+  include Travis::Model::EnvHelpers
 
   has_one    :log, :class_name => 'Artifact::Log', :conditions => { :type => 'Artifact::Log' }, :dependent => :destroy
   has_many   :artifacts
@@ -49,6 +50,18 @@ class Job < ActiveRecord::Base
 
   def duration
     started_at && finished_at ? finished_at - started_at : nil
+  end
+
+  def config=(config)
+    super(config ? config.deep_symbolize_keys : {})
+  end
+
+  def obfuscated_config
+    self.config.dup.tap do |config|
+      if config[:env]
+        config[:env] = obfuscate_env_vars(config[:env])
+      end
+    end
   end
 
   def matrix_config?(config)
