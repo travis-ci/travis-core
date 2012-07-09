@@ -15,21 +15,23 @@ module Travis
           consts = ancestors.select { |const| const.name[0..5] == 'Travis' }
           methods = consts.map { |const| const.public_instance_methods(false) }.flatten.uniq
 
-          methods.each do |event|
-            ActiveSupport::Notifications.subscribe(/^#{namespace}(\..+)?.#{event}:completed$/) do |message, args|
-              method, event = message.split('.').last.split(':')
-              new(message, args).send(method)
+          methods.each do |method|
+            next unless match = method.to_s.match(/^(.*)_(completed|failed|received)$/)
+            event, status = match.captures
+            ActiveSupport::Notifications.subscribe(/^#{namespace}(\..+)?.#{event}:#{status}/) do |message, args|
+              new(message, status, args).send(method)
             end
           end
         end
       end
 
-      attr_reader :config, :target, :result, :exception, :message
+      attr_reader :config, :target, :result, :exception, :message, :status
 
-      def initialize(message, payload)
+      def initialize(message, status, payload)
         @target, @result, @exception = payload.values_at(:target, :result, :exception)
         @config = { :message => message }
         @config[:exception] = exception if exception
+        @status = status.to_sym
       end
 
       private
