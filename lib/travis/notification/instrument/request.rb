@@ -3,7 +3,7 @@ module Travis
     class Instrument
       module Request
         class Factory < Instrument
-          def request
+          def request_completed
             publish(
               :msg => "#{target.class.name}#request type=#{target.type.inspect}",
               :type => target.type,

@@ -7,7 +7,7 @@ describe Travis::Notification::Instrument::Github::Sync::Repositories do
   let(:repo)      { { 'name' => 'minimal', 'owner' => { 'login' => 'sven' }, 'permissions' => { 'admin' => true } } }
 
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
-  let(:event)     { publisher.events.first }
+  let(:event)     { publisher.events[1] }
   let(:sync)      { Travis::Github::Sync::Repositories.new(user) }
 
   before :each do

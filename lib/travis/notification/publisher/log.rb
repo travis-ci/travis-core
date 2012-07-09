@@ -3,6 +3,7 @@ module Travis
     module Publisher
       class Log
         def publish(event)
+          return if event[:message].end_with? "received"
           level = event.key?(:exception) ? :error : :info
           log(level, event[:payload][:msg])
 

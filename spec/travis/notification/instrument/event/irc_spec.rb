@@ -6,7 +6,7 @@ describe Travis::Notification::Instrument::Event::Handler::Irc do
   let(:build)     { stub_build(:config => { :notifications => { :irc => 'irc.freenode.net:1234#travis' } }) }
   let(:handler)   { Travis::Event::Handler::Irc.new('build:finished', build) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
-  let(:event)     { publisher.events.first }
+  let(:event)     { publisher.events[1] }
 
   before :each do
     Travis::Notification.publishers.replace([publisher])

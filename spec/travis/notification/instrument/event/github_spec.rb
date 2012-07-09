@@ -5,7 +5,7 @@ describe Travis::Notification::Instrument::Event::Handler::Github do
 
   let(:handler)   { Travis::Event::Handler::Github.new('build:finished', build) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
-  let(:event)     { publisher.events.first }
+  let(:event)     { publisher.events[1] }
 
   before :each do
     Travis::Notification.publishers.replace([publisher])

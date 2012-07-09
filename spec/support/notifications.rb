@@ -7,7 +7,8 @@ module Support
     end
 
     def instrument(payload = {})
-      Instrument.new(payload[:message].to_s, payload)
+      status = payload.delete(:status) || :completed
+      Instrument.new(payload[:message].to_s, status, payload)
     end
 
     def publish(payload = {})

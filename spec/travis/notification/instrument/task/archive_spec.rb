@@ -6,7 +6,7 @@ describe Travis::Notification::Instrument::Task::Archive do
   let(:data)      { Travis::Api.data(build, :for => 'archive', :version => 'v1') }
   let(:task)      { Travis::Task::Archive.new(data) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
-  let(:event)     { publisher.events.first }
+  let(:event)     { publisher.events[1] }
 
   before :each do
     Travis::Notification.publishers.replace([publisher])

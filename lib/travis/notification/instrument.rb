@@ -1,4 +1,5 @@
 require 'mail'
+require 'active_support/core_ext/object/try'
 
 module Travis
   module Notification
@@ -9,27 +10,35 @@ module Travis
       autoload :Task,    'travis/notification/instrument/task'
 
       class << self
+        def method_added(method)
+          return unless event = method.to_s.match(/^(.*)_completed$/).try(:captures).try(:first)
+          define_method("#{event}_received") { send(method) rescue publish } unless method_defined? "#{event}_received"
+          define_method("#{event}_failed") { send(method) rescue publish } unless method_defined? "#{event}_failed"
+        end
+
         def attach_to(const)
           namespace = const.name.underscore.gsub('/', '.')
           # TODO could instead somehow figure out or keep track of instrumented methods?
           consts = ancestors.select { |const| const.name[0..5] == 'Travis' }
           methods = consts.map { |const| const.public_instance_methods(false) }.flatten.uniq
 
-          methods.each do |event|
-            ActiveSupport::Notifications.subscribe(/^#{namespace}(\..+)?.#{event}:completed$/) do |message, args|
-              method, event = message.split('.').last.split(':')
-              new(message, args).send(method)
+          methods.each do |method|
+            next unless match = method.to_s.match(/^(.*)_(completed|failed|received)$/)
+            event, status = match.captures
+            ActiveSupport::Notifications.subscribe(/^#{namespace}(\..+)?.#{event}:#{status}/) do |message, args|
+              new(message, status, args).send(method)
             end
           end
         end
       end
 
-      attr_reader :config, :target, :result, :exception, :message
+      attr_reader :config, :target, :result, :exception, :message, :status
 
-      def initialize(message, payload)
+      def initialize(message, status, payload)
         @target, @result, @exception = payload.values_at(:target, :result, :exception)
         @config = { :message => message }
         @config[:exception] = exception if exception
+        @status = status.to_sym
       end
 
       private

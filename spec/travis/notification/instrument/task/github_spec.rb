@@ -6,7 +6,7 @@ describe Travis::Notification::Instrument::Task::Github do
   let(:data)      { Travis::Api.data(build, :for => 'event', :version => 'v2') }
   let(:task)      { Travis::Task::Github.new(data, :url => 'https://api.github.com/repos/svenfuchs/minimal/issues/1/comments') }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
-  let(:event)     { publisher.events.first }
+  let(:event)     { publisher.events[1] }
 
   before :each do
     Travis::Notification.publishers.replace([publisher])

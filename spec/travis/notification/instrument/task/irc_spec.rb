@@ -6,7 +6,7 @@ describe Travis::Notification::Instrument::Task::Irc do
   let(:data)      { Travis::Api.data(build, :for => 'event', :version => 'v2') }
   let(:task)      { Travis::Task::Irc.new(data, :channels => { ['irc.freenode.net', 1234] => ['travis'] }) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
-  let(:event)     { publisher.events.first }
+  let(:event)     { publisher.events[1] }
 
   before :each do
     # TODO ...

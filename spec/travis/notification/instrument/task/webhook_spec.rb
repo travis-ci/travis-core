@@ -6,7 +6,7 @@ describe Travis::Notification::Instrument::Task::Webhook do
   let(:data)      { Travis::Api.data(build, :for => 'webhook', :type => 'build/finished', :version => 'v1') }
   let(:task)      { Travis::Task::Webhook.new(data, :targets => 'http://example.com') }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
-  let(:event)     { publisher.events.first }
+  let(:event)     { publisher.events[1] }
 
   before :each do
     Travis::Notification.publishers.replace([publisher])

@@ -3,7 +3,7 @@ module Travis
     class Instrument
       class Task < Instrument
         class Archive < Task
-          def run
+          def run_completed
             publish(
               :msg => "#{task.class.name}#run for #<Build id=#{data['id']}>",
               :repository => data['repository']['slug'],
@@ -15,7 +15,7 @@ module Travis
         end
 
         class Campfire < Task
-          def run
+          def run_completed
             publish(
               :msg => "#{task.class.name}#run for #<Build id=#{data['build']['id']}>",
               :repository => data['repository']['slug'],
@@ -29,7 +29,7 @@ module Travis
         end
 
         class Email < Task
-          def run
+          def run_completed
             publish(
               :msg => "#{task.class.name}#run for #<Build id=#{data['build']['id']}>",
               :repository => data['repository']['slug'],
@@ -43,7 +43,7 @@ module Travis
         end
 
         class Github < Task
-          def run
+          def run_completed
             publish(
               :msg => "#{task.class.name}#run for #<Build id=#{data['build']['id']}>",
               :repository => data['repository']['slug'],
@@ -57,7 +57,7 @@ module Travis
         end
 
         class Irc < Task
-          def run
+          def run_completed
             publish(
               :msg => "#{task.class.name}#run for #<Build id=#{data['build']['id']}>",
               :repository => data['repository']['slug'],
@@ -71,7 +71,7 @@ module Travis
         end
 
         class Pusher < Task
-          def run
+          def run_completed
             publish(
               :msg => "#{task.class.name}#run for #<#{type.camelize} id=#{id}>",
               # :repository => data['repository']['slug'],
@@ -95,7 +95,7 @@ module Travis
         end
 
         class Webhook < Task
-          def run
+          def run_completed
             publish(
               :msg => "#{task.class.name}#run for #<Build id=#{data['id']}>",
               :repository => data['repository'].values_at(*%w(owner_name name)).join('/'),
@@ -109,13 +109,13 @@ module Travis
 
         attr_reader :task, :data
 
-        def initialize(message, payload)
+        def initialize(message, status, payload)
           @task = payload[:target]
           @data = task.data
           super
         end
 
-        def run
+        def run_completed
           publish
         end
 
