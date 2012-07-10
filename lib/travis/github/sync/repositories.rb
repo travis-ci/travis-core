@@ -24,7 +24,7 @@ module Travis
           def fetch
             Travis::Github.repositories_for(user)
           end
-          instrument :fetch
+          instrument :fetch, :level => :debug
 
         Travis::Notification::Instrument::Github::Sync::Repositories.attach_to(self)
       end

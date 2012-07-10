@@ -25,7 +25,7 @@ module Travis
       def fetch
         with_github { filter(data) }
       end
-      instrument :fetch, :level => :debug # TODO add debug level (e.g. exclude metrics)
+      instrument :fetch, :level => :debug
 
       def resources
         ['user/repos'] + user.organizations.map { |org| "orgs/#{org.login}/repos" }

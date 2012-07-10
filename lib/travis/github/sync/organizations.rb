@@ -27,9 +27,9 @@ module Travis
         private
 
           def fetch
-            GH['user/orgs'].map { |data| data } # TODO would to_a work?
+            GH['user/orgs'].to_a
           end
-          instrument :fetch
+          instrument :fetch, :level => :debug
 
         Travis::Notification::Instrument::Github::Sync::Organizations.attach_to(self)
       end
