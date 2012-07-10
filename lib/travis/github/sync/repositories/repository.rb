@@ -14,6 +14,7 @@ module Travis
             repo = find_or_create
             update!(repo, data)
             permit!(repo) unless permitted?(repo)
+            repo
           end
 
           private

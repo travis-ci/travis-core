@@ -13,13 +13,18 @@ module Travis
         end
 
         def run
-          user.authenticated_on_github do
-            Travis::Github.repositories_for(user).each do |data|
-              Repository.new(user, data).run
-            end
+          fetch.map do |data|
+            Repository.new(user, data).run
           end
         end
         instrument :run
+
+        private
+
+          def fetch
+            Travis::Github.repositories_for(user)
+          end
+          instrument :fetch
 
         Travis::Notification::Instrument::Github::Sync::Repositories.attach_to(self)
       end

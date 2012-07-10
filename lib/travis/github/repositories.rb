@@ -23,11 +23,17 @@ module Travis
       end
 
       def fetch
-        repos = with_github { fetch_resources }
-        repos = repos.map(&:to_a).flatten.compact
-        filter(repos)
+        with_github { filter(data) }
       end
-      instrument :fetch
+      instrument :fetch, :level => :debug # TODO add debug level (e.g. exclude metrics)
+
+      def resources
+        ['user/repos'] + user.organizations.map { |org| "orgs/#{org.login}/repos" }
+      end
+
+      def data
+        @data ||= resources.map { |resource| fetch_resource(resource) }.map(&:to_a).flatten.compact
+      end
 
       private
 
@@ -42,20 +48,10 @@ module Travis
           result
         end
 
-        def fetch_resources
-          resources_for(user).map do |resource|
-            fetch_resource(resource)
-          end
-        end
-
         def fetch_resource(resource)
           GH[resource] # should be: ?type=#{self.class.type}
         rescue Faraday::Error::ResourceNotFound => e
           log_exception(e)
-        end
-
-        def resources_for(user)
-          ['user/repos'] + user.organizations.map { |org| "orgs/#{org.login}/repos" }
         end
 
         # we have to filter these ourselves because the github api is broken for this
