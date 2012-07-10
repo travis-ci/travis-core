@@ -20,7 +20,7 @@ class Build
   module Matrix
     autoload :Config, 'travis/model/build/matrix/config'
     extend ActiveSupport::Concern
-    ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl]
+    ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl, :compiler, :go]
 
 
     module ClassMethods
