@@ -31,5 +31,4 @@ group :test do
   gem 'database_cleaner', '~> 0.7.1'
   gem 'mocha',            '~> 0.10.0'
   gem 'webmock',          '~> 1.8.0'
-  gem 'debugger'
 end
