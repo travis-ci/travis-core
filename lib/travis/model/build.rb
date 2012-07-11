@@ -160,7 +160,7 @@ class Build < ActiveRecord::Base
     self.config.dup.tap do |config|
       if env_group = config[:env]
         config[:env] = env_group.map do |env_vars|
-          obfuscate_env_vars(env_vars)
+          obfuscate_env_vars(env_vars).join(' ')
         end
       end
     end

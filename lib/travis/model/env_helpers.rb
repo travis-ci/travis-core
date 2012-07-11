@@ -6,7 +6,7 @@ module Travis
           repository.key.secure.decrypt(env) do |decrypted|
             Travis::Helpers.obfuscate_env_vars(decrypted)
           end
-        end.join(' ')
+        end
       end
     end
   end

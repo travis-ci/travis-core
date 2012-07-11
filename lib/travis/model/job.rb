@@ -60,7 +60,9 @@ class Job < ActiveRecord::Base
   def obfuscated_config
     self.config.dup.tap do |config|
       if config[:env]
-        config[:env] = obfuscate_env_vars(config[:env])
+        config[:env] = process_env_vars(config[:env]) do |env|
+          obfuscate_env_vars(env)
+        end.join(' ')
       end
     end
   end
@@ -68,7 +70,9 @@ class Job < ActiveRecord::Base
   def decrypted_config
     self.config.dup.tap do |config|
       if config[:env]
-        config[:env] = process_env_vars(config[:env])
+        config[:env] = process_env_vars(config[:env]) do |env|
+          decrypt_env_vars(env)
+        end
       end
     end
   end
@@ -82,16 +86,16 @@ class Job < ActiveRecord::Base
 
   private
 
-    def process_env_vars(env_groups)
-      env_groups = [env_groups] unless env_groups.is_a? Array
+    def process_env_vars(env)
+      env = [env] unless env.is_a? Array
 
-      env_groups = if pull_request?
-        remove_encrypted_env_vars(env_groups)
+      env = if pull_request?
+        remove_encrypted_env_vars(env)
       else
-        decrypt_env(env_groups)
+        yield(env)
       end
 
-      env_groups.compact.presence
+      env.compact.presence
     end
 
     def remove_encrypted_env_vars(env)
@@ -100,7 +104,7 @@ class Job < ActiveRecord::Base
       end
     end
 
-    def decrypt_env(env)
+    def decrypt_env_vars(env)
       env.map do |var|
         decrypt(var) do |var|
           var.insert(0, 'SECURE ') unless var.include?('SECURE ')

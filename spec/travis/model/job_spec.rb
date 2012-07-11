@@ -87,6 +87,7 @@ describe Job do
   describe 'obfuscated config' do
     it 'leaves regular vars untouched' do
       job = Job.new(:repository => Factory(:repository))
+      job.expects(:pull_request?).at_least_once.returns(false)
       job.config = { :rvm => '1.8.7', :env => 'FOO=foo' }
 
       job.obfuscated_config.should == {
@@ -96,7 +97,8 @@ describe Job do
     end
 
     it 'obfuscates env vars' do
-      job    = Job.new(:repository => Factory(:repository))
+      job = Job.new(:repository => Factory(:repository))
+      job.expects(:pull_request?).at_least_once.returns(false)
       config = { :rvm => '1.8.7',
                  :env => [job.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo']
                }
@@ -106,6 +108,26 @@ describe Job do
         :rvm => '1.8.7',
         :env => 'BAR=[secure] FOO=foo'
       }
+    end
+
+    context 'when job is from a pull request' do
+      let :job do
+        job = Job.new(:repository => Factory(:repository))
+        job.expects(:pull_request?).returns(true).at_least_once
+        job
+      end
+
+      it 'removes secure env vars' do
+        config = { :rvm => '1.8.7',
+                   :env => [job.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo']
+                 }
+        job.config = config
+
+        job.obfuscated_config.should == {
+          :rvm => '1.8.7',
+          :env => 'FOO=foo'
+        }
+      end
     end
   end
 
@@ -123,11 +145,12 @@ describe Job do
   describe 'decrypted config' do
     it 'leaves regular vars untouched' do
       job = Job.new(:repository => Factory(:repository))
+      job.expects(:pull_request?).returns(false).at_least_once
       job.config = { :rvm => '1.8.7', :env => 'FOO=foo' }
 
-      job.obfuscated_config.should == {
+      job.decrypted_config.should == {
         :rvm => '1.8.7',
-        :env => 'FOO=foo'
+        :env => ['FOO=foo']
       }
     end
 
