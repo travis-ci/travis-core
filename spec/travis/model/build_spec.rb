@@ -170,15 +170,15 @@ describe Build do
     end
 
     describe 'obfuscated config' do
-    it 'leaves regular vars untouched' do
-      build = Build.new(:repository => Factory(:repository))
-      build.config = { :rvm => ['1.8.7'], :env => ['FOO=foo'] }
+      it 'leaves regular vars untouched' do
+        build = Build.new(:repository => Factory(:repository))
+        build.config = { :rvm => ['1.8.7'], :env => ['FOO=foo'] }
 
-      build.obfuscated_config.should == {
-        :rvm => ['1.8.7'],
-        :env => ['FOO=foo']
-      }
-    end
+        build.obfuscated_config.should == {
+          :rvm => ['1.8.7'],
+          :env => ['FOO=foo']
+        }
+      end
 
       it 'obfuscates env vars' do
         build  = Build.new(:repository => Factory(:repository))

@@ -37,6 +37,7 @@ class Job < ActiveRecord::Base
   serialize :config
 
   delegate :request_id, :to => :source # TODO denormalize
+  delegate :pull_request?, :to => :commit
 
   after_initialize do
     self.config = {} if config.nil?
@@ -59,7 +60,19 @@ class Job < ActiveRecord::Base
   def obfuscated_config
     self.config.dup.tap do |config|
       if config[:env]
-        config[:env] = obfuscate_env_vars(config[:env])
+        config[:env] = process_env_vars(config[:env]) do |env|
+          obfuscate_env_vars(env)
+        end.join(' ')
+      end
+    end
+  end
+
+  def decrypted_config
+    self.config.dup.tap do |config|
+      if config[:env]
+        config[:env] = process_env_vars(config[:env]) do |env|
+          decrypt_env_vars(env)
+        end
       end
     end
   end
@@ -70,4 +83,36 @@ class Job < ActiveRecord::Base
       self.config[key.to_sym] == config[key] || commit.branch == config[key]
     end.inject(:&)
   end
+
+  private
+
+    def process_env_vars(env)
+      env = [env] unless env.is_a? Array
+
+      env = if pull_request?
+        remove_encrypted_env_vars(env)
+      else
+        yield(env)
+      end
+
+      env.compact.presence
+    end
+
+    def remove_encrypted_env_vars(env)
+      env.reject do |var|
+        var.is_a?(Hash) && var.has_key?(:secure)
+      end
+    end
+
+    def decrypt_env_vars(env)
+      env.map do |var|
+        decrypt(var) do |var|
+          var.insert(0, 'SECURE ') unless var.include?('SECURE ')
+        end
+      end
+    end
+
+    def decrypt(v, &block)
+      repository.key.secure.decrypt(v, &block)
+    end
 end
