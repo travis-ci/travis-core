@@ -5,6 +5,7 @@ module Travis
   module Notification
     module Publisher
       class Redis
+        extend Exceptions::Handling
         attr_accessor :redis, :ttl
 
         def initialize(options = {})
@@ -25,6 +26,8 @@ module Travis
             end
           end
         end
+
+        rescues :publish, :from => Exception
       end
     end
   end
