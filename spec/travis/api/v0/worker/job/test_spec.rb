@@ -40,7 +40,8 @@ describe Travis::Api::V0::Worker::Job::Test do
           'rvm' => '1.8.7',
           'gemfile' => 'test/Gemfile.rails-2.3.x'
         },
-        'queue' => 'builds.common'
+        'queue' => 'builds.common',
+        'uuid' => Travis.uuid
       }
     end
   end
@@ -80,7 +81,8 @@ describe Travis::Api::V0::Worker::Job::Test do
           'rvm' => '1.8.7',
           'gemfile' => 'test/Gemfile.rails-2.3.x'
         },
-        'queue' => 'builds.common'
+        'queue' => 'builds.common',
+        'uuid' => Travis.uuid
       }
     end
   end

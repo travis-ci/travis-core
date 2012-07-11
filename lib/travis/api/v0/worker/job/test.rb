@@ -12,7 +12,8 @@ module Travis
                 'job' => job_data,
                 'repository' => repository_data,
                 'config' => job.config,
-                'queue' => job.queue
+                'queue' => job.queue,
+                'uuid' => Travis.uuid
               }
             end
 
