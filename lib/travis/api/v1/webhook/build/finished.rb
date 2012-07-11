@@ -21,6 +21,7 @@ module Travis
                 'started_at' => format_date(build.started_at),
                 'finished_at' => format_date(build.finished_at),
                 'duration' => build.duration,
+                'build_url' => [Travis.config.http_host, repository.slug, 'builds', build.id].join('/'),
                 'commit' => commit.commit,
                 'branch' => commit.branch,
                 'message' => commit.message,
