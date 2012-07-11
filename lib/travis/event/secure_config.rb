@@ -23,8 +23,7 @@ module Travis
         config.inject(config.class.new) do |result, element|
           key, element = element if result.is_a?(Hash)
           value = process(result, key, decrypt_element(key, element))
-          yield value if block_given?
-          value
+          block_given? ? yield(value) : value
         end
       end
 

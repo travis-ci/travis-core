@@ -37,6 +37,7 @@ class Job < ActiveRecord::Base
   serialize :config
 
   delegate :request_id, :to => :source # TODO denormalize
+  delegate :pull_request?, :to => :commit
 
   after_initialize do
     self.config = {} if config.nil?
@@ -64,10 +65,50 @@ class Job < ActiveRecord::Base
     end
   end
 
+  def decrypted_config
+    self.config.dup.tap do |config|
+      if config[:env]
+        config[:env] = process_env_vars(config[:env])
+      end
+    end
+  end
+
   def matrix_config?(config)
     config = config.to_hash.symbolize_keys
     Build.matrix_keys_for(config).map do |key|
       self.config[key.to_sym] == config[key] || commit.branch == config[key]
     end.inject(:&)
   end
+
+  private
+
+    def process_env_vars(env_groups)
+      env_groups = [env_groups] unless env_groups.is_a? Array
+
+      env_groups = if pull_request?
+        remove_encrypted_env_vars(env_groups)
+      else
+        decrypt_env(env_groups)
+      end
+
+      env_groups.compact.presence
+    end
+
+    def remove_encrypted_env_vars(env)
+      env.reject do |var|
+        var.is_a?(Hash) && var.has_key?(:secure)
+      end
+    end
+
+    def decrypt_env(env)
+      env.map do |var|
+        decrypt(var) do |var|
+          var.insert(0, 'SECURE ') unless var.include?('SECURE ')
+        end
+      end
+    end
+
+    def decrypt(v, &block)
+      repository.key.secure.decrypt(v, &block)
+    end
 end

@@ -115,6 +115,7 @@ module Travis
           :log => log,
           :number => '2.1',
           :config => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
+          :decrypted_config => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
           :obfuscated_config => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
           :result => 0,
           :state => :finished,

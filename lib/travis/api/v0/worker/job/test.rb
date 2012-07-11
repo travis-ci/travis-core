@@ -11,7 +11,7 @@ module Travis
                 'build' => job_data,
                 'job' => job_data,
                 'repository' => repository_data,
-                'config' => job.config,
+                'config' => job.decrypted_config,
                 'queue' => job.queue
               }
             end

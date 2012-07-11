@@ -108,4 +108,91 @@ describe Job do
       }
     end
   end
+
+  describe '#pull_request?' do
+    it 'is delegated to commit' do
+      commit = Commit.new
+      commit.expects(:pull_request?).returns(true)
+
+      job = Job.new
+      job.commit = commit
+      job.pull_request?.should be_true
+    end
+  end
+
+  describe 'decrypted config' do
+    it 'leaves regular vars untouched' do
+      job = Job.new(:repository => Factory(:repository))
+      job.config = { :rvm => '1.8.7', :env => 'FOO=foo' }
+
+      job.obfuscated_config.should == {
+        :rvm => '1.8.7',
+        :env => 'FOO=foo'
+      }
+    end
+
+    context 'when job is from a pull request' do
+      let :job do
+        job = Job.new(:repository => Factory(:repository))
+        job.expects(:pull_request?).returns(true).at_least_once
+        job
+      end
+
+      it 'removes secure env vars' do
+        config = { :rvm => '1.8.7',
+                   :env => [job.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo']
+                 }
+        job.config = config
+
+        job.decrypted_config.should == {
+          :rvm => '1.8.7',
+          :env => ['FOO=foo']
+        }
+      end
+
+      it 'removes only secured env vars' do
+        config = { :rvm => '1.8.7',
+                   :env => [job.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo']
+                 }
+        job.config = config
+
+        job.decrypted_config.should == {
+          :rvm => '1.8.7',
+          :env => ['FOO=foo']
+        }
+      end
+    end
+
+    context 'when job is *not* from pull request' do
+      let :job do
+        job = Job.new(:repository => Factory(:repository))
+        job.expects(:pull_request?).returns(false).at_least_once
+        job
+      end
+
+      it 'decrypts env vars' do
+        config = { :rvm => '1.8.7',
+                   :env => job.repository.key.secure.encrypt('BAR=barbaz')
+                 }
+        job.config = config
+
+        job.decrypted_config.should == {
+          :rvm => '1.8.7',
+          :env => ['SECURE BAR=barbaz']
+        }
+      end
+
+      it 'decrypts only secured env vars' do
+        config = { :rvm => '1.8.7',
+                   :env => [job.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo']
+                 }
+        job.config = config
+
+        job.decrypted_config.should == {
+          :rvm => '1.8.7',
+          :env => ['SECURE BAR=barbaz', 'FOO=foo']
+        }
+      end
+    end
+  end
 end
