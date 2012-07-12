@@ -1,5 +1,6 @@
 require 'mail'
 require 'active_support/core_ext/object/try'
+require 'thread'
 
 module Travis
   module Notification
@@ -10,6 +11,8 @@ module Travis
       autoload :Task,    'travis/notification/instrument/task'
 
       class << self
+        extend Travis::Async
+
         def method_added(method)
           return unless event = method.to_s.match(/^(.*)_completed$/).try(:captures).try(:first)
           define_method("#{event}_received") { send(method) rescue publish } unless method_defined? "#{event}_received"
@@ -26,10 +29,16 @@ module Travis
             next unless match = method.to_s.match(/^(.*)_(completed|failed|received)$/)
             event, status = match.captures
             ActiveSupport::Notifications.subscribe(/^#{namespace}(\..+)?.#{event}:#{status}/) do |message, args|
-              new(message, status, args).send(method)
+              publish(message, status, args, method)
             end
           end
         end
+
+        def publish(message, status, args, method)
+          new(message, status, args).send(method)
+        end
+
+        async :publish, :queue => :instrumentation
       end
 
       attr_reader :config, :target, :result, :exception, :message, :status
