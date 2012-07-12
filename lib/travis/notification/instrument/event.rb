@@ -31,6 +31,10 @@ module Travis
           end
 
           class Pusher < Handler
+          def notify_completed
+            super unless handler.event == 'job:test:log'
+          end
+
           end
 
           class Webhook < Handler
