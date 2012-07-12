@@ -66,7 +66,7 @@ module Travis
                 'log_id' => job.log.id,
                 'state' => job.state.to_s,
                 'number' => job.number,
-                'config' => job.config.stringify_keys,
+                'config' => job.obfuscated_config.stringify_keys,
                 'result' => job.result,
                 'started_at' => format_date(job.started_at),
                 'finished_at' => format_date(job.finished_at),

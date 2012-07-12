@@ -15,7 +15,7 @@ module Travis
                 'id' => build.id,
                 'repository_id' => build.repository_id,
                 'number' => build.number,
-                'config' => build.config.stringify_keys,
+                'config' => build.obfuscated_config.stringify_keys,
                 'result' => nil,
                 'started_at' => format_date(build.started_at),
                 'commit' => commit.commit,

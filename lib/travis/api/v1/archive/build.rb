@@ -19,7 +19,7 @@ module Travis
             {
               'id' => build.id,
               'number' => build.number,
-              'config' => build.config.stringify_keys,
+              'config' => build.obfuscated_config.stringify_keys,
               'result' => 0,
               'started_at' => format_date(build.started_at),
               'finished_at' => format_date(build.finished_at),

@@ -13,7 +13,7 @@ module Travis
                 'id' => build.id,
                 'repository' => repository_data,
                 'number' => build.number,
-                'config' => build.config.stringify_keys,
+                'config' => build.obfuscated_config.stringify_keys,
                 'status' => build.result,
                 'result' => build.result,
                 'status_message' => build.result_message,

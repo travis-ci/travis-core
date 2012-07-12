@@ -21,7 +21,7 @@ module Travis
                   'parent_id' => job.source_id,
                   'number' => job.number,
                   'state' => job.state.to_s,
-                  'config' => job.config,
+                  'config' => job.obfuscated_config,
                   'status' => job.result,
                   'result' => job.result,
                   'commit' => commit.commit,

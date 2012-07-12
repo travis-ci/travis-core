@@ -20,7 +20,7 @@ module Travis
                   'repository_id' => job.repository_id,
                   'parent_id' => job.source_id,
                   'number' => job.number,
-                  'config' => job.config,
+                  'config' => job.obfuscated_config,
                   'commit' => commit.commit,
                   'branch' => commit.branch,
                   'message' => commit.message,
