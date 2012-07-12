@@ -85,6 +85,16 @@ describe Job do
   end
 
   describe 'obfuscated config' do
+    it 'handles nil env' do
+      job = Job.new(:repository => Factory(:repository))
+      job.config = { :rvm => '1.8.7', :env => nil }
+
+      job.obfuscated_config.should == {
+        :rvm => '1.8.7',
+        :env => nil
+      }
+    end
+
     it 'leaves regular vars untouched' do
       job = Job.new(:repository => Factory(:repository))
       job.expects(:pull_request?).at_least_once.returns(false)
@@ -143,6 +153,16 @@ describe Job do
   end
 
   describe 'decrypted config' do
+    it 'handles nil env' do
+      job = Job.new(:repository => Factory(:repository))
+      job.config = { :rvm => '1.8.7', :env => nil }
+
+      job.decrypted_config.should == {
+        :rvm => '1.8.7',
+        :env => nil
+      }
+    end
+
     it 'leaves regular vars untouched' do
       job = Job.new(:repository => Factory(:repository))
       job.expects(:pull_request?).returns(false).at_least_once
