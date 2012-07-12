@@ -98,18 +98,6 @@ describe Build, 'matrix' do
     yml
     }
 
-    let(:encrypted_and_unencrypted_config) {
-    YAML.load <<-yml
-      script: "rake ci"
-      rvm:
-        - 1.8.7
-      gemfile:
-        - gemfiles/rails-3.0.6
-      env:
-        - ["TO=ENCRYPT", "FOO=BAR"]
-    yml
-    }
-
     let(:single_test_config) {
       YAML.load <<-yml
       script: "rake ci"
