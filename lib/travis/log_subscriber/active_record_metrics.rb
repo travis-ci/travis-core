@@ -2,8 +2,8 @@ module Travis
   module LogSubscriber
     class ActiveRecordMetrics < ActiveSupport::LogSubscriber
       def sql(event)
-        return if 'SCHEMA' == event[:name]
-        name, sql, duration = event[:name], event[:sql], event.duration
+        return if 'SCHEMA' == event.payload[:name]
+        name, sql, duration = event.payload[:name], event.payload[:sql], event.duration
 
         metric_name =
           if name.present?
