@@ -27,7 +27,16 @@ class User < ActiveRecord::Base
   end
 
   def sync
-    Travis::Github::Sync::User.new(self).run
+    syncing { Travis::Github::Sync::User.new(self).run }
+  end
+
+  def syncing
+    update_attribute :in_sync, true
+    result = yield
+    update_attribute :synced_at, Time.now
+    result
+  ensure
+    update_attribute :in_sync, false
   end
 
   def organization_ids

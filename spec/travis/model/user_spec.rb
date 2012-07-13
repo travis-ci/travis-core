@@ -138,4 +138,22 @@ describe User do
       service_hooks.any? { |s| s.name == 'other-repo' }.should be_false
     end
   end
+
+  describe 'syncing' do
+    it 'returns the block value' do
+      user.syncing { 42 }.should == 42
+    end
+
+    it 'sets in_sync?' do
+      user.should_not be_in_sync
+      user.syncing { user.should be_in_sync }
+      user.should_not be_in_sync
+    end
+
+    it 'sets synced_at' do
+      time = Time.now
+      user.syncing { }
+      user.synced_at.should >= time
+    end
+  end
 end
