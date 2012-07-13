@@ -1,40 +1,51 @@
 require 'spec_helper'
 
 describe Travis::Github::Sync::Repositories do
-  include Support::ActiveRecord
+  include Travis::Testing::Stubs
 
-  let(:user) { Factory(:user, :github_oauth_token => 'token' ) }
-  let(:repo) { { 'name' => 'minimal', 'owner' => { 'login' => 'sven' }, 'permissions' => { 'admin' => true } } }
+  let(:user) { stub_user(:organizations => [org], :github_oauth_token => 'token') }
+  let(:org)  { stub('org', :login => 'the-org') }
+  let(:repo) { stub('repo', :run => stub_repository) }
+  let(:sync) { Travis::Github::Sync::Repositories.new(user) }
 
-  subject { lambda { Travis::Github::Sync::Repositories.new(user).run } }
+  let(:repos) { [
+    { 'name' => 'public',  'owner' => { 'login' => 'sven' }, 'permissions' => { 'admin' => true }, 'private' => false },
+    { 'name' => 'private', 'owner' => { 'login' => 'sven' }, 'permissions' => { 'admin' => true }, 'private' => true }
+  ]}
 
   before :each do
-    Travis::Github.stubs(:repositories_for).returns([repo])
+    GH.stubs(:[]).returns(repos)
+    Travis::Github::Sync::Repository.stubs(:new).returns(repo)
+    @type = Travis::Github::Sync::Repositories.type
   end
 
-  it 'fetches repos from the github api' do
-    Travis::Github.expects(:repositories_for).with(user).returns([repo])
-    subject.call
+  after :each do
+    Travis::Github::Sync::Repositories.type = @type
   end
 
-  it 'creates a new repository per record if not yet present' do
-    subject.call
-    Repository.find_by_owner_name_and_name('sven', 'minimal').should be_present
+  it "fetches the user's repositories" do
+    GH.expects(:[]).with('user/repos') # should be: ?type=public
+    sync.run
   end
 
-  it 'does not create a new repository if one exists' do
-    Repository.create!(:owner_name => 'sven', :name => 'minimal')
-    subject.should_not change(Repository, :count)
+  it "fetches the user's orgs' repositories" do
+    GH.expects(:[]).with('orgs/the-org/repos') # should be: ?type=public
+    sync.run
   end
 
-  it 'creates a new permission for the user/repo if none exists' do
-    subject.should change(Permission, :count).by(1)
-  end
+  describe 'given type is set to public' do
+    before :each do
+      Travis::Github::Sync::Repositories.type = 'public'
+    end
 
-  it 'does not create a new permission for the user/repo if one exists' do
-    repo = Repository.create(:owner_name => 'sven', :name => 'minimal')
-    user.repositories << repo
-    subject.should_not change(Permission, :count)
+    it 'synchronizes each of the public repositories' do
+      Travis::Github::Sync::Repository.expects(:new).with(user, repos.first).once.returns(repo)
+      sync.run
+    end
+
+    it 'does not synchronize private repositories' do
+      Travis::Github::Sync::Repository.expects(:new).with(user, repos.last).never
+      sync.run
+    end
   end
 end
-

@@ -12,17 +12,6 @@ module Travis
           end
         end
 
-        class Repositories < Github
-          def fetch_completed
-            publish(
-              :msg => %(#{target.class.name}#fetch for #<User id=#{target.user.id} login="#{target.user.login}">),
-              :resources => target.resources,
-              :data => target.data,
-              :result => result
-            )
-          end
-        end
-
         module Sync
           class Organizations < Github
             def run_completed
@@ -44,6 +33,8 @@ module Travis
             def run_completed
               publish(
                 :msg => %(#{target.class.name}#run for #<User id=#{target.user.id} login="#{target.user.login}">),
+                :resources => target.resources,
+                :data => target.data,
                 :result => result.map { |repo| { :id => repo.id, :owner => repo.owner_name, :name => repo.name } }
               )
             end

@@ -4,7 +4,7 @@ describe Travis::Notification::Instrument::Github::Sync::Repositories do
   include Support::ActiveRecord
 
   let(:user)      { Factory(:user, :login => 'sven', :github_oauth_token => '123456') }
-  let(:data)      { [{ 'name' => 'minimal', 'owner' => { 'login' => 'sven' }, 'permissions' => { 'admin' => true } }] }
+  let(:data)      { [{ 'name' => 'minimal', 'owner' => { 'login' => 'sven' }, 'permissions' => { 'admin' => true }, 'private' => false }] }
 
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:events)    { publisher.events }
@@ -12,7 +12,7 @@ describe Travis::Notification::Instrument::Github::Sync::Repositories do
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
-    Travis::Github.stubs(:repositories_for).returns(data)
+    GH.stubs(:[]).returns(data)
     sync.run
   end
 
@@ -21,7 +21,9 @@ describe Travis::Notification::Instrument::Github::Sync::Repositories do
       :message => "travis.github.sync.repositories.run:completed",
       :payload => {
         :msg => %(Travis::Github::Sync::Repositories#run for #<User id=#{user.id} login="sven">),
-        :result => [ { :id => Repository.last.id, :owner => 'sven', :name => 'minimal' }]
+        :resources => ['user/repos'],
+        :data => data,
+        :result => [{ :id => Repository.last.id, :owner => 'sven', :name => 'minimal' }]
       },
       :uuid => Travis.uuid
     }
