@@ -81,7 +81,7 @@ module Travis
               :event => task.event,
               :client_event => task.client_event,
               :channels => task.channels
-            )
+            ) unless task.event.to_s == 'job:test:log'
           end
 
           def type

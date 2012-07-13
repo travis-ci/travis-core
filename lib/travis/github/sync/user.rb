@@ -11,8 +11,8 @@ module Travis
         end
 
         def run
-          Repositories.new(user).run
           Organizations.new(user).run
+          Repositories.new(user).run
         end
       end
     end

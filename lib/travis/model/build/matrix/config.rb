@@ -55,14 +55,6 @@ class Build
         matrix.reject { |config| exclude_config?(config) }
       end
 
-      def exclude_config?(config)
-        # gotta make the first key a string for 1.8 :/
-        exclude_configs = matrix_settings[:exclude] || []
-        exclude_configs = exclude_configs.map(&:stringify_keys).map(&:to_a).map(&:sort)
-        config = config.map { |config| [config[0].to_s, *config[1..-1]] }.sort
-        exclude_configs.to_a.any? { |excluded| excluded == config }
-      end
-
       def matrix_settings
         config[:matrix] || {}
       end
@@ -74,7 +66,7 @@ class Build
       def exclude_config?(config)
         # gotta make the first key a string for 1.8 :/
         exclude_configs = matrix_settings[:exclude] || []
-        exclude_configs = exclude_configs.map(&:stringify_keys).map(&:to_a).map(&:sort)
+        exclude_configs = exclude_configs.compact.map(&:stringify_keys).map(&:to_a).map(&:sort)
         config = config.map { |config| [config[0].to_s, *config[1..-1]] }.sort
         exclude_configs.to_a.any? { |excluded| excluded == config }
       end
