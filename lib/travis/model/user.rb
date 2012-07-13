@@ -31,12 +31,16 @@ class User < ActiveRecord::Base
   end
 
   def syncing
-    update_attribute :in_sync, true
+    update_attribute :is_syncing, true
     result = yield
     update_attribute :synced_at, Time.now
     result
   ensure
-    update_attribute :in_sync, false
+    update_attribute :is_syncing, false
+  end
+
+  def syncing?
+    is_syncing?
   end
 
   def organization_ids

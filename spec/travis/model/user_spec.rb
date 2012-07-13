@@ -144,10 +144,10 @@ describe User do
       user.syncing { 42 }.should == 42
     end
 
-    it 'sets in_sync?' do
-      user.should_not be_in_sync
-      user.syncing { user.should be_in_sync }
-      user.should_not be_in_sync
+    it 'sets is_syncing?' do
+      user.should_not be_syncing
+      user.syncing { user.should be_syncing }
+      user.should_not be_syncing
     end
 
     it 'sets synced_at' do

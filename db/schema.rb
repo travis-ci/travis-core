@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120713140816) do
+ActiveRecord::Schema.define(:version => 20120713153215) do
 
   create_table "artifacts", :force => true do |t|
     t.text     "content"
@@ -199,7 +199,7 @@ ActiveRecord::Schema.define(:version => 20120713140816) do
     t.string   "github_oauth_token"
     t.string   "gravatar_id"
     t.string   "locale"
-    t.boolean  "in_sync"
+    t.boolean  "is_syncing"
     t.datetime "synced_at"
   end
 
