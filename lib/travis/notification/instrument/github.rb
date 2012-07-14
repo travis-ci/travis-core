@@ -34,7 +34,6 @@ module Travis
               publish(
                 :msg => %(#{target.class.name}#run for #<User id=#{target.user.id} login="#{target.user.login}">),
                 :resources => target.resources,
-                :data => target.data,
                 :result => result.map { |repo| { :id => repo.id, :owner => repo.owner_name, :name => repo.name } }
               )
             end
@@ -42,6 +41,7 @@ module Travis
             def fetch_completed
               publish(
                 :msg => %(#{target.class.name}#fetch for #<User id=#{target.user.id} login="#{target.user.login}">),
+                :resources => target.resources,
                 :result => result
               )
             end

@@ -22,7 +22,6 @@ describe Travis::Notification::Instrument::Github::Sync::Repositories do
       :payload => {
         :msg => %(Travis::Github::Sync::Repositories#run for #<User id=#{user.id} login="sven">),
         :resources => ['user/repos'],
-        :data => data,
         :result => [{ :id => Repository.last.id, :owner => 'sven', :name => 'minimal' }]
       },
       :uuid => Travis.uuid

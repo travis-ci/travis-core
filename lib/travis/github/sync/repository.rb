@@ -2,7 +2,7 @@ module Travis
   module Github
     module Sync
       class Repository
-        attr_reader :user, :data
+        attr_reader :user, :data, :repo
 
         def initialize(user, data)
           @user = user
@@ -10,31 +10,37 @@ module Travis
         end
 
         def run
-          repo = find_or_create
-          update!(repo, data)
-          permit!(repo) unless permitted?(repo)
+          @repo = find || create
+          update
+          permit unless permitted?
           repo
         end
 
         private
 
-          def find_or_create
-            ::Repository.find_or_create_by_owner_name_and_name(owner_name, name)
+          def find
+            ::Repository.where(:owner_name => owner_name, :name => name).first
           end
 
-          def permitted?(repo)
+          def create
+            ::Repository.create!(:owner_name => owner_name, :name => name)
+          end
+          # instrument :create, :level => :debug
+
+          def permitted?
             user.repositories.include?(repo)
           end
 
-          def permit!(repo)
+          def permit
             user.permissions.create!(
               :user => user,
               :repository => repo,
               :admin => data['permissions']['admin']
             )
           end
+          # instrument :permit, :level => :debug
 
-          def update!(repo, data)
+          def update
             repo.update_attributes!(:private => data['private'])
           rescue ActiveRecord::RecordInvalid
             # ignore for now. this seems to happen when multiple syncs (i.e. user sign

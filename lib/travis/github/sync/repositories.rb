@@ -24,25 +24,33 @@ module Travis
 
         def run
           with_github do
-            @data = fetch
-            filter(data).map do |repository|
-              Repository.new(user, repository).run
-            end
+            # TODO remove all permissions that are not in filtered data
+            create_or_update
+            # remove
           end
         end
         instrument :run
 
         private
 
+          def create_or_update
+            data.map do |repository|
+              Repository.new(user, repository).run
+            end
+          end
+
+          def remove
+          end
+
+          # we have to filter these ourselves because the github api is broken for this
+          def data
+            @data ||= fetch.select { |repo| repo['private'] == self.class.private? }
+          end
+
           def fetch
             resources.map { |resource| fetch_resource(resource) }.map(&:to_a).flatten.compact
           end
           instrument :fetch, :level => :debug
-
-          # we have to filter these ourselves because the github api is broken for this
-          def filter(repos)
-            repos.select { |repo| repo['private'] == self.class.private? }
-          end
 
           def fetch_resource(resource)
             GH[resource] # should be: ?type=#{self.class.type}
