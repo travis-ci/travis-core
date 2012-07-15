@@ -2,6 +2,12 @@ module Travis
   module Github
     module Sync
       class Repository
+        class << self
+          def unpermit_all(user, repositories)
+            user.permissions.where(:repository_id => repositories.map(&:id)).delete_all
+          end
+        end
+
         attr_reader :user, :data, :repo
 
         def initialize(user, data)

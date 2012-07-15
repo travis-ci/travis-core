@@ -3,6 +3,12 @@ require 'active_support/core_ext/class/attribute'
 module Travis
   module Github
     module Sync
+      # Fetches all repositories from Github which are in /user/repos or any of the user's
+      # orgs/[name]/repos. Creates or updates existing repositories on our side and adds
+      # it to the user's permissions. Also removes existing permissions for repositories
+      # which are not in the received Github data. NOTE that this does *not* delete any
+      # repositories because we do not know if the repository was deleted or renamed
+      # on Github's side.
       class Repositories
         extend Travis::Instrumentation
 
@@ -24,9 +30,7 @@ module Travis
 
         def run
           with_github do
-            # TODO remove all permissions that are not in filtered data
-            create_or_update
-            # remove
+            { :synced => create_or_update, :removed => remove }
           end
         end
         instrument :run
@@ -40,11 +44,18 @@ module Travis
           end
 
           def remove
+            repos = user.repositories.select { |repo| !slugs.include?(repo.slug) }
+            Repository.unpermit_all(user, repos)
+            repos
           end
 
           # we have to filter these ourselves because the github api is broken for this
           def data
             @data ||= fetch.select { |repo| repo['private'] == self.class.private? }
+          end
+
+          def slugs
+            @slugs ||= data.map { |repo| "#{repo['owner']['login']}/#{repo['name']}" }
           end
 
           def fetch

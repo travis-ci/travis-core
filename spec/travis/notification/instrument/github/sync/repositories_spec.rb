@@ -22,7 +22,10 @@ describe Travis::Notification::Instrument::Github::Sync::Repositories do
       :payload => {
         :msg => %(Travis::Github::Sync::Repositories#run for #<User id=#{user.id} login="sven">),
         :resources => ['user/repos'],
-        :result => [{ :id => Repository.last.id, :owner => 'sven', :name => 'minimal' }]
+        :result => {
+          :synced => [{ :id => Repository.last.id, :owner => 'sven', :name => 'minimal' }],
+          :removed => []
+        }
       },
       :uuid => Travis.uuid
     }
@@ -33,6 +36,7 @@ describe Travis::Notification::Instrument::Github::Sync::Repositories do
       :message => "travis.github.sync.repositories.fetch:completed",
       :payload => {
         :msg => %(Travis::Github::Sync::Repositories#fetch for #<User id=#{user.id} login="sven">),
+        :resources => ['user/repos'],
         :result => data
       },
       :uuid => Travis.uuid
