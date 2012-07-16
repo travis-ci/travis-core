@@ -160,7 +160,11 @@ module Travis
           :name => 'Sven Fuchs',
           :login => 'svenfuchs',
           :email => 'svenfuchs@artweb-design.de',
-          :github_oauth_token => 'token'
+          :gravatar_id => '402602a60e500e85f2f5dc1ff3648ecb',
+          :locale => 'de',
+          :github_oauth_token => 'token',
+          :is_syncing => false,
+          :synced_at => Time.now.utc - 3600
         )
       end
 

@@ -10,6 +10,7 @@ module Travis
         autoload :Jobs,         'travis/api/v2/http/jobs'
         autoload :Repositories, 'travis/api/v2/http/repositories'
         autoload :Repository,   'travis/api/v2/http/repository'
+        autoload :User,         'travis/api/v2/http/user'
         autoload :Workers,      'travis/api/v2/http/workers'
       end
     end
