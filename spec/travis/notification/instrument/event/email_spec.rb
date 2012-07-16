@@ -25,7 +25,7 @@ describe Travis::Notification::Instrument::Event::Handler::Email do
       :object_id => 1,
       :object_type => 'Build',
       :event => 'build:finished',
-      :recipients => 'svenfuchs@artweb-design.de',
+      :recipients => ['svenfuchs@artweb-design.de'],
     }
     event[:payload][:payload].should_not be_nil
   end
