@@ -158,7 +158,7 @@ class Build < ActiveRecord::Base
 
   def obfuscated_config
     self.config.dup.tap do |config|
-      if env_group = config[:env]
+      if env_group = Array(config[:env])
         config[:env] = env_group.map do |env_vars|
           obfuscate_env_vars(env_vars).join(' ')
         end
