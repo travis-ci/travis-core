@@ -11,6 +11,7 @@ module Travis
       # on Github's side.
       class Repositories
         extend Travis::Instrumentation
+        include Travis::Logging
 
         class_attribute :type
         self.type = 'public'
