@@ -13,6 +13,12 @@ module Travis
             @request = build.request
             @repository = build.repository
           end
+
+          private
+
+          def build_url
+            [Travis.config.http_host, repository.slug, 'builds', build.id].join('/')
+          end
         end
       end
     end
