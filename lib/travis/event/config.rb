@@ -70,7 +70,7 @@ module Travis
         # Returns (recipients, urls, channels) for (email, webhooks, irc)
         # Supported data types are Hash, Array and String
         def notification_values(type, key)
-          config = notifications[type]
+          config = notifications[type] rescue {}
           # Notification type config can be a string, an array of values,
           # or a hash containing a key for these values.
           Array(config.is_a?(Hash) ? config[key] : config)

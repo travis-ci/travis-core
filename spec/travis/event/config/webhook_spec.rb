@@ -45,4 +45,12 @@ describe Travis::Event::Config::Webhook do
       config.webhooks.should == webhooks[:urls]
     end
   end
+
+  describe 'does not explode on invalid .travis.yml syntax' do
+    it 'when :notifications contains an array' do
+      # e.g. https://github.com/sieben/sieben.github.com/blob/05f09da13221e054ef2dafa1baf2fb4d9826ebb3/.travis.yml
+      config.config[:notifications] = [{ :email => false }]
+      lambda { config.webhooks }.should_not raise_error
+    end
+  end
 end
