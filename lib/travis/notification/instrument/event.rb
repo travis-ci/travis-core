@@ -66,8 +66,14 @@ module Travis
               :object_type => object.class.name,
               :object_id => object.id,
               :event => handler.event,
-              :payload => handler.payload
             )
+
+            if handler.respond_to?(:payloads)
+              event[:payloads] = handler.payloads
+            elsif handler.respond_to?(:payload)
+              event[:payload] = handler.payload
+            end
+
             event[:request_id] = object.request_id if object.respond_to?(:request_id)
             event[:repository] = object.repository.slug if object.respond_to?(:repository)
             super(event)

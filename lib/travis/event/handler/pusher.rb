@@ -4,20 +4,29 @@ module Travis
 
       # Notifies registered clients about various state changes through Pusher.
       class Pusher < Handler
-        API_VERSION = 'v1'
+        API_VERSIONS = ['v1', 'v2']
 
         EVENTS = [/^build:(started|finished)/, /^job:test:(created|started|log|finished)/, /^worker:.*/]
+
+        attr_reader :payloads
+
+        def initialize(*)
+          super
+          @payloads = {}
+        end
 
         def handle?
           true
         end
 
         def handle
-          Task.run(:pusher, payload, :event => event)
+          API_VERSIONS.each do |version|
+            Task.run(:pusher, payload(version), :event => event, :version => version)
+          end
         end
 
-        def payload
-          @payload ||= Api.data(object, :for => 'pusher', :type => type, :params => data, :version => API_VERSION)
+        def payload(version)
+          payloads[version] ||= Api.data(object, :for => 'pusher', :type => type, :params => data, :version => version)
         end
 
         def type

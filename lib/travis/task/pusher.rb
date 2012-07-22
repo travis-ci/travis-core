@@ -9,6 +9,10 @@ module Travis
         options[:event]
       end
 
+      def version
+        options[:version] || 'v1'
+      end
+
       def client_event
         @client_event ||= (event =~ /job:.*/ ? event.gsub(/(test|configure):/, '') : event)
       end
@@ -29,7 +33,9 @@ module Travis
         end
 
         def trigger(channel, data)
-          Travis.pusher[channel].trigger(client_event, data)
+          prefix = version == 'v1' ? nil : version
+          event = [prefix, client_event].compact.join(':')
+          Travis.pusher[channel].trigger(event, data)
         end
 
         Notification::Instrument::Task::Pusher.attach_to(self)

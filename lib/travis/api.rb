@@ -16,7 +16,7 @@ module Travis
         target  = (options[:for] || 'http').to_s.camelize
         version = (options[:version] || 'v1').to_s.camelize
         type    = (options[:type] || type_for(resource)).to_s.camelize
-        [name, version, target, type].join("::").constantize rescue nil
+        [name, version, target, type].join('::').constantize rescue nil
       end
 
       private

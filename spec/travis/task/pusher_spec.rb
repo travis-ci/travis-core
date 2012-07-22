@@ -10,10 +10,11 @@ describe Travis::Task::Pusher do
     Pusher.stubs(:[]).returns(channel)
   end
 
-  def run(event, object)
+  def run(event, object, options = {})
+    version = options[:version] || 'v1'
     type = event =~ /^worker:/ ? 'worker' : event.sub('test:', '').sub(':', '/')
-    data = Travis::Api.data(object, :for => 'pusher', :type => type, :version => 'v1')
-    Travis::Task.run(:pusher, data, :event => event)
+    data = Travis::Api.data(object, :for => 'pusher', :type => type, :version => version)
+    Travis::Task.run(:pusher, data, :event => event, :version => version)
   end
 
   describe 'run' do
@@ -95,5 +96,15 @@ describe Travis::Task::Pusher do
       handler = Travis::Task::Pusher.new(data, :event => 'worker:created')
       handler.send(:channels).should include('common')
     end
+  end
+
+  it 'does not prefix channels for version v1' do
+    run('job:test:created', test, :version => 'v1')
+    channel.should have_message('job:created', test)
+  end
+
+  it 'prefixes channels for other versions' do
+    run('job:test:created', test, :version => 'v2')
+    channel.should have_message('v2:job:created', test)
   end
 end
