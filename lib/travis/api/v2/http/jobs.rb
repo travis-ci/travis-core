@@ -5,10 +5,11 @@ module Travis
         class Jobs
           include Formats
 
-          attr_reader :jobs
+          attr_reader :jobs, :options
 
           def initialize(jobs, options = {})
             @jobs = jobs
+            @options = options
           end
 
           def data

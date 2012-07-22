@@ -8,11 +8,12 @@ module Travis
 
           include Formats
 
-          attr_reader :build, :repository
+          attr_reader :build, :repository, :options
 
-          def initialize(build)
+          def initialize(build, options = {})
             @build = build
             @repository = build.repository
+            @options = options
           end
 
           def data(extra = {})
