@@ -65,7 +65,7 @@ module Travis
               :msg => "#{handler.class.name}#notify(#{handler.event}) for #<#{object.class.name} id=#{object.id}>",
               :object_type => object.class.name,
               :object_id => object.id,
-              :event => handler.event,
+              :event => handler.event
             )
 
             if handler.respond_to?(:payloads)
