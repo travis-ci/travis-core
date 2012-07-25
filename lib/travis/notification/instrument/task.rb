@@ -50,6 +50,19 @@ module Travis
               # :request_id => data['request_id'], # TODO
               :object_type => 'Build',
               :object_id => data['build']['id'],
+              :url => task.url
+            )
+          end
+        end
+
+        class GithubCommitStatus < Task
+          def run_completed
+            publish(
+              :msg => "#{task.class.name}#run for #<Build id=#{data['build']['id']}>",
+              :repository => data['repository']['slug'],
+              # :request_id => data['request_id'], # TODO
+              :object_type => 'Build',
+              :object_id => data['build']['id'],
               :url => task.url,
               :message => task.message
             )
