@@ -7,6 +7,7 @@ module Travis
       autoload :Campfire,  'travis/event/handler/campfire'
       autoload :Email,     'travis/event/handler/email'
       autoload :Github,    'travis/event/handler/github'
+      autoload :GithubCommitStatus, 'travis/event/handler/github_commit_status'
       autoload :Irc,       'travis/event/handler/irc'
       autoload :Pusher,    'travis/event/handler/pusher'
       autoload :Webhook,   'travis/event/handler/webhook'

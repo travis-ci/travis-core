@@ -8,6 +8,7 @@ module Travis
     autoload :Campfire, 'travis/task/campfire'
     autoload :Email,    'travis/task/email'
     autoload :Github,   'travis/task/github'
+    autoload :GithubCommitStatus, 'travis/task/github_commit_status'
     autoload :Irc,      'travis/task/irc'
     autoload :Pusher,   'travis/task/pusher'
     autoload :Webhook,  'travis/task/webhook'
