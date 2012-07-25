@@ -40,11 +40,12 @@ module Travis
         end
 
         def token
-          user ? user.github_oauth_token : nil
+          user.try(:github_oauth_token)
         end
 
         def user
-          object.repository.permissions.find { |p| p.admin? }
+          permission = object.repository.permissions.where(:admin => true).first
+          permission.try(:user)
         end
 
         Notification::Instrument::Event::Handler::GithubCommitStatus.attach_to(self)
