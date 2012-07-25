@@ -44,17 +44,17 @@ module Travis
 
           class Worker < Handler
             def notify_completed
-              attrs = !job ? {} : {
-                :repository => job.repository.slug,
-                :build => { :id => job.source_id },
-                :job => { :id => job.id, :number => job.number }
-              }
-              publish attrs.merge(
-                :name => object.name,
-                :host => object.host,
-                :queue => handler.queue,
-                :payload => handler.payload
-             )
+              if handler.handle?
+                publish(
+                  :name => object.name,
+                  :host => object.host,
+                  :queue => handler.queue,
+                  :repository => job.repository.slug,
+                  :build => { :id => job.source_id },
+                  :job => { :id => job.id, :number => job.number },
+                  :payload => handler.payload
+               )
+              end
             end
 
             def job
