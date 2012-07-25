@@ -17,7 +17,7 @@ module Travis
 
     class << self
       def run(type, data, options = {})
-        if Travis.env == 'staging'
+        if false && Travis.env == 'staging'
           publisher('tasks').publish(:data => data, :options => options)
         else
           const_get(type.to_s.camelize).new(data, options).run
