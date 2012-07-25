@@ -7,7 +7,7 @@ module Travis
         # API_VERSIONS = ['v1', 'v2']
         API_VERSIONS = ['v1']
 
-        EVENTS = [/^build:(started|finished)/, /^job:test:(created|started|log|finished)/, /^worker:.*/]
+        EVENTS = [/^build:(started|finished)/, /^job:test:(created|started|log|finished)/, /^worker:(added|updated|removed)/]
 
         attr_reader :payloads
 
