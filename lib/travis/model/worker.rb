@@ -26,4 +26,25 @@ class Worker < ActiveRecord::Base
   def full_name
     [host, name].join(':')
   end
+
+  def queue
+    read_attribute(:queue) || guess_queue
+  end
+
+  def guess_queue
+    case host
+    when /ruby/, /staging/
+      'builds.common'
+    when /jvm.*otp/
+      'builds.jvmotp'
+    when /ppp/
+      'builds.php'
+    when /rails/
+      'build.rails'
+    when /spree/
+      'build.spree'
+    else
+      raise "No idea what queue #{full_name} might use."
+    end
+  end
 end
