@@ -53,7 +53,7 @@ module Travis
                 :name => object.name,
                 :host => object.host,
                 :queue => handler.queue,
-                :payload => handler.payload,
+                :payload => handler.payload
              )
             end
 
