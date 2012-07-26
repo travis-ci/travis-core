@@ -18,22 +18,29 @@ class Job < ActiveRecord::Base
   autoload :Test,      'travis/model/job/test'
 
   class << self
-    def queuable(queue = nil)
-      scope = where(:state => :created)
-      scope = scope.where(:queue => queue) if queue
-      scope
-    end
-
+    # what we return from the json api
     def queued(queue = nil)
       scope = where(:state => [:created, :queued])
       scope = scope.where(:queue => queue) if queue
       scope
     end
 
+    # what needs to be queued up
+    def queuable(queue = nil)
+      scope = where(:state => :created)
+      scope = scope.where(:queue => queue) if queue
+      scope
+    end
+
+    # what already is queued or started
     def running(queue = nil)
       scope = where(:state => [:queued, :started])
       scope = scope.where(:queue => queue) if queue
       scope
+    end
+
+    def owned_by(owner)
+      where(:owner_id => owner.id, :owner_type => owner.class.to_s)
     end
   end
 
