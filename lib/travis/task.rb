@@ -16,8 +16,16 @@ module Travis
     extend  Instrumentation, NewRelic, Exceptions::Handling, Async
 
     class << self
-      def run(type, *args)
-        const_get(type.to_s.camelize).new(*args).run
+      def run(type, data, options = {})
+        if Travis.env == 'staging'
+          publisher('tasks').publish(:data => data, :options => options)
+        else
+          const_get(type.to_s.camelize).new(data, options).run
+        end
+      end
+
+      def publisher(queue)
+        Travis::Amqp::Publisher.new(queue)
       end
     end
 
@@ -35,7 +43,7 @@ module Travis
     rescues    :run, :from => Exception
     instrument :run
     new_relic  :run, :category => :task
-    async      :run
+    async      :run unless Travis.env == 'staging'
 
     private
 

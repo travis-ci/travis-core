@@ -17,8 +17,10 @@ class Job < ActiveRecord::Base
   autoload :Test,      'travis/model/job/test'
 
   class << self
-    def queued
-      where(:state => :created)
+    def queued(queue = nil)
+      scope = where(:state => :created)
+      scope = scope.where(:queue => queue) if queue
+      scope
     end
   end
 

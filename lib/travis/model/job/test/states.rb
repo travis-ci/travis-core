@@ -23,7 +23,7 @@ class Job
       included do
         include SimpleStates, Job::States, Travis::Event
 
-        states :created, :started, :finished # :cloned, :installed, ...
+        states :created, :queued, :started, :finished # :cloned, :installed, ...
 
         event :start,  :to => :started
         event :finish, :to => :finished, :after => :add_tags
@@ -31,9 +31,13 @@ class Job
       end
 
       def start(data = {})
-        self.log.update_attributes!(:content => '')
+        log.update_attributes!(:content => '')
         self.started_at = data[:started_at]
         self.worker = data[:worker]
+      end
+
+      def enqueue
+        update_attributes!(:state => :queued, :queued_at => Time.now.utc)
       end
 
       def finish(data = {})

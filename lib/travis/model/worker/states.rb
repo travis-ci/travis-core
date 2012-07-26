@@ -22,6 +22,8 @@ class Worker
       else
         touch(:last_seen_at)
       end
+
+      notify('ready') if state == 'ready'
     end
   end
 end

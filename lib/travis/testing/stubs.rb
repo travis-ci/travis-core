@@ -142,9 +142,11 @@ module Travis
 
       def stub_worker(attributes = {})
         stub 'worker', attributes.reverse_merge(
+          :class => stub('Worker', :name => 'Worker'),
           :id => 1,
           :name => 'ruby-1',
           :host => 'ruby-1.worker.travis-ci.org',
+          :queue => 'builds.common',
           :state => 'created',
           :last_seen_at => Time.now.utc,
           :payload => nil,

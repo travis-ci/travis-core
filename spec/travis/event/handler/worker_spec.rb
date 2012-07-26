@@ -3,31 +3,26 @@ require 'spec_helper'
 describe Travis::Event::Handler::Worker do
   include Travis::Testing::Stubs
 
+  let(:handler)   { Travis::Event::Handler::Worker.new(:start, worker) }
+  let(:payload)   { Travis::Api.data(test, :for => 'worker', :type => 'Job::Test', :version => 'v0') }
+  let(:publisher) { stub('publisher', :publish => true) }
+
+  before :each do
+    Travis::Event.stubs(:subscribers).returns [:worker]
+    Travis::Amqp::Publisher.stubs(:builds).returns(publisher)
+    Job.stubs(:queued).returns([test])
+    test.stubs(:enqueue)
+  end
+
   describe 'notify' do
-    let(:handler) { Travis::Event::Handler::Worker.new(:start, test) }
-    let(:builds)  { stub('builds', :publish => true) }
-    let(:payload) { Travis::Api.data(test, :for => 'worker', :type => 'Job::Test', :version => 'v0') }
-
-    before :each do
-      Travis::Event.stubs(:subscribers).returns [:worker]
-      Travis::Amqp::Publisher.stubs(:builds).returns(builds)
-    end
-
     it 'fetches a publisher for the given queue name (routing_key)' do
-      Travis::Amqp::Publisher.expects(:builds).with('builds.common').returns(builds)
+      Travis::Amqp::Publisher.expects(:builds).with('builds.common').returns(publisher)
       handler.notify
     end
 
     it 'publishes the payload to the publisher' do
-      builds.expects(:publish).with(payload, :properties => { :type => 'test' })
+      publisher.expects(:publish).with(payload, :properties => { :type => 'test' })
       handler.notify
-    end
-  end
-
-  describe 'publisher' do
-    it 'returns a publisher for "builds.common" for a test job' do
-      handler = Travis::Event::Handler::Worker.new(:start, test)
-      handler.send(:publisher).routing_key.should == test.queue
     end
   end
 
@@ -39,8 +34,6 @@ describe Travis::Event::Handler::Worker do
   end
 
   describe 'instrumentation' do
-    let(:handler) { Travis::Event::Handler::Worker.new(:start, test) }
-
     before :each do
       handler.stubs(:handle)
       Travis::Event.stubs(:subscribers).returns [:worker]
@@ -51,7 +44,7 @@ describe Travis::Event::Handler::Worker do
       ActiveSupport::Notifications.expects(:publish).with do |event, data|
         event =~ /travis.event.handler.worker.notify/ && data[:target].is_a?(Travis::Event::Handler::Worker)
       end
-      Travis::Event.dispatch('job:test:created', test)
+      Travis::Event.dispatch('worker:ready', test)
     end
 
     it 'meters on "travis.event.handler.worker.notify:completed"' do

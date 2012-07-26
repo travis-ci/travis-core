@@ -28,21 +28,6 @@ describe Job::Cleanup do
     end
   end
 
-  describe :enqueue do
-    before :each do
-      Travis::Event::Handler::Worker.stubs(:enqueue)
-    end
-
-    it 'enqueues the job' do
-      Travis::Event::Handler::Worker.expects(:enqueue).with(job)
-      job.enqueue
-    end
-
-    it 'increments the retries count' do
-      lambda { job.enqueue }.should change(job, :retries).by(1)
-    end
-  end
-
   describe :force_finish do
     # TODO @flippingbits, could you look into this?
     xit 'appends a message to the log' do
