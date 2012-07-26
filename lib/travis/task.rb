@@ -43,7 +43,7 @@ module Travis
     rescues    :run, :from => Exception
     instrument :run
     new_relic  :run, :category => :task
-    async      :run unless Travis.env == 'staging'
+    async      :run # unless Travis.env == 'staging'
 
     private
 
