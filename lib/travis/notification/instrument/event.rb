@@ -24,6 +24,12 @@ module Travis
             end
           end
 
+          class GithubCommitStatus < Handler
+            def notify_completed
+              publish(:url => handler.url)
+            end
+          end
+
           class Irc < Handler
             def notify_completed
               publish(:channels => handler.channels)
