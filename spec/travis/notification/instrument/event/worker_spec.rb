@@ -11,6 +11,7 @@ describe Travis::Notification::Instrument::Event::Handler::Worker do
     Travis::Notification.publishers.replace([publisher])
     handler.stubs(:handle)
     handler.stubs(:job).returns(test)
+    test.stubs(:enqueue)
     handler.notify
   end
 

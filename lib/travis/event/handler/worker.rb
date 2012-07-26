@@ -18,17 +18,16 @@ module Travis
           publisher.publish(payload, :properties => { :type => payload['type'] })
         end
 
-        def queue
-          object.queue
-        end
-
         def job
-          # TODO rate limit by repository owner
-          @job ||= Job.queued(queue).first
+          @job ||= Job::Limited.first(queue)
         end
 
         def publisher
           Travis::Amqp::Publisher.builds(queue)
+        end
+
+        def queue
+          object.queue
         end
 
         def payload
