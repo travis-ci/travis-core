@@ -26,8 +26,9 @@ module Travis
 
       def subscriptions
         @subscriptions ||= subscribers.map do |name|
-          Subscription.new(name)
-        end
+          subscription = Subscription.new(name)
+          subscription if subscription.subscriber
+        end.compact
       end
 
       def dispatch(event, *args)
