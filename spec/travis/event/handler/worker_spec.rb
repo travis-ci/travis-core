@@ -3,6 +3,11 @@ require 'spec_helper'
 describe Travis::Event::Handler::Worker do
   include Travis::Testing::Stubs
 
+  before :each do
+    test.stubs(:enqueue)
+    Job::Limited.stubs(:first).returns(test)
+  end
+
   describe 'notify' do
     let(:handler) { Travis::Event::Handler::Worker.new(:start, test) }
     let(:builds)  { stub('builds', :publish => true) }
@@ -51,7 +56,7 @@ describe Travis::Event::Handler::Worker do
       ActiveSupport::Notifications.expects(:publish).with do |event, data|
         event =~ /travis.event.handler.worker.notify/ && data[:target].is_a?(Travis::Event::Handler::Worker)
       end
-      Travis::Event.dispatch('job:test:created', test)
+      Travis::Event.dispatch('worker:ready', test)
     end
 
     it 'meters on "travis.event.handler.worker.notify:completed"' do

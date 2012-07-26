@@ -10,6 +10,7 @@ require 'active_record'
 class Job < ActiveRecord::Base
   autoload :Compat,    'travis/model/job/compat'
   autoload :Cleanup,   'travis/model/job/cleanup'
+  autoload :Limited,   'travis/model/job/limited'
   autoload :Queue,     'travis/model/job/queue'
   autoload :States,    'travis/model/job/states'
   autoload :Sponsors,  'travis/model/job/sponsors'
@@ -17,8 +18,22 @@ class Job < ActiveRecord::Base
   autoload :Test,      'travis/model/job/test'
 
   class << self
-    def queued
-      where(:state => :created)
+    def queuable(queue = nil)
+      scope = where(:state => :created)
+      scope = scope.where(:queue => queue) if queue
+      scope
+    end
+
+    def queued(queue = nil)
+      scope = where(:state => [:created, :queued])
+      scope = scope.where(:queue => queue) if queue
+      scope
+    end
+
+    def running(queue = nil)
+      scope = where(:state => [:queued, :started])
+      scope = scope.where(:queue => queue) if queue
+      scope
     end
   end
 
