@@ -3,12 +3,13 @@ module Travis
     module V2
       module Event
         class Build
-          attr_reader :build, :repository, :request
+          attr_reader :build, :repository, :request, :options
 
-          def initialize(build, options)
+          def initialize(build, options = {})
             @build = build
             @repository = build.repository
             @request = build.request
+            @options = options
           end
 
           def data(extra = {})

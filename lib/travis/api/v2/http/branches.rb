@@ -5,11 +5,12 @@ module Travis
         class Branches
           include Formats
 
-          attr_reader :builds, :commits
+          attr_reader :builds, :commits, :options
 
           def initialize(repository, options = {})
             @builds = repository.last_finished_builds_by_branches
             @commits = builds.map(&:commit)
+            @options = options
           end
 
           def data

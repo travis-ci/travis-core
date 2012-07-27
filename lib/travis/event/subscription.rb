@@ -13,12 +13,20 @@ module Travis
     # Subscribing classes are supposed to define an EVENTS constant which holds
     # a regular expression which will be matched against the event name.
     class Subscription
-      attr_reader :name, :subscriber, :patterns
+      attr_reader :name
 
       def initialize(name)
         @name = name
-        @subscriber = Handler.const_get(name.to_s.camelize)
-        @patterns = Array(subscriber::EVENTS)
+      end
+
+      def subscriber
+        Handler.const_get(name.to_s.camelize)
+      rescue NameError => e
+        Travis::Exceptions.handle(e)
+      end
+
+      def patterns
+        Array(subscriber::EVENTS)
       end
 
       def notify(event, *args)

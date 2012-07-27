@@ -32,11 +32,6 @@ class Job
       end
     end
 
-    def enqueue
-      Travis::Event::Handler::Worker.enqueue(self)
-      update_attribute(:retries, retries + 1)
-    end
-
     def force_finish
       append_log!("\n#{FORCE_FINISH_MESSAGE}") if respond_to?(:append_log!)
       finish!(:result => 1, :finished_at => Time.now.utc)

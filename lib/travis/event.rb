@@ -26,8 +26,9 @@ module Travis
 
       def subscriptions
         @subscriptions ||= subscribers.map do |name|
-          Subscription.new(name)
-        end
+          subscription = Subscription.new(name)
+          subscription if subscription.subscriber
+        end.compact
       end
 
       def dispatch(event, *args)
@@ -48,7 +49,7 @@ module Travis
     protected
 
       def client_event(event, object)
-        event = "#{event}ed".gsub(/eded$|eed$/, 'ed') unless event == :log
+        event = "#{event}ed".gsub(/eded$|eed$/, 'ed') unless [:log, :ready].include?(event)
         namespace = object.class.name.underscore.gsub('/', ':').gsub('travis:model:', '')
         [namespace, event].join(':')
       end

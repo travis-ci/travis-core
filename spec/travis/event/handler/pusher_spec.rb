@@ -41,9 +41,9 @@ describe Travis::Event::Handler::Pusher do
       Travis::Event.dispatch('build:finished', build)
     end
 
-    it 'worker:started' do
+    it 'worker:added' do
       handler.expects(:notify)
-      Travis::Event.dispatch('worker:started', worker)
+      Travis::Event.dispatch('worker:added', worker)
     end
   end
 

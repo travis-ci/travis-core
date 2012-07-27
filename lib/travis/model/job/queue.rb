@@ -53,4 +53,3 @@ class Job
       end
   end
 end
-

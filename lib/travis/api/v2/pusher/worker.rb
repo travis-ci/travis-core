@@ -3,10 +3,11 @@ module Travis
     module V2
       module Pusher
         class Worker
-          attr_reader :worker
+          attr_reader :worker, :options
 
-          def initialize(worker)
+          def initialize(worker, options = {})
             @worker = worker
+            @options = options
           end
 
           def data(extra = {})

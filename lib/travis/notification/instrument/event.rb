@@ -50,7 +50,21 @@ module Travis
 
           class Worker < Handler
             def notify_completed
-              publish(:queue => object.queue, :payload => handler.payload)
+              if handler.handle?
+                publish(
+                  :name => object.name,
+                  :host => object.host,
+                  :queue => handler.queue,
+                  :repository => job.repository.slug,
+                  :build => { :id => job.source_id },
+                  :job => { :id => job.id, :number => job.number },
+                  :payload => handler.payload
+               )
+              end
+            end
+
+            def job
+              handler.job
             end
           end
 
@@ -71,9 +85,15 @@ module Travis
               :msg => "#{handler.class.name}#notify(#{handler.event}) for #<#{object.class.name} id=#{object.id}>",
               :object_type => object.class.name,
               :object_id => object.id,
-              :event => handler.event,
-              :payload => handler.payload
+              :event => handler.event
             )
+
+            if handler.respond_to?(:payloads)
+              event[:payloads] = handler.payloads
+            elsif handler.respond_to?(:payload)
+              event[:payload] = handler.payload
+            end
+
             event[:request_id] = object.request_id if object.respond_to?(:request_id)
             event[:repository] = object.repository.slug if object.respond_to?(:repository)
             super(event)

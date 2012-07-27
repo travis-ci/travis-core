@@ -3,10 +3,11 @@ module Travis
     module V2
       module Http
         class Artifact
-          attr_reader :artifact
+          attr_reader :artifact, :options
 
           def initialize(artifact, options = {})
             @artifact = artifact
+            @options = options
           end
 
           def data
