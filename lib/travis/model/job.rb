@@ -93,7 +93,7 @@ class Job < ActiveRecord::Base
     self.config.dup.tap do |config|
       if config[:env]
         config[:env] = process_env_vars(config[:env]) do |env|
-          decrypt_env_vars(env)
+          decrypt_env_vars(env) rescue {}
         end
       end
     end
