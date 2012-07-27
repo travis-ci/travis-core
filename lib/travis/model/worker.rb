@@ -40,9 +40,9 @@ class Worker < ActiveRecord::Base
     when /ppp/
       'builds.php'
     when /rails/
-      'build.rails'
+      'builds.rails'
     when /spree/
-      'build.spree'
+      'builds.spree'
     else
       raise "No idea what queue #{full_name} might use."
     end

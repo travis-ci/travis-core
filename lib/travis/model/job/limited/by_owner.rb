@@ -9,7 +9,7 @@ class Job
 
       def first
         if custom_queue?
-          jobs.where(:queue => queue).first
+          jobs.first
         else
           jobs.detect { |job| !limited?(job.owner) }
         end
