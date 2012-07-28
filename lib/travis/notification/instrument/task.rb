@@ -28,6 +28,20 @@ module Travis
           end
         end
 
+        class Hipchat < Task
+          def run_completed
+            publish(
+              :msg => "#{task.class.name}#run for #<Build id=#{data['build']['id']}>",
+              :repository => data['repository']['slug'],
+              # :request_id => data['request']['id'], # TODO
+              :object_type => 'Build',
+              :object_id => data['build']['id'],
+              :targets => task.targets,
+              :message => task.message
+            )
+          end
+        end
+
         class Email < Task
           def run_completed
             publish(

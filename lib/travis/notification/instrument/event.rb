@@ -30,6 +30,12 @@ module Travis
             end
           end
 
+          class Hipchat < Handler
+            def notify_completed
+              publish(:targets => handler.targets)
+            end
+          end
+
           class Irc < Handler
             def notify_completed
               publish(:channels => handler.channels)
