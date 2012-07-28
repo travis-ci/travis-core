@@ -10,8 +10,9 @@ require 'active_record'
 class Job < ActiveRecord::Base
   autoload :Compat,    'travis/model/job/compat'
   autoload :Cleanup,   'travis/model/job/cleanup'
-  autoload :Limited,   'travis/model/job/limited'
+  autoload :Limit,     'travis/model/job/limit'
   autoload :Queue,     'travis/model/job/queue'
+  autoload :Queueing,  'travis/model/job/queueing'
   autoload :States,    'travis/model/job/states'
   autoload :Sponsors,  'travis/model/job/sponsors'
   autoload :Tagging,   'travis/model/job/tagging'
@@ -26,8 +27,8 @@ class Job < ActiveRecord::Base
     end
 
     # what needs to be queued up
-    def queuable(queue = nil)
-      scope = where(:state => :created)
+    def queueable(queue = nil)
+      scope = where(:state => :created).order('id DESC')
       scope = scope.where(:queue => queue) if queue
       scope
     end
@@ -54,7 +55,7 @@ class Job < ActiveRecord::Base
   belongs_to :source, :polymorphic => true, :autosave => true
   belongs_to :owner, :polymorphic => true
 
-  validates :repository_id, :commit_id, :source_id, :source_type, :presence => true
+  validates :repository_id, :commit_id, :source_id, :source_type, :owner_id, :owner_type, :presence => true
 
   serialize :config
 
