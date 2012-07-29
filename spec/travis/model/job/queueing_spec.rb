@@ -55,3 +55,15 @@ describe Job::Queueing do
   end
 end
 
+describe Job::Queueing::All do
+  include Travis::Testing::Stubs
+
+  before :each do
+    Job.stubs(:queueable).returns [test, test]
+  end
+
+  it 'tries to enqueue each queueable job' do
+    Job::Queueing.any_instance.expects(:run).twice
+    Job::Queueing::All.new.run
+  end
+end

@@ -1,18 +1,20 @@
 class Job
   class Queueing
-    class << self
-      def all
-        run(Job.queueable)
-      end
+    class All
+      extend Travis::Instrumentation, Travis::Exceptions::Handling
 
-      def by_owner(owner)
-        run(Limit.all(owner), :force => true)
+      def run
+        Job.queueable.each { |job| Queueing.new(job).run }.flatten
       end
-
-      def run(jobs, options = {})
-        jobs.each { |job| new(job, options).run }
-      end
+      instrument :run
+      rescues :run, :from => Exception
     end
+
+    # class << self
+    #   def by_owner(owner)
+    #     run(Limit.all(owner), :force => true)
+    #   end
+    # end
 
     API_VERSION = 'v0'
 
@@ -32,6 +34,7 @@ class Job
       def enqueue
         job.enqueue
         publisher.publish(payload, :properties => { :type => payload['type'] })
+        job
       end
 
       def enqueueable?
