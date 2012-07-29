@@ -32,10 +32,10 @@ class Worker < ActiveRecord::Base
   end
 
   def guess_queue
-    case host
+    case full_name
     when /ruby/, /staging/
       'builds.common'
-    when /jvm.*otp/
+    when /jvm/
       'builds.jvmotp'
     when /ppp/
       'builds.php'
