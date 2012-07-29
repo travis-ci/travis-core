@@ -28,7 +28,7 @@ class Job < ActiveRecord::Base
 
     # what needs to be queued up
     def queueable(queue = nil)
-      scope = where(:state => :created).order('id DESC')
+      scope = where(:state => :created)
       scope = scope.where(:queue => queue) if queue
       scope
     end
