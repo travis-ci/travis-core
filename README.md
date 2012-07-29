@@ -62,6 +62,10 @@ $ bundle exec rake
 
   Fetches the `.travis.yml` file from Github.
 
+* `v1.job.queueing.all.run`
+
+  Enqueues queueable jobs based on a per-owner rate limit.
+
 * `v1.travis.event.handler.\*.notify`
 
   Responds to `build:finished` events and creates an instance of `Task::Archive`.
