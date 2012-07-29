@@ -32,7 +32,7 @@ class Job
       end
 
       def max_jobs
-        5
+        Travis.config.jobs.queue.limit
       end
     end
   end

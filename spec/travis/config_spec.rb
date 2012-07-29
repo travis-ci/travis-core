@@ -47,6 +47,10 @@ describe Travis::Config do
       config.amqp.prefetch.should == 1
     end
 
+    it 'jobs.queue.limit defaults to 5' do
+      config.jobs.queue.limit.should == 5
+    end
+
     it 'database' do
       config.database.should == {
         :adapter => 'postgresql',
