@@ -37,7 +37,7 @@ class Worker < ActiveRecord::Base
       'builds.common'
     when /jvm/
       'builds.jvmotp'
-    when /ppp/
+    when /ppp/, /php/
       'builds.php'
     when /rails/
       'builds.rails'
