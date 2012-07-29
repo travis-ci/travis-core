@@ -7,6 +7,7 @@ require 'active_record'
 # 15 seconds at an interval of 5 seconds (unless configured otherwise).
 class Worker < ActiveRecord::Base
   autoload :States, 'travis/model/worker/states'
+  autoload :Status, 'travis/model/worker/status'
 
   include States
 

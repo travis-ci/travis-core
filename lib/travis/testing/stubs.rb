@@ -106,6 +106,7 @@ module Travis
         stub 'test', attributes.reverse_merge(
           :class => stub('Job::Test', :name => 'Job::Test', :base_class => stub('Job', :name => 'Job')),
           :id => 1,
+          :owner => stub_user,
           :repository_id => 1,
           :repository => repository,
           :source_id => 1,

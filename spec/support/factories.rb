@@ -2,6 +2,7 @@ require 'factory_girl'
 
 FactoryGirl.define do
   factory :build do
+    owner { User.first || Factory(:user) }
     repository { Repository.first || Factory(:repository) }
     association :request
     association :commit
@@ -24,6 +25,7 @@ FactoryGirl.define do
   end
 
   factory :test, :class => 'Job::Test' do
+    owner      { User.first || Factory(:user) }
     repository { Repository.first || Factory(:repository) }
     commit     { Factory(:commit) }
     source     { Factory(:build) }

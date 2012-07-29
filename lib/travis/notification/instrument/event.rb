@@ -56,21 +56,10 @@ module Travis
 
           class Worker < Handler
             def notify_completed
-              if handler.handle?
-                publish(
-                  :name => object.name,
-                  :host => object.host,
-                  :queue => handler.queue,
-                  :repository => job.repository.slug,
-                  :build => { :id => job.source_id },
-                  :job => { :id => job.id, :number => job.number },
-                  :payload => handler.payload
-               )
-              end
-            end
-
-            def job
-              handler.job
+              publish(
+                :repository => object.repository.slug,
+                :request_id => object.request_id
+              )
             end
           end
 

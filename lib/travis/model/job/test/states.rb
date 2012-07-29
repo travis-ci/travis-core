@@ -25,19 +25,20 @@ class Job
 
         states :created, :queued, :started, :finished # :cloned, :installed, ...
 
-        event :start,  :to => :started
-        event :finish, :to => :finished, :after => :add_tags
+        event :start,   :to => :started
+        event :finish,  :to => :finished, :after => :add_tags
         event :all, :after => [:notify, :propagate]
+      end
+
+      def enqueue
+        update_attributes!(:state => :queued, :queued_at => Time.now.utc)
+        notify(:queue)
       end
 
       def start(data = {})
         log.update_attributes!(:content => '')
         self.started_at = data[:started_at]
         self.worker = data[:worker]
-      end
-
-      def enqueue
-        update_attributes!(:state => :queued, :queued_at => Time.now.utc)
       end
 
       def finish(data = {})

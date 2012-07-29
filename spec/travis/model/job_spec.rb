@@ -33,18 +33,21 @@ describe Job do
   end
 
   describe 'before_create' do
+    let(:job) { Job::Test.create!(:owner => Factory(:user), :repository => Factory(:repository), :commit => Factory(:commit), :source => Factory(:build)) }
+
+    before :each do
+      Job::Test.any_instance.stubs(:enqueueable?).returns(false) # prevent jobs to enqueue themselves on create
+    end
+
     it 'instantiates the log artifact' do
-      job = Job::Test.create!(:repository => Factory(:repository), :commit => Factory(:commit), :source => Factory(:build))
       job.reload.log.should be_instance_of(Artifact::Log)
     end
 
     it 'sets the state attribute' do
-      job = Job::Test.create!(:repository => Factory(:repository), :commit => Factory(:commit), :source => Factory(:build))
       job.reload.should be_created
     end
 
     it 'sets the queue attribute' do
-      job = Job::Test.create!(:repository => Factory(:repository), :commit => Factory(:commit), :source => Factory(:build))
       job.reload.queue.should == 'builds.common'
     end
   end
