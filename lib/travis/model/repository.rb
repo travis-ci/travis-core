@@ -57,7 +57,8 @@ class Repository < ActiveRecord::Base
     end
 
     def by_member(login_name)
-      User.where(:login => login_name).first.repositories
+      user = User.where(:login => login_name).first
+      user.repositories.where('last_build_id IS NOT NULL')
     end
 
     def by_slug(slug)
