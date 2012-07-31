@@ -57,13 +57,28 @@ end
 
 describe Job::Queueing::All do
   include Travis::Testing::Stubs
-
-  before :each do
-    Job.stubs(:queueable).returns [test, test]
-  end
+  include Support::ActiveRecord
 
   it 'tries to enqueue each queueable job' do
+    Job.stubs(:queueable).returns [test, test]
     Job::Queueing.any_instance.expects(:run).twice
     Job::Queueing::All.new.run
+  end
+
+  describe 'queueing order' do
+    let(:config)    { { :rvm => ['1.9.3', 'rbx', 'jruby'] } }
+    let!(:builds)   { [Factory(:build, :config => config), Factory(:build, :config => config), Factory(:build, :config => config)] }
+    let(:publisher) { Support::Mocks::Amqp::Publisher.new }
+
+    before :each do
+      Travis::Amqp::Publisher.stubs(:builds).returns(publisher)
+    end
+
+    it 'enqueues jobs in the expected order' do
+      Job::Queueing::All.new.run
+      expected = Job.order(:id).map(&:id)[0, 5]
+      actual = publisher.messages.map { |message| message.first['job']['id'] }
+      actual.should == expected
+    end
   end
 end

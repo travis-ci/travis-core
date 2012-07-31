@@ -4,10 +4,10 @@ class Job
       extend Travis::Instrumentation, Travis::Exceptions::Handling
 
       def run
-        Job.queueable.each { |job| Queueing.new(job).run }.flatten
+        Job.queueable.each { |job| Queueing.new(job).run }
       end
       instrument :run
-      rescues :run, :from => Exception
+      rescues :run, :from => Exception unless ENV['env'] == 'test' # move to travis-support?
     end
 
     # class << self
