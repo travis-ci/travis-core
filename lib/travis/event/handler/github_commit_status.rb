@@ -7,7 +7,7 @@ module Travis
       class GithubCommitStatus < Handler
         API_VERSION = 'v2'
 
-        EVENTS = /build:finished/
+        EVENTS = /build:(started|finished)/
 
         def handle?
           object.pull_request?
@@ -15,7 +15,7 @@ module Travis
 
         def handle
           if token
-            Task.run(:github_commit_status, payload, :url => url, :sha => sha, :build_url => build_url, :token => token)
+            Task.run(:github_commit_status, payload, :url => url, :build_url => build_url, :token => token)
           end
         end
 

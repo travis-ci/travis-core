@@ -25,16 +25,37 @@ describe Travis::Task::GithubCommitStatus do
       a_request(:post, url).should have_been_made
     end
 
+    describe 'using a pending build' do
+      before :each do
+        build.stubs(:result).returns(nil)
+      end
+
+      it 'sets the status of the commit to pending' do
+        body = lambda do |request|
+          decoded = ActiveSupport::JSON.decode(request.body)
+          decoded.should == {
+            "description" => "The Travis build is in progress",
+            "target_url" => "http://travis-ci.org/#!/travis-repos/test-project-1/1234",
+            "state" => "pending"
+          }
+        end
+
+        # GH.expects(:post).with { |url, message| url == self.url }
+        run
+        a_request(:post, url).with(&body).should have_been_made
+      end
+    end
+
     describe 'using a passing build' do
       before :each do
         build.stubs(:result).returns(0)
       end
 
-      it 'sets the status of the commit to passing' do
+      it 'sets the status of the commit to success' do
         body = lambda do |request|
           decoded = ActiveSupport::JSON.decode(request.body)
           decoded.should == {
-            "sha" => "ab2784e55bcf71ac9ef5f6ade8e02334c6524eea",
+            "description" => "The Travis build passed",
             "target_url" => "http://travis-ci.org/#!/travis-repos/test-project-1/1234",
             "state" => "success"
           }
@@ -51,11 +72,11 @@ describe Travis::Task::GithubCommitStatus do
         build.stubs(:result).returns(1)
       end
 
-      it 'sets the status of the commit to failing' do
+      it 'sets the status of the commit to failure' do
         body = lambda do |request|
           decoded = ActiveSupport::JSON.decode(request.body)
           decoded.should == {
-            "sha" => "ab2784e55bcf71ac9ef5f6ade8e02334c6524eea",
+            "description" => "The Travis build failed",
             "target_url" => "http://travis-ci.org/#!/travis-repos/test-project-1/1234",
             "state" => "failure"
           }

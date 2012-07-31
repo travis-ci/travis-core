@@ -11,8 +11,8 @@ describe Travis::Event::Handler::GithubCommitStatus do
   describe 'subscription' do
     let(:handler) { Travis::Event::Handler::GithubCommitStatus.any_instance }
 
-    it 'build:started does not notify' do
-      handler.expects(:notify).never
+    it 'build:started notifies' do
+      handler.expects(:notify)
       Travis::Event.dispatch('build:started', build)
     end
 
@@ -22,29 +22,55 @@ describe Travis::Event::Handler::GithubCommitStatus do
     end
   end
 
-  describe 'given the request is not a pull_request event' do
-    let(:handler) { Travis::Event::Handler::GithubCommitStatus.new('build:finished', build) }
+  describe 'a build which has started' do
+    let(:handler) { Travis::Event::Handler::GithubCommitStatus.new('build:started', build) }
 
-    before :each do
-      build.request.stubs(:pull_request? => false)
+    describe 'given the request is not a pull_request event' do
+      before :each do
+        build.request.stubs(:pull_request? => false)
+      end
+
+      it 'does not handle the notification' do
+        handler.expects(:handle).never
+        handler.notify
+      end
     end
 
-    it 'does not handle the notification' do
-      handler.expects(:handle).never
-      handler.notify
+    describe 'given the request is a pull_request event' do
+      before :each do
+        build.request.stubs(:pull_request? => true)
+      end
+
+      it 'handles the notification' do
+        handler.expects(:handle)
+        handler.notify
+      end
     end
   end
 
-  describe 'given the request is a pull_request event' do
+  describe 'a build which has finished' do
     let(:handler) { Travis::Event::Handler::GithubCommitStatus.new('build:finished', build) }
 
-    before :each do
-      build.request.stubs(:pull_request? => true)
+    describe 'given the request is not a pull_request event' do
+      before :each do
+        build.request.stubs(:pull_request? => false)
+      end
+
+      it 'does not handle the notification' do
+        handler.expects(:handle).never
+        handler.notify
+      end
     end
 
-    it 'handles the notification' do
-      handler.expects(:handle)
-      handler.notify
+    describe 'given the request is a pull_request event' do
+      before :each do
+        build.request.stubs(:pull_request? => true)
+      end
+
+      it 'handles the notification' do
+        handler.expects(:handle)
+        handler.notify
+      end
     end
   end
 
