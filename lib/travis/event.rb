@@ -19,7 +19,7 @@ module Travis
     autoload :Subscription, 'travis/event/subscription'
     autoload :SecureConfig, 'travis/event/secure_config'
 
-    SUBSCRIBERS = %w(worker)
+    SUBSCRIBERS = %w(metrics worker)
 
     class << self
       include Logging
