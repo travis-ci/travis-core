@@ -1,6 +1,6 @@
 module Support
   module Mocks
-    autoload :Irc,    'support/mocks/irc'
+    autoload :Amqp,   'support/mocks/amqp'
     autoload :Pusher, 'support/mocks/pusher'
   end
 end
