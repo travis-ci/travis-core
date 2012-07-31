@@ -21,21 +21,21 @@ class Job < ActiveRecord::Base
   class << self
     # what we return from the json api
     def queued(queue = nil)
-      scope = where(:state => [:created, :queued]).order(:id)
+      scope = where(:state => [:created, :queued]).order('jobs.id')
       scope = scope.where(:queue => queue) if queue
       scope
     end
 
     # what needs to be queued up
     def queueable(queue = nil)
-      scope = where(:state => :created).order(:id)
+      scope = where(:state => :created).order('jobs.id')
       scope = scope.where(:queue => queue) if queue
       scope
     end
 
     # what already is queued or started
     def running(queue = nil)
-      scope = where(:state => [:queued, :started]).order(:id)
+      scope = where(:state => [:queued, :started]).order('jobs.id')
       scope = scope.where(:queue => queue) if queue
       scope
     end
