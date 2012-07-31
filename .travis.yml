@@ -3,12 +3,13 @@ rvm:
   - 1.9.3
   - jruby-18mode
   - jruby-19mode
-jdk: oraclejdk7
+jdk:
+  - oraclejdk7
+  - openjdk6
 env:
   - JRUBY_OPTS="--server -Xcext.enabled=false -Xcompile.invokedynamic=false"
 matrix:
   allow_failures:
-    - rvm: jruby-19mode
     - rvm: jruby-head
   include:
     - rvm: jruby-head
