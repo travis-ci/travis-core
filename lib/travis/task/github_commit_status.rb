@@ -7,7 +7,6 @@ module Travis
     # Adds a comment with a build notification to the pull-request the request
     # belongs to.
     class GithubCommitStatus < Task
-
       def url
         options[:url]
       end
@@ -16,15 +15,15 @@ module Travis
         options[:build_url]
       end
 
-      def sha
-        options[:sha]
+      def description
+        "The Travis build #{friendly_state}"
       end
 
       private
 
         def process
           authenticated do
-            GH.post(url, :sha => sha, :target_url => build_url, :state => state)
+            GH.post(url, :target_url => build_url, :state => state, :description => description)
           end
           info "Successfully updated the PR status on #{url}."
         rescue Faraday::Error::ClientError => e
@@ -43,7 +42,25 @@ module Travis
 
         # TODO move to Build::Messages
         def state
-          data['build']['result'] == 0 ? 'success' : 'failure'
+          case data['build']['result']
+          when nil
+            'pending'
+          when 0
+            'success'
+          when 1
+            'failure'
+          end
+        end
+
+        def friendly_state
+          case data['build']['result']
+          when nil
+            'is in progress'
+          when 0
+            'passed'
+          when 1
+            'failed'
+          end
         end
 
         Notification::Instrument::Task::GithubCommitStatus.attach_to(self)
