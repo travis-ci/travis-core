@@ -182,15 +182,22 @@ describe Build do
 
       it 'obfuscates env vars' do
         build  = Build.new(:repository => Factory(:repository))
-        config = { :rvm => ['1.8.7'],
-                   :env => [[build.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo'], 'BAR=baz']
-                 }
+        config = {
+          :rvm => ['1.8.7'],
+          :env => [[build.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo'], 'BAR=baz']
+        }
         build.config = config
 
         build.obfuscated_config.should == {
           :rvm => ['1.8.7'],
           :env => ['BAR=[secure] FOO=foo', 'BAR=baz']
         }
+      end
+
+      it 'does not make an empty env key an array but leaves it empty' do
+        build  = Build.new(:repository => Factory(:repository))
+        build.config = { :rvm => ['1.8.7'], :env =>  nil }
+        build.obfuscated_config.should == { :rvm => ['1.8.7'], :env =>  nil }
       end
     end
 
