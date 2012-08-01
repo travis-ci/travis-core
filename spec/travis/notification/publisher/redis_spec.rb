@@ -14,6 +14,7 @@ describe Travis::Notification::Publisher::Redis do
   end
 
   it 'adds to the list' do
+    pending "feature disabled at the moment"
     redis.llen(key).should be == 0
     publish
     redis.llen(key).should be == 1
@@ -27,6 +28,7 @@ describe Travis::Notification::Publisher::Redis do
   end
 
   it 'encodes the payload in json' do
+    pending "feature disabled at the moment"
     publish(:foo => 'bar')
     MultiJson.decode(redis.lindex(key, 0)).should be == {
       "message" => "",
@@ -36,6 +38,7 @@ describe Travis::Notification::Publisher::Redis do
   end
 
   it 'queues new messages on the right' do
+    pending "feature disabled at the moment"
     publish(:x => 'foo')
     publish(:x => 'bar')
     redis.lindex(key, 0).should include('foo')
