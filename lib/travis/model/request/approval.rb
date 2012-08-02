@@ -17,10 +17,18 @@ class Request
     end
 
     def approved?
-      accepted? && branches.included?(commit.branch) && !branches.excluded?(commit.branch)
+      accepted? && branch_approved? if !request.pull_request? || !pull_request_allowed?
     end
 
     private
+
+      def pull_request_allowed?
+        Array(request.config['addons']).include? 'pull_requests'
+      end
+
+      def branch_approved?
+        branches.included?(commit.branch) && !branches.excluded?(commit.branch)
+      end
 
       def skipped?
         commit.message.to_s =~ /\[ci(?: |:)([\w ]*)\]/i && $1.downcase == 'skip'
