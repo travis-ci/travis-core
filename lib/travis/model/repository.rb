@@ -57,7 +57,7 @@ class Repository < ActiveRecord::Base
     end
 
     def by_member(login)
-      joins(:users).where(:users => { :login => login })
+      administratable.joins(:users).where(:users => { :login => login })
     end
 
     def by_slug(slug)
