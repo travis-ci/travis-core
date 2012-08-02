@@ -16,6 +16,8 @@ matrix:
       env: JRUBY_OPTS="--server -Xcext.enabled=false -Xcompile.invokedynamic=false --1.9"
     - rvm: jruby-head
       env: JRUBY_OPTS="--server -Xcext.enabled=false -Xcompile.invokedynamic=false --1.8"
+before_install:
+  - export JRUBY_OPTS="--server -Xcext.enabled=false -Xcompile.invokedynamic=false"
 before_script:
   - 'RAILS_ENV=test rake db:create db:schema:load --trace'
 notifications:
