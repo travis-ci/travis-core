@@ -79,6 +79,25 @@ describe Repository do
         Repository.search('fuchs\\').to_a.count.should == 2
       end
     end
+
+    describe "by_member" do
+      let(:user) { Factory(:user) }
+      let(:repository_admin) { Factory(:repository, :owner => user)}
+      let(:repository_non_admin) { Factory(:repository, :owner => user, :name => 'globalize')}
+
+      before do
+        Permission.create!(:user => user, :repository => repository_admin, :admin => true)
+        Permission.create!(:user => user, :repository => repository_non_admin, :admin => false)
+      end
+
+      it "should only return the administratable repositories" do
+        Repository.by_member('svenfuchs').should have(1).item
+      end
+
+      it "shouldn't return the non-administrator repositories" do
+        Repository.by_member('svenfuchs').first.should == repository_admin
+      end
+    end
   end
 
   describe 'source_url' do

@@ -42,14 +42,28 @@ describe Travis::Event::Handler::Metrics do
       Travis::Event::Handler::Metrics.new(event, object).notify
     end
 
-    it 'job:test:started notifies' do
-      Travis::Instrumentation.expects(:meter).with('job.queue.wait_time', :started_at => created_at, :finished_at => started_at)
-      notify('job:test:started', test)
+    describe 'job:test:started' do
+      it 'meters on job.queue.wait_time' do
+        Travis::Instrumentation.expects(:meter).with('job.queue.wait_time', :started_at => created_at, :finished_at => started_at)
+        notify('job:test:started', test)
+      end
+
+      it 'meters on job.queue.builds-common.wait_time' do
+        Travis::Instrumentation.expects(:meter).with('job.queue.wait_time.builds-common', :started_at => created_at, :finished_at => started_at)
+        notify('job:test:started', test)
+      end
     end
 
-    it 'job:test:finished notifies' do
-      Travis::Instrumentation.expects(:meter).with('job.duration', :started_at => started_at, :finished_at => finished_at)
-      notify('job:test:finished', test)
+    describe 'job:test:finished' do
+      it 'meters on job.duration' do
+        Travis::Instrumentation.expects(:meter).with('job.duration', :started_at => started_at, :finished_at => finished_at)
+        notify('job:test:finished', test)
+      end
+
+      it 'meters on job.duration' do
+        Travis::Instrumentation.expects(:meter).with('job.duration.builds-common', :started_at => started_at, :finished_at => finished_at)
+        notify('job:test:finished', test)
+      end
     end
   end
 end

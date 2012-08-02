@@ -81,22 +81,14 @@ class Job < ActiveRecord::Base
   end
 
   def obfuscated_config
-    self.config.dup.tap do |config|
-      if config[:env]
-        config[:env] = process_env_vars(config[:env]) do |env|
-          obfuscate_env_vars(env)
-        end.join(' ')
-      end
+    config.dup.tap do |config|
+      config[:env] = process_env(config[:env]) { |env| obfuscate_env(env) }.join(' ') if config[:env]
     end
   end
 
   def decrypted_config
     self.config.dup.tap do |config|
-      if config[:env]
-        config[:env] = process_env_vars(config[:env]) do |env|
-          decrypt_env_vars(env) rescue {}
-        end
-      end
+      config[:env] = process_env(config[:env]) { |env| decrypt_env(env) } if config[:env]
     end
   end
 
@@ -109,15 +101,13 @@ class Job < ActiveRecord::Base
 
   private
 
-    def process_env_vars(env)
-      env = [env] unless env.is_a? Array
-
+    def process_env(env)
+      env = [env] unless env.is_a?(Array)
       env = if pull_request?
         remove_encrypted_env_vars(env)
       else
         yield(env)
       end
-
       env.compact.presence
     end
 
@@ -127,12 +117,14 @@ class Job < ActiveRecord::Base
       end
     end
 
-    def decrypt_env_vars(env)
+    def decrypt_env(env)
       env.map do |var|
         decrypt(var) do |var|
           var.insert(0, 'SECURE ') unless var.include?('SECURE ')
         end
       end
+    rescue
+      {}
     end
 
     def decrypt(v, &block)

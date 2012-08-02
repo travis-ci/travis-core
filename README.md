@@ -66,6 +66,22 @@ $ bundle exec rake
 
   Enqueues queueable jobs based on a per-owner rate limit.
 
+* `v1.job.queue.wait\_time`
+
+  Time jobs wait in the queue before being started (i.e. job.created_at to job.started_at)
+
+* `v1.job.queue.wait\_time.[queue\_name]`
+
+  (same, but per queue)
+
+* `v1.job.queue.duration`
+
+  Time jobs take for being run (i.e. job.started_at to job.finished_at)
+
+* `v1.job.duration.[queue\_name]`
+
+  (same, but per queue)
+
 * `v1.travis.event.handler.\*.notify`
 
   Responds to `build:finished` events and creates an instance of `Task::Archive`.
