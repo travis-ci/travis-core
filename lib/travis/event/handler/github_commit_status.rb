@@ -5,18 +5,17 @@ module Travis
       # Adds a comment with a build notification to the pull-request the request
       # belongs to.
       class GithubCommitStatus < Handler
-        API_VERSION = 'v2'
+        delegate :repository, :request, :to => :object
 
+        API_VERSION = 'v2'
         EVENTS = /build:(started|finished)/
 
         def handle?
-          object.pull_request?
+          true
         end
 
         def handle
-          if token
-            Task.run(:github_commit_status, payload, :url => url, :build_url => build_url, :token => token)
-          end
+          Task.run(:github_commit_status, payload, :url => url, :build_url => build_url, :token => token) if token
         end
 
         def url
@@ -32,11 +31,11 @@ module Travis
         end
 
         def slug
-          object.repository.slug
+          repository.slug
         end
 
         def sha
-          object.request.head_commit
+          request.pull_request? ? request.head_commit : request.commit.commit
         end
 
         def token
@@ -44,7 +43,7 @@ module Travis
         end
 
         def user
-          permission = object.repository.permissions.where(:admin => true).first
+          permission = repository.permissions.where(:admin => true).first
           permission.try(:user)
         end
 
