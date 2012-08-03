@@ -25,11 +25,11 @@ module Travis
           authenticated do
             GH.post(url, :target_url => build_url, :state => state, :description => description)
           end
-          info "Successfully updated the PR status on #{url}."
+          info "Successfully updated the PR status on #{full_url}."
         rescue Faraday::Error::ClientError => e
           message = e.message
           message += ": #{e.response[:status]} #{e.response[:body]}" if e.response
-          error "Could not update the PR status on #{url} (#{message})."
+          error "Could not update the PR status on #{full_url} (#{message})."
         end
 
         def authenticated(&block)
@@ -61,6 +61,10 @@ module Travis
           when 1
             'failed'
           end
+        end
+
+        def full_url
+          GH.api_host + url
         end
 
         Notification::Instrument::Task::GithubCommitStatus.attach_to(self)
