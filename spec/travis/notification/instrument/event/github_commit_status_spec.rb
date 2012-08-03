@@ -27,7 +27,7 @@ describe Travis::Notification::Instrument::Event::Handler::GithubCommitStatus do
       :object_id => 1,
       :object_type => 'Build',
       :event => 'build:finished',
-      :url => 'https://api.github.com/repos/svenfuchs/minimal/statuses/62aae5f70ceee39123ef',
+      :url => 'repos/svenfuchs/minimal/statuses/62aae5f70ceee39123ef',
     }
 
     event[:payload][:payload].should_not be_nil
@@ -50,7 +50,7 @@ describe Travis::Notification::Instrument::Event::Handler::GithubCommitStatus do
       :object_id => 1,
       :object_type => 'Build',
       :event => 'build:finished',
-      :url => 'https://api.github.com/repos/svenfuchs/minimal/statuses/head-commit',
+      :url => 'repos/svenfuchs/minimal/statuses/head-commit',
     }
 
     event[:payload][:payload].should_not be_nil
