@@ -19,7 +19,7 @@ module Travis
         end
 
         def url
-          "https://api.github.com/repos/#{slug}/statuses/#{sha}"
+          "repos/#{slug}/statuses/#{sha}"
         end
 
         def build_url
