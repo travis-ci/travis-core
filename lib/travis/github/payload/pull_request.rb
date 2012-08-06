@@ -67,7 +67,6 @@ module Travis
           end
         end
 
-
         def pull_request
           event['pull_request']
         end
