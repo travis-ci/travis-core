@@ -82,20 +82,17 @@ describe Repository do
 
     describe "by_member" do
       let(:user) { Factory(:user) }
-      let(:repository_admin) { Factory(:repository, :owner => user)}
-      let(:repository_non_admin) { Factory(:repository, :owner => user, :name => 'globalize')}
+      let(:org)  { Factory(:org) }
+      let(:repository_user) { Factory(:repository, :owner => user)}
+      let(:repository_org)  { Factory(:repository, :owner => org, :name => 'globalize')}
 
       before do
-        Permission.create!(:user => user, :repository => repository_admin, :admin => true)
-        Permission.create!(:user => user, :repository => repository_non_admin, :admin => false)
+        Permission.create!(:user => user, :repository => repository_user, :pull => true, :push => true)
+        Permission.create!(:user => user, :repository => repository_org,  :pull => true)
       end
 
-      it "should only return the administratable repositories" do
-        Repository.by_member('svenfuchs').should have(1).item
-      end
-
-      it "shouldn't return the non-administrator repositories" do
-        Repository.by_member('svenfuchs').first.should == repository_admin
+      it "returns all repositories a user has rights to" do
+        Repository.by_member('svenfuchs').should have(2).items
       end
     end
   end

@@ -3,16 +3,17 @@ require 'spec_helper'
 describe Travis::Task::GithubCommitStatus do
   include Travis::Testing::Stubs, Support::Formats
 
-  let(:url)   { "https://api.github.com/repos/travis-repos/test-project-1/statuses/#{sha}" }
-  let(:build_url)  { 'http://travis-ci.org/#!/travis-repos/test-project-1/1234' }
-  let(:sha)   { 'ab2784e55bcf71ac9ef5f6ade8e02334c6524eea' }
-  let(:token) { '12345' }
-  let(:data)  { Travis::Api.data(build, :for => 'event', :version => 'v2') }
-  let(:io)    { StringIO.new }
+  let(:url)       { "repos/travis-repos/test-project-1/statuses/#{sha}" }
+  let(:full_url)  { "https://api.github.com/#{url}" }
+  let(:build_url) { 'http://travis-ci.org/#!/travis-repos/test-project-1/1234' }
+  let(:sha)       { 'ab2784e55bcf71ac9ef5f6ade8e02334c6524eea' }
+  let(:token)     { '12345' }
+  let(:data)      { Travis::Api.data(build, :for => 'event', :version => 'v2') }
+  let(:io)        { StringIO.new }
 
   before do
     Travis.logger = Logger.new(io)
-    WebMock.stub_request(:post, url).to_return(:status => 200, :body => '{}')
+    WebMock.stub_request(:post, full_url).to_return(:status => 200, :body => '{}')
   end
 
   def run
@@ -22,7 +23,7 @@ describe Travis::Task::GithubCommitStatus do
   describe 'run' do
     it 'posts to the pull requests statuses sha url' do
       run
-      a_request(:post, url).should have_been_made
+      a_request(:post, full_url).should have_been_made
     end
 
     describe 'using a pending build' do
@@ -42,7 +43,7 @@ describe Travis::Task::GithubCommitStatus do
 
         # GH.expects(:post).with { |url, message| url == self.url }
         run
-        a_request(:post, url).with(&body).should have_been_made
+        a_request(:post, full_url).with(&body).should have_been_made
       end
     end
 
@@ -63,7 +64,7 @@ describe Travis::Task::GithubCommitStatus do
 
         # GH.expects(:post).with { |url, message| url == self.url }
         run
-        a_request(:post, url).with(&body).should have_been_made
+        a_request(:post, full_url).with(&body).should have_been_made
       end
     end
 
@@ -83,13 +84,13 @@ describe Travis::Task::GithubCommitStatus do
         end
 
         run
-        a_request(:post, url).with(&body).should have_been_made
+        a_request(:post, full_url).with(&body).should have_been_made
       end
     end
 
     it 'authenticates using the token passed into the task' do
       run
-      a_request(:post, url).with { |r| r.headers['Authorization'] == 'token 12345' }.should have_been_made
+      a_request(:post, full_url).with { |r| r.headers['Authorization'] == 'token 12345' }.should have_been_made
     end
   end
 
