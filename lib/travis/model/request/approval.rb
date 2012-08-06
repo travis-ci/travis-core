@@ -17,12 +17,13 @@ class Request
     end
 
     def approved?
-      accepted? && branch_approved? if !request.pull_request? || !pull_request_allowed?
+      accepted? && branch_approved? if pull_request_allowed?
     end
 
     private
 
       def pull_request_allowed?
+        return true unless request.pull_request?
         Array(request.config['addons']).include? 'pull_requests'
       end
 

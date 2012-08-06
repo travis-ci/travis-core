@@ -95,4 +95,21 @@ describe Request::Approval do
       approval.send(:rails_fork?).should be_false
     end
   end
+
+  describe 'pull_request_allowed?' do
+    it 'accepts push events' do
+      approval.should be_pull_request_allowed
+    end
+
+    it 'rejects pull request events' do
+      request.stubs(:pull_request?).returns(true)
+      approval.should_not be_pull_request_allowed
+    end
+
+    it 'accepts pull request events if pull request testing has been enabled' do
+      request.stubs(:pull_request?).returns(true)
+      request.config['addons'] = 'pull_requests'
+      approval.should be_pull_request_allowed
+    end
+  end
 end
