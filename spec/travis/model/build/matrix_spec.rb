@@ -110,6 +110,23 @@ describe Build, 'matrix' do
     yml
     }
 
+    let(:env_global_config) {
+      YAML.load <<-yml
+      script: "rake ci"
+      rvm:
+        - 1.9.2
+        - 1.9.3
+      gemfile:
+        - gemfiles/rails-4.0.0
+      env:
+        global:
+          - TOKEN=abcdef
+        matrix:
+          - FOO=bar
+          - BAR=baz
+    yml
+    }
+
     let(:multiple_tests_config) {
       YAML.load <<-yml
       script: "rake ci"
@@ -262,6 +279,17 @@ describe Build, 'matrix' do
     end
 
     describe :expand_matrix do
+      it 'adds global entries in env to all of the matrix elements' do
+        build = Factory(:build, :config => env_global_config)
+
+        build.expand_matrix_config(build.matrix_config).should == [
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, ['FOO=bar', 'TOKEN=abcdef']]],
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, ['BAR=baz', 'TOKEN=abcdef']]],
+          [[:rvm, '1.9.3'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, ['FOO=bar', 'TOKEN=abcdef']]],
+          [[:rvm, '1.9.3'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, ['BAR=baz', 'TOKEN=abcdef']]]
+        ]
+      end
+
       it 'sets the config to the jobs (no config)' do
         build = Factory(:build, :config => {})
         build.matrix.map(&:config).should == [{}]
