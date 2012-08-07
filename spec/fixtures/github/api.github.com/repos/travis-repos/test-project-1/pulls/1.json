@@ -124,6 +124,7 @@
   "issue_url": "https://github.com/travis-repos/test-project-1/issues/1",
   "html_url": "https://github.com/travis-repos/test-project-1/pull/1",
   "mergeable": true,
+  "mergeable_state": "clean",
   "diff_url": "https://github.com/travis-repos/test-project-1/pull/1.diff",
   "id": 826379,
   "user": {
