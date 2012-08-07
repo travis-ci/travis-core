@@ -330,6 +330,7 @@ GITHUB_PAYLOADS = {
       "html_url": "https://github.com/travis-repos/test-project-1/pull/1",
       "id": 826379,
       "mergeable": true,
+      "mergeable_state": "clean",
       "additions": 1
     },
     "repository": {
