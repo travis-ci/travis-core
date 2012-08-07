@@ -23,8 +23,9 @@ class Request
     private
 
       def pull_request_allowed?
-        return true unless request.pull_request?
-        Array(request.config['addons']).include? 'pull_requests'
+        true
+        # return true unless request.pull_request?
+        # Array(request.config['addons']).include? 'pull_requests'
       end
 
       def branch_approved?
