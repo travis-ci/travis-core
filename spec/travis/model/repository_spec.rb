@@ -80,7 +80,7 @@ describe Repository do
       end
     end
 
-    describe "by_member" do
+    describe 'by_member' do
       let(:user) { Factory(:user) }
       let(:org)  { Factory(:org) }
       let(:repository_user) { Factory(:repository, :owner => user)}
@@ -91,8 +91,20 @@ describe Repository do
         Permission.create!(:user => user, :repository => repository_org,  :pull => true)
       end
 
-      it "returns all repositories a user has rights to" do
+      it 'returns all repositories a user has rights to' do
         Repository.by_member('svenfuchs').should have(2).items
+      end
+    end
+
+    describe 'counts_by_owner_names' do
+      let!(:repositories) do
+        Factory(:repository, :owner_name => 'svenfuchs', :name => 'minimal')
+        Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-ci')
+      end
+
+      it 'returns repository counts per owner_name for the given owner_names' do
+        counts = Repository.counts_by_owner_names(%w(svenfuchs travis-ci))
+        counts.should == { 'svenfuchs' => '1', 'travis-ci' => '1' }
       end
     end
   end
