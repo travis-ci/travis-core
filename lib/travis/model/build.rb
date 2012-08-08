@@ -153,7 +153,7 @@ class Build < ActiveRecord::Base
   end
 
   def config=(config)
-    super(config ? config.deep_symbolize_keys : {})
+    super(config ? normalize_config(config) : {})
   end
 
   def obfuscated_config
@@ -176,6 +176,34 @@ class Build < ActiveRecord::Base
   end
 
   private
+
+    def normalize_env_values(values)
+      global = nil
+
+      if values.is_a?(Hash) && (values[:global] || values[:matrix])
+        global = values[:global]
+        values = values[:matrix]
+      end
+
+      if global
+        global = [global] unless global.is_a?(Array)
+      else
+        return values
+      end
+
+      values = [values] unless values.is_a?(Array)
+      values.map do |line|
+        line = [line] unless line.is_a?(Array)
+        line + global
+      end
+    end
+
+
+    def normalize_config(config)
+      config = config.deep_symbolize_keys
+      config[:env] = normalize_env_values(config[:env]) if config[:env]
+      config
+    end
 
     def last_on_branch
       repository.builds.on_branch(commit.branch).order(:id).last
