@@ -18,7 +18,11 @@ module Travis
         def run
           @repo = find || create
           update
-          permit unless permitted?
+          if permission
+            sync_permissions
+          elsif permit?
+            permit
+          end
           repo
         end
 
@@ -33,16 +37,27 @@ module Travis
           end
           # instrument :create, :level => :debug
 
-          def permitted?
-            user.repositories.include?(repo)
+          def permission
+            @permission ||= user.permissions.where(:repository_id => repo.id).first
+          end
+
+          def sync_permissions
+            if permit?
+              permission.update_attributes!(permission_data)
+            else
+              permission.destroy
+            end
+          end
+
+          def permit?
+            push_access? || admin_access? || repo.private?
           end
 
           def permit
-            user.permissions.create!(
-              :user => user,
-              :repository => repo,
-              :admin => data['permissions']['admin']
-            )
+            user.permissions.create!({
+              :user  => user,
+              :repository => repo
+            }.merge(permission_data))
           end
           # instrument :permit, :level => :debug
 
@@ -59,6 +74,18 @@ module Travis
 
           def name
             data['name']
+          end
+
+          def permission_data
+            data['permissions']
+          end
+
+          def push_access?
+            permission_data['push']
+          end
+
+          def admin_access?
+            permission_data['admin']
           end
       end
     end

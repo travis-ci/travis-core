@@ -36,7 +36,7 @@ class ServiceHook
       data = { :'hub.mode' => action, :'hub.topic' => topic, :'hub.callback' => callback(params) }
 
       # GH.post('hub', data)
-      connection = Faraday.new(:url => 'https://api.github.com') do |builder|
+      connection = Faraday.new(:url => GH.api_host.to_s) do |builder|
         builder.request(:authorization, :token, token)
         builder.request :multipart
         builder.request :url_encoded

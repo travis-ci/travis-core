@@ -79,6 +79,22 @@ describe Repository do
         Repository.search('fuchs\\').to_a.count.should == 2
       end
     end
+
+    describe "by_member" do
+      let(:user) { Factory(:user) }
+      let(:org)  { Factory(:org) }
+      let(:repository_user) { Factory(:repository, :owner => user)}
+      let(:repository_org)  { Factory(:repository, :owner => org, :name => 'globalize')}
+
+      before do
+        Permission.create!(:user => user, :repository => repository_user, :pull => true, :push => true)
+        Permission.create!(:user => user, :repository => repository_org,  :pull => true)
+      end
+
+      it "returns all repositories a user has rights to" do
+        Repository.by_member('svenfuchs').should have(2).items
+      end
+    end
   end
 
   describe 'source_url' do

@@ -6,7 +6,7 @@ describe Travis::Github::Payload::PullRequest do
   describe 'accept' do
     describe 'given action is "opened"' do
       before :each do
-        payload.gh.data['action'] = 'opened'
+        payload.event.data['action'] = 'opened'
       end
 
       it 'returns true' do
@@ -16,7 +16,7 @@ describe Travis::Github::Payload::PullRequest do
 
     describe 'given action is "reopened"' do
       before :each do
-        payload.gh.data['action'] = 'reopened'
+        payload.event.data['action'] = 'reopened'
       end
 
       it 'returns true' do
@@ -28,7 +28,7 @@ describe Travis::Github::Payload::PullRequest do
       let(:last) { stub('request') }
 
       before :each do
-        payload.gh.data['action'] = 'synchronize'
+        payload.event.data['action'] = 'synchronize'
       end
 
       it 'returns true if head has changed' do
@@ -44,7 +44,7 @@ describe Travis::Github::Payload::PullRequest do
 
     describe 'given action is "comment"' do
       before :each do
-        payload.gh.data['action'] = 'comment'
+        payload.event.data['action'] = 'comment'
       end
 
       it 'returns false' do
