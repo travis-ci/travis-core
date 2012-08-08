@@ -17,14 +17,14 @@ module Travis
           payload = MultiJson.encode(event)
           list    = "events:" << event[:uuid]
 
-          # redis.pipelined do
+          redis.pipelined do
             redis.publish list, payload
-          #   redis.multi do
-          #     redis.persist(list)
-          #     redis.rpush(list, payload)
-          #     redis.expire(list, ttl)
-          #   end
-          # end
+            redis.multi do
+              redis.persist(list)
+              redis.rpush(list, payload)
+              redis.expire(list, ttl)
+            end
+          end
         end
 
         rescues :publish, :from => Exception
