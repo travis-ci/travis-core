@@ -62,8 +62,10 @@ class User < ActiveRecord::Base
     gravatar_id.presence || (email? && Digest::MD5.hexdigest(email)) || '0' * 32
   end
 
-  def service_hooks
-    repositories.administratable.order('owner_name, name').map do |repo|
+  def service_hooks(options = {})
+    scope = repositories.administratable.order('owner_name, name')
+    scope = scope.by_owner_name(options[:owner_name]) if options[:owner_name]
+    scope.map do |repo|
       ServiceHook.new(
         :uid => [repo.owner_name, repo.name].join(':'),
         :owner_name => repo.owner_name,
