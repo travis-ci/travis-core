@@ -161,6 +161,22 @@ describe Build do
         build.config[:foo][:bar].should == 'bar'
       end
 
+      it 'squashes matrix and global keys to save config as an array, not as a hash' do
+        env = {
+          'global' => ['FOO=bar'],
+          'matrix' => [['BAR=baz', 'BAZ=qux'], 'QUX=foo']
+        }
+        config = { 'env' => env }
+        build = Factory(:build, :config => config)
+
+        build.config.should == {
+          :env => [
+            ["BAR=baz", "BAZ=qux", "FOO=bar"],
+            ["QUX=foo", "FOO=bar"]
+          ]
+        }
+      end
+
       it 'tries to deserialize the config itself if a String is returned' do
         build = Factory(:build)
         build.stubs(:read_attribute).returns("---\n:foo:\n  :bar: bar")

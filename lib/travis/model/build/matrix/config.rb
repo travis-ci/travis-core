@@ -19,7 +19,7 @@ class Build
       def to_a
         @as_array ||= begin
           keys.inject([]) do |result, key|
-            values = normalize_config_values(key, config[key])
+            values = config[key]
             values = [values] unless values.is_a?(Array)
 
             if values
@@ -32,33 +32,6 @@ class Build
         end
       end
       alias to_ary to_a
-
-      def normalize_config_values(key, values)
-        method_name = "normalize_#{key}_values"
-        values = send(method_name, values) if respond_to?(method_name)
-        values
-      end
-
-      def normalize_env_values(values)
-        global = nil
-
-        if values.is_a?(Hash) && (values[:global] || values[:matrix])
-          global = values[:global]
-          values = values[:matrix]
-        end
-
-        if global
-          global = [global] unless global.is_a?(Array)
-        else
-          return values
-        end
-
-        values = [values] unless values.is_a?(Array)
-        values.map do |line|
-          line = [line] unless line.is_a?(Array)
-          line + global
-        end
-      end
 
       # TODO: I'm lazy and I don't want to change tests for now,
       #       it can be removed later, especially when some tests
