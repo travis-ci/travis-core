@@ -49,5 +49,21 @@ describe Travis::Github::Payload::Push do
         :compare_url => 'https://github.com/svenfuchs/gem-release/compare/af674bd...9854592'
       }
     end
+
+    describe 'branch processing' do
+      it 'returns master when ref is ref/heads/master' do
+        payload.commit[:branch].should == 'master'
+      end
+
+      it 'returns travis when ref is ref/heads/travis' do
+        payload.gh.data['ref'] = "ref/heads/travis"
+        payload.commit[:branch].should == 'travis'
+      end
+
+      it 'returns features/travis-ci when ref is ref/heads/features/travis-ci' do
+        payload.gh.data['ref'] = "ref/heads/features/travis-ci"
+        payload.commit[:branch].should == 'features/travis-ci'
+      end
+    end
   end
 end

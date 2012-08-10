@@ -45,7 +45,7 @@ module Travis
             {
               :commit          => commit['sha'],
               :message         => commit['message'],
-              :branch          => gh['ref'].split('/').last,
+              :branch          => gh['ref'].split('/', 3).last,
               :ref             => gh['ref'],
               :committed_at    => commit['date'],
               :committer_name  => commit['committer']['name'],
