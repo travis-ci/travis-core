@@ -117,7 +117,7 @@ describe Repository do
 
       it 'returns repository counts per owner_name for the given owner_names' do
         counts = Repository.counts_by_owner_names(%w(svenfuchs travis-ci))
-        counts.should == { 'svenfuchs' => '1', 'travis-ci' => '1' }
+        counts.should == { 'svenfuchs' => 1, 'travis-ci' => 1 }
       end
     end
   end

@@ -12,6 +12,11 @@ describe Travis::Github::Payload::PullRequest do
       it 'returns true' do
         payload.accept?.should be_true
       end
+
+      it 'rejects it if there is no merge commit' do
+        payload.event.data['pull_request']['merge_commit'] = nil
+        payload.should_not be_accept
+      end
     end
 
     describe 'given action is "reopened"' do

@@ -15,7 +15,11 @@ module Travis
         end
 
         def accept?
-          [:opened, :reopened].include?(action) || action == :synchronize && head_change?
+          case action
+          when :opened, :reopened then !!merge_commit
+          when :synchronize       then head_change?
+          else false
+          end
         end
 
         def head_change?
