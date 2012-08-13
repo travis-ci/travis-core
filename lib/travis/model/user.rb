@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
   end
 
   def first_sync?
-    !!synced_at
+    synced_at.nil?
   end
 
   def sync
