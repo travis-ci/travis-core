@@ -69,6 +69,10 @@ class Repository < ActiveRecord::Base
       where("(repositories.owner_name || chr(47) || repositories.name) ILIKE ?", "%#{query}%")
     end
 
+    def active
+      where(:active => true)
+    end
+
     def find_by(params)
       if id = params[:repository_id] || params[:id]
         self.find(id)

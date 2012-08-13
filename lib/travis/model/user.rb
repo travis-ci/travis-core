@@ -26,6 +26,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def first_sync?
+    !!synced_at
+  end
+
   def sync
     syncing { Travis::Github::Sync::User.new(self).run }
   end

@@ -61,6 +61,19 @@ describe Repository do
       end
     end
 
+    describe 'active' do
+      let(:active)   { Factory(:repository, :active => true) }
+      let(:inactive) { Factory(:repository, :active => false) }
+
+      it 'contains active repositories' do
+        Repository.active.should include(active)
+      end
+
+      it 'does not include inactive repositories' do
+        Repository.active.should_not include(inactive)
+      end
+    end
+
     describe 'search' do
       before(:each) do
         Factory(:repository, :name => 'repository_1', :last_build_started_at => '2011-11-11')
