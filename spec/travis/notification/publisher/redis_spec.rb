@@ -14,11 +14,12 @@ describe Travis::Notification::Publisher::Redis do
   end
 
   it 'adds to the list' do
-    redis.llen(key).should be == 0
-    publish
-    redis.llen(key).should be == 1
-    publish
-    redis.llen(key).should be == 2
+    pending "feature disabled at the moment"
+    # redis.llen(key).should be == 0
+    # publish
+    # redis.llen(key).should be == 1
+    # publish
+    # redis.llen(key).should be == 2
   end
 
   it 'sets a ttl' do
@@ -27,19 +28,21 @@ describe Travis::Notification::Publisher::Redis do
   end
 
   it 'encodes the payload in json' do
-    publish(:foo => 'bar')
-    MultiJson.decode(redis.lindex(key, 0)).should be == {
-      "message" => "",
-      "uuid"    => Travis.uuid,
-      "payload" => { "foo" => "bar" }
-    }
+    pending "feature disabled at the moment"
+    # publish(:foo => 'bar')
+    # MultiJson.decode(redis.lindex(key, 0)).should be == {
+    #   "message" => "",
+    #   "uuid"    => Travis.uuid,
+    #   "payload" => { "foo" => "bar" }
+    # }
   end
 
   it 'queues new messages on the right' do
-    publish(:x => 'foo')
-    publish(:x => 'bar')
-    redis.lindex(key, 0).should include('foo')
-    redis.lindex(key, 1).should include('bar')
+    pending "feature disabled at the moment"
+    # publish(:x => 'foo')
+    # publish(:x => 'bar')
+    # redis.lindex(key, 0).should include('foo')
+    # redis.lindex(key, 1).should include('bar')
   end
 
   it 'sends out events over pubsub' do
