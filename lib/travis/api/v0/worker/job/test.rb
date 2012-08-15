@@ -18,7 +18,7 @@ module Travis
             end
 
             def job_data
-              {
+              data = {
                 'id' => job.id,
                 'number' => job.number,
                 'commit' => commit.commit,
@@ -26,6 +26,12 @@ module Travis
                 'ref' => commit.pull_request? ? commit.ref : nil,
                 'pull_request' => !!commit.pull_request?
               }
+
+              if commit.pull_request?
+                data['pull_request_number'] = commit.pull_request_number
+              end
+
+              data
             end
 
             def repository_data
