@@ -12,9 +12,9 @@ module Travis
 
         repositories.map do |repo|
           {
-            date: repo.created_at_date,
-            added_on_date: repo.repository_count.to_i,
-            total_growth: total_repositories += repo.repository_count.to_i
+            :date => repo.created_at_date,
+            :added_on_date => repo.repository_count.to_i,
+            :total_growth => total_repositories += repo.repository_count.to_i
           }
         end
       end
@@ -29,8 +29,8 @@ module Travis
 
         tests.map do |job|
           {
-            date: job.created_at_date,
-            run_on_date: job.config.to_i
+            :date => job.created_at_date,
+            :run_on_date => job.config.to_i
           }
         end
       end
