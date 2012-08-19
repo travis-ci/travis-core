@@ -24,7 +24,7 @@ module Travis
 
         # TODO needs to take care of nested namespaces, so we can pass 'job/test'
         def stub_class(name)
-          if const_defined?(name, false)
+          if const_defined?(*method(:const_defined?).arity == 1 ? [name] : [name, false])
             const_get(name)
           else
             Class.new.tap do |const|
