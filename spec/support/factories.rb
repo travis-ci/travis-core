@@ -62,6 +62,17 @@ FactoryGirl.define do
     last_build_finished_at { Time.now.utc }
   end
 
+  factory :minimal, :parent => :repository do
+  end
+
+  factory :enginex, :parent => :repository do
+    name 'enginex'
+    owner_name 'josevalim'
+    owner_email 'josevalim@email.com'
+    owner { User.find_by_login('josevalim') || Factory(:user, :login => 'josevalim') }
+    last_duration 30
+  end
+
   factory :user do
     name  'Sven Fuchs'
     login 'svenfuchs'
