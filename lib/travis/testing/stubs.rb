@@ -3,23 +3,28 @@ require 'active_support/core_ext/numeric/time'
 module Travis
   module Testing
     module Stubs
-      def self.included(base)
-        base.send(:instance_eval) do
-          let(:repository) { stub_repository }
-          let(:request)    { stub_request }
-          let(:commit)     { stub_commit }
-          let(:build)      { stub_build }
-          let(:test)       { stub_test }
-          let(:log)        { stub_log }
-          let(:worker)     { stub_worker }
-          let(:user)       { stub_user }
-          let(:url)        { stub_url }
+      autoload :Stub, 'travis/testing/stubs/stub'
+
+      class << self
+        include Stub
+
+        def included(base)
+          base.send(:instance_eval) do
+            let(:repository) { stub_repository }
+            let(:request)    { stub_request }
+            let(:commit)     { stub_commit }
+            let(:build)      { stub_build }
+            let(:test)       { stub_test }
+            let(:log)        { stub_log }
+            let(:worker)     { stub_worker }
+            let(:user)       { stub_user }
+            let(:url)        { stub_url }
+          end
         end
       end
 
       def stub_repository(attributes = {})
-        stub 'repository', attributes.reverse_merge(
-          :class => stub('Repository', :name => 'Repository', :base_class => stub('Repository', :name => 'Repository')),
+        Stubs.stub 'repository', attributes.reverse_merge(
           :id => 1,
           :owner_name => 'svenfuchs',
           :owner_email => 'svenfuchs@artweb-design.de',
@@ -28,7 +33,7 @@ module Travis
           :description => 'the repo description',
           :url => 'http://github.com/svenfuchs/minimal',
           :source_url => 'git://github.com/svenfuchs/minimal.git',
-          :key => stub('key', :id => 1, :public_key => '-----BEGIN PUBLIC KEY-----'),
+          :key => stub_key,
           :private? => false,
           :last_build_id => 1,
           :last_build_number => 2,
@@ -41,11 +46,18 @@ module Travis
         )
       end
 
-      def stub_request(attributes = {})
-        stub 'request', attributes.reverse_merge(
+      def stub_key(attributes = {})
+        Stubs.stub 'key', attributes.reverse_merge(
           :id => 1,
-          :repository => stub_repository(),
-          :commit => stub_commit(),
+          :public_key => '-----BEGIN PUBLIC KEY-----'
+        )
+      end
+
+      def stub_request(attributes = {})
+        Stubs.stub 'request', attributes.reverse_merge(
+          :id => 1,
+          :repository => stub_repository,
+          :commit => stub_commit,
           :config => {},
           :event_type => 'push',
           :head_commit => 'head-commit',
@@ -57,7 +69,7 @@ module Travis
       end
 
       def stub_commit(attributes = {})
-        stub 'commit', attributes.reverse_merge(
+        Stubs.stub 'commit', attributes.reverse_merge(
           :id => 1,
           :commit => '62aae5f70ceee39123ef',
           :branch => 'master',
@@ -75,8 +87,7 @@ module Travis
       end
 
       def stub_build(attributes = {})
-        stub 'build', attributes.reverse_merge(
-          :class => stub('Build', :name => 'Build', :base_class => stub('Build', :name => 'Build')),
+        Stubs.stub 'build', attributes.reverse_merge(
           :id => 1,
           :repository_id => repository.id,
           :repository => repository,
@@ -104,8 +115,7 @@ module Travis
       end
 
       def stub_test(attributes = {})
-        stub 'test', attributes.reverse_merge(
-          :class => stub('Job::Test', :name => 'Job::Test', :base_class => stub('Job', :name => 'Job')),
+        Stubs.stub 'test', attributes.reverse_merge(
           :id => 1,
           :owner => stub_user,
           :repository_id => 1,
@@ -134,17 +144,16 @@ module Travis
       end
 
       def stub_log(attributes = {})
-        stub 'log', attributes.reverse_merge(
+        Stubs.stub 'log', attributes.reverse_merge(
           :id => 1,
           :job_id => 1,
-          :class => stub('class', :name => 'Artifact::Log'),
+          :class => Stubs.stub('class', :name => 'Artifact::Log'),
           :content => 'the test log'
         )
       end
 
       def stub_worker(attributes = {})
-        stub 'worker', attributes.reverse_merge(
-          :class => stub('Worker', :name => 'Worker'),
+        Stubs.stub 'worker', attributes.reverse_merge(
           :id => 1,
           :name => 'ruby-1',
           :host => 'ruby-1.worker.travis-ci.org',
@@ -157,8 +166,7 @@ module Travis
       end
 
       def stub_user(attributes = {})
-        stub 'user', attributes.reverse_merge(
-          :class => stub('User', :name => 'User', :base_class => stub('User', :name => 'User')),
+        Stubs.stub 'user', attributes.reverse_merge(
           :id => 1,
           :organizations => [],
           :name => 'Sven Fuchs',
@@ -173,8 +181,7 @@ module Travis
       end
 
       def stub_url(attributes = {})
-        stub 'url', attributes.reverse_merge(
-          :class => stub('Url', :name => 'Url'),
+        Stubs.stub 'url', attributes.reverse_merge(
           :id => 1,
           :short_url => 'http://trvs.io/short'
         )
