@@ -161,6 +161,34 @@ describe Build do
         build.config[:foo][:bar].should == 'bar'
       end
 
+      it 'works fine even if matrix part of env is undefined' do
+        env = {
+          'global' => ['FOO=bar']
+        }
+        config = { 'env' => env }
+        build = Factory(:build, :config => config)
+
+        build.config.should == {
+          :env => [
+            ['FOO=bar']
+          ]
+        }
+      end
+
+      it 'works fine even if global part of env is undefined' do
+        env = {
+          'matrix' => ['FOO=bar']
+        }
+        config = { 'env' => env }
+        build = Factory(:build, :config => config)
+
+        build.config.should == {
+          :env => [
+            "FOO=bar"
+          ]
+        }
+      end
+
       it 'squashes matrix and global keys to save config as an array, not as a hash' do
         env = {
           'global' => ['FOO=bar'],

@@ -197,7 +197,7 @@ class Build < ActiveRecord::Base
       values = [values] unless values.is_a?(Array)
       values.map do |line|
         line = [line] unless line.is_a?(Array)
-        line + global
+        (line + global).compact
       end
     end
 
