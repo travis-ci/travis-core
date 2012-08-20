@@ -210,6 +210,20 @@ describe Build do
         }
       end
 
+      it 'obfuscates env vars which are not in nested array' do
+        build  = Build.new(:repository => Factory(:repository))
+        config = {
+          :rvm => ['1.8.7'],
+          :env => [build.repository.key.secure.encrypt('BAR=barbaz')]
+        }
+        build.config = config
+
+        build.obfuscated_config.should == {
+          :rvm => ['1.8.7'],
+          :env => ['BAR=[secure]']
+        }
+      end
+
       it 'does not make an empty env key an array but leaves it empty' do
         build  = Build.new(:repository => Factory(:repository))
         build.config = { :rvm => ['1.8.7'], :env =>  nil }
