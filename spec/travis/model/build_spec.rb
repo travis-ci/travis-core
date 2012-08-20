@@ -224,6 +224,13 @@ describe Build do
         }
       end
 
+      it 'works with nil values' do
+        build  = Build.new(:repository => Factory(:repository))
+        build.config = { :rvm => ['1.8.7'] }
+        build.config[:env] = [[nil, {:secure => ''}]]
+        build.obfuscated_config.should == { :rvm => ['1.8.7'], :env =>  [''] }
+      end
+
       it 'does not make an empty env key an array but leaves it empty' do
         build  = Build.new(:repository => Factory(:repository))
         build.config = { :rvm => ['1.8.7'], :env =>  nil }
