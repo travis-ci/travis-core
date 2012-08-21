@@ -7,7 +7,6 @@ describe Travis::Api::V2::Http::Repository do
   let(:data) { Travis::Api::V2::Http::Repository.new(repository).data }
 
   it 'repository' do
-    p repository.class
     data['repository'].should == {
       'id' => repository.id,
       'slug' => 'svenfuchs/minimal',
