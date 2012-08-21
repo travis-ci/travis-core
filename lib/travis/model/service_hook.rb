@@ -36,7 +36,7 @@ class ServiceHook
 
     def update
       create unless hook
-      GH.patch(url, payload) unless hook['active'] == active
+      GH.patch(hook_url, payload) unless hook['active'] == active
     end
 
     def hook
@@ -62,7 +62,7 @@ class ServiceHook
       "repos/#{repository.slug}/hooks"
     end
 
-    def url
+    def hook_url
       hook['_links']['self']['href']
     end
 
