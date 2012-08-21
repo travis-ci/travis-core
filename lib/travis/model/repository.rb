@@ -132,4 +132,9 @@ class Repository < ActiveRecord::Base
     n = branches.map { |branch| builds.last_finished_on_branch(branch) }.compact
     n.sort { |a, b| b.finished_at <=> a.finished_at }
   end
+
+  def admin
+    return owner if User === owner and owner.github_oauth_token
+    @admin ||= permissions.where(:admin => true).first.try(:user)
+  end
 end
