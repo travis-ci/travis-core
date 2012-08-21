@@ -21,11 +21,11 @@ describe Travis::Notification::Instrument::Event::Handler::Pusher do
         :uuid => Travis.uuid
       }
       event[:payload].except(:payloads).should == {
-        :msg => 'Travis::Event::Handler::Pusher#notify(job:test:started) for #<Job::Test id=1>',
+        :msg => 'Travis::Event::Handler::Pusher#notify(job:test:started) for #<Test id=1>',
         :repository => 'svenfuchs/minimal',
         :request_id => 1,
         :object_id => 1,
-        :object_type => 'Job::Test',
+        :object_type => 'Test',
         :event => 'job:test:started',
       }
       event[:payload][:payloads].should_not be_nil
