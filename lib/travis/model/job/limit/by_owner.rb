@@ -37,11 +37,11 @@ class Job
       end
 
       def max_jobs_by_owner
-        Travis.config.jobs.queue.limit.by_owner[owner.login]
+        Travis.config.queue.limit.by_owner[owner.login]
       end
 
       def max_jobs_default
-        Travis.config.jobs.queue.limit.default
+        Travis.config.queue.limit.default
       end
 
       def custom_queue?
