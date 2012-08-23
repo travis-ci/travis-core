@@ -47,6 +47,14 @@ describe Travis::Config do
       config.amqp.prefetch.should == 1
     end
 
+    it 'jobs.queue.limit.by_owner defaults to {}' do
+      config.jobs.queue.limit.by_owner.should == {}
+    end
+
+    it 'jobs.queue.limit.default defaults to 5' do
+      config.jobs.queue.limit.default.should == 5
+    end
+
     it 'jobs.queue.interval defaults to 3' do
       config.jobs.queue.interval.should == 3
     end
