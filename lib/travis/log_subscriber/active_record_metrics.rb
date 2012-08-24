@@ -4,6 +4,9 @@ module Travis
       def sql(event)
         return if 'SCHEMA' == event.payload[:name]
         name, sql, duration = event.payload[:name], event.payload[:sql], event.duration
+        if name.is_a?(Array)
+          name = "generic"
+        end
 
         metric_name =
           if name.present?
