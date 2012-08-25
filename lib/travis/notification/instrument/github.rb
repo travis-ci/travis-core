@@ -2,6 +2,15 @@ module Travis
   module Notification
     class Instrument
       class Github < Instrument
+        class Admin < Github
+          def find_completed
+            publish(
+              :msg => "#{target.class.name}#find for #{target.repository.slug}: #{result.login}",
+              :result => result
+            )
+          end
+        end
+
         class Config < Github
           def fetch_completed
             publish(

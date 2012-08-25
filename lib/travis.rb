@@ -57,6 +57,7 @@ module Travis
 
   class UnknownRepository < StandardError; end
   class GithubApiError < StandardError; end
+  class AdminMissing < StandardError; end
 
   class << self
     def config
