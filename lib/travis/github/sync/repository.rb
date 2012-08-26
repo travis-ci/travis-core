@@ -4,7 +4,7 @@ module Travis
       class Repository
         class << self
           def unpermit_all(user, repositories)
-            user.permissions.where(:repository_id => repositories.map(&:id)).delete_all
+            user.permissions.where(:repository_id => repositories.map(&:id)).delete_all unless repositories.empty?
           end
         end
 
