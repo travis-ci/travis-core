@@ -45,7 +45,7 @@ module Travis
           end
 
           def remove
-            repos = user.repositories.select { |repo| !slugs.include?(repo.slug) }
+            repos = user.repositories.reject { |repo| slugs.include?(repo.slug) }
             Repository.unpermit_all(user, repos)
             repos
           end
