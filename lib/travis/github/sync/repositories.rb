@@ -53,7 +53,6 @@ module Travis
           # we have to filter these ourselves because the github api is broken for this
           def data
             @data ||= filter_duplicates(fetch.select { |repo| repo['private'] == self.class.private? })
-            @data
           end
 
           def filter_duplicates(repositories)
