@@ -7,14 +7,15 @@ module Travis
             class Job
               include Formats
 
-              attr_reader :job, :commit
+              attr_reader :job, :commit, :options
 
-              def initialize(job)
+              def initialize(job, options = {})
                 @job = job
                 @commit = job.commit
+                @options = options
               end
 
-              def data(options = {})
+              def data
                 data = {
                   'id' => job.id,
                   'repository_id' => job.repository_id,
@@ -34,7 +35,7 @@ module Travis
                   'committer_name' => commit.committer_name,
                   'committer_email' => commit.committer_email
                 }
-                data['log'] = job.log.try(:content) || '' unless options[:bare]
+                data['log'] = job.log.try(:content) || '' if options[:include_log]
                 data['started_at'] = format_date(job.started_at) if job.started?
                 data['finished_at'] = format_date(job.finished_at) if job.finished?
                 data

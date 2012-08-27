@@ -8,7 +8,7 @@ module Travis
 
             include Formats
 
-            def data(options = {})
+            def data
               {
                 'id' => build.id,
                 'repository' => repository_data,
@@ -31,7 +31,7 @@ module Travis
                 'author_email' => commit.author_email,
                 'committer_name' => commit.committer_name,
                 'committer_email' => commit.committer_email,
-                'matrix' => build.matrix.map { |job| Job.new(job).data(options) }
+                'matrix' => build.matrix.map { |job| Job.new(job, options).data }
               }
             end
 

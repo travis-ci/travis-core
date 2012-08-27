@@ -25,7 +25,12 @@ module Travis
         end
 
         def payload
-          @payload ||= Api.data(object, :for => 'webhook', :type => 'build/finished', :version => API_VERSION)
+          @payload ||= Api.data(object,
+            :for => 'webhook',
+            :type => 'build/finished',
+            :params => { :include_log => config.include_log? },
+            :version => API_VERSION
+          )
         end
 
         def token
