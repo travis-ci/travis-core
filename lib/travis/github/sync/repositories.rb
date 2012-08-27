@@ -52,7 +52,19 @@ module Travis
 
           # we have to filter these ourselves because the github api is broken for this
           def data
-            @data ||= fetch.select { |repo| repo['private'] == self.class.private? }
+            @data ||= filter_duplicates(fetch.select { |repo| repo['private'] == self.class.private? })
+            @data
+          end
+
+          def filter_duplicates(repositories)
+            repositories.reduce([]) do |filtered_list, repository|
+              if filtered_list.none? {|r|
+                  r['owner']['login'] == repository['owner']['login'] and
+                  r['name'] == repository['name']} 
+                filtered_list.push(repository)
+              end
+              filtered_list
+            end
           end
 
           def slugs
@@ -86,6 +98,3 @@ module Travis
     end
   end
 end
-
-
-
