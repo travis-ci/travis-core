@@ -16,8 +16,8 @@ module Travis
             end
 
             meta_class.send(:define_method, :inspect) do
-              attributes = attributes.map { |name, value| [name, value.inspect].join('=') }.join(' ')
-              "#<#{name.camelize}:#{object.object_id} #{attributes}>"
+              attrs = attributes.map { |name, value| [name, value.inspect].join('=') }.join(' ')
+              "#<#{name.camelize}:#{object.object_id} #{attrs}>"
             end
           end
         end
