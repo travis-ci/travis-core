@@ -3,14 +3,14 @@ require 'spec_helper'
 describe Travis::Event::Handler::Webhook do
   include Travis::Testing::Stubs
 
-  let(:handler) { Travis::Event::Handler::Webhook.any_instance }
-
-  before do
-    Travis::Event.stubs(:subscribers).returns [:webhook]
-    handler.stubs(:handle => true, :handle? => true)
-  end
-
   describe 'subscription' do
+    let(:handler) { Travis::Event::Handler::Webhook.any_instance }
+
+    before do
+      Travis::Event.stubs(:subscribers).returns [:webhook]
+      handler.stubs(:handle => true, :handle? => true)
+    end
+
     it 'build:started notifies' do
       handler.expects(:notify)
       Travis::Event.dispatch('build:started', build)
@@ -22,7 +22,28 @@ describe Travis::Event::Handler::Webhook do
     end
   end
 
+  describe 'payload' do
+    let(:handler) { Travis::Event::Handler::Webhook.new('build:finished', build) }
+
+    it 'includes job logs to the payload if defined by the config' do
+      handler.config.stubs(:include_log?).returns true
+      handler.payload['matrix'].first['log'].should_not be_nil
+    end
+
+    it 'does not include job logs to the payload if defined by the config' do
+      handler.config.stubs(:include_log?).returns false
+      handler.payload['matrix'].first['log'].should be_nil
+    end
+  end
+
   describe 'instrumentation' do
+    let(:handler) { Travis::Event::Handler::Webhook.any_instance }
+
+    before do
+      Travis::Event.stubs(:subscribers).returns [:webhook]
+      handler.stubs(:handle => true, :handle? => true)
+    end
+
     it 'instruments with "travis.event.handler.webhook.notify"' do
       ActiveSupport::Notifications.stubs(:publish)
       ActiveSupport::Notifications.expects(:publish).with do |event, data|

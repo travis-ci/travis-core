@@ -3,7 +3,8 @@ require 'spec_helper'
 describe Travis::Api::V1::Webhook::Build::Finished do
   include Travis::Testing::Stubs, Support::Formats
 
-  let(:data)  { Travis::Api::V1::Webhook::Build::Finished.new(build).data }
+  let(:data)    { Travis::Api::V1::Webhook::Build::Finished.new(build, options).data }
+  let(:options) { { :include_log => true } }
 
   it 'data' do
     data.except('repository', 'matrix').should == {
@@ -39,28 +40,39 @@ describe Travis::Api::V1::Webhook::Build::Finished do
     }
   end
 
-  it 'matrix' do
-    data['matrix'].first.should == {
-      'id' => 1,
-      'repository_id' => 1,
-      'parent_id' => 1,
-      'number' => '2.1',
-      'state' => 'finished',
-      'started_at' => json_format_time(Time.now.utc - 1.minute),
-      'finished_at' => json_format_time(Time.now.utc),
-      'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
-      'status' => 0,
-      'result' => 0,
-      'commit' => '62aae5f70ceee39123ef',
-      'branch' => 'master',
-      'message' => 'the commit message',
-      'author_name' => 'Sven Fuchs',
-      'author_email' => 'svenfuchs@artweb-design.de',
-      'committer_name' => 'Sven Fuchs',
-      'committer_email' => 'svenfuchs@artweb-design.de',
-      'committed_at' => json_format_time(Time.now.utc - 1.hour),
-      'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
-      'log' => 'the test log',
-    }
+  describe 'matrix' do
+    it 'payload' do
+      data['matrix'].first.except('log').should == {
+        'id' => 1,
+        'repository_id' => 1,
+        'parent_id' => 1,
+        'number' => '2.1',
+        'state' => 'finished',
+        'started_at' => json_format_time(Time.now.utc - 1.minute),
+        'finished_at' => json_format_time(Time.now.utc),
+        'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
+        'status' => 0,
+        'result' => 0,
+        'commit' => '62aae5f70ceee39123ef',
+        'branch' => 'master',
+        'message' => 'the commit message',
+        'author_name' => 'Sven Fuchs',
+        'author_email' => 'svenfuchs@artweb-design.de',
+        'committer_name' => 'Sven Fuchs',
+        'committer_email' => 'svenfuchs@artweb-design.de',
+        'committed_at' => json_format_time(Time.now.utc - 1.hour),
+        'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
+      }
+    end
+
+    it 'given include_log is true' do
+      options.replace :include_log => true
+      data['matrix'].first['log'].should == 'the test log'
+    end
+
+    it 'given include_log is false' do
+      options.replace :include_log => false
+      data['matrix'].first['log'].should be_nil
+    end
   end
 end

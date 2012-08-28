@@ -4,6 +4,10 @@ module Travis
   module Event
     class Config
       class Webhook < Config
+        def include_log?
+          with_fallbacks(:webhooks, :include_log, true)
+        end
+
         def send_on_start?
           !build.pull_request? && webhooks.present? && send_on_start_for?(:webhooks)
         end
