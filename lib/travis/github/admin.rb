@@ -32,7 +32,12 @@ module Travis
 
         def validate(user)
           data = Github.authenticated(user) { repository_data }
-          data['permissions']['admin'] ? user : update(user, data['permissions']) && false
+          if data['permissions'] && data['permissions']['admin']
+            user
+          else
+            update(user, data['permissions'])
+            false
+          end
         rescue Faraday::Error::ClientError => e
           error "[github-admin] error retrieving repository info for #{repository.slug} for #{user.login}: #{e.inspect}"
           false
