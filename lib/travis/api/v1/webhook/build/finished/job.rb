@@ -35,7 +35,7 @@ module Travis
                   'committer_name' => commit.committer_name,
                   'committer_email' => commit.committer_email
                 }
-                data['log'] = job.log.try(:content) || '' if options[:include_log]
+                data['log'] = job.log.try(:content) || '' if options[:include_logs]
                 data['started_at'] = format_date(job.started_at) if job.started?
                 data['finished_at'] = format_date(job.finished_at) if job.finished?
                 data

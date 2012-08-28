@@ -14,31 +14,31 @@ describe Travis::Event::Config::Webhook do
     it_behaves_like 'a build configuration'
   end
 
-  describe :include_log? do
+  describe :include_logs? do
     # TODO default is to be deprecated and changed to false
     it 'returns true by default (single url given)' do
       build.stubs(:config => { :notifications => { :webhooks => 'http://domain.com' } })
-      config.include_log?.should be_true
+      config.include_logs?.should be_true
     end
 
     it 'returns true by default (array of urls given)' do
       build.stubs(:config => { :notifications => { :webhooks => ['http://domain.com'] } })
-      config.include_log?.should be_true
+      config.include_logs?.should be_true
     end
 
     it 'returns true by default (hash given)' do
       build.stubs(:config => { :notifications => { :webhooks => {} } })
-      config.include_log?.should be_true
+      config.include_logs?.should be_true
     end
 
     it 'returns true if defined in the config' do
-      build.stubs(:config => { :notifications => { :webhooks => { :include_log => true } } })
-      config.include_log?.should be_true
+      build.stubs(:config => { :notifications => { :webhooks => { :include_logs => true } } })
+      config.include_logs?.should be_true
     end
 
     it 'returns false if defined in the config' do
-      build.stubs(:config => { :notifications => { :webhooks => { :include_log => false } } })
-      config.include_log?.should be_false
+      build.stubs(:config => { :notifications => { :webhooks => { :include_logs => false } } })
+      config.include_logs?.should be_false
     end
   end
 

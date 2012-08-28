@@ -4,7 +4,7 @@ describe Travis::Api::V1::Webhook::Build::Finished do
   include Travis::Testing::Stubs, Support::Formats
 
   let(:data)    { Travis::Api::V1::Webhook::Build::Finished.new(build, options).data }
-  let(:options) { { :include_log => true } }
+  let(:options) { { :include_logs => true } }
 
   it 'data' do
     data.except('repository', 'matrix').should == {
@@ -65,13 +65,13 @@ describe Travis::Api::V1::Webhook::Build::Finished do
       }
     end
 
-    it 'given include_log is true' do
-      options.replace :include_log => true
+    it 'given include_logs is true' do
+      options.replace :include_logs => true
       data['matrix'].first['log'].should == 'the test log'
     end
 
-    it 'given include_log is false' do
-      options.replace :include_log => false
+    it 'given include_logs is false' do
+      options.replace :include_logs => false
       data['matrix'].first['log'].should be_nil
     end
   end

@@ -28,7 +28,7 @@ module Travis
           @payload ||= Api.data(object,
             :for => 'webhook',
             :type => 'build/finished',
-            :params => { :include_log => config.include_log? },
+            :params => { :include_logs => config.include_logs? },
             :version => API_VERSION
           )
         end
