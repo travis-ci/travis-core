@@ -9,6 +9,7 @@ describe Travis::Task::Github do
 
   before do
     Travis.logger = Logger.new(io)
+    GH.stubs(:head)
     WebMock.stub_request(:post, 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments').to_return(:status => 200, :body => '{}')
   end
 
@@ -20,6 +21,12 @@ describe Travis::Task::Github do
     it 'posts to the request comments_url' do
       run
       a_request(:post, url).should have_been_made
+    end
+
+    it 'does not post if the bot has no access to the comments' do
+      GH.stubs(:head).raises(Faraday::Error::ResourceNotFound)
+      run
+      a_request(:post, url).should_not have_been_made
     end
 
     describe 'using a passing build' do
