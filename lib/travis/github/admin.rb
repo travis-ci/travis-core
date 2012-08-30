@@ -46,7 +46,7 @@ module Travis
 
         def handle_error(user, error)
           case error.response.try(:status)
-          when 403
+          when 401
             error "[github-admin] token for #{user.login} no longer valid"
             user.update_attributes!(:github_oauth_token => "")
           when 404
