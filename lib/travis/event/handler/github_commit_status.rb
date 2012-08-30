@@ -40,6 +40,9 @@ module Travis
 
         def token
           repository.admin.try(:github_oauth_token)
+        rescue Travis::AdminMissing => error
+          error error.message
+          nil
         end
 
         Notification::Instrument::Event::Handler::GithubCommitStatus.attach_to(self)
