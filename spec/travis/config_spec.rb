@@ -63,6 +63,10 @@ describe Travis::Config do
       config.queue.interval.should == 3
     end
 
+    it 'logs.shards defaults to 1' do
+      config.logs.shards.should == 1
+    end
+
     it 'database' do
       config.database.should == {
         :adapter => 'postgresql',
