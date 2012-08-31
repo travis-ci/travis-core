@@ -81,15 +81,19 @@ module Travis
         end
 
         def nick
-          config[:nick] || Travis.config.irc.try(:nick) || 'travis-ci'
+          try_config(:nick) || Travis.config.irc.try(:nick) || 'travis-ci'
         end
 
         def password
-          config[:password]
+          try_config(:password)
         end
 
         def nickserv_password
-          config[:nickserv_password]
+          try_config(:nickserv_password)
+        end
+
+        def try_config(option)
+          config.is_a?(Hash) and config[option]
         end
 
         def config
