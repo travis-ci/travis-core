@@ -26,6 +26,7 @@ module Travis
         end
 
         def initialize(server, nick, options = {})
+          Travis.logger.info("Connecting to #{server} on port #{options[:port] || 6667} with nick #{options[:nick]}")
           @socket = TCPSocket.open(server, options[:port] || 6667)
           @socket = self.class.wrap_ssl(@socket) if options[:ssl]
 
