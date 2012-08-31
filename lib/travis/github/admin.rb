@@ -35,12 +35,27 @@ module Travis
           if data['permissions'] && data['permissions']['admin']
             user
           else
+            info "[github-admin] #{user.login} no longer has admin access to #{repository.slug}"
             update(user, data['permissions'])
             false
           end
-        rescue Faraday::Error::ClientError => e
-          error "[github-admin] error retrieving repository info for #{repository.slug} for #{user.login}: #{e.inspect}"
+        rescue Faraday::Error::ClientError => error
+          handle_error(user, error)
           false
+        end
+
+        def handle_error(user, error)
+          status = error.response.status if error.response.respond_to? :status
+          case status
+          when 401
+            error "[github-admin] token for #{user.login} no longer valid"
+            user.update_attributes!(:github_oauth_token => "")
+          when 404
+            info "[github-admin] #{user.login} no longer has any access to #{repository.slug}"
+            update(user, {})
+          else
+            error "[github-admin] error retrieving repository info for #{repository.slug} for #{user.login}: #{error.inspect}"
+          end
         end
 
         def repository_data
