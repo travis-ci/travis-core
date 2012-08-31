@@ -33,7 +33,6 @@ module Travis
         end
 
         def send_messages(host, port, ssl, channels)
-          p client_options(port, ssl)
           client(host, nick, client_options(port, ssl)) do |client|
             channels.each do |channel|
                 send_message(client, channel)
@@ -82,7 +81,7 @@ module Travis
         end
 
         def nick
-          Travis.config.irc.try(:nick) || 'travis-ci'
+          config[:nick] || Travis.config.irc.try(:nick) || 'travis-ci'
         end
 
         def password

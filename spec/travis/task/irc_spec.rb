@@ -172,6 +172,23 @@ describe Travis::Task::Irc do
     run(build)
   end
 
+  it "allows overwriting the nickname" do
+    build.obfuscated_config[:notifications] = { :irc => { :use_notice => true, :password => 'pass', :nickserv_password => 'nickpass', :nick => 'niclas' } }
+
+    expect_irc 'irc.freenode.net', 1234, 'travis', [
+      'PASS pass',
+      'NICK niclas',
+      'PRIVMSG NickServ :IDENTIFY nickpass',
+      'USER niclas niclas niclas :niclas',
+      'JOIN #travis',
+      'NOTICE #travis :[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.',
+      'NOTICE #travis :[travis-ci] Change view : http://trvs.io/short',
+      'NOTICE #travis :[travis-ci] Build details : http://trvs.io/short',
+      'PART #travis',
+      'QUIT'
+    ]
+    run(build)
+  end
 
   context 'when configured to IRC+SSL server' do
     it "should wrap socket with ssl (in client private)" do
