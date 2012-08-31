@@ -33,7 +33,7 @@ module Travis
         end
 
         def send_messages(host, port, ssl, channels)
-          client(host, nick, :port => port, :ssl => (ssl == :ssl)) do |client|
+          client(host, nick, client_options(port, ssl)) do |client|
             channels.each do |channel|
                 send_message(client, channel)
                 info("Successfully notified #{host}:#{port}##{channel}")
@@ -64,6 +64,15 @@ module Travis
           Array(templates || TEMPLATES)
         end
 
+        def client_options(port, ssl)
+          {
+            :port => port,
+            :ssl => (ssl == :ssl),
+            :password => password,
+            :nickserv_password => nickserv_password
+          }
+        end
+
         def client(host, nick, options, &block)
           Client.new(host, nick, options).tap do |client|
             client.run(&block) if block_given?
@@ -72,7 +81,15 @@ module Travis
         end
 
         def nick
-          Travis.config.irc.try(:nick) || 'travis-ci'
+          config[:nick] || Travis.config.irc.try(:nick) || 'travis-ci'
+        end
+
+        def password
+          config[:password]
+        end
+
+        def nickserv_password
+          config[:nickserv_password]
         end
 
         def config
