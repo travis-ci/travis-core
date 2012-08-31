@@ -48,6 +48,22 @@ describe Travis::Task::Irc::Client do
           Travis::Task::Irc::Client.new(server, nick, :password => password)
         end
       end
+
+      describe "with a nickserv password" do
+        it "should identify with nickserv" do
+          @socket.expects(:puts).with("PRIVMSG NickServ :IDENTIFY pass")
+          expect_standard_sequence
+          Travis::Task::Irc::Client.new(server, nick, :nickserv_password => 'pass')
+        end
+      end
+
+      describe "without a nickserv password" do
+        it "should not identify with nickserv" do
+          expect_standard_sequence
+          Travis::Task::Irc::Client.new(server, nick)
+        end
+
+      end
     end
 
     describe 'should connect to a server which requires ping/pong' do

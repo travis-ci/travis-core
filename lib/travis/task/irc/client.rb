@@ -33,6 +33,7 @@ module Travis
 
           socket.puts "PASS #{options[:password]}" if options[:password]
           socket.puts "NICK #{nick}"
+          socket.puts "PRIVMSG NickServ :IDENTIFY #{options[:nickserv_password]}" if options[:nickserv_password]
           socket.puts "USER #{nick} #{nick} #{nick} :#{nick}"
         end
 
