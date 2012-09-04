@@ -12,7 +12,7 @@ module Travis
           end
 
           def cache_key
-            "#{r.id}-#{r.last_build_id}-branches"
+            "#{repository.id}-#{repository.last_build_id}-branches"
           end
 
           def updated_at

@@ -7,9 +7,7 @@ module Travis
 
     class << self
       def data(resource, options = {})
-        builder = builder(resource, options)
-        raise ArgumentError, "cannot serialize #{resource.inspect}" unless builder
-        builder.new(resource, options[:params] || {}).data
+        new(resource, options).data
       end
 
       def builder(resource, options = {})
@@ -17,6 +15,12 @@ module Travis
         version = (options[:version] || 'v1').to_s.camelize
         type    = (options[:type] || type_for(resource)).to_s.camelize
         [name, version, target, type].join('::').constantize rescue nil
+      end
+
+      def new(resource, options = {})
+        builder = builder(resource, options)
+        raise ArgumentError, "cannot serialize #{resource.inspect}" unless builder
+        builder.new(resource, options[:params] || {})
       end
 
       private
