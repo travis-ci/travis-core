@@ -1,3 +1,5 @@
+require 'active_support/log_subscriber'
+
 module Travis
   module LogSubscriber
     class ActiveRecordMetrics < ActiveSupport::LogSubscriber
