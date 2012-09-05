@@ -3,6 +3,10 @@ require 'active_support/log_subscriber'
 module Travis
   module LogSubscriber
     class ActiveRecordMetrics < ActiveSupport::LogSubscriber
+      def self.attach
+        attach_to(:active_record)
+      end
+
       def sql(event)
         return if 'SCHEMA' == event.payload[:name]
         name, sql, duration = event.payload[:name], event.payload[:sql].downcase, event.duration
@@ -23,13 +27,11 @@ module Travis
         Metriks.timer(metric_name).update(duration)
       end
 
-      def log_update?(sql)
-        sql.include?('artifacts') && sql.include?("content = coalesce(content, '')")
-      end
+      private
 
-      def self.attach
-        attach_to(:active_record)
-      end
+        def log_update?(sql)
+          sql.include?('artifacts') && sql.include?("content = coalesce(content, '')")
+        end
     end
   end
 end
