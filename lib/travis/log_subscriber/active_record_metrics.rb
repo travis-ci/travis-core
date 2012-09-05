@@ -20,7 +20,7 @@ module Travis
             "active_record.#{name.downcase.gsub(/ /, ".")}"
           elsif %w{insert delete update}.include?(sql[0..6])
             Metriks.timer("active_record.writes").update(duration)
-            Metriks.timer("active_record.log_updates").update(duration) if log_update?(sql)
+            # Metriks.timer("active_record.log_updates").update(duration) if log_update?(sql)
             "active_record.#{sql[0..6]}"
           end
 
