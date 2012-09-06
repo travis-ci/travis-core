@@ -22,7 +22,7 @@ module Travis
         if run_local?
           const_get(type.to_s.camelize).new(data, options).run
         else
-          publisher('tasks').publish(:data => data, :options => options)
+          publisher('tasks').publish(:type => type, :data => data, :options => options)
         end
       end
 
