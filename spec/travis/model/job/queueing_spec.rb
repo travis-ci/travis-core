@@ -74,6 +74,10 @@ describe Job::Queueing::All do
   include Travis::Testing::Stubs
   include Support::ActiveRecord
 
+  before :each do
+    Travis::Features.start
+  end
+
   it 'tries to enqueue each queueable job' do
     Job.stubs(:queueable).returns [test, test]
     Job::Queueing.any_instance.expects(:run).twice
