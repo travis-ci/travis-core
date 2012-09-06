@@ -1,3 +1,18 @@
+RSpec::Matchers.define :be_queued_to do |publisher|
+  match do |jobs|
+    expected = jobs.map(&:id)
+    actual = publisher.messages.map { |message| message.first['job']['id'] }
+    actual.should == expected
+    # jobs.map(&:state).uniq.should == ['queued']
+  end
+
+  failure_message_for_should do |jobs|
+    actual = publisher.messages.map { |message| message.first['job']['id'] }
+    "expected jobs #{jobs.map(&:id)} to be enqueued. instead we have:\n" +
+    "  jobs #{actual} in publish messages\n"
+  end
+end
+
 RSpec::Matchers.define :contain_recipients do |expected|
   match do |actual|
     actual = Array(actual).join(',').split(',')
