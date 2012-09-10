@@ -56,14 +56,17 @@ module Travis
           end
 
           def filter_duplicates(repositories)
-            repositories.reduce([]) do |filtered_list, repository|
-              if filtered_list.none? {|r|
-                  r['owner']['login'] == repository['owner']['login'] and
-                  r['name'] == repository['name']} 
+            repositories.each_with_object([]) do |repository, filtered_list|
+              if filtered_list.none? {|r| same_repository_with_admin?(r, repository) } 
                 filtered_list.push(repository)
               end
-              filtered_list
             end
+          end
+
+          def same_repository_with_admin?(existing_repository, other_repository)
+            existing_repository['owner']['login'] == other_repository['owner']['login'] and
+              existing_repository['name'] == other_repository['name'] and
+              existing_repository['permissions']['admin'] == true
           end
 
           def slugs

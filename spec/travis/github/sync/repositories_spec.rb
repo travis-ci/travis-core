@@ -105,5 +105,13 @@ describe Travis::Github::Sync::Repositories do
       GH.expects(:[]).with('orgs/the-org/repos').returns(org_repositories).in_sequence(order)
       sync.run
     end
+
+    it "should sync the organization's repository when it has admin rights" do
+      # this is an unlikely scenario, but as the code checks for it, a test is in order
+      Travis::Github::Sync::Repository.expects(:new).twice.returns(stub('repository', :run => public_repo))
+      GH.expects(:[]).with('user/repos').returns(duplicate_org_repositories).in_sequence(order)
+      GH.expects(:[]).with('orgs/the-org/repos').returns(user_repositories).in_sequence(order)
+      sync.run
+    end
   end
 end
