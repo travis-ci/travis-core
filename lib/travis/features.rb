@@ -70,6 +70,10 @@ module Travis
       redis.get(disabled_key(feature)) != "1"
     end
 
+    def feature_deactivated?(feature)
+      redis.get(disabled_key(feature)) == '0'
+    end
+
     def deactivate_all(feature)
       redis.set(disabled_key(feature), 0)
     end

@@ -123,3 +123,4 @@ FactoryGirl.define do
     finished_at { Time.now.utc }
   end
 end
+

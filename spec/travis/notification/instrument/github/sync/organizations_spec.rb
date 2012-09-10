@@ -10,6 +10,9 @@ describe Travis::Notification::Instrument::Github::Sync::Organizations do
   let(:events)    { publisher.events }
   let(:sync)      { Travis::Github::Sync::Organizations.new(user) }
 
+  let(:travis)  { Organization.find_by_login('travis-ci') }
+  let(:sinatra) { Organization.find_by_login('sinatra') }
+
   before :each do
     Travis::Notification.publishers.replace([publisher])
     GH.stubs(:[]).with('user/orgs').returns data
@@ -21,7 +24,10 @@ describe Travis::Notification::Instrument::Github::Sync::Organizations do
       :message => "travis.github.sync.organizations.run:completed",
       :payload => {
         :msg => %(Travis::Github::Sync::Organizations#run for #<User id=#{user.id} login="sven">),
-        :result => [{ :id => Organization.find_by_login('travis-ci').id, :login => 'travis-ci' }, { :id => Organization.find_by_login('sinatra').id, :login => 'sinatra' }]
+        :result => {
+          :synced => [{ :id => travis.id, :login => 'travis-ci' }, { :id => sinatra.id, :login => 'sinatra' }],
+          :removed => []
+        }
       },
       :uuid => Travis.uuid
     }

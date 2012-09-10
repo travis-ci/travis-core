@@ -16,6 +16,10 @@ class User < ActiveRecord::Base
   after_create :create_a_token
 
   class << self
+    def with_permissions(permissions)
+      where(:permissions => permissions).includes(:permissions)
+    end
+
     def authenticate_by(options)
       options = options.symbolize_keys
       includes(:tokens).where(:login => options[:login], 'tokens.token' => options[:token]).first

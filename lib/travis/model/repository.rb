@@ -93,6 +93,10 @@ class Repository < ActiveRecord::Base
     end
   end
 
+  def admin
+    @admin ||= Travis::Github::Admin.for_repository(self)
+  end
+
   def slug
     @slug ||= [owner_name, name].join('/')
   end
@@ -131,10 +135,5 @@ class Repository < ActiveRecord::Base
   def last_finished_builds_by_branches
     n = branches.map { |branch| builds.last_finished_on_branch(branch) }.compact
     n.sort { |a, b| b.finished_at <=> a.finished_at }
-  end
-
-  def admin
-    return owner if User === owner and owner.github_oauth_token
-    @admin ||= permissions.where(:admin => true).first.try(:user)
   end
 end

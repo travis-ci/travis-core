@@ -137,6 +137,75 @@ describe Travis::Task::Irc do
     run(build, ['irc.freenode.net', 6667] => ['travis', 'example'])
   end
 
+  it "sets a connection password" do
+    build.obfuscated_config[:notifications] = { :irc => { :use_notice => true, :password => 'pass' } }
+
+    expect_irc 'irc.freenode.net', 1234, 'travis', [
+      'PASS pass',
+      'NICK travis-ci',
+      'USER travis-ci travis-ci travis-ci :travis-ci',
+      'JOIN #travis',
+      'NOTICE #travis :[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.',
+      'NOTICE #travis :[travis-ci] Change view : http://trvs.io/short',
+      'NOTICE #travis :[travis-ci] Build details : http://trvs.io/short',
+      'PART #travis',
+      'QUIT'
+    ]
+    run(build)
+  end
+
+  it "message nickserv with a nickserv password" do
+    build.obfuscated_config[:notifications] = { :irc => { :use_notice => true, :password => 'pass', :nickserv_password => 'nickpass' } }
+
+    expect_irc 'irc.freenode.net', 1234, 'travis', [
+      'PASS pass',
+      'NICK travis-ci',
+      'PRIVMSG NickServ :IDENTIFY nickpass',
+      'USER travis-ci travis-ci travis-ci :travis-ci',
+      'JOIN #travis',
+      'NOTICE #travis :[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.',
+      'NOTICE #travis :[travis-ci] Change view : http://trvs.io/short',
+      'NOTICE #travis :[travis-ci] Build details : http://trvs.io/short',
+      'PART #travis',
+      'QUIT'
+    ]
+    run(build)
+  end
+
+  it "allows overwriting the nickname" do
+    build.obfuscated_config[:notifications] = { :irc => { :use_notice => true, :password => 'pass', :nickserv_password => 'nickpass', :nick => 'niclas' } }
+
+    expect_irc 'irc.freenode.net', 1234, 'travis', [
+      'PASS pass',
+      'NICK niclas',
+      'PRIVMSG NickServ :IDENTIFY nickpass',
+      'USER niclas niclas niclas :niclas',
+      'JOIN #travis',
+      'NOTICE #travis :[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.',
+      'NOTICE #travis :[travis-ci] Change view : http://trvs.io/short',
+      'NOTICE #travis :[travis-ci] Build details : http://trvs.io/short',
+      'PART #travis',
+      'QUIT'
+    ]
+    run(build)
+  end
+
+  it "works with just a list of channels" do
+    build.obfuscated_config[:notifications] = { :irc => [] }
+
+    expect_irc 'irc.freenode.net', 1234, 'travis', [
+      'NICK travis-ci',
+      'USER travis-ci travis-ci travis-ci :travis-ci',
+      'JOIN #travis',
+      'PRIVMSG #travis :[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.',
+      'PRIVMSG #travis :[travis-ci] Change view : http://trvs.io/short',
+      'PRIVMSG #travis :[travis-ci] Build details : http://trvs.io/short',
+      'PART #travis',
+      'QUIT'
+    ]
+    run(build)
+  end
+
   context 'when configured to IRC+SSL server' do
     it "should wrap socket with ssl (in client private)" do
       Travis::Task::Irc::Client.expects(:wrap_ssl).with(tcp).returns(tcp)

@@ -10,7 +10,7 @@ describe Travis::Stats do
     it "should return the jobs per day" do
       stats = Travis::Stats.daily_tests_counts
       stats.should have(1).item
-      stats.first[:date].should == Date.current.to_s(:date)
+      stats.first[:date].should == Job.first.created_at.to_date.to_s(:date)
       stats.first[:run_on_date].should == 13
     end
   end
