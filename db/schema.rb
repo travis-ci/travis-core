@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120802001001) do
+ActiveRecord::Schema.define(:version => 20120911160000) do
 
   create_table "artifacts", :force => true do |t|
     t.text     "content"
@@ -45,7 +45,8 @@ ActiveRecord::Schema.define(:version => 20120802001001) do
     t.integer  "previous_result"
   end
 
-  add_index "builds", ["repository_id"], :name => "index_builds_on_repository_id"
+  add_index "builds", ["repository_id", "state"], :name => "index_builds_on_repository_id_and_state"
+  add_index "builds", ["state"], :name => "index_builds_on_state"
 
   create_table "commits", :force => true do |t|
     t.integer  "repository_id"
