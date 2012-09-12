@@ -2,7 +2,7 @@ module Travis
   module Services
     class Repositories
       def find_all(params)
-        scope = model.timeline.recent
+        scope = self.scope.timeline.recent
         scope = scope.by_member(params[:member])         if params[:member]
         scope = scope.by_owner_name(params[:owner_name]) if params[:owner_name]
         scope = scope.by_owner_name(params[:login])      if params[:login]
@@ -12,16 +12,16 @@ module Travis
       end
 
       def find_one(params)
-        model.find_by(params)
+        scope.find_by(params)
       end
 
       def find_or_create_by(params)
         find_one(params) || Repository.create!(params.slice(:owner_name, :name))
       end
 
-      private
+      protected
 
-        def model
+        def scope
           Repository
         end
     end

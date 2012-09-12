@@ -11,11 +11,11 @@ module Travis
       end
 
       def find_one(params)
-        scope = params[:repository_id] ? repository(params).builds : model
+        scope = params[:repository_id] ? repository(params).builds : self.scope
         scope.includes(:commit, :matrix => [:commit, :log]).find(params[:id])
       end
 
-      private
+      protected
 
         def by_event_type(params)
           repository(params).builds.by_event_type(params[:event_type])
@@ -25,7 +25,7 @@ module Travis
           service(:repository).find_one(:id => params[:repository_id])
         end
 
-        def model
+        def scope
           Build
         end
     end
