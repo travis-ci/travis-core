@@ -32,11 +32,6 @@ autoload :Worker,       'travis/model/worker'
 #                  workers.
 # travis/mailer  - contains ActionMailers for sending out email
 #                  notifications
-# travis/views   - contains Rabl views for creating JSON payloads used
-#                  for pusher and webhook notifications, build archiving
-#                  and worker job payloads. (TODO This should be replaced
-#                  with some saner sort of JSON generation, like, just
-#                  plain Ruby?)
 #
 # travis-core also contains some helper classes and modules like Travis::Database
 # (needed in travis-hub in order to connect to the database) and Travis::Renderer
@@ -50,6 +45,7 @@ module Travis
   autoload :Mailer,       'travis/mailer'
   autoload :Model,        'travis/model'
   autoload :Notification, 'travis/notification'
+  autoload :Service,      'travis/service'
   autoload :Stats,        'travis/stats'
   autoload :Task,         'travis/task'
   autoload :Testing,      'travis/testing'
