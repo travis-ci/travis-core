@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe Travis::Service::Jobs do
+describe Travis::Services::Jobs do
   let(:queued)   { stub('queued', :where => where) }
   let(:where)    { stub('where', :includes => result) }
   let(:result)   { stub('result') }
-  let(:service)  { Travis::Service::Jobs.new }
+  let(:service)  { Travis::Services::Jobs.new }
 
   describe 'find_all' do
     before :each do

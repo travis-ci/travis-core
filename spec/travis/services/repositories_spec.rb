@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe Travis::Service::Repositories do
+describe Travis::Services::Repositories do
   let(:timeline) { stub('timeline', :recent => recent) }
   let(:recent)   { stub('recent') }
   let(:result)   { stub('result') }
-  let(:service)  { Travis::Service::Repositories.new }
+  let(:service)  { Travis::Services::Repositories.new }
 
   before :each do
     Repository.stubs(:timeline).returns(timeline)

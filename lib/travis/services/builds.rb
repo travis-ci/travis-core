@@ -1,6 +1,6 @@
 module Travis
-  class Service
-    class Builds < Service
+  module Services
+    class Builds
       def find_all(params)
         # TODO :after_number seems like a bizarre api
         # why not just pass an id? pagination style?
@@ -15,12 +15,12 @@ module Travis
 
       private
 
-        def repository(params)
-          service(:repositories).find_one(params.slice(:repository_id)) || raise(ActiveRecord::RecordNotFound)
-        end
-
         def by_event_type(params)
           repository(params).builds.by_event_type(params[:event_type])
+        end
+
+        def repository(params)
+          Repository.find(params[:repository_id])
         end
     end
   end

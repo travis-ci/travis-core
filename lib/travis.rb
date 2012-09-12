@@ -45,7 +45,7 @@ module Travis
   autoload :Mailer,       'travis/mailer'
   autoload :Model,        'travis/model'
   autoload :Notification, 'travis/notification'
-  autoload :Service,      'travis/service'
+  autoload :Services,     'travis/services'
   autoload :Stats,        'travis/stats'
   autoload :Task,         'travis/task'
   autoload :Testing,      'travis/testing'
@@ -57,6 +57,10 @@ module Travis
   class << self
     def config
       @config ||= Config.new
+    end
+
+    def services
+      @services ||= {}
     end
 
     def pusher
