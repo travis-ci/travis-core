@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Services::Builds do
+  let(:repositories)  { stub('repositories', :find_one => repository) }
   let(:repository)    { stub('repository', :builds => builds) }
   let(:builds)        { stub('builds', :by_event_type => by_event_type, :includes => includes) }
   let(:by_event_type) { stub('by_event_type') }
@@ -10,6 +11,7 @@ describe Travis::Services::Builds do
 
   before :each do
     Repository.stubs(:find).returns(repository)
+    Travis.services[:repository] = repositories
   end
 
   describe 'find_all' do
@@ -30,7 +32,7 @@ describe Travis::Services::Builds do
     end
 
     it 'scopes the query to a repository_id if given' do
-      Repository.expects(:find).with(1).returns(repository)
+      repositories.expects(:find_one).with(:id => 1).returns(repository)
       service.find_one(:repository_id => 1, :id => 1).should == result
     end
 
