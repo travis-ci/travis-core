@@ -11,7 +11,7 @@ describe Travis::Services::Builds do
 
   before :each do
     Repository.stubs(:find).returns(repository)
-    Travis.services[:repository] = repositories
+    service.stubs(:service).with(:repositories).returns(repositories)
   end
 
   describe 'find_all' do

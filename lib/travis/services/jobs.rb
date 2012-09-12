@@ -1,6 +1,6 @@
 module Travis
   module Services
-    class Jobs
+    class Jobs < Base
       def find_all(params)
         scope.queued.where(:queue => params[:queue]).includes(:commit)
       end
