@@ -1,7 +1,7 @@
 module Travis
   module Services
     class Builds < Base
-      def find_all(params)
+      def find_all(params = {})
         # TODO :after_number seems like a bizarre api
         # why not just pass an id? pagination style?
         builds = by_event_type(params)
@@ -9,7 +9,7 @@ module Travis
       end
 
       def find_one(params)
-        scope = params[:repository_id] ? repository(params).builds : self.scope
+        scope = params[:repository_id] ? repository(params).builds : build_scope
         scope.includes(:commit, :matrix => [:commit, :log]).find(params[:id])
       end
 
@@ -20,11 +20,15 @@ module Travis
         end
 
         def repository(params)
-          service(:repositories).find_one(:id => params[:repository_id])
+          repository_scope.find(params[:repository_id])
         end
 
-        def scope
+        def build_scope
           Build
+        end
+
+        def repository_scope
+          Repository
         end
     end
   end

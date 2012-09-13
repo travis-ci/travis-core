@@ -1,7 +1,7 @@
 module Travis
   module Services
     class Repositories < Base
-      def find_all(params)
+      def find_all(params = {})
         scope = self.scope.timeline.recent
         scope = scope.by_member(params[:member])         if params[:member]
         scope = scope.by_owner_name(params[:owner_name]) if params[:owner_name]

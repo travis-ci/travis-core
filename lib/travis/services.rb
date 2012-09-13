@@ -6,7 +6,8 @@ module Travis
     autoload :Repositories, 'travis/services/repositories'
 
     def service(key)
-      Travis.services[key].new || raise("no service registered for #{key}")
+      const = Travis.services[key] || raise("no service registered for #{key}")
+      const.new
     end
   end
 end
