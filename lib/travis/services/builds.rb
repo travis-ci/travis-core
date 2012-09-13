@@ -1,3 +1,5 @@
+require 'core_ext/active_record/none_scope'
+
 module Travis
   module Services
     class Builds < Base
@@ -6,6 +8,8 @@ module Travis
         # why not just pass an id? pagination style?
         builds = by_event_type(params)
         params[:after_number] ? builds.older_than(params[:after_number]) : builds.recent
+      rescue ActiveRecord::RecordNotFound
+        build_scope.none
       end
 
       def find_one(params)
