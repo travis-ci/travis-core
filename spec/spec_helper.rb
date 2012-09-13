@@ -38,6 +38,15 @@ RSpec.configure do |c|
   end
 end
 
+# this keeps Model.inspect from exploding which happens for
+# expected method calls in tests that do not use a db connection
+require 'active_record'
+ActiveRecord::Base.class_eval do
+  def self.inspect
+    super
+  end
+end
+
 module Kernel
   def capture_stdout
     out = StringIO.new
