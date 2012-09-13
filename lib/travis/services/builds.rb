@@ -2,7 +2,7 @@ require 'core_ext/active_record/none_scope'
 
 module Travis
   module Services
-    class Builds < Base
+    class Builds
       def find_all(params = {})
         # TODO :after_number seems like a bizarre api
         # why not just pass an id? pagination style?
