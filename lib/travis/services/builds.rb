@@ -2,18 +2,18 @@ require 'core_ext/active_record/none_scope'
 
 module Travis
   module Services
-    class Builds
+    class Builds < Base
       def find_all(params = {})
         # TODO :after_number seems like a bizarre api
         # why not just pass an id? pagination style?
         builds = by_event_type(params)
         params[:after_number] ? builds.older_than(params[:after_number]) : builds.recent
       rescue ActiveRecord::RecordNotFound
-        build_scope.none
+        scope(:build).none
       end
 
       def find_one(params)
-        scope = params[:repository_id] ? repository(params).builds : build_scope
+        scope = params[:repository_id] ? repository(params).builds : scope(:build)
         scope.includes(:commit, :matrix => [:commit, :log]).find(params[:id])
       end
 
@@ -24,15 +24,7 @@ module Travis
         end
 
         def repository(params)
-          repository_scope.find(params[:repository_id])
-        end
-
-        def build_scope
-          Build
-        end
-
-        def repository_scope
-          Repository
+          scope(:repository).find(params[:repository_id])
         end
     end
   end

@@ -5,22 +5,23 @@ module Travis
         class Branches
           include Formats
 
-          attr_reader :repository, :options
+          attr_reader :builds, :options
 
-          def initialize(repository, options = {})
-            @repository = repository
+          def initialize(builds, options = {})
+            builds = builds.last_finished_builds_by_branches if builds.is_a?(Repository) # TODO remove, bc
+            @builds = builds
           end
 
           def cache_key
-            "#{repository.id}-#{repository.last_build_id}-branches"
+            "branches-#{builds.map(&:id).join('-')}"
           end
 
           def updated_at
-            repository.last_build_finished_at
+            builds.sort { |lft, rgt| lft.finished_at <=> rgt.finished_at }.first.finished_at
           end
 
           def data
-            repository.last_finished_builds_by_branches.map do |build|
+            branches.map do |build|
               {
                 'repository_id' => build.repository_id,
                 'build_id' => build.id,

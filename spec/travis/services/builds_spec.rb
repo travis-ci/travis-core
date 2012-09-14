@@ -35,6 +35,10 @@ describe Travis::Services::Builds do
       lambda { service.find_one(:repository_id => repo.id + 1, :id => build.id) }.should raise_error(ActiveRecord::RecordNotFound)
     end
 
+    it 'raises if the record could not be found' do
+      lambda { service.find_one(:id => build.id + 1) }.should raise_error(ActiveRecord::RecordNotFound)
+    end
+
     # TODO for all services test that the expected number of queries is issued
     # it 'includes associations' do
     #   Build.expects(:includes).returns(includes)

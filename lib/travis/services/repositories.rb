@@ -1,28 +1,27 @@
 module Travis
   module Services
-    class Repositories
+    class Repositories < Base
       def find_all(params = {})
-        scope = self.scope.timeline.recent
+        scope = self.scope(:repository).timeline.recent
         scope = scope.by_member(params[:member])         if params[:member]
         scope = scope.by_owner_name(params[:owner_name]) if params[:owner_name]
-        scope = scope.by_owner_name(params[:login])      if params[:login]
         scope = scope.by_slug(params[:slug])             if params[:slug]
         scope = scope.search(params[:search])            if params[:search].present?
         scope
       end
 
       def find_one(params)
-        scope.find_by(params)
+        repository(params) || raise(ActiveRecord::RecordNotFound)
       end
 
       def find_or_create_by(params)
-        find_one(params) || Repository.create!(params.slice(:owner_name, :name))
+        repository(params) || scope(:repository).create!(params.slice(:owner_name, :name))
       end
 
-      protected
+      private
 
-        def scope
-          Repository
+        def repository(params)
+          scope(:repository).find_by(params)
         end
     end
   end
