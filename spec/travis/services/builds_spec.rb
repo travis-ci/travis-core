@@ -1,59 +1,45 @@
 require 'spec_helper'
 
 describe Travis::Services::Builds do
-  let(:repository)    { stub('repository', :builds => builds) }
-  let(:builds)        { stub('builds', :by_event_type => by_event_type, :includes => includes) }
-  let(:by_event_type) { stub('by_event_type', :recent => result) }
-  let(:includes)      { stub('includes', :find => result) }
-  let(:result)        { stub('result') }
-  let(:service)       { Travis::Services::Builds.new }
+  include Support::ActiveRecord
 
-  before :each do
-    Repository.stubs(:find).returns(repository)
-  end
+  let(:repo)    { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
+  let!(:build)  { Factory(:build, :repository => repo, :state => :finished, :number => 1) }
+  let(:service) { Travis::Services::Builds.new }
 
   describe 'find_all' do
     it 'finds recent builds when empty params given' do
-      by_event_type.expects(:recent).returns(result)
-      service.find_all(:repository_id => 1).should == result
+      service.find_all(:repository_id => repo.id).should == [build]
     end
 
     it 'finds builds older than the given number' do
-      by_event_type.expects(:older_than).with(1).returns(result)
-      service.find_all(:repository_id => 1, :after_number => 1).should == result
+      service.find_all(:repository_id => repo.id, :after_number => 2).should == [build]
     end
 
     it 'scopes to the given repository_id' do
-      Repository.expects(:find).with(1).returns(repository)
-      service.find_all(:repository_id => 1).should == result
+      Factory(:build, :repository => Factory(:repository), :state => :finished)
+      service.find_all(:repository_id => repo.id).should == [build]
     end
 
     it 'returns an empty build scope when the repository could not be found' do
-      Build.stubs(:none).returns([])
-      Repository.stubs(:find).raises(ActiveRecord::RecordNotFound)
-      service.find_all(:repository_id => 1).should == Build.none
+      service.find_all(:repository_id => repo.id + 1).should == Build.none
     end
   end
 
   describe 'find_one' do
-    before :each do
-      Build.stubs(:includes).returns(includes)
+    it 'finds a build by the given id' do
+      service.find_one(:id => build.id).should == build
     end
 
     it 'scopes the query to a repository_id if given' do
-      Repository.expects(:find).with(1).returns(repository)
-      service.find_one(:repository_id => 1, :id => 1).should == result
+      lambda { service.find_one(:repository_id => repo.id + 1, :id => build.id) }.should raise_error(ActiveRecord::RecordNotFound)
     end
 
-    it 'includes associations' do
-      Build.expects(:includes).returns(includes)
-      service.find_one(:id => 1).should == result
-    end
-
-    it 'finds the build with the given id' do
-      includes.expects(:find).with(1).returns(result)
-      service.find_one(:id => 1).should == result
-    end
+    # TODO for all services test that the expected number of queries is issued
+    # it 'includes associations' do
+    #   Build.expects(:includes).returns(includes)
+    #   service.find_one(:id => 1).should == result
+    # end
   end
 end
 

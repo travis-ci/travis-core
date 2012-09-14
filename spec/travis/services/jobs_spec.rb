@@ -1,36 +1,37 @@
 require 'spec_helper'
 
 describe Travis::Services::Jobs do
-  let(:queued)   { stub('queued', :where => where) }
-  let(:where)    { stub('where', :includes => result) }
-  let(:result)   { stub('result') }
-  let(:service)  { Travis::Services::Jobs.new }
+  include Support::ActiveRecord
+
+  let(:repo)    { Factory(:repository) }
+  let!(:job)    { Factory(:test, :repository => repo, :state => :created, :queue => 'builds.common') }
+  let(:service) { Travis::Services::Jobs.new }
 
   describe 'find_all' do
-    before :each do
-      Job.stubs(:queued).returns(queued)
-    end
-
     it 'finds queued jobs' do
-      Job.expects(:queued).returns(queued)
-      service.find_all({ :queue => 'builds.common'}).should == result
+      service.find_all.should include(job)
     end
 
-    it 'finds jobs on the given queue' do
-      queued.expects(:where).with(:queue => 'builds.common').returns(where)
-      service.find_all({ :queue => 'builds.common'}).should == result
+    describe 'given a queue name' do
+      it 'finds jobs on the given queue' do
+        service.find_all({ :queue => 'builds.common'}).should include(job)
+      end
+
+      it 'does not find jobs on other queues' do
+        service.find_all({ :queue => 'builds.nodejs'}).should_not include(job)
+      end
     end
 
-    it 'includes associations' do
-      where.expects(:includes).with(:commit).returns(result)
-      service.find_all({ :queue => 'builds.common'}).should == result
-    end
+    # TODO for all services test that the expected number of queries is issued
+    # it 'includes associations' do
+    #   where.expects(:includes).with(:commit).returns(result)
+    #   service.find_all({ :queue => 'builds.common'}).should == result
+    # end
   end
 
   describe 'find_one' do
     it 'finds the job with the given id' do
-      Job.expects(:find).with(1).returns(result)
-      service.find_one(:id => 1).should == result
+      service.find_one(:id => job.id).should == job
     end
   end
 end
