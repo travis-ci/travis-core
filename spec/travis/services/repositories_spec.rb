@@ -62,7 +62,7 @@ describe Travis::Services::Repositories do
       service.find_one(:owner_name => repo.owner_name, :name => repo.name).should == repo
     end
 
-    it 'raises if the record could not be found' do
+    it 'raises if the repository could not be found' do
       lambda { service.find_one(:id => repo.id + 1) }.should raise_error(ActiveRecord::RecordNotFound)
     end
   end

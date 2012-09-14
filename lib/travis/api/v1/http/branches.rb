@@ -21,7 +21,7 @@ module Travis
           end
 
           def data
-            branches.map do |build|
+            builds.map do |build|
               {
                 'repository_id' => build.repository_id,
                 'build_id' => build.id,

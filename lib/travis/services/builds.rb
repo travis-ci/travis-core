@@ -24,7 +24,7 @@ module Travis
         end
 
         def repository(params)
-          scope(:repository).find(params[:repository_id])
+          scope(:repository).find_by(params) || raise(ActiveRecord::RecordNotFound)
         end
     end
   end

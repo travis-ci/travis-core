@@ -9,6 +9,13 @@ module Travis
         repository(params).service_hook
       end
 
+      def update(params)
+p params
+        repository(params).tap do |repo|
+          repo.service_hook.set(params[:active] == 'true', current_user)
+        end
+      end
+
       private
 
         def repository(params)

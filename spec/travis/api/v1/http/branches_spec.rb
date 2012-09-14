@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Travis::Api::V1::Http::Branches do
   include Travis::Testing::Stubs, Support::Formats
 
-  let(:data) { Travis::Api::V1::Http::Branches.new(repository).data }
+  let(:data)     { Travis::Api::V1::Http::Branches.new([build]).data }
   let(:branches) { [build] }
 
   before :each do

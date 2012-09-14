@@ -35,7 +35,11 @@ describe Travis::Services::Builds do
       lambda { service.find_one(:repository_id => repo.id + 1, :id => build.id) }.should raise_error(ActiveRecord::RecordNotFound)
     end
 
-    it 'raises if the record could not be found' do
+    it 'raises if the repository could not be found' do
+      lambda { service.find_one(:repository_id => repo.id + 1, :id => build.id) }.should raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'raises if the build could not be found' do
       lambda { service.find_one(:id => build.id + 1) }.should raise_error(ActiveRecord::RecordNotFound)
     end
 

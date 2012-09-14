@@ -16,5 +16,9 @@ describe Travis::Services::Branches do
       build = Factory(:build, :repository => Factory(:repository), :state => :finished)
       service.find_all(:repository_id => repo.id).should_not include(build)
     end
+
+    it 'returns an empty build scope when the repository could not be found' do
+      service.find_all(:repository_id => repo.id + 1).should == Build.none
+    end
   end
 end

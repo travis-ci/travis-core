@@ -17,7 +17,7 @@ describe Travis::Services::Workers do
       service.find_one(:id => worker.id).should == worker
     end
 
-    it 'raises if the record could not be found' do
+    it 'raises if the worker could not be found' do
       lambda { service.find_one(:id => worker.id + 1) }.should raise_error(ActiveRecord::RecordNotFound)
     end
   end

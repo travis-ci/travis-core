@@ -11,7 +11,7 @@ describe Travis::Services::Artifacts do
       service.find_one(:id => log.id).should == log
     end
 
-    it 'raises if the record could not be found' do
+    it 'raises if the artifact could not be found' do
       lambda { service.find_one(:id => log.id + 1) }.should raise_error(ActiveRecord::RecordNotFound)
     end
   end

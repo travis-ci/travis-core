@@ -12,7 +12,7 @@ module Travis
 
     def service(key)
       const = Travis.services[key] || raise("no service registered for #{key}")
-      const.new(current_user)
+      const.new(respond_to?(:current_user) ? current_user : nil)
     end
   end
 end
