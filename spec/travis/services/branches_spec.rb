@@ -8,6 +8,10 @@ describe Travis::Services::Branches do
   let(:service) { Travis::Services::Branches.new }
 
   describe 'find_all' do
+    it 'finds branches by a given list of ids' do
+      service.find_all(:ids => [build.id]).should == [build]
+    end
+
     it 'finds the last builds of the given repository grouped per branch' do
       service.find_all(:repository_id => repo.id).should include(build)
     end

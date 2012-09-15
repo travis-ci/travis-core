@@ -8,6 +8,10 @@ describe Travis::Services::Jobs do
   let(:service) { Travis::Services::Jobs.new }
 
   describe 'find_all' do
+    it 'finds jobs by a given list of ids' do
+      service.find_all(:ids => [job.id]).should == [job]
+    end
+
     it 'finds queued jobs' do
       service.find_all.should include(job)
     end

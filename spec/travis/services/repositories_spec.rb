@@ -7,6 +7,10 @@ describe Travis::Services::Repositories do
   let(:service) { Travis::Services::Repositories.new }
 
   describe 'find_all' do
+    it 'finds repositories by a given list of ids' do
+      service.find_all(:ids => [repo.id]).should == [repo]
+    end
+
     it 'returns the recent timeline when given empty params' do
       service.find_all({}).should include(repo)
     end

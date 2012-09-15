@@ -8,6 +8,10 @@ describe Travis::Services::Builds do
   let(:service) { Travis::Services::Builds.new }
 
   describe 'find_all' do
+    it 'finds builds by a given list of ids' do
+      service.find_all(:ids => [build.id]).should == [build]
+    end
+
     it 'finds recent builds when empty params given' do
       service.find_all(:repository_id => repo.id).should == [build]
     end

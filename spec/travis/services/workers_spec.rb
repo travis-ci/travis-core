@@ -10,6 +10,10 @@ describe Travis::Services::Workers do
     it 'finds workers' do
       service.find_all.should include(worker)
     end
+
+    it 'finds workers by a given list of ids' do
+      service.find_all(:ids => [worker.id]).should == [worker]
+    end
   end
 
   describe 'find_one' do
