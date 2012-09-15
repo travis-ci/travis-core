@@ -13,7 +13,7 @@ describe Travis::Services::Stats do
       stats = service.daily_tests_counts
       stats.should have(1).item
       stats.first['date'].should == Job.first.created_at.to_date.to_s(:date)
-      stats.first['count'].should == '13'
+      stats.first['count'].to_i.should == 13
     end
   end
 
@@ -27,7 +27,7 @@ describe Travis::Services::Stats do
     it 'should include the number per day' do
       stats = service.daily_repository_counts
       stats.should have(1).items
-      stats.first['count'].should == '2'
+      stats.first['count'].to_i.should == 2
     end
   end
 end
