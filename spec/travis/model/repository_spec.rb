@@ -43,10 +43,8 @@ describe Repository do
         repository.name.should == minimal.name
       end
 
-      it "should raise an error when a repository couldn't be found using params" do
-        expect {
-          Repository.find_by(:name => 'emptiness')
-        }.to raise_error(ActiveRecord::RecordNotFound)
+      it "returns nil when a repository couldn't be found using params" do
+        Repository.find_by(:name => 'emptiness').should be_nil
       end
     end
 
@@ -182,14 +180,11 @@ describe Repository do
   describe 'branches' do
     let(:repository) { Factory(:repository) }
 
-    it 'retrieves branches only from last 25 builds' do
-      old_build = Factory(:build, :repository => repository, :commit => Factory(:commit, :branch => 'old-branch'))
-      24.times { Factory(:build, :repository => repository) }
-      Factory(:build, :repository => repository, :commit => Factory(:commit, :branch => 'production'))
-      repository.branches.size.should eql 2
-      repository.branches.should include("master")
-      repository.branches.should include("production")
-      repository.branches.should_not include("old-branch")
+    it 'returns branches for the given repository' do
+      %w(master production).each do |branch|
+        2.times { Factory(:build, :repository => repository, :commit => Factory(:commit, :branch => branch)) }
+      end
+      repository.branches.sort.should == %w(master production)
     end
 
     it 'is empty for empty repository' do
@@ -204,11 +199,12 @@ describe Repository do
       old_build = Factory(:build, :repository => repository, :state => 'finished', :commit => Factory(:commit, :branch => 'master'))
       production_build = Factory(:build, :repository => repository, :state => 'finished', :commit => Factory(:commit, :branch => 'production'))
       master_build = Factory(:build, :repository => repository, :state => 'finished', :commit => Factory(:commit, :branch => 'master'))
-      builds = repository.last_finished_builds_by_branches
 
+      builds = repository.last_finished_builds_by_branches
       builds.size.should == 2
       builds.should include(master_build)
       builds.should include(production_build)
+      builds.should_not include(old_build)
     end
   end
 end

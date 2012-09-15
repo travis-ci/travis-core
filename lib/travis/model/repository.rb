@@ -117,7 +117,14 @@ class Repository < ActiveRecord::Base
   end
 
   def branches
-    builds.descending.paged({}).includes([:commit]).map{ |build| build.commit.branch }.uniq
+    self.class.connection.select_values %(
+      SELECT DISTINCT ON (branch) branch
+      FROM   builds
+      JOIN   commits ON builds.commit_id = commits.id
+      WHERE  builds.repository_id = #{id}
+      ORDER  BY branch DESC
+      LIMIT  25
+    )
   end
 
   def last_build_result(params = {})
@@ -135,7 +142,17 @@ class Repository < ActiveRecord::Base
   end
 
   def last_finished_builds_by_branches
-    n = branches.map { |branch| builds.last_finished_on_branch(branch) }.compact
-    n.sort { |a, b| b.finished_at <=> a.finished_at }
+    builds.where(:id => last_finished_builds_by_branches_ids).order(:finished_at)
+  end
+
+  def last_finished_builds_by_branches_ids
+    self.class.connection.select_values %(
+      SELECT DISTINCT ON (branch) builds.id
+      FROM   builds
+      JOIN   commits ON builds.commit_id = commits.id
+      WHERE  builds.repository_id = #{id}
+      ORDER  BY branch, finished_at DESC
+      LIMIT  25
+    )
   end
 end
