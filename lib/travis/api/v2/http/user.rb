@@ -2,7 +2,7 @@ module Travis
   module Api
     module V2
       module Http
-        class Profile
+        class User
           include Formats
 
           attr_reader :user, :accounts, :repository_counts, :options
@@ -14,14 +14,14 @@ module Travis
 
           def data
             {
-              'profile' => profile_data,
+              'user' => user_data,
               'accounts' => accounts.map { |account| account_data(account) }
             }
           end
 
           private
 
-            def profile_data
+            def user_data
               {
                 'id' => user.id,
                 'name' => user.name,

@@ -1,6 +1,6 @@
 module Travis
   module Services
-    class Profile < Base
+    class User < Base
       def find_one
         {
           :user => current_user,

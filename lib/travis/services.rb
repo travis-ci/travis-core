@@ -6,10 +6,10 @@ module Travis
     autoload :Branches,     'travis/services/branches'
     autoload :Hooks,        'travis/services/hooks'
     autoload :Jobs,         'travis/services/jobs'
-    autoload :Profile,      'travis/services/profile'
     autoload :Repositories, 'travis/services/repositories'
     autoload :Stats,        'travis/services/stats'
     autoload :Workers,      'travis/services/workers'
+    autoload :User,         'travis/services/user'
 
     def service(key)
       const = Travis.services[key] || raise("no service registered for #{key}")

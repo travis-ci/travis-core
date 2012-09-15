@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe Travis::Api::V2::Http::Profile do
+describe Travis::Api::V2::Http::User do
   include Travis::Testing::Stubs, Support::Formats
 
   let(:profile) { { :user => user, :accounts => [user, org], :repository_counts => { 'svenfuchs' => 2, 'travis-ci' => 1 } } }
-  let(:data)    { Travis::Api::V2::Http::Profile.new(profile).data }
+  let(:data)    { Travis::Api::V2::Http::User.new(profile).data }
 
-  it 'profile' do
-    data['profile'].should == {
+  it 'user' do
+    data['user'].should == {
       'id' => 1,
       'name' => 'Sven Fuchs',
       'login' => 'svenfuchs',
