@@ -12,13 +12,13 @@ module Travis
 
           def data
             {
-              'artifact' => artifact_data(artifact),
+              'artifact' => artifact_data,
             }
           end
 
           private
 
-            def artifact_data(job)
+            def artifact_data
               {
                 'id' => artifact.id,
                 'job_id' => artifact.job_id,

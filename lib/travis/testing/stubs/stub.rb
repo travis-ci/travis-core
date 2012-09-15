@@ -16,7 +16,7 @@ module Travis
             end
 
             meta_class.send(:define_method, :is_a?) do |const|
-              const.name == name.to_s.camelize
+              const.name.to_s == name.to_s.camelize
             end
 
             meta_class.send(:define_method, :inspect) do

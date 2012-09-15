@@ -19,6 +19,7 @@ module Travis
             let(:worker)     { stub_worker }
             let(:user)       { stub_user }
             let(:org)        { stub_org }
+            let(:hook)       { stub_hook }
             let(:url)        { stub_url }
           end
         end
@@ -188,6 +189,17 @@ module Travis
           :login => 'travis-ci',
           :name => 'Travis CI',
           :email => 'contact@travis-ci.org'
+        )
+      end
+
+      def stub_hook(attributes = {})
+        Stubs.stub 'hook', attributes.reverse_merge(
+          :repository => stub_repository,
+          :owner_name => 'travis-ci',
+          :name => 'travis-ci',
+          :description => 'description',
+          :active => true,
+          :private => false
         )
       end
 
