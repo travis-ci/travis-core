@@ -8,6 +8,7 @@ module Travis
         autoload :Builds,       'travis/api/v2/http/builds'
         autoload :Job,          'travis/api/v2/http/job'
         autoload :Jobs,         'travis/api/v2/http/jobs'
+        autoload :Profile,      'travis/api/v2/http/profile'
         autoload :Repositories, 'travis/api/v2/http/repositories'
         autoload :Repository,   'travis/api/v2/http/repository'
         autoload :User,         'travis/api/v2/http/user'

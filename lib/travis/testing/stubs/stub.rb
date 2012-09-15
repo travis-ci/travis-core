@@ -15,6 +15,10 @@ module Travis
               class_stub
             end
 
+            meta_class.send(:define_method, :is_a?) do |const|
+              const.name == name.camelize
+            end
+
             meta_class.send(:define_method, :inspect) do
               attrs = attributes.map { |name, value| [name, value.inspect].join('=') }.join(' ')
               "#<#{name.camelize}:#{object.object_id} #{attrs}>"

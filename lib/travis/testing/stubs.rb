@@ -18,6 +18,7 @@ module Travis
             let(:log)        { stub_log }
             let(:worker)     { stub_worker }
             let(:user)       { stub_user }
+            let(:org)        { stub_org }
             let(:url)        { stub_url }
           end
         end
@@ -168,15 +169,25 @@ module Travis
       def stub_user(attributes = {})
         Stubs.stub 'user', attributes.reverse_merge(
           :id => 1,
-          :organizations => [],
+          :organizations => [org],
           :name => 'Sven Fuchs',
           :login => 'svenfuchs',
           :email => 'svenfuchs@artweb-design.de',
           :gravatar_id => '402602a60e500e85f2f5dc1ff3648ecb',
           :locale => 'de',
           :github_oauth_token => 'token',
+          :syncing? => false,
           :is_syncing => false,
           :synced_at => Time.now.utc - 3600
+        )
+      end
+
+      def stub_org(attributes = {})
+        Stubs.stub 'org', attributes.reverse_merge(
+          :id => 1,
+          :login => 'travis-ci',
+          :name => 'Travis CI',
+          :email => 'contact@travis-ci.org'
         )
       end
 
