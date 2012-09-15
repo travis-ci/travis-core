@@ -11,7 +11,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120911160000) do
+ActiveRecord::Schema.define(:version => 20120915012001) do
+
+  create_table "artifact_parts", :force => true do |t|
+    t.integer "artifact_id"
+    t.string  "content"
+    t.integer "number"
+  end
+
+  add_index "artifact_parts", ["artifact_id", "number"], :name => "index_artifact_parts_on_artifact_id_and_number"
 
   create_table "artifacts", :force => true do |t|
     t.text     "content"
@@ -19,6 +27,7 @@ ActiveRecord::Schema.define(:version => 20120911160000) do
     t.string   "type"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "aggregated_at"
   end
 
   add_index "artifacts", ["type", "job_id"], :name => "index_artifacts_on_type_and_job_id"
@@ -45,6 +54,7 @@ ActiveRecord::Schema.define(:version => 20120911160000) do
     t.integer  "previous_result"
   end
 
+  add_index "builds", ["finished_at"], :name => "index_builds_on_finished_at"
   add_index "builds", ["repository_id", "state"], :name => "index_builds_on_repository_id_and_state"
   add_index "builds", ["state"], :name => "index_builds_on_state"
 
@@ -64,6 +74,7 @@ ActiveRecord::Schema.define(:version => 20120911160000) do
     t.datetime "updated_at"
   end
 
+  add_index "commits", ["branch"], :name => "index_commits_on_branch"
   add_index "commits", ["commit"], :name => "index_commits_on_commit"
 
   create_table "jobs", :force => true do |t|
