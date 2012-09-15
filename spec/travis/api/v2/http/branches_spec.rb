@@ -3,12 +3,8 @@ require 'spec_helper'
 describe Travis::Api::V2::Http::Branches do
   include Travis::Testing::Stubs, Support::Formats
 
-  let(:data) { Travis::Api::V2::Http::Branches.new(repository).data }
+  let(:data) { Travis::Api::V2::Http::Branches.new(branches).data }
   let(:branches) { [build] }
-
-  before :each do
-    repository.stubs(:last_finished_builds_by_branches).returns(branches)
-  end
 
   it 'branches' do
     data['branches'].first.should == {

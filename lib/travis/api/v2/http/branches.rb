@@ -7,8 +7,9 @@ module Travis
 
           attr_reader :builds, :commits, :options
 
-          def initialize(repository, options = {})
-            @builds = repository.last_finished_builds_by_branches
+          def initialize(builds, options = {})
+            builds = builds.last_finished_builds_by_branches if builds.is_a?(Repository) # TODO remove, bc
+            @builds = builds
             @commits = builds.map(&:commit)
             @options = options
           end
