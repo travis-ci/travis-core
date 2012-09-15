@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120915012001) do
+ActiveRecord::Schema.define(:version => 20120915150000) do
 
   create_table "artifact_parts", :force => true do |t|
     t.integer "artifact_id"
@@ -103,6 +103,7 @@ ActiveRecord::Schema.define(:version => 20120915012001) do
     t.datetime "queued_at"
   end
 
+  add_index "jobs", ["created_at"], :name => "index_jobs_on_created_at"
   add_index "jobs", ["queue", "state"], :name => "index_jobs_on_queue_and_state"
   add_index "jobs", ["repository_id"], :name => "index_jobs_on_repository_id"
   add_index "jobs", ["state", "owner_id", "owner_type"], :name => "index_jobs_on_state_owner_type_owner_id"
