@@ -75,6 +75,7 @@ class User < ActiveRecord::Base
     scope = scope.by_owner_name(options[:owner_name]) if options[:owner_name]
     scope.map do |repo|
       ServiceHook.new(
+        :id => repo.id,
         :uid => [repo.owner_name, repo.name].join(':'),
         :owner_name => repo.owner_name,
         :name => repo.name,

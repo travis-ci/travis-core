@@ -2,7 +2,7 @@
 # a service hook on Github.
 class ServiceHook
   EVENTS = [:push, :pull_request, :issue_comment, :public, :member]
-  attr_accessor :uid, :owner_name, :name, :description, :url, :active, :repository, :private, :user
+  attr_accessor :id, :uid, :owner_name, :name, :description, :url, :active, :repository, :private, :user
 
   def initialize(attrs = {})
     attrs.each { |k,v| public_send("#{k}=", v) if respond_to?("#{k}=") }

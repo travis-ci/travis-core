@@ -20,7 +20,7 @@ module Travis
 
             def hook_data(hook)
               {
-                'id' => hook.repository.id,
+                'id' => hook.id,
                 'name' => hook.name,
                 'owner_name' => hook.owner_name,
                 'description' => hook.description,
