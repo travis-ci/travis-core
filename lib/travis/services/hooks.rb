@@ -2,7 +2,7 @@ module Travis
   module Services
     class Hooks < Base
       def find_all(params = {})
-        current_user.service_hooks
+        current_user.service_hooks(params)
       end
 
       def find_one(params)
