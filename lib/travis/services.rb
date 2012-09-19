@@ -1,6 +1,5 @@
 module Travis
   module Services
-    autoload :Base,         'travis/services/base'
     autoload :Builds,       'travis/services/builds'
     autoload :Jobs,         'travis/services/jobs'
     autoload :Repositories, 'travis/services/repositories'
