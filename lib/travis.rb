@@ -71,4 +71,6 @@ module Travis
       end
     end
   end
+
+  Github.setup
 end
