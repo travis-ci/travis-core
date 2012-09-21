@@ -4,6 +4,11 @@ describe Travis::Github::Payload::PullRequest do
   let(:payload) { Travis::Github::Payload.for('pull_request', GITHUB_PAYLOADS['pull-request']) }
 
   describe 'accept' do
+    before do
+      Travis::Features.start
+      Travis::Features.enable_for_all(:pull_requests)
+    end
+
     describe 'given action is "opened"' do
       before :each do
         payload.event.data['action'] = 'opened'
@@ -16,6 +21,11 @@ describe Travis::Github::Payload::PullRequest do
       it 'rejects it if there is no merge commit' do
         payload.event.data['pull_request']['merge_commit'] = nil
         payload.should_not be_accept
+      end
+
+      it "rejects when the feature is disabled" do
+        Travis::Features.disable_for_all(:pull_requests)
+        payload.accept?.should be_false
       end
     end
 
