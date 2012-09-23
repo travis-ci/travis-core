@@ -41,10 +41,11 @@ module Travis
         async :publish, :queue => :instrumentation
       end
 
-      attr_reader :config, :target, :result, :exception, :message, :status
+      attr_reader :config, :target, :result, :exception, :finished_at, :message, :status
 
       def initialize(message, status, payload)
         @target, @result, @exception = payload.values_at(:target, :result, :exception)
+        @finished_at = payload[:finished_at]
         @config = { :message => message }
         @config[:exception] = exception if exception
         @status = status.to_sym
