@@ -22,8 +22,8 @@ module Travis
         end
 
         def ignore?(message)
-          message.end_with? "received" &&
-            not (message =~ /Travis::Hub::Handler::(Sync|Request)/)
+          message.end_with?("received") &&
+            message !~ /Travis::Hub::Handler::(Sync|Request)/
         end
       end
     end
