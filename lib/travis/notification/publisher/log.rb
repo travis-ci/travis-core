@@ -29,7 +29,7 @@ module Travis
           event[:message].end_with?("received")
         end
 
-        def sync_or_request_handler(event)
+        def sync_or_request_handler?(event)
           msg = event[:payload][:msg]
           msg && msg !~ /Travis::Hub::Handler::(Sync|Request#authenticate)/
         end
