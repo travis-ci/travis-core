@@ -15,6 +15,7 @@ describe Travis::Notification::Instrument::Task::Archive do
   end
 
   it 'publishes a payload' do
+    publisher.events
     event.except(:payload).should == {
       :message => "travis.task.archive.run:completed",
       :uuid => Travis.uuid

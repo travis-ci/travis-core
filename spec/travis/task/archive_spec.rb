@@ -9,6 +9,7 @@ describe Travis::Task::Archive do
   let(:data)     { Travis::Api.data(build, :for => 'archive', :version => 'v1') }
 
   before do
+    Travis::Features.start
     Travis.logger = Logger.new(io)
     Travis.config.archive = { :host => 'host', :username => 'username', :password => 'password' }
     Travis::Task::Archive.any_instance.stubs(:http).returns(client)

@@ -9,6 +9,7 @@ describe Travis::Task::Campfire do
   let(:data)    { Travis::Api.data(build, :for => 'event', :version => 'v2') }
 
   before do
+    Travis::Features.start
     Travis.logger = Logger.new(io)
     Travis::Task::Campfire.any_instance.stubs(:http).returns(client)
   end

@@ -66,7 +66,7 @@ module Travis
 
           def fetch_resource(resource)
             GH[resource] # should be: ?type=#{self.class.type}
-          rescue Faraday::Error::ClientError => e
+          rescue GH::Error => e
             log_exception(e)
           end
 

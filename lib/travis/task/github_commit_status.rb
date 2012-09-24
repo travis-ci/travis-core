@@ -26,10 +26,8 @@ module Travis
             GH.post(url, :target_url => build_url, :state => state, :description => description)
           end
           info "Successfully updated the PR status on #{full_url}."
-        rescue Faraday::Error::ClientError => e
-          message = e.message
-          message += ": #{e.response[:status]} #{e.response[:body]}" if e.response
-          error "Could not update the PR status on #{full_url} (#{message})."
+        rescue GH::Error => e
+          error "Could not update the PR status on #{full_url} (#{e.message})."
         end
 
         def authenticated(&block)

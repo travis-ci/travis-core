@@ -39,12 +39,13 @@ module Travis
             update(user, data['permissions'])
             false
           end
-        rescue Faraday::Error::ClientError => error
+        rescue GH::Error => error
           handle_error(user, error)
           false
         end
 
         def handle_error(user, error)
+          error = error.error # TODO fix once GH has some sane public api for this
           status = error.response.status if error.response.respond_to? :status
           case status
           when 401

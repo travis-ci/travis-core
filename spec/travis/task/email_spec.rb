@@ -8,6 +8,10 @@ describe Travis::Task::Email do
   let(:data)       { Travis::Api.data(build, :for => 'event', :version => 'v2') }
   let(:recipients) { ['svenfuchs@artweb-design.de'] }
 
+  before :each do
+    Travis::Features.start
+  end
+
   def run
     Travis::Task.run(:email, data, :recipients => recipients)
   end

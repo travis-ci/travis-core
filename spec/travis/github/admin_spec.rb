@@ -42,8 +42,10 @@ describe Travis::Github::Admin do
     end
 
     describe 'given an error occurs while retrieving the repository info' do
+      let(:error) { stub('error', :backtrace => [], :response => stub('reponse')) }
+
       before :each do
-        GH.stubs(:[]).with("repos/#{repository.slug}").raises(Faraday::Error::ResourceNotFound.new(nil, nil))
+        GH.stubs(:[]).with("repos/#{repository.slug}").raises(GH::Error.new(error))
       end
 
       it 'raises an exception' do

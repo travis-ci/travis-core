@@ -26,26 +26,24 @@ module Travis
 
         def process
           comment if has_access?
-        rescue Faraday::Error::ClientError => e
-          error error_message(e)
         end
 
         def has_access?
           authenticated { GH.head(url) }
           true
-        rescue Faraday::Error::ResourceNotFound
+        rescue GH::Error => e
           false
         end
 
         def comment
           authenticated { GH.post(url, :body => message) }
           info "Successfully commented on #{url}."
+        rescue GH::Error => e
+          error error_message(e)
         end
 
         def error_message(e)
-          message = e.message
-          message += ": #{e.response[:status]} #{e.response[:body]}" if e.response
-          "Could not comment on #{url} (#{message})."
+          "Could not comment on #{url} (#{e.message})."
         end
 
         def authenticated(&block)
