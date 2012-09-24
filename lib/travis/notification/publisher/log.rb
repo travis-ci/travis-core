@@ -3,7 +3,7 @@ module Travis
     module Publisher
       class Log
         def publish(event)
-          return if ignore?(event[:message])
+          return if ignore?(event)
 
           level = event.key?(:exception) ? :error : :info
           log(level, event[:payload][:msg])
@@ -21,9 +21,9 @@ module Travis
           Travis.logger.send(level, msg)
         end
 
-        def ignore?(message)
-          message.end_with?("received") &&
-            message !~ /Travis::Hub::Handler::(Sync|Request)/
+        def ignore?(event)
+          event[:message].end_with?("received") &&
+            event[:payload][:msg] !~ /Travis::Hub::Handler::(Sync|Request)/
         end
       end
     end
