@@ -22,14 +22,14 @@ module Travis
         end
 
         def ignore?(event)
-          event_received? && sync_or_request_handler?
+          event_received?(event) && sync_or_request_handler?(event)
         end
 
-        def event_received?
+        def event_received?(event)
           event[:message].end_with?("received")
         end
 
-        def sync_or_request_handler
+        def sync_or_request_handler(event)
           msg = event[:payload][:msg]
           msg && msg !~ /Travis::Hub::Handler::(Sync|Request#authenticate)/
         end
