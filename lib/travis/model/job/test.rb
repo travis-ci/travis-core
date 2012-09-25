@@ -18,7 +18,7 @@ class Job
     class << self
       def append_log!(id, chars)
         job = find(id)
-        job.append_log!(chars) unless job.finished?
+        job.append_log!(chars)
       end
     end
 

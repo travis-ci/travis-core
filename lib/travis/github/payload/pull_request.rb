@@ -15,6 +15,7 @@ module Travis
         end
 
         def accept?
+          return false if pull_requests_disabled?
           case action
           when :opened, :reopened then !!merge_commit
           when :synchronize       then head_change?
@@ -89,6 +90,10 @@ module Travis
 
         def merge_commit
           pull_request['merge_commit']
+        end
+
+        def pull_requests_disabled?
+          Travis::Features.feature_deactivated?(:pull_requests)
         end
 
         private

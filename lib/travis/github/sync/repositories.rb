@@ -45,7 +45,7 @@ module Travis
           end
 
           def remove
-            repos = user.repositories.select { |repo| !slugs.include?(repo.slug) }
+            repos = user.repositories.reject { |repo| slugs.include?(repo.slug) }
             Repository.unpermit_all(user, repos)
             repos
           end
@@ -66,7 +66,7 @@ module Travis
 
           def fetch_resource(resource)
             GH[resource] # should be: ?type=#{self.class.type}
-          rescue Faraday::Error::ResourceNotFound => e
+          rescue GH::Error => e
             log_exception(e)
           end
 

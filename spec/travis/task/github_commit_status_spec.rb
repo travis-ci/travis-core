@@ -12,6 +12,7 @@ describe Travis::Task::GithubCommitStatus do
   let(:io)        { StringIO.new }
 
   before do
+    Travis::Features.start
     Travis.logger = Logger.new(io)
     WebMock.stub_request(:post, full_url).to_return(:status => 200, :body => '{}')
   end
@@ -102,9 +103,10 @@ describe Travis::Task::GithubCommitStatus do
     end
 
     it 'warns about a failed request' do
-      GH.stubs(:with).raises(Faraday::Error::ClientError.new(:status => 403, :body => 'nono.'))
+      GH.stubs(:post).raises(GH::Error.new(nil))
       run
-      io.string.should include('[githubcommitstatus] Could not update the PR status on https://api.github.com/repos/travis-repos/test-project-1/statuses/ab2784e55bcf71ac9ef5f6ade8e02334c6524eea (the server responded with status 403: 403 nono.)')
+      io.string.should include('[githubcommitstatus]')
+      io.string.should include('Could not update')
     end
   end
 end

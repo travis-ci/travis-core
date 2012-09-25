@@ -158,7 +158,10 @@ class Build < ActiveRecord::Base
 
   def obfuscated_config
     config.dup.tap do |config|
-      config[:env] = Array(config[:env]).map { |env| obfuscate_env(env).join(' ') } if config[:env]
+      next unless config[:env]
+
+      config[:env] = [config[:env]] unless config[:env].is_a?(Array)
+      config[:env] = config[:env].map { |env| obfuscate_env(env).join(' ') } if config[:env]
     end
   end
 
@@ -194,7 +197,7 @@ class Build < ActiveRecord::Base
       values = [values] unless values.is_a?(Array)
       values.map do |line|
         line = [line] unless line.is_a?(Array)
-        line + global
+        (line + global).compact
       end
     end
 

@@ -54,7 +54,7 @@ module Travis
         end
 
         def parse(target)
-          target =~ /(\w+):(\w+)@(\w+)/
+          target =~ /([\w-]+):([\w-]+)@(\d+)/
           ["https://#{$1}.campfirenow.com/room/#{$3}/speak.json", $2]
         end
 

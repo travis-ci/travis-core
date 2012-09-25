@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe Travis::Api::V2::Http::Repository do
-  include Travis::Testing::Stubs, Support::Formats
+  include Travis::Testing::Stubs
+  include Support::Formats
 
   let(:data) { Travis::Api::V2::Http::Repository.new(repository).data }
 

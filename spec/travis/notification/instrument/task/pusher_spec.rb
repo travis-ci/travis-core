@@ -22,7 +22,7 @@ describe Travis::Notification::Instrument::Task::Pusher do
                 :uuid => Travis.uuid
       }
       event[:payload].except(:data).should == {
-        :msg => 'Travis::Task::Pusher#run for #<Job id=1>',
+        :msg => 'Travis::Task::Pusher#run for #<Job id=1> (channels: common)',
         # :repository => 'svenfuchs/minimal', # TODO
         :object_id => 1,
         :object_type => 'Job',
@@ -41,10 +41,10 @@ describe Travis::Notification::Instrument::Task::Pusher do
     it 'publishes a payload' do
       event.except(:payload).should == {
         :message => "travis.task.pusher.run:completed",
-                :uuid => Travis.uuid
+        :uuid => Travis.uuid
       }
       event[:payload].except(:data).should == {
-        :msg => 'Travis::Task::Pusher#run for #<Build id=1>',
+        :msg => 'Travis::Task::Pusher#run for #<Build id=1> (channels: common)',
         # :repository => 'svenfuchs/minimal', # TODO
         :object_id => 1,
         :object_type => 'Build',

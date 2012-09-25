@@ -1,69 +1,72 @@
 # Helper object that is aggregated by a Repository and allows to de/activate
 # a service hook on Github.
 class ServiceHook
-  ATTRS = [:uid, :owner_name, :name, :description, :url, :active, :repository, :private]
+  EVENTS = [:push, :pull_request, :issue_comment, :public, :member]
+  attr_accessor :uid, :owner_name, :name, :description, :url, :active, :repository, :private, :user
 
-  attr_accessor *ATTRS
-
-  def initialize(attrs)
-    ATTRS.each { |name| self.send(:"#{name}=", attrs[name]) if attrs.key?(name) }
+  def initialize(attrs = {})
+    attrs.each { |k,v| public_send("#{k}=", v) if respond_to?("#{k}=") }
   end
 
-  def set(active, user)
-    active ? activate(user) : deactivate(user)
+  def activate(user = nil)
+    set(true, user)
+  end
+
+  def deactivate(user = nil)
+    set(false, user)
+  end
+
+  def set(active, user = nil)
+    self.active, self.user = active, user
+    Travis::Github.authenticated(self.user) { update }
     repository.update_column(:active, active)
+  ensure
+    self.active = repository.active
   end
 
   def repository
     @repository ||= Repository.where(:owner_name => owner_name, :name => name).first
   end
 
-  protected
+  def user
+    @user || repository.admin
+  end
 
-    def activate(user)
-      authenticated(user) do
-        update('subscribe', :user => user.login, :token => user.tokens.first.token, :domain => domain)
+  private
+
+    def update
+      create unless hook
+      GH.patch(hook_url, payload) unless hook['active'] == active
+    end
+
+    def hook
+      @hook ||= GH[hooks].detect do |hook|
+        hook["name"] == "travis" and hook['config']['domain'] == domain
       end
     end
 
-    def deactivate(user)
-      authenticated(user) do
-        update('unsubscribe')
-      end
+    def payload
+      {
+        :name   => 'travis',
+        :events => EVENTS,
+        :active => active,
+        :config => { :user => user.login, :token => user.tokens.first.token, :domain => domain }
+      }
     end
 
-    def update(action, params = {})
-      data = { :'hub.mode' => action, :'hub.topic' => topic, :'hub.callback' => callback(params) }
-
-      # GH.post('hub', data)
-      connection = Faraday.new(:url => GH.api_host.to_s) do |builder|
-        builder.request(:authorization, :token, token)
-        builder.request :multipart
-        builder.request :url_encoded
-        builder.adapter :net_http
-      end
-      connection.post('/hub', data)
+    def create
+      @hook = GH.post(hooks, payload)
     end
 
-    def authenticated(user, &block)
-      # user.authenticated_on_github(&block)
-      @token = user.github_oauth_token
-      yield
-    end
-    attr_reader :token
-
-    def topic
-      "https://github.com/#{owner_name}/#{name}/events/push"
+    def hooks
+      "repos/#{repository.slug}/hooks"
     end
 
-    def callback(params)
-      callback = "github://travis"
-      callback += '?' + params.map { |key, value| [key, value].join('=') }.join('&') unless params.empty?
-      callback
+    def hook_url
+      hook['_links']['self']['href']
     end
 
     def domain
       Travis.config.service_hook_url || ''
     end
 end
-

@@ -76,8 +76,10 @@ class Repository < ActiveRecord::Base
     def find_by(params)
       if id = params[:repository_id] || params[:id]
         self.find(id)
-      else
+      elsif params.key?(:name) && params.key?(:owner_name)
         self.where(params.slice(:name, :owner_name)).first || raise(ActiveRecord::RecordNotFound)
+      else
+        raise(ActiveRecord::RecordNotFound)
       end
     end
 
@@ -91,6 +93,10 @@ class Repository < ActiveRecord::Base
       rows = connection.select_all(query, owner_names)
       Hash[*rows.map { |row| [row['owner_name'], row['count'].to_i] }.flatten]
     end
+  end
+
+  def admin
+    @admin ||= Travis::Github::Admin.for_repository(self)
   end
 
   def slug

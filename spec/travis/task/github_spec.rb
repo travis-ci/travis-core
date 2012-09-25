@@ -9,6 +9,7 @@ describe Travis::Task::Github do
 
   before do
     Travis.logger = Logger.new(io)
+    GH.stubs(:head)
     WebMock.stub_request(:post, 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments').to_return(:status => 200, :body => '{}')
   end
 
@@ -20,6 +21,12 @@ describe Travis::Task::Github do
     it 'posts to the request comments_url' do
       run
       a_request(:post, url).should have_been_made
+    end
+
+    it 'does not post if the bot has no access to the comments' do
+      GH.stubs(:head).raises(GH::Error.new(nil))
+      run
+      a_request(:post, url).should_not have_been_made
     end
 
     describe 'using a passing build' do
@@ -64,9 +71,10 @@ describe Travis::Task::Github do
     end
 
     it 'warns about a failed request' do
-      GH.stubs(:with).raises(Faraday::Error::ClientError.new(:status => 403, :body => 'nono.'))
+      GH.stubs(:post).raises(GH::Error.new(nil))
       run
-      io.string.should include('[github] Could not comment on https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments (the server responded with status 403: 403 nono.)')
+      io.string.should include('[github]')
+      io.string.should include('Could not comment')
     end
   end
 end

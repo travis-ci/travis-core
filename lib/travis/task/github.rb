@@ -25,14 +25,25 @@ module Travis
       private
 
         def process
-          authenticated do
-            GH.post(url, :body => message)
-          end
+          comment if has_access?
+        end
+
+        def has_access?
+          authenticated { GH.head(url) }
+          true
+        rescue GH::Error => e
+          false
+        end
+
+        def comment
+          authenticated { GH.post(url, :body => message) }
           info "Successfully commented on #{url}."
-        rescue Faraday::Error::ClientError => e
-          message = e.message
-          message += ": #{e.response[:status]} #{e.response[:body]}" if e.response
-          error "Could not comment on #{url} (#{message})."
+        rescue GH::Error => e
+          error error_message(e)
+        end
+
+        def error_message(e)
+          "Could not comment on #{url} (#{e.message})."
         end
 
         def authenticated(&block)

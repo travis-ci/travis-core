@@ -11,6 +11,14 @@ module Travis
             @repository = repository
           end
 
+          def cache_key
+            "#{repository.id}-#{repository.last_build_id}-branches"
+          end
+
+          def updated_at
+            repository.last_build_finished_at
+          end
+
           def data
             repository.last_finished_builds_by_branches.map do |build|
               {

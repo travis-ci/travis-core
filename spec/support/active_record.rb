@@ -3,7 +3,7 @@ require 'pg'
 require 'logger'
 require 'fileutils'
 require 'database_cleaner'
-require 'support/factories'
+require 'travis/testing/factories'
 
 FileUtils.mkdir_p('log')
 

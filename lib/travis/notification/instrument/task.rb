@@ -100,7 +100,7 @@ module Travis
         class Pusher < Task
           def run_completed
             publish(
-              :msg => "#{task.class.name}#run for #<#{type.camelize} id=#{id}>",
+              :msg => "#{task.class.name}#run for #<#{type.camelize} id=#{id}> (channels: #{task.channels.join(', ')})",
               # :repository => data['repository']['slug'],
               # :request_id => data['request_id'], # TODO
               :object_type => type.camelize,

@@ -19,11 +19,15 @@ module Travis
 
     class << self
       def run(type, data, options = {})
-        if false && Travis.env == 'staging'
-          publisher('tasks').publish(:data => data, :options => options)
-        else
+        if run_local?
           const_get(type.to_s.camelize).new(data, options).run
+        else
+          publisher('tasks').publish(:type => type, :data => data, :options => options)
         end
+      end
+
+      def run_local?
+        Travis::Features.feature_inactive?(:travis_tasks)
       end
 
       def publisher(queue)

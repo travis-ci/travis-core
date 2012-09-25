@@ -9,6 +9,7 @@ describe Travis::Task::Campfire do
   let(:data)    { Travis::Api.data(build, :for => 'event', :version => 'v2') }
 
   before do
+    Travis::Features.start
     Travis.logger = Logger.new(io)
     Travis::Task::Campfire.any_instance.stubs(:http).returns(client)
   end
@@ -17,16 +18,20 @@ describe Travis::Task::Campfire do
     Travis::Task.run(:campfire, data, :targets => targets)
   end
 
-  it 'sends campfire notifications to the room' do
-    targets = ['account:token@room']
+  [['account', 'token'],
+   ['my-account', 'my-token']].each do |account_details|
+    account, token = *account_details
+    it "sends campfire notifications to the #{account}:#{token}@1234" do
+      targets = ["#{account}:#{token}@1234"]
 
-    expect_campfire('account', 'room', 'token', [
-      '[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): the build has passed',
-      '[travis-ci] Change view: https://github.com/svenfuchs/minimal/compare/master...develop',
-      "[travis-ci] Build details: http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}"
-    ])
-    run(targets, data)
-    http.verify_stubbed_calls
+      expect_campfire(account, 1234, token, [
+        '[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): the build has passed',
+        '[travis-ci] Change view: https://github.com/svenfuchs/minimal/compare/master...develop',
+        "[travis-ci] Build details: http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}"
+      ])
+      run(targets, data)
+      http.verify_stubbed_calls
+    end
   end
 
   def expect_campfire(account, room, token, body)
