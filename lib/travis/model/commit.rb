@@ -15,4 +15,10 @@ class Commit < ActiveRecord::Base
   def pull_request?
     ref =~ %r(^refs/pull/\d+/merge$)
   end
+
+  def pull_request_number
+    if pull_request? && (num = ref.scan(%r(^refs/pull/(\d+)/merge$)).flatten.first)
+      num.to_i
+    end
+  end
 end
