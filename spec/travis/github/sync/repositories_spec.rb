@@ -73,4 +73,45 @@ describe Travis::Github::Sync::Repositories do
     Travis::Github::Sync::Repository.expects(:unpermit_all).with(user, [removed_repo])
     sync.run
   end
+
+  context "with private forks of organization repositories" do
+    let(:user_repositories) {[
+      { 'name' => 'public',  'owner' => { 'login' => 'sven' }, 'permissions' => { 'admin' => true }, 'private' => false },
+      { 'name' => 'private', 'owner' => { 'login' => 'sven' }, 'permissions' => { 'admin' => true }, 'private' => true, 'fork' => true}
+    ]}
+    let(:duplicate_org_repositories) {[
+      { 'name' => 'private', 'owner' => { 'login' => 'sven' }, 'permissions' => { 'admin' => false }, 'private' => true, 'fork' => true}
+    ]}
+    let(:org_repositories) {[
+      { 'name' => 'other', 'owner' => { 'login' => 'sven' }, 'permissions' => { 'admin' => false }, 'private' => true, 'fork' => true}
+    ]}
+    let(:order) {sequence('github-sync')}
+
+    before do
+      Travis::Github::Sync::Repositories.type = 'private'
+      Travis::Github::Sync::Repository.unstub(:new)
+    end
+
+    it "should not sync the organization's duplicate" do
+      Travis::Github::Sync::Repository.expects(:new).once.returns(stub('repository', :run => public_repo))
+      GH.expects(:[]).with('user/repos').returns(user_repositories).in_sequence(order)
+      GH.expects(:[]).with('orgs/the-org/repos').returns(duplicate_org_repositories).in_sequence(order)
+      sync.run
+    end
+
+    it "should sync the organization's repository when it's not a duplicate" do
+      Travis::Github::Sync::Repository.expects(:new).twice.returns(stub('repository', :run => public_repo))
+      GH.expects(:[]).with('user/repos').returns(user_repositories).in_sequence(order)
+      GH.expects(:[]).with('orgs/the-org/repos').returns(org_repositories).in_sequence(order)
+      sync.run
+    end
+
+    it "should sync the organization's repository when it has admin rights" do
+      # this is an unlikely scenario, but as the code checks for it, a test is in order
+      Travis::Github::Sync::Repository.expects(:new).twice.returns(stub('repository', :run => public_repo))
+      GH.expects(:[]).with('user/repos').returns(duplicate_org_repositories).in_sequence(order)
+      GH.expects(:[]).with('orgs/the-org/repos').returns(user_repositories).in_sequence(order)
+      sync.run
+    end
+  end
 end
