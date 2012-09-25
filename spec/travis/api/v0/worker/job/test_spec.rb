@@ -62,8 +62,7 @@ describe Travis::Api::V0::Worker::Job::Test do
           'commit' => '62aae5f70ceee39123ef',
           'branch' => 'master',
           'ref'    => 'refs/pull/180/merge',
-          'pull_request' => true,
-          'pull_request_number' => 180
+          'pull_request' => 180
         },
         # TODO legacy. remove this once workers respond to a 'job' key
         'build' => {
@@ -72,8 +71,7 @@ describe Travis::Api::V0::Worker::Job::Test do
           'commit' => '62aae5f70ceee39123ef',
           'branch' => 'master',
           'ref'    => 'refs/pull/180/merge',
-          'pull_request' => true,
-          'pull_request_number' => 180
+          'pull_request' => 180
         },
         'repository' => {
           'id' => 1,
