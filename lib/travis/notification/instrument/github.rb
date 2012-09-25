@@ -13,8 +13,9 @@ module Travis
 
         class Config < Github
           def fetch_completed
+            config_url = target.url.gsub(/\?access_token=\w*/, '?access_token=[secure]')
             publish(
-              :msg => "#{target.class.name}#fetch #{target.url}",
+              :msg => "#{target.class.name}#fetch #{config_url}",
               :url => target.url,
               :result => result
             )
