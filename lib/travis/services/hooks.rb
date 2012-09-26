@@ -11,7 +11,8 @@ module Travis
 
       def update(params)
         repository(params).tap do |repo|
-          repo.service_hook.set(params[:active] == 'true', current_user)
+          params[:active] = { 'true' => true, 'false' => false }[params[:active]] if params[:active].is_a?(String)
+          repo.service_hook.set(params[:active], current_user)
         end
       end
 

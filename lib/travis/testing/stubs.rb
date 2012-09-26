@@ -194,6 +194,7 @@ module Travis
 
       def stub_hook(attributes = {})
         Stubs.stub 'hook', attributes.reverse_merge(
+          :id => stub_repository.id,
           :repository => stub_repository,
           :owner_name => 'travis-ci',
           :name => 'travis-ci',
