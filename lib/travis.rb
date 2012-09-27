@@ -1,5 +1,6 @@
 require 'travis/support'
 
+autoload :Account,      'travis/model/account'
 autoload :Artifact,     'travis/model/artifact'
 autoload :Build,        'travis/model/build'
 autoload :Commit,       'travis/model/commit'

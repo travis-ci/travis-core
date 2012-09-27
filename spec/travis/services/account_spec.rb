@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::Services::User do
+describe Travis::Services::Account do
   include Support::ActiveRecord
 
   let!(:sven)    { Factory(:user, :login => 'sven') }
@@ -8,13 +8,13 @@ describe Travis::Services::User do
   let!(:sinatra) { Factory(:org, :login => 'sinatra') }
 
   let!(:repos) do
-    Factory(:repository, :owner => sven, :owner_name => 'svenfuchs', :name => 'minimal')
+    Factory(:repository, :owner => sven, :owner_name => 'sven', :name => 'minimal')
     Factory(:repository, :owner => travis, :owner_name => 'travis-ci', :name => 'travis-ci')
     Factory(:repository, :owner => travis, :owner_name => 'travis-ci', :name => 'travis-core')
     Factory(:repository, :owner => sinatra, :owner_name => 'sinatra', :name => 'sinatra')
   end
 
-  let(:service) { Travis::Services::User.new(sven) }
+  let(:service) { Travis::Services::Account.new(sven) }
 
   before :each do
     Repository.all.each do |repo|
@@ -23,17 +23,21 @@ describe Travis::Services::User do
     sven.organizations << travis
   end
 
-  describe 'find_one' do
+  describe 'find_all' do
     it 'includes the user' do
-      service.find_one[:user].should == sven
+      service.find_all.should include(Account.from(sven))
     end
 
     it 'includes accounts where the user has admin access' do
-      service.find_one[:accounts].should == [sven, travis]
+      service.find_all.should include(Account.from(travis))
+    end
+
+    it 'does not include accounts where the user does not have admin access' do
+      service.find_all.should_not include(Account.from(sinatra))
     end
 
     it 'includes repository counts' do
-      service.find_one[:repository_counts].should == { 'svenfuchs' => 1, 'travis-ci' => 2 }
+      service.find_all.map(&:repos_count).should == [1, 2]
     end
   end
 end
