@@ -78,7 +78,7 @@ module Travis
               # :request_id => data['request_id'], # TODO
               :object_type => 'Build',
               :object_id => data['build']['id'],
-              :url => task.url
+              :url => task.full_url.to_s
             )
           end
         end

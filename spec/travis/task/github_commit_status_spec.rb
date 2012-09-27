@@ -96,12 +96,6 @@ describe Travis::Task::GithubCommitStatus do
   end
 
   describe 'logging' do
-    it 'logs a successful request' do
-      GH.stubs(:post)
-      run
-      io.string.should include('[githubcommitstatus] Successfully updated the PR status on https://api.github.com/repos/travis-repos/test-project-1/statuses/ab2784e55bcf71ac9ef5f6ade8e02334c6524eea')
-    end
-
     it 'warns about a failed request' do
       GH.stubs(:post).raises(GH::Error.new(nil))
       run

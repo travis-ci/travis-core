@@ -5,7 +5,7 @@ describe Travis::Notification::Instrument::Task::GithubCommitStatus do
 
   let(:data)      { Travis::Api.data(build, :for => 'event', :version => 'v2') }
   let(:build_url) { 'http://travis-ci.org/#!/travis-repos/test-project-1/1234' }
-  let(:url)       { "https://api.github.com/repos/svenfuchs/minimal/statuses/#{sha}" }
+  let(:url)       { "/repos/svenfuchs/minimal/statuses/#{sha}" }
   let(:sha)       { 'ab2784e55bcf71ac9ef5f6ade8e02334c6524eea' }
   let(:token)     { '12345' }
   let(:task)      { Travis::Task::GithubCommitStatus.new(data, :url => url, :sha => sha, :build_url => build_url, :token => token) }
