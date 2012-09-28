@@ -4,7 +4,7 @@ module Travis
   module Services
     class Builds < Base
       def find_all(params = {})
-        return find_by_ids(params) if params.key?(:ids)
+        return find_by_ids(params) if params[:ids]
         # TODO :after_number seems like a bizarre api
         # why not just pass an id? pagination style?
         builds = by_event_type(params)

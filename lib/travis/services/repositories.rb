@@ -2,7 +2,7 @@ module Travis
   module Services
     class Repositories < Base
       def find_all(params = {})
-        return find_by_ids(params) if params.key?(:ids)
+        return find_by_ids(params) if params[:ids]
         scope = self.scope(:repository).timeline.recent
         scope = scope.by_member(params[:member])         if params[:member]
         scope = scope.by_owner_name(params[:owner_name]) if params[:owner_name]

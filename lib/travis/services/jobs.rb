@@ -2,7 +2,7 @@ module Travis
   module Services
     class Jobs < Base
       def find_all(params = {})
-        return find_by_ids(params) if params.key?(:ids)
+        return find_by_ids(params) if params[:ids]
         scope(:job).queued(params[:queue]).includes(:commit)
       end
 
