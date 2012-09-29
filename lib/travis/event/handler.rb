@@ -6,6 +6,7 @@ module Travis
       autoload :Archive,            'travis/event/handler/archive'
       autoload :Campfire,           'travis/event/handler/campfire'
       autoload :Email,              'travis/event/handler/email'
+      autoload :Flowdock,           'travis/event/handler/flowdock'
       autoload :Github,             'travis/event/handler/github'
       autoload :GithubCommitStatus, 'travis/event/handler/github_commit_status'
       autoload :Hipchat,            'travis/event/handler/hipchat'

@@ -3,14 +3,15 @@ module Travis
     class Config
       autoload :Campfire, 'travis/event/config/campfire'
       autoload :Email,    'travis/event/config/email'
+      autoload :Flowdock, 'travis/event/config/flowdock'
       autoload :Hipchat,  'travis/event/config/hipchat'
       autoload :Irc,      'travis/event/config/irc'
       autoload :Webhook,  'travis/event/config/webhook'
 
       DEFAULTS = {
-        :start   => { :email => false,   :webhooks => false,   :campfire => false,   :hipchat => false,   :irc => false   },
-        :success => { :email => :change, :webhooks => :always, :campfire => :always, :hipchat => :always, :irc => :always },
-        :failure => { :email => :always, :webhooks => :always, :campfire => :always, :hipchat => :always, :irc => :always }
+        :start   => { :email => false,   :webhooks => false,   :campfire => false,   :hipchat => false,   :irc => false,   :flowdock => false },
+        :success => { :email => :change, :webhooks => :always, :campfire => :always, :hipchat => :always, :irc => :always, :flowdock => :always },
+        :failure => { :email => :always, :webhooks => :always, :campfire => :always, :hipchat => :always, :irc => :always, :flowdock => :always }
       }
 
       attr_reader :repository, :build, :config
