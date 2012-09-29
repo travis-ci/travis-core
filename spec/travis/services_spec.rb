@@ -41,12 +41,6 @@ describe Travis::Services do
     end
   end
 
-  describe 'one_or_create' do
-    it 'returns an instance of OneOrCreate' do
-      object.one_or_create({}).should be_instance_of(Test::Services::Foo::OneOrCreate)
-    end
-  end
-
   describe 'update' do
     it 'returns an instance of update' do
       object.update({}).should be_instance_of(Test::Services::Foo::Update)
