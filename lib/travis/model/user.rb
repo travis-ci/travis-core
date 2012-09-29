@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
   has_many :permissions
   has_many :repositories, :through => :permissions
 
-  attr_accessible :name, :login, :email, :github_id, :github_oauth_token, :gravatar_id
+  attr_accessible :name, :login, :email, :github_id, :github_oauth_token, :gravatar_id, :locale
 
   before_create :set_as_recent
   after_create :create_a_token
