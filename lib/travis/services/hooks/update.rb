@@ -5,7 +5,7 @@ module Travis
         def run
           active = params[:active]
           active = { 'true' => true, 'false' => false }[active] if active.is_a?(String)
-          hook.set(params[:active], current_user)
+          hook.set(active, current_user)
         end
 
         private

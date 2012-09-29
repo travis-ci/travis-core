@@ -14,17 +14,9 @@ describe Travis::Services::Hooks do
   describe 'run' do
     let(:params) { { :id => repo.id, :active => 'true' } }
 
-    before :each do
-      ServiceHook.any_instance.stubs(:set)
-    end
-
     it 'sets the given :active param to the hook' do
       ServiceHook.any_instance.expects(:set).with(true, user)
       service.run
-    end
-
-    it 'returns the repository' do
-      service.run.should == repo
     end
   end
 end
