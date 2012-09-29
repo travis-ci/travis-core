@@ -10,9 +10,9 @@ module Travis
     class Flowdock < Task
       TEMPLATE = <<-EOT
 <ul>
-<li>%{slug} build #%{number} has %{result}</li>
+<li><code><a href="https://github.com/%{slug}">%{slug}</a></code> build #%{number} has %{result}!</li>
 <li>Branch: <code>%{branch}</code></li>
-<li>Latest commit: <code>%{sha}</code> by %{author}</li>
+<li>Latest commit: <code><a href="%{sha_url}">%{sha}</a></code> by <a href="mailto:%{author_email}">%{author}</a></li>
 <li>Change view: %{compare_url}</li>
 <li>Build details: %{build_url}</li>
 </ul>
@@ -29,7 +29,9 @@ EOT
             :number => data['build']['number'],
             :branch => data['commit']['branch'],
             :sha    => data['commit']['sha'][0..6],
+            :sha_url => "https://github.com/#{data['repository']['slug']}/commit/#{data['commit']['sha']}",
             :author => data['commit']['author_name'],
+            :author_email => data['commit']['author_email'],
             :result => build_result,
             :compare_url => data['commit']['compare_url'],
             :build_url => build_url
@@ -75,7 +77,7 @@ EOT
         def flowdock_subject
           slug = data['repository']['slug']
           number = data['build']['number']
-          "#{slug} build ##{number} has #{build_result}"
+          "#{slug} build ##{number} has #{build_result}!"
         end
 
         def flowdock_payload
