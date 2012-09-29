@@ -60,10 +60,6 @@ module Travis
       @config ||= Config.new
     end
 
-    def services
-      @services ||= {}
-    end
-
     def pusher
       @pusher ||= ::Pusher.tap do |pusher|
         pusher.app_id = config.pusher.app_id

@@ -1,10 +1,13 @@
 module Travis
   module Services
     class Base
-      attr_reader :current_user
+      include Services
 
-      def initialize(current_user = nil)
+      attr_reader :current_user, :params
+
+      def initialize(current_user = nil, params = {})
         @current_user = current_user
+        @params = params
       end
 
       def scope(key)

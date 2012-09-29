@@ -1,18 +1,9 @@
 module Travis
   module Services
-    class Jobs < Base
-      def find_all(params = {})
-        return find_by_ids(params) if params[:ids]
-        scope(:job).queued(params[:queue]).includes(:commit)
-      end
-
-      def find_by_ids(params)
-        scope(:job).where(:id => params[:ids])
-      end
-
-      def find_one(params)
-        scope(:job).find(params[:id])
-      end
+    module Jobs
+      autoload :All,   'travis/services/jobs/all'
+      autoload :ByIds, 'travis/services/jobs/by_ids'
+      autoload :One,   'travis/services/jobs/one'
     end
   end
 end

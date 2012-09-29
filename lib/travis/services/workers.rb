@@ -1,14 +1,8 @@
 module Travis
   module Services
-    class Workers < Base
-      def find_all(params = {})
-        scope(:worker).order(:host, :name)
-      end
-
-      def find_one(params = {})
-        scope(:worker).find(params[:id])
-      end
+    module Workers
+      autoload :All, 'travis/services/workers/all'
+      autoload :One, 'travis/services/workers/one'
     end
   end
 end
-

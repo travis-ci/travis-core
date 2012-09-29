@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe Travis::Services::User do
+describe Travis::Services::User::Sync do
   include Travis::Testing::Stubs
 
-  let(:service)   { Travis::Services::User.new(user) }
   let(:publisher) { stub('publisher', :publish => true) }
+  let(:service)   { Travis::Services::User::Sync.new(user, {}) }
 
   before :each do
     Travis::Amqp::Publisher.stubs(:new).returns(publisher)
@@ -19,12 +19,12 @@ describe Travis::Services::User do
 
       it 'enqueues a sync job' do
         publisher.expects(:publish).with({ user_id: user.id }, type: 'sync')
-        service.sync
+        service.run
       end
 
       it 'sets the user to syncing' do
         user.expects(:update_column).with(:is_syncing, true)
-        service.sync
+        service.run
       end
     end
 
@@ -35,27 +35,13 @@ describe Travis::Services::User do
 
       it 'does not enqueue a sync job' do
         publisher.expects(:publish).never
-        service.sync
+        service.run
       end
 
       it 'does not set the user to syncing' do
         user.expects(:update_column).never
-        service.sync
+        service.run
       end
     end
   end
-
-  describe 'update_locale' do
-    it 'updates the locale if valid' do
-      user.expects(:update_column).with(:locale, 'en')
-      service.update_locale('en')
-    end
-
-    it 'does not update the locale if invalid' do
-      user.expects(:update_column).never
-      service.update_locale('en')
-    end
-  end
 end
-
-

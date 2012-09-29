@@ -1,9 +1,7 @@
 module Travis
   module Services
-    class Artifacts < Base
-      def find_one(params)
-        scope(:artifact).find(params[:id])
-      end
+    module Artifacts
+      autoload :One, 'travis/services/artifacts/one'
     end
   end
 end
