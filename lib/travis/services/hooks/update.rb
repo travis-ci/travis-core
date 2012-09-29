@@ -3,16 +3,15 @@ module Travis
     module Hooks
       class Update < Base
         def run
-          repository(params).tap do |repo|
-            params[:active] = { 'true' => true, 'false' => false }[params[:active]] if params[:active].is_a?(String)
-            repo.service_hook.set(params[:active], current_user)
-          end
+          active = params[:active]
+          active = { 'true' => true, 'false' => false }[active] if active.is_a?(String)
+          hook.set(params[:active], current_user)
         end
 
         private
 
-          def repository(params)
-            current_user.repositories.administratable.find_by(params) || raise(ActiveRecord::RecordNotFound)
+          def hook
+            service(:hooks, :one, params).run
           end
       end
     end
