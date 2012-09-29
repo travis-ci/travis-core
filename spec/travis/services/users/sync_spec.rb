@@ -18,7 +18,7 @@ describe Travis::Services::Users::Sync do
       end
 
       it 'enqueues a sync job' do
-        publisher.expects(:publish).with({ user_id: user.id }, type: 'sync')
+        publisher.expects(:publish).with({ :user_id => user.id }, :type => 'sync')
         service.run
       end
 
