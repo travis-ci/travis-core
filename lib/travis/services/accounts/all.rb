@@ -1,6 +1,6 @@
 module Travis
   module Services
-    module Account
+    module Accounts
       class All < Base
         def run
           ([current_user] + orgs).map do |record|

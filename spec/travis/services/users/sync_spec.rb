@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe Travis::Services::User::Sync do
+describe Travis::Services::Users::Sync do
   include Travis::Testing::Stubs
 
   let(:publisher) { stub('publisher', :publish => true) }
-  let(:service)   { Travis::Services::User::Sync.new(user, {}) }
+  let(:service)   { Travis::Services::Users::Sync.new(user, {}) }
 
   before :each do
     Travis::Amqp::Publisher.stubs(:new).returns(publisher)

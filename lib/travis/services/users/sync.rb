@@ -1,6 +1,6 @@
 module Travis
   module Services
-    module User
+    module Users
       class Sync < Base
         def run
           unless current_user.syncing?

@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Travis::Services::User::Update do
+describe Travis::Services::Users::Update do
   include Travis::Testing::Stubs
 
-  let(:service)   { Travis::Services::User::Update.new(user, params) }
+  let(:service)   { Travis::Services::Users::Update.new(user, params) }
 
   before :each do
     user.stubs(:update_attributes!)

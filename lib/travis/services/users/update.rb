@@ -1,6 +1,6 @@
 module Travis
   module Services
-    module User
+    module Users
       class Update < Base
         # TODO how to figure these out
         LOCALES = %w(en es fr ja eb nl pl pt-Br ru)

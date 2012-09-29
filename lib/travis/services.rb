@@ -1,7 +1,7 @@
 module Travis
   module Services
     autoload :Base,         'travis/services/base'
-    autoload :Account,      'travis/services/account'
+    autoload :Accounts,     'travis/services/accounts'
     autoload :Artifacts,    'travis/services/artifacts'
     autoload :Builds,       'travis/services/builds'
     autoload :Branches,     'travis/services/branches'
@@ -10,22 +10,18 @@ module Travis
     autoload :Repositories, 'travis/services/repositories'
     autoload :Stats,        'travis/services/stats'
     autoload :Workers,      'travis/services/workers'
-    autoload :User,         'travis/services/user'
+    autoload :Users,        'travis/services/users'
 
     class << self
       attr_writer :namespace
 
       def namespace
-        @namespace ||= name
+        @namespace ||= self
       end
     end
 
     def all(params)
-      name = case true
-        when params.empty?     then :all
-        when params.key?(:ids) then :by_ids
-      end
-      service(name, params)
+      service(params.key?(:ids) ? :by_ids : :all, params)
     end
 
     def one(params)
@@ -40,7 +36,7 @@ module Travis
       service(:update, params)
     end
 
-    def service(type, name, params = nil)
+    def service(type, name = {}, params = nil)
       type, name, params = self.class.name.split('::').last, type, name if name.is_a?(Hash)
       const(type, name).new(respond_to?(:current_user) ? current_user : nil, params.symbolize_keys)
     end
@@ -48,7 +44,7 @@ module Travis
     private
 
       def const(type, name)
-        name = [Travis::Services.namespace, type, name]
+        name = [Travis::Services.namespace.name, type, name]
         name = name.map(&:to_s).map(&:camelize).join('::')
         name.constantize
       end
