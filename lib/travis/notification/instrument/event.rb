@@ -18,6 +18,12 @@ module Travis
             end
           end
 
+          class Flowdock < Handler
+            def notify_completed
+              publish(:targets => handler.targets)
+            end
+          end
+
           class Github < Handler
             def notify_completed
               publish(:url => handler.url)

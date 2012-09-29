@@ -7,6 +7,7 @@ module Travis
     autoload :Archive,            'travis/task/archive'
     autoload :Campfire,           'travis/task/campfire'
     autoload :Email,              'travis/task/email'
+    autoload :Flowdock,           'travis/task/flowdock'
     autoload :Github,             'travis/task/github'
     autoload :GithubCommitStatus, 'travis/task/github_commit_status'
     autoload :Hipchat,            'travis/task/hipchat'
