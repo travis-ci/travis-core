@@ -25,6 +25,10 @@ describe Travis::Services do
     Travis::Services.namespace = Test::Services
   end
 
+  after :each do
+    Travis::Services.namespace = nil
+  end
+
   describe 'all' do
     it 'returns an instance of All if params are empty' do
       object.all({}).should be_instance_of(Test::Services::Foo::All)
