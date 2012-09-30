@@ -1,7 +1,6 @@
 language: ruby
 rvm:
   - 1.9.3
-  - jruby-18mode
   - jruby-19mode
 jdk:
   - oraclejdk7
@@ -13,9 +12,7 @@ matrix:
     - rvm: jruby-head
   include:
     - rvm: jruby-head
-      env: JRUBY_OPTS="--server -Xcext.enabled=false -Xcompile.invokedynamic=false --1.9"
-    - rvm: jruby-head
-      env: JRUBY_OPTS="--server -Xcext.enabled=false -Xcompile.invokedynamic=false --1.8"
+      env: JRUBY_OPTS="--server -Xcext.enabled=false -Xcompile.invokedynamic=false"
 before_script:
   - 'RAILS_ENV=test rake db:create db:schema:load --trace'
 script:
