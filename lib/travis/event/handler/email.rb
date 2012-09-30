@@ -41,6 +41,7 @@ module Travis
         # stolen from http://my.rails-royce.org/2010/07/21/email-validation-in-ruby-on-rails-without-regexp
         # because of it's beauty and all
         def valid_email?(email)
+          return false if email =~ /\.local$/
           m = Mail::Address.new(email)
           r = m.domain && m.address == email
           t = m.__send__(:tree)
