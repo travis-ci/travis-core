@@ -38,9 +38,12 @@ describe Travis::Github::Config do
       result['.result'].should == 'server_error'
     end
 
-    it "returns { '.result' => 'parsing_error' } if the .travis.yml is invalid" do
-      YAML.stubs(:load).raises(StandardError)
-      result['.result'].should == 'parsing_failed'
+    describe 'invalid yml' do
+      let(:response) { stub('response', :success? => true, :body => "\tfoo: Foo") }
+
+      it "returns { '.result' => 'parsing_error' } if the .travis.yml is invalid" do
+        result['.result'].should == 'parsing_failed'
+      end
     end
   end
 

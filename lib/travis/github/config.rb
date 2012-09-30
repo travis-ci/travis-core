@@ -28,7 +28,7 @@ module Travis
 
         def parse(yaml)
           YAML.load(yaml).merge('.result' => 'configured')
-        rescue StandardError => e
+        rescue StandardError, Psych::SyntaxError => e
           log_exception(e)
           { '.result' => 'parsing_failed' }
         end
