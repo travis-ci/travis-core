@@ -31,8 +31,14 @@ describe Travis::Event::Handler::Email do
       handler.recipients.should contain_recipients(email)
     end
 
-    it 'includes ignores email addresses (me@email)' do
+    it 'ignores email addresses (me@email)' do
       email = 'me@email'
+      build.config[:notifications] = { :email => [email] }
+      handler.recipients.should_not contain_recipients(email)
+    end
+
+    it "ignores email address ending in .local" do
+      email = 'me@email.local'
       build.config[:notifications] = { :email => [email] }
       handler.recipients.should_not contain_recipients(email)
     end
