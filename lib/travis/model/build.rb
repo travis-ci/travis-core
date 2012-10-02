@@ -136,7 +136,7 @@ class Build < ActiveRecord::Base
 
   # set the build number and expand the matrix
   before_create do
-    self.number ||= repository.builds.next_number
+    self.number = repository.builds.next_number
     self.previous_result ||= last_on_branch.try(:result)
     expand_matrix
   end
