@@ -34,17 +34,20 @@ class ServiceHook
 
   private
 
+    def hook
+      @hook ||= find || create
+    end
+
     def update
-      create unless hook
       GH.patch(hook_url, payload) unless hook['active'] == active
     end
 
-    def create
-      @hook = GH.post(hooks, payload)
+    def find
+      GH[hooks_url].detect { |hook| hook['name'] == 'travis' && hook['config']['domain'] == domain }
     end
 
-    def hook
-      @hook ||= GH[hooks].detect { |hook| hook['name'] == 'travis' && hook['config']['domain'] == domain }
+    def create
+      GH.post(hooks_url, payload)
     end
 
     def payload
@@ -56,7 +59,7 @@ class ServiceHook
       }
     end
 
-    def hooks
+    def hooks_url
       "repos/#{repository.slug}/hooks"
     end
 
