@@ -78,6 +78,7 @@ FactoryGirl.define do
     login 'svenfuchs'
     email 'sven@fuchs.com'
     tokens { [Token.new] }
+    github_oauth_token 'github_oauth_token'
   end
 
   factory :org, :class => 'Organization' do

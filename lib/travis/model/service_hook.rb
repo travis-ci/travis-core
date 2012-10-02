@@ -18,7 +18,7 @@ class ServiceHook
 
   def set(active, user = nil)
     self.active, self.user = active, user
-    Travis::Github.authenticated(self.user) { update }
+    Travis::Github.authenticated(self.user) { hook ? update : create }
     repository.update_column(:active, active)
   ensure
     self.active = repository.active
@@ -34,15 +34,16 @@ class ServiceHook
 
   private
 
+    def create
+      @hook = GH.post(hooks, payload)
+    end
+
     def update
-      create unless hook
       GH.patch(hook_url, payload) unless hook['active'] == active
     end
 
     def hook
-      @hook ||= GH[hooks].detect do |hook|
-        hook["name"] == "travis" and hook['config']['domain'] == domain
-      end
+      @hook ||= GH[hooks].detect { |hook| hook['name'] == 'travis' && hook['config']['domain'] == domain }
     end
 
     def payload
@@ -52,10 +53,6 @@ class ServiceHook
         :active => active,
         :config => { :user => user.login, :token => user.tokens.first.token, :domain => domain }
       }
-    end
-
-    def create
-      @hook = GH.post(hooks, payload)
     end
 
     def hooks
