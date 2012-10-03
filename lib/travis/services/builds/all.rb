@@ -7,9 +7,8 @@ module Travis
         def run
           # TODO :after_number seems like a bizarre api
           # why not just pass an id? pagination style?
-          builds = repository(params).builds
-          builds = by_event_type(params) if params[:event_type]
-          builds.order(params[:order_by] || 'number DESC')
+          builds = repository(params).builds.order(params[:order_by] || 'number DESC')
+          builds = builds.by_event_type(params) if params[:event_type]
           params[:after_number] ? builds.older_than(params[:after_number]) : builds.recent
         rescue ActiveRecord::RecordNotFound
           scope(:build).none
