@@ -1,9 +1,3 @@
-# in travis-hub/handler/request:
-#
-# ::Request.receive(type, data, credentials['token']) if authenticated?
-#
-# Services::Requests::Create.new(user, :event_type => event_type, :payload => data, :token => token)
-
 module Travis
   module Services
     module Requests

@@ -1,7 +1,3 @@
-# in travis-hub/handler/request:
-#
-# Services::Requests::Requeue.new(user, :build_id => 1, :token => current_user.token)
-
 module Travis
   module Services
     module Requests
