@@ -47,7 +47,6 @@ module Travis
   autoload :Model,        'travis/model'
   autoload :Notification, 'travis/notification'
   autoload :Services,     'travis/services'
-  autoload :Stats,        'travis/stats'
   autoload :Task,         'travis/task'
   autoload :Testing,      'travis/testing'
 
