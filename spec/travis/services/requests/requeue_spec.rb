@@ -14,7 +14,7 @@ describe Travis::Services::Requests::Requeue do
 
   describe 'given the request is authorized' do
     it 'requeues the request' do
-      service.expects(:service).with(:requests, :requeue, :event_type => 'push', :payload => 'the-payload', :token => 'token').returns(stub(:run => request))
+      service.expects(:service).with(:requests, :receive, :event_type => 'push', :payload => 'the-payload', :token => 'token').returns(stub(:run => request))
       service.run
     end
   end

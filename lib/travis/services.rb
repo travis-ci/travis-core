@@ -32,7 +32,8 @@ module Travis
 
     def service(type, name = {}, params = nil)
       type, name, params = self.class.name.split('::').last, type, name if name.is_a?(Hash)
-      const(type, name).new(respond_to?(:current_user) ? current_user : nil, params.symbolize_keys)
+      user = current_user if respond_to?(:current_user)
+      const(type, name).new(user, params)
     end
 
     private
