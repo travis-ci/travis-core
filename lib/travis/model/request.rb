@@ -8,7 +8,6 @@ require 'active_record'
 class Request < ActiveRecord::Base
   autoload :Approval, 'travis/model/request/approval'
   autoload :Branches, 'travis/model/request/branches'
-  autoload :Factory,  'travis/model/request/factory'
   autoload :States,   'travis/model/request/states'
 
   include States
