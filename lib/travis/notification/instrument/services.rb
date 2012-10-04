@@ -6,16 +6,16 @@ module Travis
           class Receive < Instrument
             def run_completed
               publish(
-                :msg => "#{target.class.name}#run type=#{request.event_type.inspect}",
-                :type => request.event_type,
-                :token => request.token,
+                :msg => "#{target.class.name}#run type=#{params[:event_type].inspect}",
+                :type => params[:event_type],
                 :accept? => target.accept?,
-                :payload => request.payload
+                :token => params[:token],
+                :payload => params[:payload]
               )
             end
 
-            def request
-              target.request
+            def params
+              target.params
             end
           end
 

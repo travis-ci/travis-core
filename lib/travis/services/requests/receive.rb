@@ -10,15 +10,14 @@ module Travis
       class Receive < Base
         extend Travis::Instrumentation
 
+        attr_reader :request
+
         def run
+          create if accept?
           request.start! if request
           request
         end
         instrument :run
-
-        def request
-          @request ||= create if accept?
-        end
 
         def accept?
           payload.accept?
@@ -35,13 +34,13 @@ module Travis
           end
 
           def create
-            repo.requests.create! payload.request.merge(
+            @request = repo.requests.create!(payload.request.merge(
               :event_type => event_type,
               :state => :created,
               :commit => commit,
               :owner => owner,
               :token => params[:token]
-            )
+            ))
           end
 
           def owner
