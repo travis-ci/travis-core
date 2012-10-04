@@ -13,8 +13,7 @@ module Travis
         attr_reader :request
 
         def run
-          create if accept?
-          request.start! if request
+          create && start if accept?
           request
         end
         instrument :run
@@ -25,14 +24,6 @@ module Travis
 
         private
 
-          def payload
-            @payload ||= Travis::Github::Payload.for(event_type, params[:payload])
-          end
-
-          def event_type
-            @event_type ||= (params[:event_type] || 'push').gsub('-', '_')
-          end
-
           def create
             @request = repo.requests.create!(payload.request.merge(
               :event_type => event_type,
@@ -41,6 +32,18 @@ module Travis
               :owner => owner,
               :token => params[:token]
             ))
+          end
+
+          def start
+            request.start! if request
+          end
+
+          def payload
+            @payload ||= Travis::Github::Payload.for(event_type, params[:payload])
+          end
+
+          def event_type
+            @event_type ||= (params[:event_type] || 'push').gsub('-', '_')
           end
 
           def owner
