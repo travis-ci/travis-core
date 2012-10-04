@@ -21,7 +21,7 @@ module Travis
         private
 
           def requeue
-            service(:requests, :create, data).run
+            service(:requests, :requeue, data).run
           end
 
           def data
