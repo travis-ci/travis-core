@@ -14,14 +14,6 @@ module Travis
     autoload :Workers,       'travis/services/workers'
     autoload :Users,         'travis/services/users'
 
-    class << self
-      attr_writer :namespace
-
-      def namespace
-        @namespace ||= self
-      end
-    end
-
     def all(params)
       service(params.key?(:ids) ? :by_ids : :all, params)
     end
@@ -46,7 +38,7 @@ module Travis
     private
 
       def const(type, name)
-        name = [Travis::Services.namespace.name, type, name]
+        name = [Travis.services.name, type, name]
         name = name.map(&:to_s).map(&:camelize).join('::')
         name.constantize
       end

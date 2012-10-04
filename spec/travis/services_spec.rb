@@ -22,11 +22,11 @@ describe Travis::Services do
   let(:object) { Test::Foo.new }
 
   before :each do
-    Travis::Services.namespace = Test::Services
+    Travis.services = Test::Services
   end
 
   after :each do
-    Travis::Services.namespace = nil
+    Travis.services = Travis::Services
   end
 
   describe 'all' do

@@ -55,6 +55,8 @@ module Travis
   class AdminMissing < StandardError; end
 
   class << self
+    attr_writer :services
+
     def config
       @config ||= Config.new
     end
@@ -65,6 +67,10 @@ module Travis
         pusher.key    = config.pusher.key
         pusher.secret = config.pusher.secret
       end
+    end
+
+    def services
+      @services || raise('no services namespace set')
     end
   end
 
