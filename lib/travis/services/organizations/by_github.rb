@@ -16,7 +16,7 @@ module Travis
             Organization.create!(
               :name => data['name'],
               :login => data['login'],
-              :github_id => data['id'],
+              :github_id => data['id']
             )
           end
 
