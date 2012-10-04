@@ -1,10 +1,19 @@
 require 'spec_helper'
 
-describe Request::Factory do
+# TODO this is really an integration test. should move it
+# somewhere else and add unit tests
+
+describe Travis::Services::Requests::Receive do
   include Support::ActiveRecord
 
-  let(:payload) { JSON.parse(GITHUB_PAYLOADS['gem-release']) }
   let(:owner)   { User.first || Factory(:user) }
+  let(:service) { Travis::Services::Requests::Receive.new(nil, params) }
+  let(:payload) { JSON.parse(GITHUB_PAYLOADS['gem-release']) }
+  let(:request) { service.run }
+
+  before :each do
+    Request.any_instance.stubs(:start!)
+  end
 
   shared_examples_for 'creates a request and repository' do
     it 'creates a request for the given payload' do
@@ -82,7 +91,7 @@ describe Request::Factory do
   end
 
   describe 'a github push event' do
-    let(:request) { Request::Factory.new('push', payload, 'token').request }
+    let(:params) { { :event_type => 'push', :payload => payload, :token => 'token' } }
 
     describe 'for repository belonging to a user' do
       let(:payload) { JSON.parse(GITHUB_PAYLOADS['gem-release']) }
@@ -96,60 +105,65 @@ describe Request::Factory do
         it_should_behave_like 'does not create a user'
       end
 
-      # describe 'if the user does not exist' do
-      #   before(:each) { User.delete_all }
-      #   it_should_behave_like 'a created request', type, login
-      #   it_should_behave_like 'creates an object from the github api', type, login
-      # end
+      describe 'if the user does not exist' do
+        before(:each) { User.delete_all }
+        it_should_behave_like 'a created request', type, login
+        it_should_behave_like 'creates an object from the github api', type, login
+      end
     end
 
-    # describe 'for repository belonging to an organization' do
-    #   let(:payload) { JSON.parse(GITHUB_PAYLOADS['travis-core']) }
+    describe 'for repository belonging to an organization' do
+      let(:payload) { JSON.parse(GITHUB_PAYLOADS['travis-core']) }
 
-    #   login = 'travis-ci'
-    #   type  = 'organization'
+      login = 'travis-ci'
+      type  = 'organization'
 
-    #   describe 'if the organization exists' do
-    #     before(:each) { Factory(:org, :login => login) }
-    #     it_should_behave_like 'a created request', type, login
-    #     it_should_behave_like 'does not create an organization'
-    #   end
+      describe 'if the organization exists' do
+        before(:each) { Factory(:org, :login => login) }
+        it_should_behave_like 'a created request', type, login
+        it_should_behave_like 'does not create an organization'
+      end
 
-    #   describe 'if the organization does not exist' do
-    #     before(:each) { Organization.delete_all }
-    #     it_should_behave_like 'a created request', type, login
-    #     it_should_behave_like 'creates an object from the github api', type, login
-    #   end
-    # end
+      describe 'if the organization does not exist' do
+        before(:each) { Organization.delete_all }
+        it_should_behave_like 'a created request', type, login
+        it_should_behave_like 'creates an object from the github api', type, login
+      end
+    end
   end
 
-  # describe 'a github pull-request event' do
-  #   describe 'for a repository that belongs to an organization' do
-  #     let(:request) { Request::Factory.new('pull_request', payload, 'token').request }
-  #     let(:payload) { JSON.parse(GITHUB_PAYLOADS['pull-request']) }
+  describe 'a github pull-request event' do
+    describe 'for a repository that belongs to an organization' do
+      let(:params)  { { :event_type => 'pull_request', :payload => payload, :token => 'token' } }
+      let(:payload) { JSON.parse(GITHUB_PAYLOADS['pull-request']) }
 
-  #     login = 'travis-repos'
-  #     type  = 'organization'
+      login = 'travis-repos'
+      type  = 'organization'
 
-  #     describe 'if the organization exists' do
-  #       before(:each) { Factory(:org, :login => login) }
-  #       it_should_behave_like 'a created request', type, login
-  #       it_should_behave_like 'does not create an organization'
+      before :each do
+        Travis::Features.start
+      end
 
-  #       it 'sets the comments_url to the request' do
-  #         request.comments_url.should == 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments'
-  #       end
-  #     end
+      describe 'if the organization exists' do
+        before(:each) { Factory(:org, :login => login) }
+        it_should_behave_like 'a created request', type, login
+        it_should_behave_like 'does not create an organization'
 
-  #     describe 'if the organization does not exist' do
-  #       before(:each) { Organization.delete_all }
-  #       it_should_behave_like 'a created request', type, login
-  #       it_should_behave_like 'creates an object from the github api', type, login
+        it 'sets the comments_url to the request' do
+          request.comments_url.should == 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments'
+        end
+      end
 
-  #       it 'sets the comments_url to the request' do
-  #         request.comments_url.should == 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments'
-  #       end
-  #     end
-  #   end
-  # end
+      describe 'if the organization does not exist' do
+        before(:each) { Organization.delete_all }
+        it_should_behave_like 'a created request', type, login
+        it_should_behave_like 'creates an object from the github api', type, login
+
+        it 'sets the comments_url to the request' do
+          request.comments_url.should == 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments'
+        end
+      end
+    end
+  end
 end
+

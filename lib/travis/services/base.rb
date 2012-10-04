@@ -7,7 +7,7 @@ module Travis
 
       def initialize(current_user = nil, params = {})
         @current_user = current_user
-        @params = params
+        @params = params.symbolize_keys
       end
 
       def scope(key)

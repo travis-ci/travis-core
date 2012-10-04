@@ -11,7 +11,7 @@ describe Travis::Services::Users::Update do
 
   attr_reader :params
 
-  describe 'update_locale' do
+  describe 'run' do
     it 'updates the locale if valid' do
       @params = { :locale => 'en' }
       user.expects(:update_attributes!).with(params)

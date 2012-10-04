@@ -5,10 +5,10 @@ require 'thread'
 module Travis
   module Notification
     class Instrument
-      autoload :Event,   'travis/notification/instrument/event'
-      autoload :Github,  'travis/notification/instrument/github'
-      autoload :Request, 'travis/notification/instrument/request'
-      autoload :Task,    'travis/notification/instrument/task'
+      autoload :Event,    'travis/notification/instrument/event'
+      autoload :Github,   'travis/notification/instrument/github'
+      autoload :Services, 'travis/notification/instrument/services'
+      autoload :Task,     'travis/notification/instrument/task'
 
       class << self
         extend Travis::Async

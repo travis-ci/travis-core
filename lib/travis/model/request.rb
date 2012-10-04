@@ -14,11 +14,6 @@ class Request < ActiveRecord::Base
   include States
 
   class << self
-    def receive(type, data, token)
-      request = Factory.new(type, data, token).request
-      request.start! if request
-    end
-
     def last_by_head_commit(head_commit)
       where(:head_commit => head_commit).order(:id).last
     end
@@ -32,6 +27,7 @@ class Request < ActiveRecord::Base
   validates :repository_id, :presence => true
 
   serialize :config
+  serialize :payload
 
   def event_type
     read_attribute(:event_type) || 'push'

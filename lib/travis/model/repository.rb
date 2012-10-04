@@ -15,6 +15,7 @@ class Repository < ActiveRecord::Base
 
   include Compat
 
+  has_many :commits, :dependent => :delete_all
   has_many :requests, :dependent => :delete_all
   has_many :builds, :dependent => :delete_all do
     def last_result_on(params)
