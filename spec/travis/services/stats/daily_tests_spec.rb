@@ -8,12 +8,10 @@ describe Travis::Services::Stats::DailyTests do
 
   before { Scenario.default }
 
-  describe 'run' do
-    it 'should return the jobs per day' do
-      stats = service.run
-      stats.should have(1).item
-      stats.first['date'].should == Job.first.created_at.to_date.to_s(:date)
-      stats.first['count'].to_i.should == 13
-    end
+  it 'should return the jobs per day' do
+    stats = service.run
+    stats.should have(1).item
+    stats.first['date'].should == Job.first.created_at.to_date.to_s(:date)
+    stats.first['count'].to_i.should == 13
   end
 end

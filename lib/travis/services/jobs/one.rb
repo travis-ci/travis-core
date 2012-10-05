@@ -3,7 +3,7 @@ module Travis
     module Jobs
       class One < Base
         def run
-          scope(:job).find(params[:id])
+          scope(:job).find_by_id(params[:id])
         end
       end
     end

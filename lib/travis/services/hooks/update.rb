@@ -3,15 +3,19 @@ module Travis
     module Hooks
       class Update < Base
         def run
-          active = params[:active]
-          active = { 'true' => true, 'false' => false }[active] if active.is_a?(String)
-          hook.set(active, current_user)
+          hook.set(active?, current_user) if hook
         end
 
         private
 
           def hook
-            service(:hooks, :one, params).run
+            @hook ||= service(:hooks, :one, params).run
+          end
+
+          def active?
+            active = params[:active]
+            active = { 'true' => true, 'false' => false }[active] if active.is_a?(String)
+            !!active
           end
       end
     end

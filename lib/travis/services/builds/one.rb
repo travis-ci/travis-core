@@ -5,15 +5,8 @@ module Travis
     module Builds
       class One < Base
         def run
-          scope = params[:repository_id] ? repository(params).builds : scope(:build)
-          scope.includes(:commit, :matrix => [:commit, :log]).find(params[:id])
+          scope(:build).includes(:commit, :matrix => [:commit, :log]).find_by_id(params[:id])
         end
-
-        private
-
-          def repository(params)
-            scope(:repository).find_by(params) || raise(ActiveRecord::RecordNotFound)
-          end
       end
     end
   end

@@ -23,22 +23,19 @@ describe Travis::Services::Accounts::All do
     sven.organizations << travis
   end
 
-  describe 'run' do
-    it 'includes the user' do
-      service.run.should include(Account.from(sven))
-    end
+  it 'includes the user' do
+    service.run.should include(Account.from(sven))
+  end
 
-    it 'includes accounts where the user has admin access' do
-      service.run.should include(Account.from(travis))
-    end
+  it 'includes accounts where the user has admin access' do
+    service.run.should include(Account.from(travis))
+  end
 
-    it 'does not include accounts where the user does not have admin access' do
-      service.run.should_not include(Account.from(sinatra))
-    end
+  it 'does not include accounts where the user does not have admin access' do
+    service.run.should_not include(Account.from(sinatra))
+  end
 
-    it 'includes repository counts' do
-      service.run.map(&:repos_count).should == [1, 2]
-    end
+  it 'includes repository counts' do
+    service.run.map(&:repos_count).should == [1, 2]
   end
 end
-

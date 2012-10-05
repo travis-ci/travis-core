@@ -9,29 +9,25 @@ describe Travis::Services::Jobs::All do
 
   attr_reader :params
 
-  describe 'run' do
-    it 'finds queued jobs' do
-      @params = { :ids => [job.id] }
-      service.run.should include(job)
-    end
-
-    describe 'given a queue name' do
-      it 'finds jobs on the given queue' do
-        @params = { :queue => 'builds.common' }
-        service.run.should include(job)
-      end
-
-      it 'does not find jobs on other queues' do
-        @params = { :queue => 'builds.nodejs' }
-        service.run.should_not include(job)
-      end
-    end
-
-    # TODO for all services test that the expected number of queries is issued
-    # it 'includes associations' do
-    #   @params = { :queue => 'builds.common'}
-    #   where.expects(:includes).with(:commit).returns(result)
-    #   service.run.should == result
-    # end
+  it 'finds jobs on the given queue' do
+    @params = { :queue => 'builds.common' }
+    service.run.should include(job)
   end
+
+  it 'does not find jobs on other queues' do
+    @params = { :queue => 'builds.nodejs' }
+    service.run.should_not include(job)
+  end
+
+  it 'finds jobs by a given list of ids' do
+    @params = { :ids => [job.id] }
+    service.run.should == [job]
+  end
+
+  # TODO for all services test that the expected number of queries is issued
+  # it 'includes associations' do
+  #   @params = { :queue => 'builds.common'}
+  #   where.expects(:includes).with(:commit).returns(result)
+  #   service.run.should == result
+  # end
 end

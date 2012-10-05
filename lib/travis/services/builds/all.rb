@@ -5,19 +5,29 @@ module Travis
     module Builds
       class All < Base
         def run
-          # TODO :after_number seems like a bizarre api
-          # why not just pass an id? pagination style?
-          builds = repository(params).builds.descending(:number)
-          builds = builds.by_event_type(params) if params[:event_type]
-          params[:after_number] ? builds.older_than(params[:after_number]) : builds.recent
-        rescue ActiveRecord::RecordNotFound
-          scope(:build).none
+          params[:ids] ? by_ids : by_params
         end
 
         private
 
-          def repository(params)
-            scope(:repository).find_by(params) || raise(ActiveRecord::RecordNotFound)
+          def by_ids
+            scope(:build).where(:id => params[:ids])
+          end
+
+          def by_params
+            if repo
+              # TODO :after_number seems like a bizarre api
+              # why not just pass an id? pagination style?
+              builds = repo.builds.descending(:number)
+              builds = builds.by_event_type(params) if params[:event_type]
+              params[:after_number] ? builds.older_than(params[:after_number]) : builds.recent
+            else
+              scope(:build).none
+            end
+          end
+
+          def repo
+            @repo ||= service(:repositories, :one, params).run
           end
       end
     end

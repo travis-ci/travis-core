@@ -3,13 +3,13 @@ module Travis
     module Hooks
       class One < Base
         def run
-          repository(params).service_hook
+          repo.service_hook if repo
         end
 
         private
 
-          def repository(params)
-            current_user.repositories.administratable.find_by(params) || raise(ActiveRecord::RecordNotFound)
+          def repo
+            @repo ||= current_user.repositories.administratable.find_by(params)
           end
       end
     end

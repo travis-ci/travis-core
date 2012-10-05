@@ -8,15 +8,13 @@ describe Travis::Services::Workers::One do
 
   attr_reader :params
 
-  describe 'find_one' do
-    it 'finds a worker by its id' do
-      @params = { :id => worker.id }
-      service.run.should == worker
-    end
+  it 'finds a worker by its id' do
+    @params = { :id => worker.id }
+    service.run.should == worker
+  end
 
-    it 'raises if the worker could not be found' do
-      @params = { :id => worker.id + 1 }
-      lambda { service.run }.should raise_error(ActiveRecord::RecordNotFound)
-    end
+  it 'does not raise if the worker could not be found' do
+    @params = { :id => worker.id + 1 }
+    lambda { service.run }.should_not raise_error
   end
 end

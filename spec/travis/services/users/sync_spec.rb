@@ -11,37 +11,35 @@ describe Travis::Services::Users::Sync do
     user.stubs(:update_column)
   end
 
-  describe 'sync' do
-    describe 'given the user is not currently syncing' do
-      before :each do
-        user.stubs(:syncing?).returns(false)
-      end
-
-      it 'enqueues a sync job' do
-        publisher.expects(:publish).with({ :user_id => user.id }, :type => 'sync')
-        service.run
-      end
-
-      it 'sets the user to syncing' do
-        user.expects(:update_column).with(:is_syncing, true)
-        service.run
-      end
+  describe 'given the user is not currently syncing' do
+    before :each do
+      user.stubs(:syncing?).returns(false)
     end
 
-    describe 'given the user is currently syncing' do
-      before :each do
-        user.stubs(:syncing?).returns(false)
-      end
+    it 'enqueues a sync job' do
+      publisher.expects(:publish).with({ :user_id => user.id }, :type => 'sync')
+      service.run
+    end
 
-      it 'does not enqueue a sync job' do
-        publisher.expects(:publish).never
-        service.run
-      end
+    it 'sets the user to syncing' do
+      user.expects(:update_column).with(:is_syncing, true)
+      service.run
+    end
+  end
 
-      it 'does not set the user to syncing' do
-        user.expects(:update_column).never
-        service.run
-      end
+  describe 'given the user is currently syncing' do
+    before :each do
+      user.stubs(:syncing?).returns(false)
+    end
+
+    it 'does not enqueue a sync job' do
+      publisher.expects(:publish).never
+      service.run
+    end
+
+    it 'does not set the user to syncing' do
+      user.expects(:update_column).never
+      service.run
     end
   end
 end

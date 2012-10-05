@@ -3,7 +3,7 @@ module Travis
     module Artifacts
       class One < Base
         def run
-          scope(:artifact).find(params[:id])
+          scope(:artifact).find_by_id(params[:id])
         end
       end
     end

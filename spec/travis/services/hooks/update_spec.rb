@@ -11,12 +11,10 @@ describe Travis::Services::Hooks do
     user.permissions.create!(:repository => repo, :admin => true)
   end
 
-  describe 'run' do
-    let(:params) { { :id => repo.id, :active => 'true' } }
+  let(:params) { { :id => repo.id, :active => 'true' } }
 
-    it 'sets the given :active param to the hook' do
-      ServiceHook.any_instance.expects(:set).with(true, user)
-      service.run
-    end
+  it 'sets the given :active param to the hook' do
+    ServiceHook.any_instance.expects(:set).with(true, user)
+    service.run
   end
 end

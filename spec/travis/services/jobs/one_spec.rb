@@ -9,15 +9,13 @@ describe Travis::Services::Jobs::One do
 
   attr_reader :params
 
-  describe 'run' do
-    it 'finds the job with the given id' do
-      @params = { :id => job.id }
-      service.run.should == job
-    end
+  it 'finds the job with the given id' do
+    @params = { :id => job.id }
+    service.run.should == job
+  end
 
-    it 'raises if the job could not be found' do
-      @params = { :id => job.id + 1 }
-      lambda { service.run }.should raise_error(ActiveRecord::RecordNotFound)
-    end
+  it 'does not raise if the job could not be found' do
+    @params = { :id => job.id + 1 }
+    lambda { service.run }.should_not raise_error
   end
 end

@@ -14,24 +14,7 @@ module Travis
     autoload :Workers,       'travis/services/workers'
     autoload :Users,         'travis/services/users'
 
-    def all(params)
-      service(params.key?(:ids) ? :by_ids : :all, params)
-    end
-
-    def one(params)
-      service(:one, params)
-    end
-
-    def one_or_create(params)
-      service(:one_or_create, params)
-    end
-
-    def update(params)
-      service(:update, params)
-    end
-
-    def service(type, name = {}, params = nil)
-      type, name, params = self.class.name.split('::').last, type, name if name.is_a?(Hash)
+    def service(type, name, params = {})
       user = current_user if respond_to?(:current_user)
       const(type, name).new(user, params)
     end
@@ -39,7 +22,7 @@ module Travis
     private
 
       def const(type, name)
-        name = [Travis.services.name, type, name]
+        name = ['', Travis.services.name, type, name]
         name = name.map(&:to_s).map(&:camelize).join('::')
         name.constantize
       end

@@ -5,9 +5,22 @@ module Travis
     module Branches
       class All < Base
         def run
-          repository = scope(:repository).find_by(params)
-          repository ? repository.last_finished_builds_by_branches : scope(:build).none
+          params[:ids] ? by_ids : by_params
         end
+
+        private
+
+          def by_ids
+            scope(:build).where(:id => params[:ids])
+          end
+
+          def by_params
+            repo ? repo.last_finished_builds_by_branches : scope(:build).none
+          end
+
+          def repo
+            @repo ||= service(:repositories, :one, params).run
+          end
       end
     end
   end
