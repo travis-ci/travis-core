@@ -96,8 +96,12 @@ class Build < ActiveRecord::Base
       finished.on_branch(branches).descending.first
     end
 
-    def descending
-      order(arel_table[:id].desc)
+    def descending(column = :id)
+      if column == :number
+        order('number::int DESC')
+      else
+        order(arel_table[column].desc)
+      end
     end
 
     def paged(options)
@@ -106,13 +110,12 @@ class Build < ActiveRecord::Base
     end
 
     def older_than(build = nil)
-      criteria = if build
-        number = build.is_a?(Build) ? build.number : build
-        where('number::integer < ?', number.to_i)
+      scope = if build
+        where('number::integer < ?', (build.is_a?(Build) ? build.number : build).to_i)
       else
-        Build
+        Build # TODO in which case we'd call older_than without an argument?
       end
-      criteria.includes(:commit).order('number::int DESC').limit(per_page)
+      scope.includes(:commit).descending(:number).limit(per_page)
     end
 
     def next_number
