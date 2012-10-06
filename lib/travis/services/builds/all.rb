@@ -18,7 +18,7 @@ module Travis
             if repo
               # TODO :after_number seems like a bizarre api
               # why not just pass an id? pagination style?
-              builds = repo.builds.descending(:number)
+              builds = repo.builds.descending
               builds = builds.by_event_type(params) if params[:event_type]
               params[:after_number] ? builds.older_than(params[:after_number]) : builds.recent
             else
