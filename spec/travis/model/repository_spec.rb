@@ -196,6 +196,7 @@ describe Repository do
     let(:repository) { Factory(:repository) }
 
     it 'retrieves last builds on all branches' do
+      Build.delete_all
       old_build = Factory(:build, :repository => repository, :state => 'finished', :commit => Factory(:commit, :branch => 'master'))
       production_build = Factory(:build, :repository => repository, :state => 'finished', :commit => Factory(:commit, :branch => 'production'))
       master_build = Factory(:build, :repository => repository, :state => 'finished', :commit => Factory(:commit, :branch => 'master'))

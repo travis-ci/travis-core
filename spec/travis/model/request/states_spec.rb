@@ -3,8 +3,9 @@ require 'spec_helper'
 describe Request::States do
   include Support::ActiveRecord
 
-  let(:repository) { Repository.new }
-  let(:commit)     { Commit.new(:repository => repository) }
+  let(:owner)      { User.new(:login => 'joshk') }
+  let(:repository) { Repository.new(:name => 'travis-ci', :owner => owner, :owner_name => 'travis-ci') }
+  let(:commit)     { Commit.new(:repository => repository, :commit => '12345', :branch => 'master', :message => 'message', :committed_at => Time.now) }
   let(:request)    { Request.new(:repository => repository, :commit => commit) }
 
   let(:approval)   { Request::Approval.any_instance }
@@ -13,7 +14,7 @@ describe Request::States do
 
   before :each do
     github.stubs(:fetch).returns(config)
-    request.stubs(:build_build) # can't stub on the stupic association?
+    request.stubs(:add_build) # can't stub on the stupic association?
   end
 
   it 'has the state :created when just created' do
@@ -48,7 +49,7 @@ describe Request::States do
       end
 
       it 'does not configure the request' do
-        request.expects(:configure).never
+        request.expects(:fetch_config).never
         request.start
       end
 
@@ -88,12 +89,11 @@ describe Request::States do
 
     describe 'with an approved request' do
       before :each do
-        request.stubs(:was_configured?).returns(true)
         approval.stubs(:approved?).returns(true)
       end
 
       it 'builds the build' do
-        request.expects(:build_build)
+        request.expects(:add_build)
         request.finish
       end
 
@@ -109,7 +109,7 @@ describe Request::States do
       end
 
       it 'does not build the build' do
-        request.expects(:build_build).never
+        request.expects(:add_build).never
         request.finish
       end
 
@@ -117,6 +117,21 @@ describe Request::States do
         request.finish
         request.should be_finished
       end
+    end
+  end
+
+  describe 'start!' do
+    before :each do
+      request.stubs(:config).returns('.configured' => true)
+      approval.stubs(:approved?).returns(true)
+    end
+
+    it 'finally sets the state to finished' do
+      request.repository.save!
+      request.repository_id = request.repository.id
+      request.save!
+      request.start!
+      request.reload.should be_finished
     end
   end
 end
