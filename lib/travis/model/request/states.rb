@@ -22,7 +22,8 @@ class Request
     end
 
     def requeueable?
-      finished? && !!builds.all { |build| build.finished? }
+      # finished? && !!builds.all { |build| build.finished? }
+      !!builds.all { |build| build.finished? }
     end
 
     protected
