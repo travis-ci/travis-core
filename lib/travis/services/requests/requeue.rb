@@ -10,21 +10,13 @@ module Travis
         instrument :run
 
         def accept?
-          push_permission? && build.finished? && !jobs_unfinished?
+          push_permission? && request.requeueable?
         end
 
         private
 
-          def push_permission?
-            current_user.permission?(:push, :repository_id => request.repository_id)
-          end
-
-          def jobs_unfinished?
-            Job.unfinished.where(:source_id => build.id, :source_type => 'Build').any?
-          end
-
           def requeue
-            service(:requests, :receive, data).run
+            request.start!
           end
 
           def data
@@ -37,6 +29,10 @@ module Travis
 
           def build
             @build ||= service(:builds, :one, :id => params[:build_id]).run
+          end
+
+          def push_permission?
+            current_user.permission?(:push, :repository_id => request.repository_id)
           end
 
           Travis::Notification::Instrument::Services::Requests::Requeue.attach_to(self)

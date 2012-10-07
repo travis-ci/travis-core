@@ -4,7 +4,7 @@ describe Travis::Services::Requests::Requeue do
   include Support::ActiveRecord
 
   let(:user)    { User.first || Factory(:user) }
-  let(:request) { Factory(:request, :payload => 'the-payload') }
+  let(:request) { Factory(:request, :config => {}, :state => :finished) }
   let(:build)   { Factory(:build, :request => request, :state => :finished) }
   let(:service) { Travis::Services::Requests::Requeue.new(user, :build_id => build.id, :token => 'token') }
 
@@ -15,7 +15,7 @@ describe Travis::Services::Requests::Requeue do
 
   describe 'given the request is authorized' do
     it 'requeues the request' do
-      service.expects(:service).with(:requests, :receive, :event_type => 'push', :payload => 'the-payload', :token => 'token').returns(stub(:run => request))
+      request.expects(:start!)
       service.run
     end
   end

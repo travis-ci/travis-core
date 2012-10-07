@@ -13,11 +13,8 @@ class Request
       event :finish,    :to => :finished
     end
 
-    # TODO
-    # Metriks.meter('github.requests.accepted').mark
-    # Metriks.meter('github.requests.rejected').mark
     def start
-      configure if accepted?
+      configure if accepted? && config.blank?
       finish
     end
 
@@ -26,10 +23,14 @@ class Request
     end
 
     def finish
-      build_build if was_configured? && approved?
+      build_build if config.present? && approved?
     end
 
-    protected
+    def requeueable?
+      finished? && builds.all { |build| build.finished? }
+    end
+
+    private
 
       delegate :accepted?, :approved?, :to => :approval
 

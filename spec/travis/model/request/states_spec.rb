@@ -83,7 +83,7 @@ describe Request::States do
 
   describe 'finish' do
     before :each do
-      request.stubs(:was_configured?).returns(true)
+      request.stubs(:config).returns('.configured' => true)
     end
 
     describe 'with an approved request' do
