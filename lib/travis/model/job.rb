@@ -40,6 +40,10 @@ class Job < ActiveRecord::Base
       scope
     end
 
+    def unfinished
+      where('state <> ?', :finished).order('jobs.id')
+    end
+
     def owned_by(owner)
       where(:owner_id => owner.id, :owner_type => owner.class.to_s)
     end

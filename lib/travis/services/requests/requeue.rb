@@ -10,11 +10,18 @@ module Travis
         instrument :run
 
         def accept?
-          # TODO does this user have push access to this repo?
-          true
+          push_permission? && build.finished? && !jobs_unfinished?
         end
 
         private
+
+          def push_permission?
+            current_user.permission?(:push, :repository_id => request.repository_id)
+          end
+
+          def jobs_unfinished?
+            Job.unfinished.where(:source_id => build.id, :source_type => 'Build').any?
+          end
 
           def requeue
             service(:requests, :receive, data).run
@@ -25,7 +32,7 @@ module Travis
           end
 
           def request
-            build.request if build
+            build && build.request
           end
 
           def build

@@ -30,6 +30,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def permission?(roles, options = {})
+    !!permissions.by_roles(roles).where(options).first
+  end
+
   def first_sync?
     synced_at.nil?
   end

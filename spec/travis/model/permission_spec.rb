@@ -8,8 +8,8 @@ describe Permission do
       Permission::ROLES.each { |role| Permission.create!(role => true) }
     end
 
-    it 'returns matching permissions if roles given as a comma-separated string' do
-      Permission.by_roles('admin,pull').size.should == 2
+    it 'returns matching permissions if two roles given as symbols' do
+      Permission.by_roles([:admin, :pull]).size.should == 2
     end
 
     it 'returns a single permission if one role given' do

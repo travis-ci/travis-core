@@ -22,11 +22,9 @@ module Travis
           class Requeue < Instrument
             def run_completed
               publish(
-                :msg => "#{target.class.name}#run build_id=#{target.params[:build_id]} type=#{result.event_type.inspect}",
-                :type => result.event_type,
+                :msg => "#{target.class.name}#run build_id=#{target.params[:build_id]} #{result ? 'accepted' : 'not accepted'}",
                 :build_id => target.params[:build_id],
-                :accept? => target.accept?,
-                :payload => result.payload
+                :accept? => target.accept?
               )
             end
           end

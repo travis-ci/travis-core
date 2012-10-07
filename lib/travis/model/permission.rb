@@ -5,7 +5,7 @@ class Permission < ActiveRecord::Base
 
   class << self
     def by_roles(roles)
-      roles = roles.split(',').select { |role| ROLES.include?(role.to_s) }
+      roles = Array(roles).select { |role| ROLES.include?(role.to_s) }
       roles.empty? ? none : where(has_roles(roles))
     end
 
