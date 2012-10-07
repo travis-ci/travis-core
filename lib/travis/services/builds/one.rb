@@ -5,7 +5,9 @@ module Travis
     module Builds
       class One < Base
         def run
-          scope(:build).includes(:commit, :matrix => [:commit, :log]).find_by_id(params[:id])
+          build = scope(:build).includes(:commit, :request, :matrix).find_by_id(params[:id])
+          ActiveRecord::Associations::Preloader.new(build.matrix, :log, :select => [:id, :job_id]).run if build
+          build
         end
       end
     end

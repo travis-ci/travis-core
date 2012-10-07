@@ -98,6 +98,7 @@ module Travis
           :commit_id => commit.id,
           :commit => commit,
           :matrix => [stub_test(:id => 1, :number => '2.1'), stub_test(:id => 2, :number => '2.2')],
+          :matrix_ids => [1, 2],
           :number => 2,
           :config => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
           :obfuscated_config => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },

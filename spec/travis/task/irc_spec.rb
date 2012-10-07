@@ -9,8 +9,9 @@ describe Travis::Task::Irc do
   let(:channels) { { ['irc.freenode.net', 1234] => ['travis'] } }
 
   before do
-    Travis.config.notifications = [:irc]
+    Travis::Features.start
     Travis::Features.stubs(:active?).returns(true)
+    Travis.config.notifications = [:irc]
     Repository.stubs(:find).returns(stub('repo'))
     Url.stubs(:shorten).returns(url)
   end

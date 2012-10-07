@@ -6,11 +6,10 @@ module Travis
           class Job
             include Formats
 
-            attr_reader :job, :commit
+            attr_reader :job
 
             def initialize(job)
               @job = job
-              @commit = job.commit
             end
 
             def data

@@ -21,3 +21,15 @@ describe Travis::Api::V2::Http::Repository do
     }
   end
 end
+
+describe 'Travis::Api::V2::Http::Repository using Travis::Services::Repositories::One' do
+  include Support::ActiveRecord
+
+  let!(:record) { Factory(:repository) }
+  let(:repo)    { Travis::Services::Repositories::One.new(nil, :id => record.id).run }
+  let(:data)    { Travis::Api::V2::Http::Repository.new(repo).data }
+
+  it 'queries' do
+    lambda { data }.should issue_queries(1)
+  end
+end

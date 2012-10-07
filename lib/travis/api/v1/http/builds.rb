@@ -16,8 +16,6 @@ module Travis
           end
 
           def build_data(build)
-            commit = build.commit
-            request = build.request
             {
               'id' => build.id,
               'repository_id' => build.repository_id,
@@ -27,10 +25,10 @@ module Travis
               'started_at' => format_date(build.started_at),
               'finished_at' => format_date(build.finished_at),
               'duration' => build.duration,
-              'commit' => commit.commit,
-              'branch' => commit.branch,
-              'message' => commit.message,
-              'event_type' => request.event_type,
+              'commit' => build.commit.commit,
+              'branch' => build.commit.branch,
+              'message' => build.commit.message,
+              'event_type' => build.request.event_type,
             }
           end
         end

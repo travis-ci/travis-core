@@ -19,8 +19,6 @@ describe Travis::Api::V2::Http::Jobs do
       'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
       'result' => 0,
       'queue' => 'builds.common',
-      'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4',
-      'sponsor' => {},
       'tags' => 'tag-a,tag-b'
     }
   end
@@ -39,6 +37,21 @@ describe Travis::Api::V2::Http::Jobs do
       'author_email' => 'svenfuchs@artweb-design.de',
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
     }
+  end
+end
+
+describe 'Travis::Api::V2::Http::Jobs using Travis::Services::Jobs::All' do
+  include Support::ActiveRecord
+
+  let(:jobs) { Travis::Services::Jobs::All.new(nil).run }
+  let(:data) { Travis::Api::V2::Http::Jobs.new(jobs).data }
+
+  before :each do
+    3.times { Factory(:test) }
+  end
+
+  it 'queries' do
+    lambda { data }.should issue_queries(3)
   end
 end
 

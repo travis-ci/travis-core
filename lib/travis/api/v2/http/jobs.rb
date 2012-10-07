@@ -35,8 +35,6 @@ module Travis
                 'started_at' => format_date(job.started_at),
                 'finished_at' => format_date(job.finished_at),
                 'queue' => job.queue,
-                'sponsor' => job.is_a?(::Job::Test) ? job.sponsor.to_hash.stringify_keys : {},
-                'worker' => job.worker,
                 'tags' => job.tags
               }
             end

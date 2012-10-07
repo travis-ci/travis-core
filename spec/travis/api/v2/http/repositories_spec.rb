@@ -20,3 +20,19 @@ describe Travis::Api::V2::Http::Repositories do
     }
   end
 end
+
+describe 'Travis::Api::V2::Http::Repositories using Travis::Services::Repositories::All' do
+  include Support::ActiveRecord
+
+  let(:repos) { Travis::Services::Repositories::All.new(nil).run }
+  let(:data)  { Travis::Api::V2::Http::Repositories.new(repos).data }
+
+  before :each do
+    3.times { |i| Factory(:repository, :name => i) }
+  end
+
+  it 'queries' do
+    lambda { data }.should issue_queries(1)
+  end
+end
+

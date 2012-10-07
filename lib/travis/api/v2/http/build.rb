@@ -30,15 +30,14 @@ module Travis
                 'repository_id' => build.repository_id,
                 'commit_id' => build.commit_id,
                 'number' => build.number,
+                'pull_request' => build.pull_request?,
                 'config' => build.obfuscated_config.stringify_keys,
                 'state' => build.state.to_s,
                 'result' => build.result,
-                'previous_result' => build.previous_result,
                 'started_at' => format_date(build.started_at),
                 'finished_at' => format_date(build.finished_at),
                 'duration' => build.duration,
-                'job_ids' => build.matrix.map { |job| job.id },
-                'pull_request' => build.pull_request?
+                'job_ids' => build.matrix_ids
               }
             end
 
@@ -72,7 +71,6 @@ module Travis
                 'finished_at' => format_date(job.finished_at),
                 'queue' => job.queue,
                 'allow_failure' => job.allow_failure,
-                'sponsor' => job.sponsor,
                 'tags' => job.tags
               }
             end

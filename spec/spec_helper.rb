@@ -9,6 +9,7 @@ require 'support'
 require 'travis'
 require 'travis/support'
 require 'travis/support/testing/webmock'
+require 'travis/testing/matchers'
 
 require 'gh'
 require 'mocha'

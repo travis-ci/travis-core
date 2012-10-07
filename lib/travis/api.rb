@@ -5,6 +5,8 @@ module Travis
     autoload :V1,      'travis/api/v1'
     autoload :V2,      'travis/api/v2'
 
+    DEFAULT_VERSION = 'v2'
+
     class << self
       def data(resource, options = {})
         new(resource, options).data
@@ -12,7 +14,7 @@ module Travis
 
       def builder(resource, options = {})
         target  = (options[:for] || 'http').to_s.camelize
-        version = (options[:version] || 'v1').to_s.camelize
+        version = (options[:version] || DEFAULT_VERSION).to_s.camelize
         type    = (options[:type] || type_for(resource)).to_s.camelize
         [name, version, target, type].join('::').constantize rescue nil
       end

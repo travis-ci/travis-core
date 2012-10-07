@@ -19,8 +19,6 @@ describe Travis::Api::V2::Pusher::Job::Created do
       'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
       'result' => 0,
       'queue' => 'builds.common',
-      'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4',
-      'sponsor' => { 'name' => 'Railslove', 'url' => 'http://railslove.de' },
       'tags' => 'tag-a,tag-b'
     }
   end

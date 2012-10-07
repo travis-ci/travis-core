@@ -19,8 +19,6 @@ describe Travis::Api::V2::Http::Job do
       'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
       'result' => 0,
       'queue' => 'builds.common',
-      'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4',
-      'sponsor' => { 'name' => 'Railslove', 'url' => 'http://railslove.de' },
       'tags' => 'tag-a,tag-b'
     }
   end
@@ -49,5 +47,17 @@ describe Travis::Api::V2::Http::Job do
     it 'shows encrypted env vars in human readable way' do
       data['job']['config']['env'].should == 'FOO=[secure]'
     end
+  end
+end
+
+describe 'Travis::Api::V2::Http::Job using Travis::Services::Jobs::One' do
+  include Support::ActiveRecord
+
+  let!(:record) { Factory(:test) }
+  let(:job)     { Travis::Services::Jobs::One.new(nil, :id => record.id).run }
+  let(:data)    { Travis::Api::V2::Http::Job.new(job).data }
+
+  it 'queries' do
+    lambda { data }.should issue_queries(3)
   end
 end

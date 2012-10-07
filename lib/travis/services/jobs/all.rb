@@ -3,7 +3,10 @@ module Travis
     module Jobs
       class All < Base
         def run
-          params[:ids] ? by_ids : by_params
+          jobs = params[:ids] ? by_ids : by_params
+          jobs = jobs.includes(:commit)
+          ActiveRecord::Associations::Preloader.new(jobs, :log, :select => [:id, :job_id]).run
+          jobs
         end
 
         private
@@ -13,7 +16,7 @@ module Travis
           end
 
           def by_params
-            scope(:job).queued(params[:queue]).includes(:commit)
+            scope(:job).queued(params[:queue])
           end
       end
     end

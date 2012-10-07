@@ -59,7 +59,7 @@ class Build < ActiveRecord::Base
 
   class << self
     def recent(options = {})
-      was_started.descending.paged(options).includes([:commit, { :matrix => :commit }])
+      descending.paged(options)
     end
 
     def was_started
@@ -76,8 +76,7 @@ class Build < ActiveRecord::Base
     end
 
     def by_event_type(event_type)
-      scope = includes('request')
-      event_type == 'pull_request' ?  scope.pull_requests : scope.pushes
+      event_type == 'pull_request' ?  pull_requests : pushes
     end
 
     def pushes
@@ -106,12 +105,9 @@ class Build < ActiveRecord::Base
     end
 
     def older_than(build = nil)
-      scope = if build
-        where('number::integer < ?', (build.is_a?(Build) ? build.number : build).to_i)
-      else
-        Build # TODO in which case we'd call older_than without an argument?
-      end
-      scope.includes(:commit).descending.limit(per_page)
+      scope = recent # TODO in which case we'd call older_than without an argument?
+      scope = scope.where('number::integer < ?', (build.is_a?(Build) ? build.number : build).to_i) if build
+      scope
     end
 
     def next_number

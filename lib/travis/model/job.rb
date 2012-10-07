@@ -63,7 +63,7 @@ class Job < ActiveRecord::Base
   delegate :pull_request?, :to => :commit
 
   after_initialize do
-    self.config = {} if config.nil?
+    self.config = {} if config.nil? rescue nil
   end
 
   before_create do
