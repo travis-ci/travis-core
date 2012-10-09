@@ -15,6 +15,7 @@ module Travis
         autoload :Repository,   'travis/api/v2/http/repository'
         autoload :User,         'travis/api/v2/http/user'
         autoload :Workers,      'travis/api/v2/http/workers'
+        autoload :Worker,       'travis/api/v2/http/worker'
       end
     end
   end
