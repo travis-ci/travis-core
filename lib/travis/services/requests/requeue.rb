@@ -3,6 +3,7 @@ module Travis
     module Requests
       class Requeue < Base
         extend Travis::Instrumentation
+        include ActiveModel::Validations
 
         def run
           requeue if request && accept?
@@ -10,13 +11,29 @@ module Travis
         instrument :run
 
         def accept?
-          push_permission? && request.requeueable?
+          push_permission? && requeueable?
+        end
+
+        def messages
+          messages = {}
+          messages[:notice] = 'The build was successfully requeued.' if accept?
+          (messages[:error] ||= '') << 'You do not seem to have push permissions. ' unless push_permission?
+          (messages[:error] ||= '') << 'This build currently can not be requeued. ' unless requeueable?
+          messages
         end
 
         private
 
           def requeue
             request.start!
+          end
+
+          def push_permission?
+            current_user.permission?(:push, :repository_id => request.repository_id)
+          end
+
+          def requeueable?
+            defined?(@requeueable) ? @requeueable : @requeueable = request.requeueable?
           end
 
           def data
@@ -29,10 +46,6 @@ module Travis
 
           def build
             @build ||= service(:builds, :one, :id => params[:build_id]).run
-          end
-
-          def push_permission?
-            current_user.permission?(:push, :repository_id => request.repository_id)
           end
 
           Travis::Notification::Instrument::Services::Requests::Requeue.attach_to(self)
