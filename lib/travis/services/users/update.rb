@@ -12,13 +12,13 @@ module Travis
         end
 
         def messages
-          messages = {}
+          messages = []
           if result
-            messages[:notice] = "Your profile was successfully updated."
+            messages << { :notice => "Your profile was successfully updated." }
           else
-            messages[:error]  = 'Your profile could not be updated.'
+            messages << { :error => 'Your profile could not be updated.' }
           end
-          messages
+          message
         end
 
         private

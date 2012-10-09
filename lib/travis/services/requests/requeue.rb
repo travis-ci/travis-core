@@ -15,10 +15,10 @@ module Travis
         end
 
         def messages
-          messages = {}
-          messages[:notice] = 'The build was successfully requeued.' if accept?
-          (messages[:error] ||= '') << 'You do not seem to have push permissions. ' unless push_permission?
-          (messages[:error] ||= '') << 'This build currently can not be requeued. ' unless requeueable?
+          messages = []
+          messages << { :notice => 'The build was successfully requeued.' } if accept?
+          messages << { :error  => 'You do not seem to have push permissions.' } unless push_permission?
+          messages << { :error  => 'This build currently can not be requeued.' } unless requeueable?
           messages
         end
 

@@ -8,9 +8,9 @@ module Travis
 
         # TODO change hook.set to communicate result and GH errors
         # def messages
-        #   messages = {}
-        #   messages[:notice] = "The service hook was successfully #{active? ? 'enabled' : 'disabled'}." if what?
-        #   messages[:error]  = 'The service hook could not be set.' unless what?
+        #   messages = []
+        #   messages << { :notice => "The service hook was successfully #{active? ? 'enabled' : 'disabled'}." } if what?
+        #   messages << { :error  => 'The service hook could not be set.' } unless what?
         #   messages
         # end
 
