@@ -3,10 +3,9 @@ module Travis
     module Users
       class Sync < Base
         def run
-          unless current_user.syncing?
-            publisher.publish({ :user_id => current_user.id }, :type => 'sync')
-            current_user.update_column(:is_syncing, true)
-          end
+          return if current_user.syncing?
+          publisher.publish({ :user_id => current_user.id }, :type => 'sync')
+          current_user.update_column(:is_syncing, true) && nil
         end
 
         private

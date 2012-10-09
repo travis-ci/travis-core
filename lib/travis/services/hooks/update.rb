@@ -4,6 +4,7 @@ module Travis
       class Update < Base
         def run
           hook.set(active?, current_user) if hook
+          nil
         end
 
         # TODO change hook.set to communicate result and GH errors

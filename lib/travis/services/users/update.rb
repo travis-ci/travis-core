@@ -9,6 +9,7 @@ module Travis
 
         def run
           @result = current_user.update_attributes!(attributes) if valid_locale?
+          nil
         end
 
         def messages

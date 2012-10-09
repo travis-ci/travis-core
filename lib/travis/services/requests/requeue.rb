@@ -6,7 +6,7 @@ module Travis
         include ActiveModel::Validations
 
         def run
-          requeue if request && accept?
+          requeue && nil if request && accept?
         end
         instrument :run
 
