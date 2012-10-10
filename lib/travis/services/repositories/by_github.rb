@@ -11,7 +11,7 @@ module Travis
         private
 
           def find
-            service(:repositories, :one, params).run(:raise => false)
+            service(:repositories, :one, params).run
           end
 
           def create

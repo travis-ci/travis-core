@@ -5,8 +5,8 @@ describe Travis::Api::V2::Pusher::Build::Finished do
 
   let(:data)  { Travis::Api::V2::Pusher::Build::Finished.new(build).data }
 
-  it 'repository' do
-    data['repository'].should == {
+  it 'repo' do
+    data['repo'].should == {
       'id' => 1,
       'slug' => 'svenfuchs/minimal',
       'description' => 'the repo description',
