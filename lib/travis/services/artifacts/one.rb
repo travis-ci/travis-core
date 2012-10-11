@@ -8,7 +8,7 @@ module Travis
 
         def final?
           # TODO keep the state on the artifact
-          result.job.finished?
+          result && result.job && result.job.finished?
         end
 
         private

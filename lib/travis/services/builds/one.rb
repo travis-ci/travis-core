@@ -9,11 +9,11 @@ module Travis
         end
 
         def final?
-          result.finished?
+          result.try(:finished?)
         end
 
         def updated_at
-          result.updated_at
+          result.try(:updated_at)
         end
 
         private

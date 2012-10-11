@@ -19,7 +19,7 @@ module Travis
           else
             messages << { :error => 'Your profile could not be updated.' }
           end
-          message
+          messages
         end
 
         private

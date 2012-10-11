@@ -7,7 +7,7 @@ module Travis
         end
 
         def updated_at
-          result.updated_at
+          result.try(:updated_at)
         end
 
         private
