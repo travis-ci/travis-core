@@ -5,10 +5,18 @@ module Travis
     module Branches
       class All < Base
         def run
-          params[:ids] ? by_ids : by_params
+          result
+        end
+
+        def updated_at
+          result.maximum(:updated_at)
         end
 
         private
+
+          def result
+            @result ||= params[:ids] ? by_ids : by_params
+          end
 
           def by_ids
             scope(:build).where(:id => params[:ids])

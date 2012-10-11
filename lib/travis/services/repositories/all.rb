@@ -3,10 +3,18 @@ module Travis
     module Repositories
       class All < Base
         def run
-          params[:ids] ? by_ids : by_params
+          result
+        end
+
+        def updated_at
+          result.maximum(:updated_at)
         end
 
         private
+
+          def result
+            @result ||= params[:ids] ? by_ids : by_params
+          end
 
           def by_ids
             scope(:repository).where(:id => params[:ids])

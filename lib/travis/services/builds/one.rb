@@ -4,11 +4,29 @@ module Travis
   module Services
     module Builds
       class One < Base
-        def run
-          build = scope(:build).includes(:commit, :request, :matrix).find_by_id(params[:id])
-          ActiveRecord::Associations::Preloader.new(build.matrix, :log, :select => [:id, :job_id]).run if build
-          build
+        def run(options = {})
+          preload(result) if result
         end
+
+        def final?
+          result.finished?
+        end
+
+        def updated_at
+          result.updated_at
+        end
+
+        private
+
+          def result
+            @result ||= scope(:build).find_by_id(params[:id])
+          end
+
+          def preload(build)
+            ActiveRecord::Associations::Preloader.new(build, [:commit, :request, :matrix]).run
+            ActiveRecord::Associations::Preloader.new(build.matrix, :log, :select => [:id, :job_id]).run
+            build
+          end
       end
     end
   end

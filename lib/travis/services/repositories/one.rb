@@ -3,8 +3,18 @@ module Travis
     module Repositories
       class One < Base
         def run(options = {})
-          scope(:repository).find_by(params)
+          result
         end
+
+        def updated_at
+          result.updated_at
+        end
+
+        private
+
+          def result
+            @result ||= scope(:repository).find_by(params)
+          end
       end
     end
   end

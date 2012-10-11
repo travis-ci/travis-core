@@ -9,25 +9,30 @@ describe Travis::Services::Jobs::All do
 
   attr_reader :params
 
-  it 'finds jobs on the given queue' do
-    @params = { :queue => 'builds.common' }
-    service.run.should include(job)
+  describe 'run' do
+    it 'finds jobs on the given queue' do
+      @params = { :queue => 'builds.common' }
+      service.run.should include(job)
+    end
+
+    it 'does not find jobs on other queues' do
+      @params = { :queue => 'builds.nodejs' }
+      service.run.should_not include(job)
+    end
+
+    it 'finds jobs by a given list of ids' do
+      @params = { :ids => [job.id] }
+      service.run.should == [job]
+    end
   end
 
-  it 'does not find jobs on other queues' do
-    @params = { :queue => 'builds.nodejs' }
-    service.run.should_not include(job)
+  describe 'updated_at' do
+    it 'returns the latest updated_at time' do
+      @params = { :queue => 'builds.common' }
+      Job.delete_all
+      Factory(:test, :repository => repo, :state => :finished, :queue => 'build.common', :updated_at => Time.now - 1.hour)
+      Factory(:test, :repository => repo, :state => :finished, :queue => 'build.common', :updated_at => Time.now)
+      service.updated_at.should == Time.now
+    end
   end
-
-  it 'finds jobs by a given list of ids' do
-    @params = { :ids => [job.id] }
-    service.run.should == [job]
-  end
-
-  # TODO for all services test that the expected number of queries is issued
-  # it 'includes associations' do
-  #   @params = { :queue => 'builds.common'}
-  #   where.expects(:includes).with(:commit).returns(result)
-  #   service.run.should == result
-  # end
 end
