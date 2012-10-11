@@ -18,7 +18,7 @@ module Travis
         private
 
           def hook
-            @hook ||= service(:hooks, :one, params).run
+            @hook ||= service(:hooks, :find_one, params).run
           end
 
           def active?

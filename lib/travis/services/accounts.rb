@@ -1,7 +1,7 @@
 module Travis
   module Services
     module Accounts
-      autoload :All, 'travis/services/accounts/all'
+      autoload :FindAll, 'travis/services/accounts/find_all'
     end
   end
 end

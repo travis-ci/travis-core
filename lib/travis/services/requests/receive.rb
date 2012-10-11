@@ -41,11 +41,11 @@ module Travis
           end
 
           def owner
-            @owner ||= service(payload.owner[:type].pluralize, :by_github, payload.owner).run
+            @owner ||= service(payload.owner[:type].pluralize, :find_by_github, payload.owner).run
           end
 
           def repo
-            @repo ||= service(:repositories, :by_github, payload.repository.merge(:owner => owner)).run
+            @repo ||= service(:repositories, :find_by_github, payload.repository.merge(:owner => owner)).run
           end
 
           def commit

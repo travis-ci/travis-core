@@ -21,10 +21,10 @@ describe Travis::Api::V2::Http::Repositories do
   end
 end
 
-describe 'Travis::Api::V2::Http::Repositories using Travis::Services::Repositories::All' do
+describe 'Travis::Api::V2::Http::Repositories using Travis::Services::Repositories::FindAll' do
   include Support::ActiveRecord
 
-  let(:repos) { Travis::Services::Repositories::All.new(nil).run }
+  let(:repos) { Travis::Services::Repositories::FindAll.new(nil).run }
   let(:data)  { Travis::Api::V2::Http::Repositories.new(repos).data }
 
   before :each do

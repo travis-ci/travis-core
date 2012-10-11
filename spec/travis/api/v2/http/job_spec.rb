@@ -50,11 +50,11 @@ describe Travis::Api::V2::Http::Job do
   end
 end
 
-describe 'Travis::Api::V2::Http::Job using Travis::Services::Jobs::One' do
+describe 'Travis::Api::V2::Http::Job using Travis::Services::Jobs::FindOne' do
   include Support::ActiveRecord
 
   let!(:record) { Factory(:test) }
-  let(:job)     { Travis::Services::Jobs::One.new(nil, :id => record.id).run }
+  let(:job)     { Travis::Services::Jobs::FindOne.new(nil, :id => record.id).run }
   let(:data)    { Travis::Api::V2::Http::Job.new(job).data }
 
   it 'queries' do

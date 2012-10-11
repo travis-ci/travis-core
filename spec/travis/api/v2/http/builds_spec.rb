@@ -39,11 +39,11 @@ describe Travis::Api::V2::Http::Builds do
   end
 end
 
-describe 'Travis::Api::V2::Http::Builds using Travis::Services::Builds::All' do
+describe 'Travis::Api::V2::Http::Builds using Travis::Services::Builds::FindAll' do
   include Support::ActiveRecord
 
   let!(:repo)  { Factory(:repository) }
-  let(:builds) { Travis::Services::Builds::All.new(nil, :event_type => 'push', :repository_id => repo.id).run }
+  let(:builds) { Travis::Services::Builds::FindAll.new(nil, :event_type => 'push', :repository_id => repo.id).run }
   let(:data)   { Travis::Api::V2::Http::Builds.new(builds).data }
 
   before :each do

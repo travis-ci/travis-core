@@ -1,8 +1,8 @@
 module Travis
   module Services
     module Hooks
-      autoload :All,    'travis/services/hooks/all'
-      autoload :One,    'travis/services/hooks/one'
+      autoload :FindAll,    'travis/services/hooks/find_all'
+      autoload :FindOne,    'travis/services/hooks/find_one'
       autoload :Update, 'travis/services/hooks/update'
     end
   end

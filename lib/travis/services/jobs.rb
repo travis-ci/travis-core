@@ -1,8 +1,8 @@
 module Travis
   module Services
     module Jobs
-      autoload :All, 'travis/services/jobs/all'
-      autoload :One, 'travis/services/jobs/one'
+      autoload :FindAll, 'travis/services/jobs/find_all'
+      autoload :FindOne, 'travis/services/jobs/find_one'
     end
   end
 end

@@ -1,7 +1,7 @@
 module Travis
   module Services
     module Artifacts
-      autoload :One, 'travis/services/artifacts/one'
+      autoload :FindOne, 'travis/services/artifacts/find_one'
     end
   end
 end

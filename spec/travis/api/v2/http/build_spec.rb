@@ -49,11 +49,11 @@ describe Travis::Api::V2::Http::Build do
   end
 end
 
-describe 'Travis::Api::V2::Http::Build using Travis::Services::Builds::One' do
+describe 'Travis::Api::V2::Http::Build using Travis::Services::Builds::FindOne' do
   include Support::ActiveRecord
 
   let!(:record) { Factory(:build) }
-  let(:build)   { Travis::Services::Builds::One.new(nil, :id => record.id).run }
+  let(:build)   { Travis::Services::Builds::FindOne.new(nil, :id => record.id).run }
   let(:data)    { Travis::Api::V2::Http::Build.new(build).data }
 
   it 'queries' do

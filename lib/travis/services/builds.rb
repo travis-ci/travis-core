@@ -1,8 +1,8 @@
 module Travis
   module Services
     module Builds
-      autoload :All, 'travis/services/builds/all'
-      autoload :One, 'travis/services/builds/one'
+      autoload :FindAll, 'travis/services/builds/find_all'
+      autoload :FindOne, 'travis/services/builds/find_one'
     end
   end
 end

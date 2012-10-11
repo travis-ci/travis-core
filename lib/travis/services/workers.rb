@@ -1,8 +1,8 @@
 module Travis
   module Services
     module Workers
-      autoload :All, 'travis/services/workers/all'
-      autoload :One, 'travis/services/workers/one'
+      autoload :FindAll, 'travis/services/workers/find_all'
+      autoload :FindOne, 'travis/services/workers/find_one'
     end
   end
 end

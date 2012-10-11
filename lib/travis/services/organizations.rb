@@ -1,7 +1,7 @@
 module Travis
   module Services
     module Organizations
-      autoload :ByGithub, 'travis/services/organizations/by_github'
+      autoload :FindByGithub, 'travis/services/organizations/find_by_github'
     end
   end
 end
