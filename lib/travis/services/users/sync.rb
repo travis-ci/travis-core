@@ -5,7 +5,8 @@ module Travis
         def run
           return if current_user.syncing?
           publisher.publish({ :user_id => current_user.id }, :type => 'sync')
-          current_user.update_column(:is_syncing, true) && nil
+          current_user.update_column(:is_syncing, true)
+          true
         end
 
         private
