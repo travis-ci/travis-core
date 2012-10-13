@@ -11,8 +11,8 @@ describe Travis::Api::V2::Http::Accounts do
 
   it 'accounts' do
     data[:accounts].should == [
-      { 'id' => 1, 'login' => 'sven', 'name' => 'Sven', 'type' => 'user', 'reposCount' => 2 },
-      { 'id' => 1, 'login' => 'travis', 'name' => 'Travis', 'type' => 'organization', 'reposCount' => 1 }
+      { 'id' => 1, 'login' => 'sven', 'name' => 'Sven', 'type' => 'user', 'repos_count' => 2 },
+      { 'id' => 1, 'login' => 'travis', 'name' => 'Travis', 'type' => 'organization', 'repos_count' => 1 }
     ]
   end
 end

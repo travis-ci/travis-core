@@ -26,7 +26,7 @@ module Travis
                 'name' => account.name,
                 'login' => account.login,
                 'type' => account.type.underscore,
-                'reposCount' => account.repos_count
+                'repos_count' => account.repos_count
               }
             end
         end
