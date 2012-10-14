@@ -6,7 +6,7 @@ module Travis
         include ActiveModel::Validations
 
         def run
-          requeue && nil if request && accept?
+          requeue if request && accept?
         end
         instrument :run
 
@@ -26,6 +26,7 @@ module Travis
 
           def requeue
             request.start!
+            true
           end
 
           def push_permission?
@@ -45,7 +46,7 @@ module Travis
           end
 
           def build
-            @build ||= service(:builds, :one, :id => params[:build_id]).run
+            @build ||= service(:builds, :find_one, :id => params[:build_id]).run
           end
 
           Travis::Notification::Instrument::Services::Requests::Requeue.attach_to(self)
