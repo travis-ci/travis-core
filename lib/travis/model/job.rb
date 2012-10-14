@@ -50,6 +50,8 @@ class Job < ActiveRecord::Base
 
   has_one    :log, :class_name => 'Artifact::Log', :conditions => { :type => 'Artifact::Log' }, :dependent => :destroy
   has_many   :artifacts
+  has_many   :events, :as => :source
+
   belongs_to :repository
   belongs_to :commit
   belongs_to :source, :polymorphic => true, :autosave => true

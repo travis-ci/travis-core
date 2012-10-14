@@ -13,6 +13,7 @@ module Travis
       autoload :Irc,                'travis/event/handler/irc'
       autoload :Metrics,            'travis/event/handler/metrics'
       autoload :Pusher,             'travis/event/handler/pusher'
+      autoload :Trail,              'travis/event/handler/trail'
       autoload :Webhook,            'travis/event/handler/webhook'
       autoload :Worker,             'travis/event/handler/worker'
 

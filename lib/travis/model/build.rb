@@ -52,6 +52,7 @@ class Build < ActiveRecord::Base
   belongs_to :repository, :autosave => true
   belongs_to :owner, :polymorphic => true
   has_many   :matrix, :as => :source, :order => :id, :class_name => 'Job::Test', :dependent => :destroy
+  has_many   :events, :as => :source
 
   validates :repository_id, :commit_id, :request_id, :presence => true
 

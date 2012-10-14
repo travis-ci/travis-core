@@ -16,6 +16,7 @@ module Travis
             let(:build)      { stub_build }
             let(:test)       { stub_test }
             let(:log)        { stub_log }
+            let(:event)      { stub_event }
             let(:worker)     { stub_worker }
             let(:user)       { stub_user }
             let(:org)        { stub_org }
@@ -147,10 +148,22 @@ module Travis
 
       def stub_log(attributes = {})
         Stubs.stub 'log', attributes.reverse_merge(
+          :class => Stubs.stub('class', :name => 'Artifact::Log'),
           :id => 1,
           :job_id => 1,
-          :class => Stubs.stub('class', :name => 'Artifact::Log'),
           :content => 'the test log'
+        )
+      end
+
+      def stub_event(attributes = {})
+        Stubs.stub 'event', attributes.reverse_merge(
+          :id => 1,
+          :repository_id => 1,
+          :source => stub_request,
+          :source_id => stub_request.id,
+          :source_type => 'Request',
+          :event => 'request:finished',
+          :data => { 'result' => 'accepted' }
         )
       end
 

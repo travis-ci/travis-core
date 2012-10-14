@@ -22,6 +22,7 @@ class Repository < ActiveRecord::Base
       last_finished_on_branch(params[:branch]).try(:matrix_result, params)
     end
   end
+  has_many :events
   has_many :permissions
   has_many :users, :through => :permissions
 
