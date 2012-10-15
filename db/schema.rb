@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121015002500) do
+ActiveRecord::Schema.define(:version => 20121015002501) do
 
   create_table "artifact_parts", :force => true do |t|
     t.integer "artifact_id"
@@ -187,6 +187,8 @@ ActiveRecord::Schema.define(:version => 20121015002500) do
     t.string   "comments_url"
     t.string   "base_commit"
     t.string   "head_commit"
+    t.string   "result"
+    t.string   "message"
   end
 
   add_index "requests", ["head_commit"], :name => "index_requests_on_head_commit"

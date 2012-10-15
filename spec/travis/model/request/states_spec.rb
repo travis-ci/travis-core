@@ -40,6 +40,11 @@ describe Request::States do
         request.start
         request.was_started?.should be_true
       end
+
+      it 'sets the result to :accepted' do
+        request.start
+        request.result.should == :accepted
+      end
     end
 
     describe 'with a rejected request' do
@@ -60,6 +65,11 @@ describe Request::States do
       it 'sets the state to started' do
         request.start
         request.was_started?.should be_true
+      end
+
+      it 'sets the result to :rejected' do
+        request.start
+        request.result.should == :rejected
       end
     end
   end

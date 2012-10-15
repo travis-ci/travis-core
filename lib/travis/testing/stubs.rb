@@ -67,7 +67,8 @@ module Travis
           :base_commit => 'base-commit',
           :token => 'token',
           :comments_url => 'http://github.com/path/to/comments',
-          :pull_request? => false
+          :pull_request? => false,
+          :result => :accepted
         )
       end
 

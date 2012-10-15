@@ -27,7 +27,7 @@ describe Travis::Event::Handler::Trail do
         :source => request,
         :repository => request.repository,
         :event => 'request:finished',
-        :data => {}
+        :data => { :result => :accepted }
       )
       Travis::Event.dispatch('request:finished', request)
     end

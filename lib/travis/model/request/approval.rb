@@ -17,20 +17,32 @@ class Request
     end
 
     def approved?
-      accepted? && branch_approved? if pull_request_allowed?
+      accepted? && request.config.present? && branch_approved?
+    end
+
+    def result
+      approved? ? :accepted : :rejected
+    end
+
+    def message
+      if !commit.present?
+        'missing commit'
+      elsif repository.private?
+        'private repository'
+      elsif rails_fork?
+        'rails fork'
+      elsif skipped?
+        'skipped through commit message'
+      elsif github_pages?
+        'github pages branch'
+      elsif request.config.blank?
+        'missing config'
+      elsif !branch_approved?
+        'branch not included or excluded'
+      end
     end
 
     private
-
-      def pull_request_allowed?
-        true
-        # return true unless request.pull_request?
-        # Array(request.config['addons']).include? 'pull_requests'
-      end
-
-      def branch_approved?
-        branches.included?(commit.branch) && !branches.excluded?(commit.branch)
-      end
 
       def skipped?
         commit.message.to_s =~ /\[ci(?: |:)([\w ]*)\]/i && $1.downcase == 'skip'
@@ -42,6 +54,10 @@ class Request
 
       def rails_fork?
         repository.slug != 'rails/rails' && repository.slug =~ %r(/rails$)
+      end
+
+      def branch_approved?
+        branches.included?(commit.branch) && !branches.excluded?(commit.branch)
       end
 
       def branches

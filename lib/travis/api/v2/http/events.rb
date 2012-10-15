@@ -26,7 +26,9 @@ module Travis
                 'repository_id' => event.repository_id,
                 'source_id' => event.source_id,
                 'source_type' => event.source_type,
-                'data' => event.data
+                'event' => event.event,
+                'data' => event.data,
+                'created_at' => event.created_at
               }
             end
         end

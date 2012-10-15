@@ -20,7 +20,8 @@ module Travis
 
           def data
             data = {}
-            data[:result] = object.result if object.respond_to?(:result)
+            data[:result]  = object.result  if object.respond_to?(:result)
+            data[:message] = object.messaeg if object.respond_to?(:message)
             data
           end
       end

@@ -28,6 +28,8 @@ class Request
 
     def finish
       build_build if was_configured? && approved?
+      self.result = approval.result
+      self.message = approval.message
     end
 
     protected
