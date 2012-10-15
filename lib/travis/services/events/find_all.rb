@@ -19,8 +19,7 @@ module Travis
           end
 
           def repo
-            # service(:repositories, :find_one, params).run
-            service(:repositories, :one, params).run
+            service(:repositories, :find_one, params).run
           end
       end
     end
