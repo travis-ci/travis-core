@@ -23,7 +23,7 @@ describe Travis::Services::Events::FindAll do
       Event.delete_all
       Factory(:event, :repository => repo, :updated_at => Time.now - 1.hour)
       Factory(:event, :repository => repo, :updated_at => Time.now)
-      service.updated_at.should == Time.now
+      service.updated_at.to_s.should == Time.now.to_s
     end
   end
 end
