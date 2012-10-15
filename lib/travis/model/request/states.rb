@@ -4,13 +4,14 @@ require 'simple_states'
 class Request
   module States
     extend ActiveSupport::Concern
-    include SimpleStates
+    include SimpleStates, Travis::Event
 
     included do
       states :created, :started, :finished
       event :start,     :to => :started, :after => :configure
       event :configure, :to => :configured, :after => :finish
       event :finish,    :to => :finished
+      event :all, :after => :notify
     end
 
     def configure
@@ -19,6 +20,8 @@ class Request
 
     def finish
       add_build if config.present? && approved?
+      self.result = approval.result
+      self.message = approval.message
     end
 
     def requeueable?

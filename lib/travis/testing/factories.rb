@@ -73,6 +73,12 @@ FactoryGirl.define do
     last_duration 30
   end
 
+  factory :event do
+    repository { Repository.first || Factory(:repository) }
+    source { Build.first || Factory(:build) }
+    event 'build:started'
+  end
+
   factory :user do
     name  'Sven Fuchs'
     login 'svenfuchs'

@@ -40,6 +40,39 @@ describe Request::Approval do
     xit 'should be specified'
   end
 
+  describe 'message' do
+    it 'returns "missing commit" if the commit is missing' do
+      request.stubs(:commit).returns(nil)
+      approval.message.should == 'missing commit'
+    end
+
+    it 'returns "private repository" if the repository is private' do
+      request.repository.stubs(:private?).returns(true)
+      approval.message.should == 'private repository'
+    end
+
+    it 'returns "rails fork" if the repository is a rails fork' do
+      request.repository.stubs(:slug).returns('svenfuchs/rails')
+      approval.message.should == 'rails fork'
+    end
+
+    it 'returns "github pages branch" if the branch is a github pages branch' do
+      request.commit.stubs(:ref).returns('gh-pages')
+      approval.message.should == 'github pages branch'
+    end
+
+    it 'returns "missing config" if the config is not present' do
+      request.stubs(:config).returns(nil)
+      approval.message.should == 'missing config'
+    end
+
+    it 'returns "branch not included or excluded" if the branch was not approved' do
+      request.commit.stubs(:branch).returns('feature')
+      request.stubs(:config).returns('branches' => { 'only' => 'master' })
+      approval.message.should == 'branch not included or excluded'
+    end
+  end
+
   describe 'skipped?' do
     it 'returns true when the commit message contains [ci skip]' do
       request.commit.stubs(:message).returns 'lets party like its 1999 [ci skip]'
@@ -94,27 +127,5 @@ describe Request::Approval do
       request.repository.stubs(:slug).returns 'josh/completeness-fu'
       approval.send(:rails_fork?).should be_false
     end
-  end
-
-  describe 'pull_request_allowed?' do
-    it 'accepts push events' do
-      approval.should be_pull_request_allowed
-    end
-
-    it 'accepts pull request events' do
-      request.stubs(:pull_request?).returns(true)
-      approval.should be_pull_request_allowed
-    end
-
-    # it 'rejects pull request events' do
-    #   request.stubs(:pull_request?).returns(true)
-    #   approval.should_not be_pull_request_allowed
-    # end
-    # 
-    # it 'accepts pull request events if pull request testing has been enabled' do
-    #   request.stubs(:pull_request?).returns(true)
-    #   request.config['addons'] = 'pull_requests'
-    #   approval.should be_pull_request_allowed
-    # end
   end
 end

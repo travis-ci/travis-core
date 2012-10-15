@@ -22,6 +22,7 @@ class Request < ActiveRecord::Base
   belongs_to :repository
   belongs_to :owner, :polymorphic => true
   has_many   :builds
+  has_many   :events, :as => :source
 
   validates :repository_id, :presence => true
 
