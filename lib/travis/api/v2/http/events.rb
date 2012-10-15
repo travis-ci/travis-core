@@ -28,7 +28,7 @@ module Travis
                 'source_type' => event.source_type,
                 'event' => event.event,
                 'data' => event.data,
-                'created_at' => event.created_at
+                'created_at' => format_date(event.created_at)
               }
             end
         end

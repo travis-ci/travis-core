@@ -164,7 +164,8 @@ module Travis
           :source_id => stub_request.id,
           :source_type => 'Request',
           :event => 'request:finished',
-          :data => { 'result' => 'accepted' }
+          :data => { 'result' => 'accepted' },
+          :created_at => Time.now
         )
       end
 
