@@ -24,12 +24,21 @@ module Travis
               {
                 'id' => event.id,
                 'repository_id' => event.repository_id,
-                'source_id' => event.source_id,
-                'source_type' => event.source_type,
+                'source_id' => source(event).id,
+                'source_type' => source(event).class.name,
                 'event' => event.event,
                 'data' => event.data,
                 'created_at' => format_date(event.created_at)
               }
+            end
+
+            def source(event)
+              case event.source
+              when Request
+                event.source.commit
+              else
+                event.source
+              end
             end
         end
       end
