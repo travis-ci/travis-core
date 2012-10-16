@@ -6,8 +6,8 @@ module Travis
           select scope(:repository).
             select(['date(created_at) AS date', 'count(created_at) AS count']).
             where('last_build_id IS NOT NULL').
-            group('created_at').
-            order('created_at').to_sql
+            group('date').
+            order('date').to_sql
         end
 
         private
