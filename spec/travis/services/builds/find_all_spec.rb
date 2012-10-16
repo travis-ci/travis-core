@@ -35,6 +35,15 @@ describe Travis::Services::Builds::FindAll do
       @params = { :ids => [build.id] }
       service.run.should == [build]
     end
+
+    describe 'with pull requests' do
+      it 'finds pull requests for event_type=pull_request' do
+        request = Factory(:request, :event_type => 'pull_request')
+        pull_request = Factory(:build, :repository => repo, :state => :finished, :number => 2, :request => request)
+        @params = { :event_type => 'pull_request', :repository_id => repo.id }
+        service.run.should == [pull_request]
+      end
+    end
   end
 
   describe 'updated_at' do
