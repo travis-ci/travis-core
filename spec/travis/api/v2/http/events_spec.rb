@@ -5,13 +5,29 @@ describe Travis::Api::V2::Http::Events do
 
   let(:data) { Travis::Api::V2::Http::Events.new([event]).data }
 
-  it 'events' do
+  it 'for a request' do
+    event.stubs(:event => 'request:finished', :source_type => 'Request')
+
     data['events'].first.should == {
       'id' => 1,
       'repository_id' => 1,
       'source_id' => 1,
       'source_type' => 'Request',
       'event' => 'request:finished',
+      'data' => { 'result' => 'accepted' },
+      'created_at' => json_format_time(Time.now.utc)
+    }
+  end
+
+  it 'for a build' do
+    event.stubs(:event => 'build:finished', :source_type => 'Build')
+
+    data['events'].first.should == {
+      'id' => 1,
+      'repository_id' => 1,
+      'source_id' => 1,
+      'source_type' => 'Build',
+      'event' => 'build:finished',
       'data' => { 'result' => 'accepted' },
       'created_at' => json_format_time(Time.now.utc)
     }

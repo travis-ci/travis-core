@@ -5,8 +5,18 @@ describe Travis::Event::Handler::Trail do
 
   let(:handler) { Travis::Event::Handler::Trail.any_instance }
 
-  before do
+  before :each do
     Travis::Event.stubs(:subscribers).returns [:trail]
+    Travis::Features.start
+    Travis::Features.enable_for_all(:event_trail)
+  end
+
+  describe 'does not persist anything unless activated' do
+    before :each do
+      Travis::Features.disable_for_all(:event_trail)
+      handler.expects(:notify).never
+      Travis::Event.dispatch('job:test:created', test)
+    end
   end
 
   describe 'does not persist an event record' do
@@ -27,7 +37,7 @@ describe Travis::Event::Handler::Trail do
         :source => request,
         :repository => request.repository,
         :event => 'request:finished',
-        :data => { :result => :accepted }
+        :data => { :commit => '62aae5f70ceee39123ef', :result => :accepted }
       )
       Travis::Event.dispatch('request:finished', request)
     end
@@ -37,7 +47,7 @@ describe Travis::Event::Handler::Trail do
         :source => test,
         :repository => test.repository,
         :event => 'job:test:created',
-        :data => { :result => 0 }
+        :data => { :commit => '62aae5f70ceee39123ef', :number => '2.1', :result => 0 }
       )
       Travis::Event.dispatch('job:test:created', test)
     end
@@ -47,7 +57,7 @@ describe Travis::Event::Handler::Trail do
         :source => test,
         :repository => test.repository,
         :event => 'job:test:started',
-        :data => { :result => 0 }
+        :data => { :commit => '62aae5f70ceee39123ef', :number => '2.1', :result => 0 }
       )
       Travis::Event.dispatch('job:test:started', test)
     end
@@ -57,7 +67,7 @@ describe Travis::Event::Handler::Trail do
         :source => test,
         :repository => test.repository,
         :event => 'job:test:finished',
-        :data => { :result => 0 }
+        :data => { :commit => '62aae5f70ceee39123ef', :number => '2.1', :result => 0 }
       )
       Travis::Event.dispatch('job:test:finished', test)
     end
@@ -67,7 +77,7 @@ describe Travis::Event::Handler::Trail do
         :source => build,
         :repository => build.repository,
         :event => 'build:started',
-        :data => { :result => 0 }
+        :data => { :commit => '62aae5f70ceee39123ef', :type => 'push', :number => 2, :result => 0 }
       )
       Travis::Event.dispatch('build:started', build)
     end
@@ -77,7 +87,7 @@ describe Travis::Event::Handler::Trail do
         :source => build,
         :repository => build.repository,
         :event => 'build:finished',
-        :data => { :result => 0 }
+        :data => { :commit => '62aae5f70ceee39123ef', :type => 'push', :number => 2, :result => 0 }
       )
       Travis::Event.dispatch('build:finished', build)
     end
