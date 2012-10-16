@@ -3,4 +3,14 @@ class Event < ActiveRecord::Base
   belongs_to :source, :polymorphic => true
 
   serialize :data
+
+  class << self
+    def recent
+      limit(50).descending
+    end
+
+    def descending
+      order(arel_table[:id].desc)
+    end
+  end
 end

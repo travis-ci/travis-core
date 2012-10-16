@@ -15,7 +15,7 @@ module Travis
         private
 
           def result
-            @result ||= repo.events
+            @result ||= repo.events.recent
           end
 
           def repo
