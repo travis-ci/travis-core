@@ -43,7 +43,7 @@ describe Travis::Services::Builds::FindAll do
       Build.delete_all
       Factory(:build, :repository => repo, :state => :finished, :number => 1, :updated_at => Time.now - 1.hour)
       Factory(:build, :repository => repo, :state => :finished, :number => 1, :updated_at => Time.now)
-      service.updated_at.should == Time.now
+      service.updated_at.to_s.should == Time.now.to_s
     end
   end
 end

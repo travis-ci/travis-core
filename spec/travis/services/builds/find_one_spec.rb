@@ -21,7 +21,7 @@ describe Travis::Services::Builds::FindOne do
 
   describe 'updated_at' do
     it 'returns builds updated_at attribute' do
-      service.updated_at.should == build.updated_at
+      service.updated_at.to_s.should == build.updated_at.to_s
     end
   end
 

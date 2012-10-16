@@ -5,7 +5,7 @@ module Travis
         EVENTS = [/^((?!event|log|worker).)*$/] # i.e. does not include "log"
 
         def handle?
-          true
+          Features.feature_active?(:event_trail)
         end
 
         def handle
@@ -20,6 +20,9 @@ module Travis
 
           def data
             data = {}
+            data[:commit]  = object.commit.try(:commit)      if object.respond_to?(:commit)
+            data[:type]    = object.request.try(:event_type) if object.respond_to?(:request)
+            data[:number]  = object.number  if object.respond_to?(:number)
             data[:result]  = object.result  if object.respond_to?(:result)
             data[:message] = object.message if object.respond_to?(:message)
             data

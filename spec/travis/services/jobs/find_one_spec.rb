@@ -22,7 +22,7 @@ describe Travis::Services::Jobs::FindOne do
 
   describe 'updated_at' do
     it 'returns jobs updated_at attribute' do
-      service.updated_at.should == job.updated_at
+      service.updated_at.to_s.should == job.updated_at.to_s
     end
   end
 
