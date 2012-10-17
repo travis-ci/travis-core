@@ -4,16 +4,22 @@ class Broadcast < ActiveRecord::Base
   belongs_to :recipient, :polymorphic => true
 
   class << self
-    def for(user)
+    def by_user(user)
       sql = %(
-        created_at >= ? AND (expired IS NULL OR expired <> ?) AND (
-          recipient_type IS NULL OR
-          recipient_type = ? AND recipient_id IN(?) OR
-          recipient_type = ? AND recipient_id = ? OR
-          recipient_type = ? AND recipient_id IN (?)
-        )
+        recipient_type IS NULL OR
+        recipient_type = ? AND recipient_id IN(?) OR
+        recipient_type = ? AND recipient_id = ? OR
+        recipient_type = ? AND recipient_id IN (?)
       )
-      where(sql, 14.days.ago, true, 'Organization', user.organization_ids, 'User', user.id, 'Repository', user.repository_ids)
+      active.where(sql, 'Organization', user.organization_ids, 'User', user.id, 'Repository', user.repository_ids)
+    end
+
+    def by_repo(repo_id)
+      active.where('recipient_type = ? AND recipient_id = ?', 'Repository', repo_id)
+    end
+
+    def active
+      where('created_at >= ? AND (expired IS NULL OR expired <> ?)', 14.days.ago, true)
     end
   end
 end

@@ -3,9 +3,10 @@ module Travis
     module Users
       class FindBroadcasts < Base
         def run
-          Broadcast.for(current_user)
+          Broadcast.by_user(current_user)
         end
       end
     end
   end
 end
+

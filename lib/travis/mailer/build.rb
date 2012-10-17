@@ -12,6 +12,7 @@ module Travis
       def finished_email(data, recipients)
         @build = Hashr.new(data['build'])
         @repository = Hashr.new(data['repository'])
+        @broadcast = Hashr.new(data['broadcasts'].first)
         @commit = Hashr.new(data['commit'])
         @jobs   = data['jobs'].map { |job| Hashr.new(job) }
 
