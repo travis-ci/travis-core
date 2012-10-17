@@ -8,12 +8,12 @@ describe Travis::Services::Users::FindByGithub do
   before :each do
   end
 
-  it 'finds an existing user' do
+  xit 'finds an existing user' do
   end
 
-  it 'creates an user from github' do
+  xit 'creates an user from github' do
   end
 
-  it 'raises a GithubApi error if the user could not be retrieved' do
+  xit 'raises a GithubApi error if the user could not be retrieved' do
   end
 end
