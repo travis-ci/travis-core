@@ -4,6 +4,7 @@ module Travis
       module Http
         autoload :Accounts,     'travis/api/v2/http/accounts'
         autoload :Artifact,     'travis/api/v2/http/artifact'
+        autoload :Broadcasts,   'travis/api/v2/http/broadcasts'
         autoload :Branches,     'travis/api/v2/http/branches'
         autoload :Build,        'travis/api/v2/http/build'
         autoload :Builds,       'travis/api/v2/http/builds'

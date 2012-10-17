@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121015002501) do
+ActiveRecord::Schema.define(:version => 20121017040200) do
 
   create_table "artifact_parts", :force => true do |t|
     t.integer "artifact_id"
@@ -31,6 +31,15 @@ ActiveRecord::Schema.define(:version => 20121015002501) do
   end
 
   add_index "artifacts", ["type", "job_id"], :name => "index_artifacts_on_type_and_job_id"
+
+  create_table "broadcasts", :force => true do |t|
+    t.integer  "recipient_id"
+    t.string   "recipient_type"
+    t.string   "message"
+    t.boolean  "expired"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
 
   create_table "builds", :force => true do |t|
     t.integer  "repository_id"
@@ -82,7 +91,7 @@ ActiveRecord::Schema.define(:version => 20121015002501) do
     t.string   "source_type"
     t.integer  "repository_id"
     t.string   "event"
-    t.string   "data"
+    t.text     "data"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
   end
