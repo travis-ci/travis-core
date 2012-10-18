@@ -5,7 +5,6 @@ module Travis
     autoload :Artifacts,     'travis/services/artifacts'
     autoload :Builds,        'travis/services/builds'
     autoload :Branches,      'travis/services/branches'
-    autoload :Broadcasts,    'travis/services/broadcasts'
     autoload :Events,        'travis/services/events'
     autoload :Organizations, 'travis/services/organizations'
     autoload :Hooks,         'travis/services/hooks'
