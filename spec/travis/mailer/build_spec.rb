@@ -13,6 +13,7 @@ describe Travis::Mailer::Build do
     I18n.reload!
     ActionMailer::Base.delivery_method = :test
     build.commit.stubs(:author_name).returns('まつもとゆきひろ a.k.a. Matz')
+    Broadcast.stubs(:by_repo).with(build.repository_id).returns([])
   end
 
   describe 'finished build email notification' do
@@ -112,6 +113,16 @@ describe Travis::Mailer::Build do
       end
     end
 
+    describe 'broadcasts' do
+      let(:broadcasts) { [stub(:message => 'message 1'), stub(:message => 'message 2')] }
+
+      it 'includes a the first broadcast' do
+        Broadcast.stubs(:by_repo).with(build.repository_id).returns(broadcasts)
+        email.deliver
+        email.html_part.decoded.should =~ /message 1/
+      end
+    end
+
     describe 'for a successful build' do
       before :each do
         build.stubs(:result).returns(0)
@@ -156,7 +167,6 @@ describe Travis::Mailer::Build do
 
       it 'contains the expected html part' do
         email.html_part.body.should include_lines(%(
-          <th>Notes</th>
           <td>
           <ul>
             <li>Your should create a test database. (2.1 and 2.2)</li>

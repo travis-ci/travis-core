@@ -4,7 +4,7 @@ class CreateBroadcasts < ActiveRecord::Migration
       t.belongs_to :recipient, :polymorphic => true
       t.string :kind
       t.string :message
-      t.timestamp :expired
+      t.boolean :expired
       t.timestamps
     end
   end

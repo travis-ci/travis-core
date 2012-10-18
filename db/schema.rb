@@ -35,7 +35,6 @@ ActiveRecord::Schema.define(:version => 20121017040200) do
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
     t.string   "recipient_type"
-    t.string   "kind"
     t.string   "message"
     t.boolean  "expired"
     t.datetime "created_at",     :null => false

@@ -12,8 +12,8 @@ describe Broadcast do
     user.repositories  << repo
   end
 
-  describe 'for' do
-    let(:broadcasts) { Broadcast.for(user) }
+  describe 'by_user' do
+    let(:broadcasts) { Broadcast.by_user(user) }
 
     it 'finds a global broadcast' do
       global = Broadcast.create!

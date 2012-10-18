@@ -14,6 +14,14 @@
   -moz-border-radius: 6px;
   border-radius: 6px;
 }
+.broadcast {
+  width: 754px;
+  background-color: #f3f4fa;
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: #777;
+}
 #build {
   padding: 0;
   width: 752px;

@@ -5,13 +5,14 @@ module Travis
         class Build
           include Formats
 
-          attr_reader :build, :repository, :request, :commit, :options
+          attr_reader :build, :repository, :request, :commit, :broadcasts, :options
 
           def initialize(build, options = {})
             @build = build
             @repository = build.repository
             @request = build.request
             @commit = build.commit
+            @broadcasts = Broadcast.by_repo(build.repository_id)
             @options = options
           end
 
@@ -21,7 +22,8 @@ module Travis
               'request' => request_data,
               'commit' => commit_data,
               'build' => build_data,
-              'jobs' => build.matrix.map { |job| job_data(job) }
+              'jobs' => build.matrix.map { |job| job_data(job) },
+              'broadcasts' => broadcasts.map { |broadcast| broadcast_data(broadcast) }
             }
           end
 
@@ -98,6 +100,12 @@ module Travis
                 'queue' => job.queue,
                 'allow_failure' => job.allow_failure,
                 'tags' => job.tags
+              }
+            end
+
+            def broadcast_data(broadcast)
+              {
+                'message' => broadcast.message
               }
             end
         end
