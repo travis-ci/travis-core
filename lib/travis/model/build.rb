@@ -81,11 +81,11 @@ class Build < ActiveRecord::Base
     end
 
     def pushes
-      joins(:request).where(:requests => { :event_type => ['push', '', nil] })
+      where(:event_type => ['push', '', nil])
     end
 
     def pull_requests
-      joins(:request).where(:requests => { :event_type => 'pull_request' })
+      where(:event_type => 'pull_request')
     end
 
     def previous(build)
