@@ -17,7 +17,7 @@ module Travis
           end
 
           def updated_at
-            builds.sort { |lft, rgt| lft.finished_at <=> rgt.finished_at }.first.finished_at
+            builds.sort { |lft, rgt| lft.finished_at <=> rgt.finished_at }.first.try(:finished_at)
           end
 
           def data
