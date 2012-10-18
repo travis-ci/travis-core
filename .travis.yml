@@ -24,7 +24,7 @@ matrix:
 before_script:
   - sudo service mysql stop
   - redis-cli config set save ""
-  - 'RAILS_ENV=test rake db:create db:schema:load --trace'
+  - 'RAILS_ENV=test rake db:create db:structure:load --trace'
 script:
   - './build.sh'
 notifications:
