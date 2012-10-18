@@ -17,11 +17,11 @@ module Travis
           end
 
           def updated_at
-            builds.sort { |lft, rgt| lft.finished_at <=> rgt.finished_at }.first.try(:finished_at)
+            builds.compact.sort { |lft, rgt| lft.finished_at <=> rgt.finished_at }.first.try(:finished_at)
           end
 
           def data
-            builds.map do |build|
+            builds.compact.map do |build|
               {
                 'repository_id' => build.repository_id,
                 'build_id' => build.id,
