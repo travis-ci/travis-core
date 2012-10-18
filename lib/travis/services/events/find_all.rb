@@ -25,6 +25,10 @@ module Travis
           def preload(events)
             events.includes(:source)
           end
+
+          def preload(events)
+            events.includes(:source)
+          end
       end
     end
   end

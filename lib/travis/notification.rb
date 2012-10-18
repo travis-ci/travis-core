@@ -10,7 +10,8 @@ module Travis
 
       def setup
         Travis::Instrumentation.setup
-        publishers << Publisher::Log.new << Publisher::Redis.new
+        publishers << Publisher::Log.new
+        publishers << Publisher::Redis.new if Travis::Features.feature_active?(:notifications_publisher_redis)
       end
 
       def publish(event)
