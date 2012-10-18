@@ -306,5 +306,13 @@ describe Build do
         build.color.should == 'yellow'
       end
     end
+
+    it 'saves event_type before crate' do
+      build = Factory(:build,  :request => Factory(:request, :event_type => 'pull_request'))
+      build.event_type.should == 'pull_request'
+
+      build = Factory(:build,  :request => Factory(:request, :event_type => 'push'))
+      build.event_type.should == 'push'
+    end
   end
 end

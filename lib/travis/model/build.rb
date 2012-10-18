@@ -134,6 +134,7 @@ class Build < ActiveRecord::Base
   before_create do
     self.number = repository.builds.next_number
     self.previous_result ||= last_on_branch.try(:result)
+    self.event_type = request.event_type
     expand_matrix
   end
 
