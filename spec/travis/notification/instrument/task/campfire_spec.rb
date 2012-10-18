@@ -11,7 +11,7 @@ describe Travis::Notification::Instrument::Task::Campfire do
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
-    Travis::Features.stubs(:active?).returns(true)
+    Travis::Features.stubs(:active?).returns(false)
     Repository.stubs(:find).returns(stub('repo'))
     Url.stubs(:shorten).returns(url)
     task.stubs(:process)
@@ -31,8 +31,8 @@ describe Travis::Notification::Instrument::Task::Campfire do
       :targets => %w(account:token@room),
       :message => [
         '[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): the build has passed',
-        '[travis-ci] Change view: http://trvs.io/short',
-        "[travis-ci] Build details: http://trvs.io/short"
+        '[travis-ci] Change view: https://github.com/svenfuchs/minimal/compare/master...develop',
+        "[travis-ci] Build details: http://travis-ci.org/svenfuchs/minimal/builds/1"
       ]
     }
     event[:payload][:data].should_not be_nil

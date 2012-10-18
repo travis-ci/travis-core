@@ -4,9 +4,8 @@ module Travis
     # configuration (`.travis.yml`).
     class Irc < Task
       autoload :Client,   'travis/task/irc/client'
-      autoload :Template, 'travis/task/irc/template'
 
-      TEMPLATES = [
+      DEFAULT_TEMPLATE = [
         "%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{message}",
         "Change view : %{compare_url}",
         "Build details : %{build_url}"
@@ -18,7 +17,7 @@ module Travis
 
       def messages
         @messages ||= templates.map do |template|
-          Template.new(template, data).interpolate
+          Shared::Template.new(template, data).interpolate
         end
       end
 
@@ -61,7 +60,7 @@ module Travis
 
         def templates
           templates = config[:template] rescue nil
-          Array(templates || TEMPLATES)
+          Array(templates || DEFAULT_TEMPLATE)
         end
 
         def client_options(port, ssl)

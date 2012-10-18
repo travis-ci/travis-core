@@ -2,13 +2,13 @@ require 'travis/features'
 
 module Travis
   class Task
-    class Campfire
+    module Shared
       class Template
         include Build::Messages
 
         attr_reader :template, :data
 
-        def initialize(template,data)
+        def initialize(template, data)
           @template = template
           @data = data
         end
@@ -19,15 +19,16 @@ module Travis
 
         def args
           @args ||= {
-            :repository   => data['repository']['slug'],
-            :build_number => data['build']['number'],
-            :branch       => data['commit']['branch'],
-            :commit       => data['commit']['sha'][0..6],
-            :author       => data['commit']['author_name'],
-            :result       => data['build']['result'] == 0 ? 'passed' : 'failed',
-            :message      => message,
-            :compare_url  => compare_url,
-            :build_url    => build_url
+            :repository     => data['repository']['slug'],
+            :build_number   => data['build']['number'].to_s,
+            :branch         => data['commit']['branch'],
+            :commit         => data['commit']['sha'][0..6],
+            :author         => data['commit']['author_name'],
+            :commit_message => data['commit']['message'],
+            :result         => data['build']['result'] == 0 ? 'passed' : 'failed',
+            :message        => message,
+            :compare_url    => compare_url,
+            :build_url      => build_url
           }
         end
 

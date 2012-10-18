@@ -8,9 +8,7 @@ module Travis
     #
     # Campfire credentials are encrypted using the repository's ssl key.
     class Campfire < Task
-      autoload :Template, 'travis/task/campfire/template'
-
-      DEFAULT_TEMPLATES = [
+      DEFAULT_TEMPLATE = [
         "[travis-ci] %{repository}#%{build_number} (%{branch} - %{commit} : %{author}): the build has %{result}",
         "[travis-ci] Change view: %{compare_url}",
         "[travis-ci] Build details: %{build_url}"
@@ -22,7 +20,7 @@ module Travis
 
       def message
         @messages ||= templates.map do |template|
-          Template.new(template, data).interpolate
+          Shared::Template.new(template, data).interpolate
         end
       end
 
@@ -40,7 +38,7 @@ module Travis
 
         def templates
           templates = config[:template] rescue nil
-          Array(templates || DEFAULT_TEMPLATES)
+          Array(templates || DEFAULT_TEMPLATE)
         end
 
         def send_line(url, line)

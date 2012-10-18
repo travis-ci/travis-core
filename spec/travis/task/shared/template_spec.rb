@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-describe Travis::Task::Campfire::Template do
+describe Travis::Task::Shared::Template do
   include Travis::Testing::Stubs
 
 
   let(:data)     { Travis::Api.data(build, :for => 'event', :version => 'v2') }
   let(:template) {
     template_string = %w(repository build_number branch commit author message compare_url build_url result).map do |name|
-    "#{name}=%{#{name}}" 
+    "#{name}=%{#{name}}"
     end.join(' ')
-    Travis::Task::Campfire::Template.new(template_string, data) 
+    Travis::Task::Shared::Template.new(template_string, data)
   }
 
   before do

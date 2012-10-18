@@ -8,8 +8,8 @@ module Travis
     #
     # Hipchat credentials can be encrypted using the repository's ssl key.
     class Hipchat < Task
-      TEMPLATE = [
-        "%{slug}#%{number} (%{branch} - %{sha} : %{author}): the build has %{result}",
+      DEFAULT_TEMPLATE = [
+        "%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): the build has %{result}",
         "Change view: %{compare_url}",
         "Build details: %{build_url}"
       ]
@@ -19,18 +19,8 @@ module Travis
       end
 
       def message
-        @message ||= begin
-          args = {
-            :slug   => data['repository']['slug'],
-            :number => data['build']['number'],
-            :branch => data['commit']['branch'],
-            :sha    => data['commit']['sha'][0..6],
-            :author => data['commit']['author_name'],
-            :result => build_passed? ? 'passed' : 'failed',
-            :compare_url => data['commit']['compare_url'],
-            :build_url => "#{Travis.config.http_host}/#{data['repository']['slug']}/builds/#{data['build']['id']}"
-          }
-          TEMPLATE.map { |line| line % args }
+        @messages ||= templates.map do |template|
+          Shared::Template.new(template, data).interpolate
         end
       end
 
@@ -43,6 +33,11 @@ module Travis
         def send_lines(target, lines)
           url, room_id = parse(target)
           lines.each { |line| send_line(url, room_id, line) }
+        end
+
+        def templates
+          templates = config[:template] rescue nil
+          Array(templates || DEFAULT_TEMPLATE)
         end
 
         def send_line(url, room_id, line)

@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Notification::Instrument::Task::Hipchat do
+  include Support::ActiveRecord
   include Travis::Testing::Stubs
 
   let(:data)      { Travis::Api.data(build, :for => 'event', :version => 'v2') }
@@ -10,6 +11,9 @@ describe Travis::Notification::Instrument::Task::Hipchat do
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
+    Travis::Features.stubs(:active?).returns(false)
+    Repository.stubs(:find).returns(stub('repo'))
+    Url.stubs(:shorten).returns(url)
     task.stubs(:process)
     task.run
   end
