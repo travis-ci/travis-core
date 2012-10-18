@@ -5,6 +5,8 @@ require 'bundler/setup'
 require 'micro_migrations'
 require 'travis'
 
+ActiveRecord::Base.schema_format = :sql
+
 desc 'Run specs'
 RSpec::Core::RakeTask.new do |t|
   t.pattern = './spec/**/*_spec.rb'
