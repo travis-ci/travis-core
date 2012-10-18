@@ -10,7 +10,7 @@ describe Travis::Notification::Instrument::Task::Irc do
 
   before :each do
     # TODO ...
-    Travis::Features.stubs(:active?).returns(true)
+    Travis::Features.stubs(:active?).returns(false)
     Repository.stubs(:find).returns(repository)
     Url.stubs(:shorten).returns(url)
 
@@ -32,8 +32,8 @@ describe Travis::Notification::Instrument::Task::Irc do
       :channels => { ['irc.freenode.net', 1234] => ['travis'] },
       :messages => [
         'svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.',
-        'Change view : http://trvs.io/short',
-        'Build details : http://trvs.io/short'
+        'Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
+        'Build details : http://travis-ci.org/svenfuchs/minimal/builds/1'
       ]
     }
     event[:payload][:data].should_not be_nil

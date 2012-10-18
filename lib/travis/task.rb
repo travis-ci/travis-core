@@ -15,6 +15,10 @@ module Travis
     autoload :Pusher,             'travis/task/pusher'
     autoload :Webhook,            'travis/task/webhook'
 
+    module Shared
+      autoload :Template,         'travis/task/shared/template'
+    end
+
     include Logging
     extend  Instrumentation, NewRelic, Exceptions::Handling, Async
 

@@ -2,7 +2,7 @@ require 'travis/features'
 
 module Travis
   class Task
-    class Irc
+    module Shared
       class Template
         include Build::Messages
 
@@ -25,6 +25,7 @@ module Travis
             :commit         => data['commit']['sha'][0..6],
             :author         => data['commit']['author_name'],
             :commit_message => data['commit']['message'],
+            :result         => data['build']['result'] == 0 ? 'passed' : 'failed',
             :message        => message,
             :compare_url    => compare_url,
             :build_url      => build_url
@@ -47,15 +48,15 @@ module Travis
 
         private
 
-          def short_urls?
-            # TODO Travis::Features wants full models, should probaly change that
-            repository = Repository.find(data['repository']['id'])
-            Travis::Features.active?(:short_urls, repository)
-          end
+        def short_urls?
+          # TODO Travis::Features wants full models, should probaly change that
+          repository = Repository.find(data['repository']['id'])
+          Travis::Features.active?(:short_urls, repository)
+        end
 
-          def shorten_url(url)
-            Url.shorten(url).short_url
-          end
+        def shorten_url(url)
+          Url.shorten(url).short_url
+        end
       end
     end
   end

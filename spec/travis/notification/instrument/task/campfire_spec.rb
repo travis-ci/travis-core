@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Notification::Instrument::Task::Campfire do
+  include Support::ActiveRecord
   include Travis::Testing::Stubs
 
   let(:data)      { Travis::Api.data(build, :for => 'event', :version => 'v2') }
@@ -10,6 +11,9 @@ describe Travis::Notification::Instrument::Task::Campfire do
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
+    Travis::Features.stubs(:active?).returns(false)
+    Repository.stubs(:find).returns(stub('repo'))
+    Url.stubs(:shorten).returns(url)
     task.stubs(:process)
     task.run
   end
@@ -28,7 +32,7 @@ describe Travis::Notification::Instrument::Task::Campfire do
       :message => [
         '[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): the build has passed',
         '[travis-ci] Change view: https://github.com/svenfuchs/minimal/compare/master...develop',
-        '[travis-ci] Build details: http://travis-ci.org/svenfuchs/minimal/builds/1'
+        "[travis-ci] Build details: http://travis-ci.org/svenfuchs/minimal/builds/1"
       ]
     }
     event[:payload][:data].should_not be_nil

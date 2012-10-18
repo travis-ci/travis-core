@@ -8,8 +8,8 @@ module Travis
     #
     # Campfire credentials are encrypted using the repository's ssl key.
     class Campfire < Task
-      TEMPLATE = [
-        "[travis-ci] %{slug}#%{number} (%{branch} - %{sha} : %{author}): the build has %{result}",
+      DEFAULT_TEMPLATE = [
+        "[travis-ci] %{repository}#%{build_number} (%{branch} - %{commit} : %{author}): the build has %{result}",
         "[travis-ci] Change view: %{compare_url}",
         "[travis-ci] Build details: %{build_url}"
       ]
@@ -19,18 +19,8 @@ module Travis
       end
 
       def message
-        @message ||= begin
-          args = {
-            :slug   => data['repository']['slug'],
-            :number => data['build']['number'],
-            :branch => data['commit']['branch'],
-            :sha    => data['commit']['sha'][0..6],
-            :author => data['commit']['author_name'],
-            :result => data['build']['result'] == 0 ? 'passed' : 'failed',
-            :compare_url => data['commit']['compare_url'],
-            :build_url => "#{Travis.config.http_host}/#{data['repository']['slug']}/builds/#{data['build']['id']}"
-          }
-          TEMPLATE.map { |line| line % args }
+        @messages ||= templates.map do |template|
+          Shared::Template.new(template, data).interpolate
         end
       end
 
@@ -46,6 +36,11 @@ module Travis
           lines.each { |line| send_line(url, line) }
         end
 
+        def templates
+          templates = config[:template] rescue nil
+          Array(templates || DEFAULT_TEMPLATE)
+        end
+
         def send_line(url, line)
           http.post(url) do |req|
             req.body = MultiJson.encode({ :message => { :body => line } })
@@ -58,6 +53,9 @@ module Travis
           ["https://#{$1}.campfirenow.com/room/#{$3}/speak.json", $2]
         end
 
+        def config
+          data['build']['config']['notifications'][:campfire] rescue {}
+        end
         Notification::Instrument::Task::Campfire.attach_to(self)
     end
   end
