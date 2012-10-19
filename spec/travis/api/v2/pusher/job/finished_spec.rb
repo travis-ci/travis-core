@@ -19,6 +19,7 @@ describe Travis::Api::V2::Pusher::Job::Finished do
       'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
       'result' => 0,
       'queue' => 'builds.common',
+      'allow_failure' => false,
       'tags' => 'tag-a,tag-b'
     }
   end
