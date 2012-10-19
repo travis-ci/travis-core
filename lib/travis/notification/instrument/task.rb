@@ -151,6 +151,7 @@ module Travis
         attr_reader :task, :data
 
         def initialize(message, status, payload)
+          message = "#{message} #{queue_info}" if Travis::Task.run_local? && Travis::Async.enabled?
           @task = payload[:target]
           @data = task.data
           super
@@ -163,6 +164,16 @@ module Travis
         def publish(event = {})
           super(event.merge(:data => self.data))
         end
+
+        private
+
+          def queue_info
+            "(queue size: #{queue.items.size})" if queue
+          end
+
+          def queue
+            Travis::Async.queues[task.class.name]
+          end
       end
     end
   end
