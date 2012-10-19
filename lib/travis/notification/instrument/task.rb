@@ -151,7 +151,6 @@ module Travis
         attr_reader :task, :data
 
         def initialize(message, status, payload)
-          message = "#{message} #{queue_info}" if Travis::Task.run_local? && Travis::Async.enabled?
           @task = payload[:target]
           @data = task.data
           super
@@ -162,6 +161,7 @@ module Travis
         end
 
         def publish(event = {})
+          event[:msg] = "#{event[:msg]} #{queue_info}" if Travis::Task.run_local? && Travis::Async.enabled?
           super(event.merge(:data => self.data))
         end
 
