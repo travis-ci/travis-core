@@ -1,7 +1,7 @@
 module Travis
   module Services
-    module Accounts
-      class FindAll < Base
+    module Users
+      class FindAccounts < Base
         def run
           ([current_user] + orgs).map do |record|
             ::Account.from(record, :repos_count => repos_counts[record.login])
