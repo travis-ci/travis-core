@@ -40,7 +40,7 @@ module Travis
 
     def initialize(data, options = {})
       @data = data
-      @options = options
+      @options = options.symbolize_keys
     end
 
     def run
