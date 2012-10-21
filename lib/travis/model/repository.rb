@@ -17,11 +17,7 @@ class Repository < ActiveRecord::Base
 
   has_many :commits, :dependent => :delete_all
   has_many :requests, :dependent => :delete_all
-  has_many :builds, :dependent => :delete_all do
-    def last_result_on(params)
-      last_finished_on_branch(params[:branch]).try(:matrix_result, params)
-    end
-  end
+  has_many :builds, :dependent => :delete_all
   has_many :events
   has_many :permissions
   has_many :users, :through => :permissions
@@ -140,7 +136,7 @@ class Repository < ActiveRecord::Base
 
   def last_build_result_on(params)
     params = params.symbolize_keys.slice(*Build.matrix_keys_for(params)).compact
-    params.empty? ? last_build_result || last_build.try(:previous_result) : builds.last_result_on(params)
+    params.empty? ? last_build_result || last_build.try(:previous_result) : builds.last_result_on(params[:branch], params.slice(*Build::Matrix::ENV_KEYS))
   end
 
   def last_finished_builds_by_branches

@@ -92,8 +92,8 @@ class Build < ActiveRecord::Base
       where("builds.repository_id = ? AND builds.id < ?", build.repository_id, build.id).finished.descending.limit(1).first
     end
 
-    def last_finished_on_branch(branches)
-      finished.on_branch(branches).descending.first
+    def last_result_on(branches, options = {})
+      finished.on_branch(branches).descending.first.try(:matrix_result, options)
     end
 
     def descending
