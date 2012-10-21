@@ -32,8 +32,8 @@ describe Travis::Task::Irc do
       'USER travis-ci travis-ci travis-ci :travis-ci',
       'JOIN #travis',
       'PRIVMSG #travis :[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.',
-      'PRIVMSG #travis :[travis-ci] Change view : http://trvs.io/short',
-      'PRIVMSG #travis :[travis-ci] Build details : http://trvs.io/short',
+      'PRIVMSG #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
+      'PRIVMSG #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/minimal/builds/1',
       'PART #travis',
       'QUIT'
     ]
@@ -52,8 +52,8 @@ describe Travis::Task::Irc do
       'USER travis-ci travis-ci travis-ci :travis-ci',
       'JOIN #travis',
       'NOTICE #travis :[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.',
-      'NOTICE #travis :[travis-ci] Change view : http://trvs.io/short',
-      'NOTICE #travis :[travis-ci] Build details : http://trvs.io/short',
+      'NOTICE #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
+      'NOTICE #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/minimal/builds/1',
       'PART #travis',
       'QUIT'
     ]
@@ -67,8 +67,8 @@ describe Travis::Task::Irc do
       'NICK travis-ci',
       'USER travis-ci travis-ci travis-ci :travis-ci',
       'PRIVMSG #travis :[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.',
-      'PRIVMSG #travis :[travis-ci] Change view : http://trvs.io/short',
-      'PRIVMSG #travis :[travis-ci] Build details : http://trvs.io/short',
+      'PRIVMSG #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
+      'PRIVMSG #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/minimal/builds/1',
       'QUIT'
     ]
     run(build)
@@ -110,8 +110,8 @@ describe Travis::Task::Irc do
         'USER travis-ci travis-ci travis-ci :travis-ci',
         "JOIN ##{channel}",
         "PRIVMSG ##{channel} :[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.",
-        "PRIVMSG ##{channel} :[travis-ci] Change view : http://trvs.io/short",
-        "PRIVMSG ##{channel} :[travis-ci] Build details : http://trvs.io/short",
+        "PRIVMSG ##{channel} :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop",
+        "PRIVMSG ##{channel} :[travis-ci] Build details : http://travis-ci.org/svenfuchs/minimal/builds/1",
         "PART ##{channel}",
         'QUIT'
       ]
@@ -125,13 +125,13 @@ describe Travis::Task::Irc do
       'USER travis-ci travis-ci travis-ci :travis-ci',
       'JOIN #travis',
       'PRIVMSG #travis :[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.',
-      'PRIVMSG #travis :[travis-ci] Change view : http://trvs.io/short',
-      'PRIVMSG #travis :[travis-ci] Build details : http://trvs.io/short',
+      'PRIVMSG #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
+      'PRIVMSG #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/minimal/builds/1',
       'PART #travis',
       'JOIN #example',
       'PRIVMSG #example :[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.',
-      'PRIVMSG #example :[travis-ci] Change view : http://trvs.io/short',
-      'PRIVMSG #example :[travis-ci] Build details : http://trvs.io/short',
+      'PRIVMSG #example :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
+      'PRIVMSG #example :[travis-ci] Build details : http://travis-ci.org/svenfuchs/minimal/builds/1',
       'PART #example',
       'QUIT'
     ]
@@ -147,8 +147,8 @@ describe Travis::Task::Irc do
       'USER travis-ci travis-ci travis-ci :travis-ci',
       'JOIN #travis',
       'NOTICE #travis :[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.',
-      'NOTICE #travis :[travis-ci] Change view : http://trvs.io/short',
-      'NOTICE #travis :[travis-ci] Build details : http://trvs.io/short',
+      'NOTICE #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
+      'NOTICE #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/minimal/builds/1',
       'PART #travis',
       'QUIT'
     ]
@@ -165,8 +165,8 @@ describe Travis::Task::Irc do
       'USER travis-ci travis-ci travis-ci :travis-ci',
       'JOIN #travis',
       'NOTICE #travis :[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.',
-      'NOTICE #travis :[travis-ci] Change view : http://trvs.io/short',
-      'NOTICE #travis :[travis-ci] Build details : http://trvs.io/short',
+      'NOTICE #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
+      'NOTICE #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/minimal/builds/1',
       'PART #travis',
       'QUIT'
     ]
@@ -183,8 +183,8 @@ describe Travis::Task::Irc do
       'USER niclas niclas niclas :niclas',
       'JOIN #travis',
       'NOTICE #travis :[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.',
-      'NOTICE #travis :[travis-ci] Change view : http://trvs.io/short',
-      'NOTICE #travis :[travis-ci] Build details : http://trvs.io/short',
+      'NOTICE #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
+      'NOTICE #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/minimal/builds/1',
       'PART #travis',
       'QUIT'
     ]
@@ -199,8 +199,8 @@ describe Travis::Task::Irc do
       'USER travis-ci travis-ci travis-ci :travis-ci',
       'JOIN #travis',
       'PRIVMSG #travis :[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.',
-      'PRIVMSG #travis :[travis-ci] Change view : http://trvs.io/short',
-      'PRIVMSG #travis :[travis-ci] Build details : http://trvs.io/short',
+      'PRIVMSG #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
+      'PRIVMSG #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/minimal/builds/1',
       'PART #travis',
       'QUIT'
     ]

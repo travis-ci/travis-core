@@ -3,21 +3,11 @@ require 'spec_helper'
 describe Travis::Task::Shared::Template do
   include Travis::Testing::Stubs
 
+  VAR_NAMES = %w(repository build_number branch commit author message compare_url build_url result)
+  TEMPLATE  = VAR_NAMES.map { |name| "#{name}=%{#{name}}" }.join(' ')
 
   let(:data)     { Travis::Api.data(build, :for => 'event', :version => 'v2') }
-  let(:template) {
-    template_string = %w(repository build_number branch commit author message compare_url build_url result).map do |name|
-    "#{name}=%{#{name}}"
-    end.join(' ')
-    Travis::Task::Shared::Template.new(template_string, data)
-  }
-
-  before do
-    # TODO remove this db dependency
-    Repository.stubs(:find).returns(repository)
-    Travis::Features.stubs(:active?).with(:short_urls, repository).returns(true)
-    Url.stubs(:shorten).returns(url)
-  end
+  let(:template) { Travis::Task::Shared::Template.new(TEMPLATE.dup, data) }
 
   describe 'interpolation' do
     let(:result) { template.interpolate }

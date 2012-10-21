@@ -48,15 +48,16 @@ module Travis
 
         private
 
-        def short_urls?
-          # TODO Travis::Features wants full models, should probaly change that
-          repository = Repository.find(data['repository']['id'])
-          Travis::Features.active?(:short_urls, repository)
-        end
+          def short_urls?
+            # # TODO Travis::Features wants full models, should probaly change that
+            # repository = Repository.find(data['repository']['id'])
+            # Travis::Features.active?(:short_urls, repository)
+            false
+          end
 
-        def shorten_url(url)
-          Url.shorten(url).short_url
-        end
+          def shorten_url(url)
+            Url.shorten(url).short_url
+          end
       end
     end
   end

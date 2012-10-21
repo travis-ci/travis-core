@@ -31,8 +31,8 @@ describe Travis::Task::Campfire do
 
       expect_campfire(account, 1234, token, [
         '[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): the build has passed',
-        '[travis-ci] Change view: http://trvs.io/short',
-        "[travis-ci] Build details: http://trvs.io/short"
+        '[travis-ci] Change view: https://github.com/svenfuchs/minimal/compare/master...develop',
+        '[travis-ci] Build details: http://travis-ci.org/svenfuchs/minimal/builds/1'
       ])
       run(targets, build)
       http.verify_stubbed_calls
