@@ -28,7 +28,10 @@ module Travis
                 'committer_name' => commit.committer_name,
                 'committer_email' => commit.committer_email,
                 'event_type' => request.event_type,
-                'matrix' => build.matrix.map { |job| Job.new(job).data }
+                'matrix' => build.matrix.map { |job| Job.new(job).data },
+                'finished_at' => format_date(build.finished_at),
+                'state' => build.state.to_s,
+                'duration' => build.duration
               }
             end
 

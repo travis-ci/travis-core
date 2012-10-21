@@ -14,7 +14,8 @@ module Travis
                 'sponsor' => {
                   'name' => 'Railslove',
                   'url' => 'http://railslove.de'
-                }
+                },
+                'state' => job.state.to_s
               }
             end
           end

@@ -9,7 +9,9 @@ describe Travis::Api::V1::Pusher::Build::Finished do
     data['build'].should == {
       'id' => build.id,
       'result' => 0,
-      'finished_at' => json_format_time(Time.now.utc)
+      'finished_at' => json_format_time(Time.now.utc),
+      'state' => 'finished',
+      'duration' => 60
     }
   end
 

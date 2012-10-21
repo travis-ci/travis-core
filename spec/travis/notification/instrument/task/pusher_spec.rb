@@ -35,7 +35,7 @@ describe Travis::Notification::Instrument::Task::Pusher do
   end
 
   describe 'given a build:finished event' do
-    let(:data) { Travis::Api.data(test, :for => 'pusher', :type => 'build/finished', :version => 'v1') }
+    let(:data) { Travis::Api.data(build, :for => 'pusher', :type => 'build/finished', :version => 'v1') }
     let(:task) { Travis::Task::Pusher.new(data, :event => 'build:finished') }
 
     it 'publishes a payload' do
