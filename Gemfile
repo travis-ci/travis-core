@@ -2,7 +2,7 @@ source :rubygems
 
 gemspec
 
-gem 'travis-support',     :git => 'git://github.com/travis-ci/travis-support'
+gem 'travis-support',     :git => 'git://github.com/travis-ci/travis-support', :branch => 'sf-async-strategies'
 gem 'gh',                 :git => 'git://github.com/rkh/gh'
 gem 'newrelic_rpm',       '~> 3.4.2'
 gem 'hubble',             :git => 'git://github.com/roidrage/hubble'
