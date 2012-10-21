@@ -111,19 +111,17 @@ describe Build do
     describe 'pushes' do
       before do
         Factory(:build)
-        Factory(:build, :request => Factory(:request, :event_type => ''))
         Factory(:build, :request => Factory(:request, :event_type => 'pull_request'))
       end
 
       it "returns only builds which have Requests with an event_type of push" do
-        Build.pushes.all.count.should == 2
+        Build.pushes.all.count.should == 1
       end
     end
 
     describe 'pull_requests' do
       before do
         Factory(:build)
-        Factory(:build, :request => Factory(:request, :event_type => ''))
         Factory(:build, :request => Factory(:request, :event_type => 'pull_request'))
       end
 
