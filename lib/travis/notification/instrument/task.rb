@@ -152,7 +152,7 @@ module Travis
 
         def initialize(message, status, payload)
           @task = payload[:target]
-          @data = task.data
+          @data = task.data || {}
           super
         end
 
