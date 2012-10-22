@@ -34,8 +34,7 @@ module Travis
       end
 
       def perform(type, *args)
-        task = const_get(type.to_s.camelize).new(*args)
-        task.run if task.run?
+        const_get(type.to_s.camelize).new(*args).run
       end
       rescues :perform, :from => Exception
     end
@@ -53,10 +52,6 @@ module Travis
     # rescues    :run, :from => Exception
     instrument :run
     new_relic  :run, :category => :task
-
-    def run?
-      raise 'overwrite run? in handler classes'
-    end
 
     private
 
