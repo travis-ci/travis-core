@@ -161,7 +161,7 @@ module Travis
         end
 
         def publish(event = {})
-          event[:msg] = "#{event[:msg]} #{queue_info}" if Travis::Async.enabled? && Travis::Task.async_strategy == :threaded
+          event[:msg] = "#{event[:msg]} #{queue_info}" if Travis::Async.enabled? && Travis::Task.run_local?
           super(event.merge(:data => self.data))
         end
 

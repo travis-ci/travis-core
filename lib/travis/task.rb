@@ -26,11 +26,11 @@ module Travis
       extend Exceptions::Handling
 
       def run(type, *args)
-        Travis::Async.run(self, :perform, { :queue => type, :use => async_strategy }, type, *args)
+        Travis::Async.run(self, :perform, { :queue => type, :use => run_local? ? :threaded : :sidekiq }, type, *args)
       end
 
-      def async_strategy
-        Travis::Features.feature_inactive?(:travis_tasks) ? :threaded : :sidekiq
+      def run_local?
+        Travis::Features.feature_inactive?(:travis_tasks)
       end
 
       def perform(type, *args)

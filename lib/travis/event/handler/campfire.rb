@@ -11,22 +11,23 @@ module Travis
 
         EVENTS = /build:finished/
 
-        attr_reader :payload, :targets
+        attr_reader :payload
 
         def initialize(*)
           super
-          if handle?
-            @payload = Api.data(object, :for => 'event', :version => API_VERSION)
-            @targets = config.rooms
-          end
+          @payload = Api.data(object, :for => 'event', :version => API_VERSION) if handle?
         end
 
         def handle?
-          config.send_on_finish?
+          config.send_on_finish? && targets.present?
         end
 
         def handle
           Task.run(:campfire, payload, :targets => targets)
+        end
+
+        def targets
+          @targets ||= config.rooms
         end
 
         private
