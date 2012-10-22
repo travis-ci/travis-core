@@ -8,6 +8,10 @@ describe Travis::Event::Subscription do
 
     EVENTS = /build:finished/
 
+    def self.notify(*args)
+      new(*args).notify
+    end
+
     def initialize(*args)
       self.class.events << args
     end
