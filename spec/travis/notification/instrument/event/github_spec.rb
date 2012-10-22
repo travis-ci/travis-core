@@ -9,7 +9,8 @@ describe Travis::Notification::Instrument::Event::Handler::Github do
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
-    build.stubs(:pull_request?).returns(false)
+    Broadcast.stubs(:by_repo).returns([broadcast])
+    build.stubs(:pull_request?).returns(true)
     handler.stubs(:handle)
     handler.notify
   end

@@ -16,11 +16,12 @@ describe Travis::Task::Campfire do
     Travis::Features.stubs(:active?).returns(true)
     Repository.stubs(:find).returns(stub('repo'))
     Url.stubs(:shorten).returns(url)
+    Broadcast.stubs(:by_repo).returns([broadcast])
   end
 
   def run(targets, build)
     data = Travis::Api.data(build, :for => 'event', :version => 'v2')
-    Travis::Task.run(:campfire, data, :targets => targets)
+    Travis::Task::Campfire.new(data, :targets => targets).run
   end
 
   [['account', 'token'],

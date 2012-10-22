@@ -8,6 +8,7 @@ describe Travis::Event::Handler::Flowdock do
   before do
     Travis::Event.stubs(:subscribers).returns [:flowdock]
     handler.stubs(:handle => true, :handle? => true)
+    Broadcast.stubs(:by_repo).returns([broadcast])
   end
 
   describe 'subscription' do

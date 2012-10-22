@@ -6,16 +6,19 @@ module Travis
 
         EVENTS = 'build:finished'
 
+        attr_reader :payload
+
+        def initialize(*)
+          super
+          @payload = Api.data(object, :for => 'archive', :version => API_VERSION) if handle?
+        end
+
         def handle?
           true
         end
 
         def handle
           Task.run(:archive, payload)
-        end
-
-        def payload
-          @payload ||= Api.data(object, :for => 'archive', :version => API_VERSION)
         end
 
         Notification::Instrument::Event::Handler::Archive.attach_to(self)

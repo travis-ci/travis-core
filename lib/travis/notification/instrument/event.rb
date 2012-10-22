@@ -32,7 +32,7 @@ module Travis
 
           class GithubCommitStatus < Handler
             def notify_completed
-              publish(:url => handler.url)
+              publish(:url => handler.params[:url])
             end
           end
 

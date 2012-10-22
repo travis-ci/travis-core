@@ -8,6 +8,16 @@ module Travis
 
         EVENTS = 'build:finished'
 
+        attr_reader :payload, :channels
+
+        def initialize(*)
+          super
+          if handle?
+            @payload = Api.data(object, :for => 'event', :version => API_VERSION)
+            @channels = config.channels
+          end
+        end
+
         def handle?
           config.send_on_finish?
         end
@@ -16,19 +26,13 @@ module Travis
           Task.run(:irc, payload, :channels => channels)
         end
 
-        def payload
-          @payload ||= Api.data(object, :for => 'event', :version => API_VERSION)
-        end
+        private
 
-        def channels
-          config.channels
-        end
+          def config
+            @config ||= Config::Irc.new(object)
+          end
 
-        def config
-          @config ||= Config::Irc.new(object)
-        end
-
-        Notification::Instrument::Event::Handler::Irc.attach_to(self)
+          Notification::Instrument::Event::Handler::Irc.attach_to(self)
       end
     end
   end

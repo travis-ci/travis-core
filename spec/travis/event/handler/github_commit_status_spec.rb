@@ -3,9 +3,10 @@ require 'spec_helper'
 describe Travis::Event::Handler::GithubCommitStatus do
   include Travis::Testing::Stubs
 
-  before do
+  before :each do
+    Travis::Features.start
     Travis::Event.stubs(:subscribers).returns [:github_commit_status]
-    handler.stubs(:handle => true, :handle? => true)
+    Broadcast.stubs(:by_repo).returns([broadcast])
   end
 
   describe 'subscription' do
@@ -25,13 +26,13 @@ describe Travis::Event::Handler::GithubCommitStatus do
   describe 'a build which has started' do
     let(:handler) { Travis::Event::Handler::GithubCommitStatus.new('build:started', build) }
 
-    describe 'given the request is not a pull_request event' do
+    describe 'given the request is a push event' do
       before :each do
         build.request.stubs(:pull_request? => false)
       end
 
       it 'does not handle the notification' do
-        handler.expects(:handle).never
+        handler.expects(:handle)
         handler.notify
       end
     end
@@ -51,13 +52,13 @@ describe Travis::Event::Handler::GithubCommitStatus do
   describe 'a build which has finished' do
     let(:handler) { Travis::Event::Handler::GithubCommitStatus.new('build:finished', build) }
 
-    describe 'given the request is not a pull_request event' do
+    describe 'given the request is a push event' do
       before :each do
         build.request.stubs(:pull_request? => false)
       end
 
       it 'does not handle the notification' do
-        handler.expects(:handle).never
+        handler.expects(:handle)
         handler.notify
       end
     end

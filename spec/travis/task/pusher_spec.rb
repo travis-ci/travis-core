@@ -14,7 +14,7 @@ describe Travis::Task::Pusher do
     version = options[:version] || 'v1'
     type = event =~ /^worker:/ ? 'worker' : event.sub('test:', '').sub(':', '/')
     data = Travis::Api.data(object, :for => 'pusher', :type => type, :version => version)
-    Travis::Task.run(:pusher, data, :event => event, :version => version)
+    Travis::Task::Pusher.new(data, :event => event, :version => version).run
   end
 
   describe 'run' do

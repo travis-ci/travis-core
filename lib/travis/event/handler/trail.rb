@@ -4,6 +4,13 @@ module Travis
       class Trail < Handler
         EVENTS = [/^((?!event|log|worker).)*$/] # i.e. does not include "log"
 
+        attr_reader :data
+
+        def initialize(*)
+          super
+          @data = build_data if handle?
+        end
+
         def handle?
           Features.feature_active?(:event_trail)
         end
@@ -18,7 +25,7 @@ module Travis
             object.is_a?(Repository) ? object : object.repository
           end
 
-          def data
+          def build_data
             data = {}
             data[:commit]  = object.commit.try(:commit)      if object.respond_to?(:commit)
             data[:type]    = object.request.try(:event_type) if object.respond_to?(:request)

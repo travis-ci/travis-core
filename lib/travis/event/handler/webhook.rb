@@ -11,6 +11,17 @@ module Travis
 
         EVENTS = /build:(started|finished)/
 
+        attr_reader :payload, :targets, :token
+
+        def initialize(*)
+          super
+          if handle?
+            @payload = Api.data(object, :for => 'webhook', :type => 'build/finished', :params => { :include_logs => config.include_logs? }, :version => API_VERSION)
+            @targets = config.webhooks
+            @token   = object.request.token
+          end
+        end
+
         def handle?
           case event
           when 'build:started'
@@ -24,28 +35,13 @@ module Travis
           Task.run(:webhook, payload, :targets => targets, :token => token)
         end
 
-        def payload
-          @payload ||= Api.data(object,
-            :for => 'webhook',
-            :type => 'build/finished',
-            :params => { :include_logs => config.include_logs? },
-            :version => API_VERSION
-          )
-        end
+        private
 
-        def token
-          object.request.token
-        end
+          def config
+            @config ||= Config::Webhook.new(object)
+          end
 
-        def targets
-          config.webhooks
-        end
-
-        def config
-          @config ||= Config::Webhook.new(object)
-        end
-
-        Notification::Instrument::Event::Handler::Webhook.attach_to(self)
+          Notification::Instrument::Event::Handler::Webhook.attach_to(self)
       end
     end
   end

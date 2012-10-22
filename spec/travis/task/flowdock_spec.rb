@@ -23,7 +23,7 @@ describe Travis::Task::Flowdock do
     {
       :source       => 'Travis',
       :from_address => 'build+ok@flowdock.com',
-      :subject      => 'svenfuchs/minimal build #2 has passed',
+      :subject      => 'svenfuchs/minimal build #2 has passed!',
       :content      => flowdock_message,
       :from_name    => 'CI',
       :project      => 'Build Status',
@@ -37,10 +37,11 @@ describe Travis::Task::Flowdock do
     Travis::Features.start
     Travis.logger = Logger.new(io)
     Travis::Task::Flowdock.any_instance.stubs(:http).returns(client)
+    Broadcast.stubs(:by_repo).returns([broadcast])
   end
 
   def run(targets, data)
-    Travis::Task.run(:flowdock, data, :targets => targets)
+    Travis::Task::Flowdock.new(data, :targets => targets).run
   end
 
   [

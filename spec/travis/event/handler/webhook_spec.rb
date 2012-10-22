@@ -26,12 +26,12 @@ describe Travis::Event::Handler::Webhook do
     let(:handler) { Travis::Event::Handler::Webhook.new('build:finished', build) }
 
     it 'includes job logs to the payload if defined by the config' do
-      handler.config.stubs(:include_logs?).returns true
+      build.config[:notifications] = { :webhooks => ['http://webhook.com'], :include_logs => true }
       handler.payload['matrix'].first['log'].should_not be_nil
     end
 
     it 'does not include job logs to the payload if defined by the config' do
-      handler.config.stubs(:include_logs?).returns false
+      build.config[:notifications] = { :webhooks => ['http://webhook.com'], :include_logs => false }
       handler.payload['matrix'].first['log'].should be_nil
     end
   end

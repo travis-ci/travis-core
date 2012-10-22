@@ -9,11 +9,11 @@ module Travis
 
         EVENTS = [/^build:(started|finished)/, /^job:test:(created|started|log|finished)/, /^worker:(added|updated|removed)/]
 
-        attr_reader :payloads
+        attr_reader :payloads, :channels
 
         def initialize(*)
           super
-          @payloads = {}
+          @payloads = build_payloads if handle?
         end
 
         def handle?
@@ -21,20 +21,28 @@ module Travis
         end
 
         def handle
-          API_VERSIONS.each do |version|
-            Task.run(:pusher, payload(version), :event => event, :version => version)
+          payloads.each do |version, payload|
+            Task.run(:pusher, payload, :event => event, :version => version)
           end
         end
 
-        def payload(version)
-          payloads[version] ||= Api.data(object, :for => 'pusher', :type => type, :params => data, :version => version)
-        end
+        private
 
-        def type
-          event =~ /^worker:/ ? 'worker' : event.sub('test:', '').sub(':', '/')
-        end
+          def build_payloads
+            API_VERSIONS.inject({}) do |payloads, version|
+              payloads.merge(version => payload(version))
+            end
+          end
 
-        Notification::Instrument::Event::Handler::Pusher.attach_to(self)
+          def payload(version)
+            Api.data(object, :for => 'pusher', :type => type, :params => data, :version => version)
+          end
+
+          def type
+            event =~ /^worker:/ ? 'worker' : event.sub('test:', '').sub(':', '/')
+          end
+
+          Notification::Instrument::Event::Handler::Pusher.attach_to(self)
       end
     end
   end

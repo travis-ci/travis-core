@@ -22,6 +22,7 @@ module Travis
             let(:org)        { stub_org }
             let(:hook)       { stub_hook }
             let(:url)        { stub_url }
+            let(:broadcast)  { stub_broadcast }
           end
         end
       end
@@ -37,6 +38,7 @@ module Travis
           :url => 'http://github.com/svenfuchs/minimal',
           :source_url => 'git://github.com/svenfuchs/minimal.git',
           :key => stub_key,
+          :admin => stub_user,
           :private? => false,
           :last_build_id => 1,
           :last_build_number => 2,
@@ -224,6 +226,13 @@ module Travis
         Stubs.stub 'url', attributes.reverse_merge(
           :id => 1,
           :short_url => 'http://trvs.io/short'
+        )
+      end
+
+      def stub_broadcast(attributes = {})
+        Stubs.stub 'broadcast', attributes.reverse_merge(
+          :id => 1,
+          :message => 'message'
         )
       end
     end

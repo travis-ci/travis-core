@@ -9,20 +9,22 @@ module Travis
 
         EVENTS = /build:finished/
 
+        attr_reader :payload, :url
+
+        def initialize(*)
+          super
+          if handle?
+            @payload = Api.data(object, :for => 'event', :version => API_VERSION)
+            @url = object.request.comments_url
+          end
+        end
+
         def handle?
           object.pull_request?
         end
 
         def handle
           Task.run(:github, payload, :url => url)
-        end
-
-        def url
-          object.request.comments_url
-        end
-
-        def payload
-          @payload ||= Api.data(object, :for => 'event', :version => API_VERSION)
         end
 
         Notification::Instrument::Event::Handler::Github.attach_to(self)

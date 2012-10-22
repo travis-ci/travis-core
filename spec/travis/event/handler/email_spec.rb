@@ -3,6 +3,11 @@ require 'spec_helper'
 describe Travis::Event::Handler::Email do
   include Travis::Testing::Stubs
 
+  before :each do
+    build.stubs(:previous_result).returns(nil)
+    Broadcast.stubs(:by_repo).returns([broadcast])
+  end
+
   describe 'subscription' do
     let(:handler) { Travis::Event::Handler::Email.any_instance }
 

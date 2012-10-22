@@ -6,6 +6,7 @@ describe Travis::Event::Handler::Github do
   before do
     Travis::Event.stubs(:subscribers).returns [:github]
     handler.stubs(:handle => true, :handle? => true)
+    Broadcast.stubs(:by_repo).returns([broadcast])
   end
 
   describe 'subscription' do

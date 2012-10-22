@@ -10,42 +10,51 @@ module Travis
         API_VERSION = 'v2'
         EVENTS = /build:(started|finished)/
 
+        attr_reader :payload, :params, :token
+
+        def initialize(*)
+          super
+          @token = find_token
+          if handle?
+            @payload = Api.data(object, :for => 'event', :version => API_VERSION)
+            @params  = { :url => url, :build_url => build_url, :token => token }
+          end
+        end
+
         def handle?
-          true
+          token.present?
         end
 
         def handle
-          Task.run(:github_commit_status, payload, :url => url, :build_url => build_url, :token => token) if token
+          Task.run(:github_commit_status, payload, params) if token
         end
 
-        def url
-          "repos/#{slug}/statuses/#{sha}"
-        end
+        private
 
-        def build_url
-          "#{Travis.config.http_host}/#{slug}/builds/#{object.id}"
-        end
+          def url
+            "repos/#{slug}/statuses/#{sha}"
+          end
 
-        def payload
-          @payload ||= Api.data(object, :for => 'event', :version => API_VERSION)
-        end
+          def build_url
+            "#{Travis.config.http_host}/#{slug}/builds/#{object.id}"
+          end
 
-        def slug
-          repository.slug
-        end
+          def slug
+            repository.slug
+          end
 
-        def sha
-          request.pull_request? ? request.head_commit : request.commit.commit
-        end
+          def sha
+            request.pull_request? ? request.head_commit : request.commit.commit
+          end
 
-        def token
-          repository.admin.try(:github_oauth_token)
-        rescue Travis::AdminMissing => error
-          error error.message
-          nil
-        end
+          def find_token
+            repository.admin.try(:github_oauth_token)
+          rescue Travis::AdminMissing => error
+            error error.message
+            nil
+          end
 
-        Notification::Instrument::Event::Handler::GithubCommitStatus.attach_to(self)
+          Notification::Instrument::Event::Handler::GithubCommitStatus.attach_to(self)
       end
     end
   end

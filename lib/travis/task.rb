@@ -23,17 +23,21 @@ module Travis
     extend  Instrumentation, NewRelic, Exceptions::Handling, Async
 
     class << self
-      def run_local?
-        Travis::Features.feature_inactive?(:travis_tasks)
-      end
+      extend Exceptions::Handling
 
       def run(type, *args)
-        Travis::Async.run(self, :perform, { :queue => type, :use => run_local? ? :threaded : :sidekiq }, type, *args)
+        Travis::Async.run(self, :perform, { :queue => type, :use => async_strategy }, type, *args)
+      end
+
+      def async_strategy
+        Travis::Features.feature_inactive?(:travis_tasks) ? :threaded : :sidekiq
       end
 
       def perform(type, *args)
-        const_get(type.to_s.camelize).new(*args).run
+        task = const_get(type.to_s.camelize).new(*args)
+        task.run if task.run?
       end
+      rescues :perform, :from => Exception
     end
 
     attr_reader :data, :options
@@ -46,10 +50,13 @@ module Travis
     def run
       process
     end
-
-    rescues    :run, :from => Exception
+    # rescues    :run, :from => Exception
     instrument :run
     new_relic  :run, :category => :task
+
+    def run?
+      raise 'overwrite run? in handler classes'
+    end
 
     private
 

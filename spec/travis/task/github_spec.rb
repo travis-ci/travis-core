@@ -11,10 +11,11 @@ describe Travis::Task::Github do
     Travis.logger = Logger.new(io)
     GH.stubs(:head)
     WebMock.stub_request(:post, 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments').to_return(:status => 200, :body => '{}')
+    Broadcast.stubs(:by_repo).returns([broadcast])
   end
 
   def run
-    Travis::Task.run(:github, data, :url => url)
+    Travis::Task::Github.new(data, :url => url).run
   end
 
   describe 'run' do

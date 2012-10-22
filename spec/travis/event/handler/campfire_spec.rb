@@ -8,6 +8,7 @@ describe Travis::Event::Handler::Campfire do
   before do
     Travis::Event.stubs(:subscribers).returns [:campfire]
     handler.stubs(:handle => true, :handle? => true)
+    Broadcast.stubs(:by_repo).returns([broadcast])
   end
 
   describe 'subscription' do

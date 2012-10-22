@@ -15,10 +15,11 @@ describe Travis::Task::GithubCommitStatus do
     Travis::Features.start
     Travis.logger = Logger.new(io)
     WebMock.stub_request(:post, full_url).to_return(:status => 200, :body => '{}')
+    Broadcast.stubs(:by_repo).returns([broadcast])
   end
 
   def run
-    Travis::Task.run(:github_commit_status, data, :url => url, :sha => sha, :build_url => build_url, :token => token)
+    Travis::Task::GithubCommitStatus.new(data, :url => url, :sha => sha, :build_url => build_url, :token => token).run
   end
 
   describe 'run' do

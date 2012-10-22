@@ -22,7 +22,8 @@ module Travis
 
       class << self
         def notify(event, object, data = {})
-          new(event, object, data).notify
+          handler = new(event, object, data)
+          handler.notify if handler.handle?
         end
       end
 
@@ -35,7 +36,7 @@ module Travis
       end
 
       def notify
-        handle if handle?
+        handle
       end
       # TODO ask mathias about the scope
       instrument :notify # , :scope => :event

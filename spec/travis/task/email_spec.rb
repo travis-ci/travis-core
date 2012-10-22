@@ -10,10 +10,11 @@ describe Travis::Task::Email do
 
   before :each do
     Travis::Features.start
+    Broadcast.stubs(:by_repo).returns([broadcast])
   end
 
   def run
-    Travis::Task.run(:email, data, :recipients => recipients)
+    Travis::Task::Email.new(data, :recipients => recipients).run
   end
 
   describe 'run' do
