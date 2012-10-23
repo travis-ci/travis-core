@@ -82,6 +82,7 @@ module Travis
             :amqp          => { :username => 'guest', :password => 'guest', :host => 'localhost', :prefetch => 1 },
             :database      => { :adapter => 'postgresql', :database => "travis_#{Travis.env}", :encoding => 'unicode', :min_messages => 'warning' },
             :pusher        => { :app_id => 'app-id', :key => 'key', :secret => 'secret' },
+            :sidekiq       => { :namespace => 'sidekiq', :pool_size => 1 },
             :smtp          => { :user_name => 'postmark-api_key' },
             :github        => { :token => 'travisbot-token' },
             :async         => {},

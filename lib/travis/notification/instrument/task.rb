@@ -172,7 +172,7 @@ module Travis
           end
 
           def queue
-            Travis::Async.queues[task.class.name]
+            Travis::Async::Threaded.queues[task.class.name]
           end
       end
     end
