@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Api::V0::Worker::Job::Test do
-  include Travis::Testing::Stubs
+  include Travis::Testing::Stubs, Support::Formats
 
   let(:data) { Travis::Api::V0::Worker::Job::Test.new(test).data }
 
@@ -36,7 +36,13 @@ describe Travis::Api::V0::Worker::Job::Test do
         'repository' => {
           'id' => 1,
           'slug' => 'svenfuchs/minimal',
-          'source_url' => 'git://github.com/svenfuchs/minimal.git'
+          'source_url' => 'git://github.com/svenfuchs/minimal.git',
+          'last_build_id' => 1,
+          'last_build_started_at' => json_format_time(Time.now.utc - 1.minute),
+          'last_build_finished_at' => json_format_time(Time.now.utc),
+          'last_build_number' => 2,
+          'last_build_duration' => 60,
+          'last_build_result' => 0,
         },
         'config' => {
           'rvm' => '1.8.7',
@@ -80,7 +86,13 @@ describe Travis::Api::V0::Worker::Job::Test do
         'repository' => {
           'id' => 1,
           'slug' => 'svenfuchs/minimal',
-          'source_url' => 'git://github.com/svenfuchs/minimal.git'
+          'source_url' => 'git://github.com/svenfuchs/minimal.git',
+          'last_build_id' => 1,
+          'last_build_started_at' => json_format_time(Time.now.utc - 1.minute),
+          'last_build_finished_at' => json_format_time(Time.now.utc),
+          'last_build_number' => 2,
+          'last_build_duration' => 60,
+          'last_build_result' => 0,
         },
         'config' => {
           'rvm' => '1.8.7',
