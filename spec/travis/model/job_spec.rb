@@ -141,6 +141,18 @@ describe Job do
           :env => 'FOO=foo'
         }
       end
+
+      it 'works even if it removes all env vars' do
+        config = { :rvm => '1.8.7',
+                   :env => [job.repository.key.secure.encrypt('BAR=barbaz')]
+                 }
+        job.config = config
+
+        job.obfuscated_config.should == {
+          :rvm => '1.8.7',
+          :env => nil
+        }
+      end
     end
   end
 

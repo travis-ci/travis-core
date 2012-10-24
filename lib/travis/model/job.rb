@@ -84,7 +84,9 @@ class Job < ActiveRecord::Base
 
   def obfuscated_config
     config.dup.tap do |config|
-      config[:env] = process_env(config[:env]) { |env| obfuscate_env(env) }.join(' ') if config[:env]
+      next unless config[:env]
+      obfuscated_env = process_env(config[:env]) { |env| obfuscate_env(env) }
+      config[:env] = obfuscated_env ? obfuscated_env.join(' ') : nil
     end
   end
 
