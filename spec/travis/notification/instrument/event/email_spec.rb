@@ -3,14 +3,14 @@ require 'spec_helper'
 describe Travis::Notification::Instrument::Event::Handler::Email do
   include Travis::Testing::Stubs
 
-  let(:handler)   { Travis::Event::Handler::Email.new('build:finished', build) }
+  let(:subject)   { Travis::Event::Handler::Email }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events[1] }
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
-    handler.stubs(:handle)
-    handler.notify
+    subject.any_instance.stubs(:handle)
+    subject.notify('build:finished', build)
   end
 
   it 'publishes a payload' do

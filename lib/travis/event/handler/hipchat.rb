@@ -11,32 +11,19 @@ module Travis
 
         EVENTS = /build:finished/
 
-        attr_reader :payload
-
-        def initialize(*)
-          super
-          @payload = Api.data(object, :for => 'event', :version => API_VERSION) if handle?
-        end
-
         def handle?
-          config.send_on_finish? && targets.present?
+          !pull_request? && targets.present? && config.send_on_finished_for?(:hipchat)
         end
 
         def handle
-          Task.run(:hipchat, payload, :targets => targets)
+          Task.run(:hipchat, payload, targets: targets)
         end
 
         def targets
-          @targets ||= config.rooms
+          @targets ||= config.notification_values(:hipchat, :rooms)
         end
 
-        private
-
-          def config
-            @config ||= Config::Hipchat.new(object)
-          end
-
-          Notification::Instrument::Event::Handler::Hipchat.attach_to(self)
+        Notification::Instrument::Event::Handler::Hipchat.attach_to(self)
       end
     end
   end

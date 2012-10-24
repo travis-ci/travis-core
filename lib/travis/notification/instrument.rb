@@ -15,7 +15,7 @@ module Travis
         def method_added(method)
           return unless event = method.to_s.match(/^(.*)_completed$/).try(:captures).try(:first)
           define_method("#{event}_received") { send(method) rescue publish } unless method_defined? "#{event}_received"
-          define_method("#{event}_failed") { send(method) rescue publish } unless method_defined? "#{event}_failed"
+          define_method("#{event}_failed")   { send(method) rescue publish } unless method_defined? "#{event}_failed"
         end
 
         def attach_to(const)
@@ -37,7 +37,8 @@ module Travis
           new(message, status, args).send(method)
         end
 
-        async :publish, :queue => :instrumentation
+        # # TODO this should probably be decoupled somewhere else
+        # async :publish, :queue => :instrumentation
       end
 
       attr_reader :config, :target, :result, :exception, :started_at, :finished_at, :message, :status
@@ -57,8 +58,7 @@ module Travis
       private
 
         def publish(event = {})
-          payload = config.merge(:uuid => Travis.uuid, :payload => event)
-          Notification.publish(payload)
+          Notification.publish(config.merge(uuid: Travis.uuid, payload: event))
         end
     end
   end

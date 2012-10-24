@@ -18,7 +18,7 @@ module Travis
 
         def self.wrap_ssl(socket)
           ssl_context = OpenSSL::SSL::SSLContext.new
-          ssl_context.verify_mode = OpenSSL::SSL::VERIFY_NONE # XXX
+          ssl_context.verify_mode = OpenSSL::SSL::VERIFY_NONE # TODO!
           OpenSSL::SSL::SSLSocket.new(socket, ssl_context).tap do |sock|
             sock.sync = true
             sock.connect

@@ -13,8 +13,8 @@ describe Travis::Task::Pusher do
   def run(event, object, options = {})
     version = options[:version] || 'v1'
     type = event =~ /^worker:/ ? 'worker' : event.sub('test:', '').sub(':', '/')
-    data = Travis::Api.data(object, :for => 'pusher', :type => type, :version => version)
-    Travis::Task::Pusher.new(data, :event => event, :version => version).run
+    payload = Travis::Api.data(object, for: 'pusher', type: type, version: version)
+    Travis::Task::Pusher.new(payload, event: event, version: version).run
   end
 
   describe 'run' do
@@ -56,55 +56,55 @@ describe Travis::Task::Pusher do
 
   describe 'channels' do
     it 'returns "common" for the event "job:created"' do
-      data = Travis::Api.data(test, :for => 'pusher', :type => 'job/created', :version => 'v1')
-      handler = Travis::Task::Pusher.new(data, :event => 'job:created')
+      payload = Travis::Api.data(test, for: 'pusher', type: 'job/created', version: 'v1')
+      handler = Travis::Task::Pusher.new(payload, event: 'job:created')
       handler.send(:channels).should include('common')
     end
 
     it 'returns "common" for the event "job:started"' do
-      data = Travis::Api.data(test, :for => 'pusher', :type => 'job/started', :version => 'v1')
-      handler = Travis::Task::Pusher.new(data, :event => 'job:started')
+      payload = Travis::Api.data(test, for: 'pusher', type: 'job/started', version: 'v1')
+      handler = Travis::Task::Pusher.new(payload, event: 'job:started')
       handler.send(:channels).should include('common')
     end
 
     it 'returns "job-1" for the event "job:log"' do
-      data = Travis::Api.data(test, :for => 'pusher', :type => 'job/log', :version => 'v1')
-      handler = Travis::Task::Pusher.new(data, :event => 'job:log')
+      payload = Travis::Api.data(test, for: 'pusher', type: 'job/log', version: 'v1')
+      handler = Travis::Task::Pusher.new(payload, event: 'job:log')
       handler.send(:channels).should include("job-#{test.id}")
     end
 
     it 'returns "common" for the event "job:finished"' do
-      data = Travis::Api.data(test, :for => 'pusher', :type => 'job/finished', :version => 'v1')
-      handler = Travis::Task::Pusher.new(data, :event => 'job:finished')
+      payload = Travis::Api.data(test, for: 'pusher', type: 'job/finished', version: 'v1')
+      handler = Travis::Task::Pusher.new(payload, event: 'job:finished')
       handler.send(:channels).should include('common')
     end
 
     it 'returns "common" for the event "build:started"' do
-      data = Travis::Api.data(build, :for => 'pusher', :type => 'build/started', :version => 'v1')
-      handler = Travis::Task::Pusher.new(data, :event => 'build:started')
+      payload = Travis::Api.data(build, for: 'pusher', type: 'build/started', version: 'v1')
+      handler = Travis::Task::Pusher.new(payload, event: 'build:started')
       handler.send(:channels).should include('common')
     end
 
     it 'returns "common" for the event "build:finished"' do
-      data = Travis::Api.data(build, :for => 'pusher', :type => 'build/finished', :version => 'v1')
-      handler = Travis::Task::Pusher.new(data, :event => 'build:finished')
+      payload = Travis::Api.data(build, for: 'pusher', type: 'build/finished', version: 'v1')
+      handler = Travis::Task::Pusher.new(payload, event: 'build:finished')
       handler.send(:channels).should include('common')
     end
 
     it 'returns "common" for the event "worker:started"' do
-      data = Travis::Api.data(worker, :for => 'pusher', :type => 'worker', :version => 'v1')
-      handler = Travis::Task::Pusher.new(data, :event => 'worker:created')
+      payload = Travis::Api.data(worker, for: 'pusher', type: 'worker', version: 'v1')
+      handler = Travis::Task::Pusher.new(payload, event: 'worker:created')
       handler.send(:channels).should include('common')
     end
   end
 
   it 'does not prefix channels for version v1' do
-    run('job:test:created', test, :version => 'v1')
+    run('job:test:created', test, version: 'v1')
     channel.should have_message('job:created', test)
   end
 
   it 'prefixes channels for other versions' do
-    run('job:test:created', test, :version => 'v2')
+    run('job:test:created', test, version: 'v2')
     channel.should have_message('v2:job:created', test)
   end
 end

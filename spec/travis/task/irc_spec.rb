@@ -4,9 +4,10 @@ describe Travis::Task::Irc do
   include Support::ActiveRecord
   include Travis::Testing::Stubs
 
-  let(:tcp) { stub('tcp', :eof? => true, :close => true) }
-  let(:seq) { sequence('tcp') }
-  let(:channels) { { ['irc.freenode.net', 1234] => ['travis'] } }
+  let(:tcp)      { stub('tcp', eof?: true, close: true) }
+  let(:seq)      { sequence('tcp') }
+  let(:channels) { ['irc.freenode.net:1234#travis'] }
+  let(:payload)  { Travis::Api.data(build, for: 'event', version: 'v0') }
 
   before do
     Travis::Features.start
@@ -21,9 +22,8 @@ describe Travis::Task::Irc do
     messages.each { |message| tcp.expects(:puts).with(message).in_sequence(seq) }
   end
 
-  def run(build, channels = nil)
-    data = Travis::Api.data(build, :for => 'event', :version => 'v2')
-    Travis::Task::Irc.new(data, :channels => channels || self.channels).run
+  def run(channels = nil)
+    Travis::Task::Irc.new(payload, channels: channels || self.channels).run
   end
 
   let(:simple_irc_notfication_messages) do
@@ -39,13 +39,13 @@ describe Travis::Task::Irc do
     ]
   end
 
-  it "one irc notification" do
+  it 'one irc notification' do
     expect_irc 'irc.freenode.net', 1234, 'travis', simple_irc_notfication_messages
-    run(build)
+    run
   end
 
-  it "one irc notification using notice" do
-    build.obfuscated_config[:notifications] = { :irc => { :use_notice => true } }
+  it 'one irc notification using notice' do
+    payload['build']['config']['notifications'] = { irc: { use_notice: true } }
 
     expect_irc 'irc.freenode.net', 1234, 'travis', [
       'NICK travis-ci',
@@ -57,11 +57,11 @@ describe Travis::Task::Irc do
       'PART #travis',
       'QUIT'
     ]
-    run(build)
+    run
   end
 
-  it "one irc notification without joining the channel" do
-    build.obfuscated_config[:notifications] = { :irc => { :skip_join => true } }
+  it 'one irc notification without joining the channel' do
+    payload['build']['config']['notifications'] = { irc: { skip_join: true } }
 
     expect_irc 'irc.freenode.net', 1234, 'travis', [
       'NICK travis-ci',
@@ -71,11 +71,11 @@ describe Travis::Task::Irc do
       'PRIVMSG #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/minimal/builds/1',
       'QUIT'
     ]
-    run(build)
+    run
   end
 
   it 'with a custom message template' do
-    build.obfuscated_config[:notifications] = { :irc => { :template => '%{repository} %{commit}' } }
+    payload['build']['config']['notifications'] = { irc: { template: '%{repository} %{commit}' } }
 
     expect_irc 'irc.freenode.net', 1234, 'travis', [
       'NICK travis-ci',
@@ -85,11 +85,11 @@ describe Travis::Task::Irc do
       'PART #travis',
       'QUIT'
     ]
-    run(build)
+    run
   end
 
   it 'with multiple custom message templates' do
-    build.obfuscated_config[:notifications] = { :irc => { :template => ['%{repository} %{commit}', '%{message}'] } }
+    payload['build']['config']['notifications'] = { irc: { template: ['%{repository} %{commit}', '%{message}'] } }
 
     expect_irc 'irc.freenode.net', 1234, 'travis', [
       'NICK travis-ci',
@@ -100,7 +100,7 @@ describe Travis::Task::Irc do
       'PART #travis',
       'QUIT'
     ]
-    run(build)
+    run
   end
 
   it 'with two irc notifications to different hosts' do
@@ -116,11 +116,11 @@ describe Travis::Task::Irc do
         'QUIT'
       ]
     end
-    run(build, ['irc.freenode.net', 1234] => ['travis'], ['irc.example.com', 6667] => ['example'])
+    run(['irc.freenode.net:1234#travis', 'irc.example.com:6667#example'])
   end
 
   it 'does not disconnect for notifications to channels on the same host' do
-    expect_irc 'irc.freenode.net', 6667, 'travis', [
+    expect_irc 'irc.example.com', 6667, 'travis', [
       'NICK travis-ci',
       'USER travis-ci travis-ci travis-ci :travis-ci',
       'JOIN #travis',
@@ -135,11 +135,11 @@ describe Travis::Task::Irc do
       'PART #example',
       'QUIT'
     ]
-    run(build, ['irc.freenode.net', 6667] => ['travis', 'example'])
+    run(['irc.example.com:6667#travis', 'irc.example.com:6667#example'])
   end
 
-  it "sets a connection password" do
-    build.obfuscated_config[:notifications] = { :irc => { :use_notice => true, :password => 'pass' } }
+  it 'sets a connection password' do
+    payload['build']['config']['notifications'] = { irc: { use_notice: true, password: 'pass' } }
 
     expect_irc 'irc.freenode.net', 1234, 'travis', [
       'PASS pass',
@@ -152,11 +152,11 @@ describe Travis::Task::Irc do
       'PART #travis',
       'QUIT'
     ]
-    run(build)
+    run
   end
 
-  it "message nickserv with a nickserv password" do
-    build.obfuscated_config[:notifications] = { :irc => { :use_notice => true, :password => 'pass', :nickserv_password => 'nickpass' } }
+  it 'message nickserv with a nickserv password' do
+    payload['build']['config']['notifications'] = { irc: { use_notice: true, password: 'pass', nickserv_password: 'nickpass' } }
 
     expect_irc 'irc.freenode.net', 1234, 'travis', [
       'PASS pass',
@@ -170,17 +170,17 @@ describe Travis::Task::Irc do
       'PART #travis',
       'QUIT'
     ]
-    run(build)
+    run
   end
 
-  it "allows overwriting the nickname" do
-    build.obfuscated_config[:notifications] = { :irc => { :use_notice => true, :password => 'pass', :nickserv_password => 'nickpass', :nick => 'niclas' } }
+  it 'allows overwriting the nickname' do
+    payload['build']['config']['notifications'] = { irc: { use_notice: true, nick: 'nick', password: 'pass', nickserv_password: 'nickpass' } }
 
     expect_irc 'irc.freenode.net', 1234, 'travis', [
       'PASS pass',
-      'NICK niclas',
+      'NICK nick',
       'PRIVMSG NickServ :IDENTIFY nickpass',
-      'USER niclas niclas niclas :niclas',
+      'USER nick nick nick :nick',
       'JOIN #travis',
       'NOTICE #travis :[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.',
       'NOTICE #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
@@ -188,11 +188,11 @@ describe Travis::Task::Irc do
       'PART #travis',
       'QUIT'
     ]
-    run(build)
+    run
   end
 
-  it "works with just a list of channels" do
-    build.obfuscated_config[:notifications] = { :irc => [] }
+  it 'works with just a list of channels' do
+    payload['build']['config']['notifications'] = {}
 
     expect_irc 'irc.freenode.net', 1234, 'travis', [
       'NICK travis-ci',
@@ -204,16 +204,32 @@ describe Travis::Task::Irc do
       'PART #travis',
       'QUIT'
     ]
-    run(build)
+    run
   end
 
-  context 'when configured to IRC+SSL server' do
-    it "should wrap socket with ssl (in client private)" do
-      Travis::Task::Irc::Client.expects(:wrap_ssl).with(tcp).returns(tcp)
+  it 'wrap socket with ssl (in client private) when configured to IRC+SSL server' do
+    Travis::Task::Irc::Client.expects(:wrap_ssl).with(tcp).returns(tcp)
+    expect_irc 'irc.freenode.net', 1234, 'travis', simple_irc_notfication_messages
+    run(['ircs://irc.freenode.net:1234#travis'])
+  end
 
-      expect_irc 'irc.freenode.net', 1234, 'travis', simple_irc_notfication_messages
-      run(build, ['irc.freenode.net', 1234, :ssl] => ['travis'])
+  describe 'parsed_channels' do
+    it 'groups irc channels by host, port & ssl flag, so notifications can be sent with one connection' do
+      channels = %w(
+        irc.freenode.net:1234#travis
+        irc.freenode.net#rails
+        irc.freenode.net:1234#travis-2
+        irc.example.com#travis-3
+        ircs://irc.example.com:2345#travis-4
+        irc://irc.freenode.net:1234#travis-5
+      )
+      handler = Travis::Task::Irc.new(payload, channels: channels)
+      handler.send(:parsed_channels).should == {
+        ['irc.freenode.net', 1234, nil]  => ['travis', 'travis-2', 'travis-5'],
+        ['irc.freenode.net', nil,  nil]  => ['rails'],
+        ['irc.example.com',  nil,  nil]  => ['travis-3'],
+        ['irc.example.com',  2345, :ssl] => ['travis-4']
+      }
     end
   end
-
 end

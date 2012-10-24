@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Task::Irc::Client do
-  let(:socket)   { stub(:puts => true, :get => true, :eof? => true) }
+  let(:socket)   { stub(puts: true, get: true, eof?: true) }
   let(:server)   { 'irc.freenode.net' }
   let(:nick)     { 'travis_bot' }
   let(:channel)  { 'travis' }
@@ -19,7 +19,7 @@ describe Travis::Task::Irc::Client do
     describe 'with port specified' do
       it 'should open a socket on the server for the given port' do
         TCPSocket.expects(:open).with(server, 1234).returns socket
-        Travis::Task::Irc::Client.new(server, nick, :port => 1234)
+        Travis::Task::Irc::Client.new(server, nick, port: 1234)
       end
     end
 
@@ -45,7 +45,7 @@ describe Travis::Task::Irc::Client do
         it 'by sending PASS then NICK then USER' do
           @socket.expects(:puts).with("PASS #{password}")
           expect_standard_sequence
-          Travis::Task::Irc::Client.new(server, nick, :password => password)
+          Travis::Task::Irc::Client.new(server, nick, password: password)
         end
       end
 
@@ -53,7 +53,7 @@ describe Travis::Task::Irc::Client do
         it "should identify with nickserv" do
           @socket.expects(:puts).with("PRIVMSG NickServ :IDENTIFY pass")
           expect_standard_sequence
-          Travis::Task::Irc::Client.new(server, nick, :nickserv_password => 'pass')
+          Travis::Task::Irc::Client.new(server, nick, nickserv_password: 'pass')
         end
       end
 
@@ -92,7 +92,7 @@ describe Travis::Task::Irc::Client do
   end
 
   describe 'with connection established' do
-    let(:socket) { stub(:puts => true) }
+    let(:socket) { stub(puts: true) }
     let(:channel_key) { 'mykey' }
 
     before(:each) do

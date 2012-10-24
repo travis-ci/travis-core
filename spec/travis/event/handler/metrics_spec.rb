@@ -3,18 +3,21 @@ require 'spec_helper'
 describe Travis::Event::Handler::Metrics do
   include Travis::Testing::Stubs
 
-  before do
-    handler.stubs(:handle => true, :handle? => true)
-    Travis::Event.stubs(:subscribers).returns [:metrics]
-    Travis::Instrumentation.stubs(:meter)
-  end
+  let(:subject) { Travis::Event::Handler::Metrics }
+  let(:payload) { Travis::Api.data(build, for: 'event', version: 'v0') }
 
   describe 'subscription' do
-    let(:handler) { Travis::Event::Handler::Metrics.any_instance }
+    let(:handler) { subject.any_instance }
+
+    before :each do
+      Travis::Event.stubs(:subscribers).returns [:metrics]
+      handler.stubs(:handle => true, :handle? => true)
+      Travis::Api.stubs(:data).returns(stub('data'))
+    end
 
     it 'build:started does not notify' do
       handler.expects(:notify).never
-      Travis::Event.dispatch('build:started', build)
+      Travis::Event.dispatch('build:started', test)
     end
 
     it 'job:test:started notifies' do
@@ -29,17 +32,17 @@ describe Travis::Event::Handler::Metrics do
   end
 
   describe 'metrics' do
-    let(:handler)     {  }
     let(:created_at)  { Time.now.utc - 180 }
     let(:started_at)  { Time.now.utc - 120 }
     let(:finished_at) { Time.now.utc - 60 }
 
     before :each do
       test.stubs(:created_at => created_at, :started_at => started_at, :finished_at => finished_at)
+      Travis::Instrumentation.stubs(:meter)
     end
 
     def notify(event, object)
-      Travis::Event::Handler::Metrics.new(event, object).notify
+      subject.notify(event, object)
     end
 
     describe 'job:test:started' do

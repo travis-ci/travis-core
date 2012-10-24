@@ -3,15 +3,15 @@ require 'spec_helper'
 describe Travis::Notification::Instrument::Event::Handler::Hipchat do
   include Travis::Testing::Stubs
 
-  let(:build)     { stub_build(:config => { :notifications => { :hipchat => 'hipchat_room' } }) }
-  let(:handler)   { Travis::Event::Handler::Hipchat.new('build:finished', build) }
+  let(:subject)   { Travis::Event::Handler::Hipchat }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
+  let(:build)     { stub_build(:config => { :notifications => { :hipchat => 'hipchat_room' } }) }
   let(:event)     { publisher.events[1] }
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
-    handler.stubs(:handle)
-    handler.notify
+    subject.any_instance.stubs(:handle)
+    subject.notify('build:finished', build)
   end
 
   it 'publishes a payload' do

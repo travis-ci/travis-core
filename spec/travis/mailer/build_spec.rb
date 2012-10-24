@@ -4,7 +4,7 @@ require 'spec_helper'
 describe Travis::Mailer::Build do
   include Travis::Testing::Stubs
 
-  let(:data)       { Travis::Api.data(build, :for => 'event', :version => 'v2') }
+  let(:data)       { Travis::Api.data(build, :for => 'event', :version => 'v0') }
   let(:recipients) { ['owner@example.com', 'committer@example.com', 'author@example.com'] }
   let(:email)      { Travis::Mailer::Build.finished_email(data, recipients) }
 

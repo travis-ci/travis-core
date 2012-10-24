@@ -1,22 +1,23 @@
 require 'faraday'
 require 'core_ext/hash/compact'
+require 'core_ext/hash/deep_symbolize_keys'
 require 'active_support/core_ext/string'
 
 module Travis
   class Task
-    autoload :Archive,            'travis/task/archive'
-    autoload :Campfire,           'travis/task/campfire'
-    autoload :Email,              'travis/task/email'
-    autoload :Flowdock,           'travis/task/flowdock'
-    autoload :Github,             'travis/task/github'
-    autoload :GithubCommitStatus, 'travis/task/github_commit_status'
-    autoload :Hipchat,            'travis/task/hipchat'
-    autoload :Irc,                'travis/task/irc'
-    autoload :Pusher,             'travis/task/pusher'
-    autoload :Webhook,            'travis/task/webhook'
+    # autoload :Archive,      'travis/task/archive'
+    # autoload :Github,       'travis/task/github'
+    autoload :Campfire,     'travis/task/campfire'
+    autoload :Email,        'travis/task/email'
+    autoload :Flowdock,     'travis/task/flowdock'
+    autoload :GithubStatus, 'travis/task/github_status'
+    autoload :Hipchat,      'travis/task/hipchat'
+    autoload :Irc,          'travis/task/irc'
+    autoload :Pusher,       'travis/task/pusher'
+    autoload :Webhook,      'travis/task/webhook'
 
     module Shared
-      autoload :Template,         'travis/task/shared/template'
+      autoload :Template,   'travis/task/shared/template'
     end
 
     include Logging
@@ -39,11 +40,11 @@ module Travis
       rescues :perform, :from => Exception
     end
 
-    attr_reader :data, :options
+    attr_reader :payload, :params
 
-    def initialize(data, options = {})
-      @data = data
-      @options = options.symbolize_keys
+    def initialize(payload, params)
+      @payload = payload.deep_symbolize_keys
+      @params  = params.deep_symbolize_keys
     end
 
     def run
@@ -54,6 +55,30 @@ module Travis
     new_relic  :run, :category => :task
 
     private
+
+      def repository
+        @repository ||= payload[:repository]
+      end
+
+      def job
+        @job ||= payload[:job]
+      end
+
+      def build
+        @build ||= payload[:build]
+      end
+
+      def request
+        @request ||= payload[:request]
+      end
+
+      def commit
+        @commit ||= payload[:commit]
+      end
+
+      def pull_request?
+        build[:pull_request]
+      end
 
       def http
         @http ||= Faraday.new(http_options) do |f|

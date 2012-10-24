@@ -6,7 +6,7 @@ describe Travis::Task::Shared::Template do
   VAR_NAMES = %w(repository build_number branch commit author message compare_url build_url result)
   TEMPLATE  = VAR_NAMES.map { |name| "#{name}=%{#{name}}" }.join(' ')
 
-  let(:data)     { Travis::Api.data(build, :for => 'event', :version => 'v2') }
+  let(:data)     { Travis::Api.data(build, for: 'event', version: 'v0') }
   let(:template) { Travis::Task::Shared::Template.new(TEMPLATE.dup, data) }
 
   describe 'interpolation' do

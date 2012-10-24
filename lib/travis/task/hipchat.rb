@@ -15,12 +15,12 @@ module Travis
       ]
 
       def targets
-        options[:targets]
+        params[:targets]
       end
 
       def message
-        @messages ||= templates.map do |template|
-          Shared::Template.new(template, data).interpolate
+        @messages ||= template.map do |line|
+          Shared::Template.new(line, payload).interpolate
         end
       end
 
@@ -35,30 +35,32 @@ module Travis
           lines.each { |line| send_line(url, room_id, line) }
         end
 
-        def templates
-          templates = config[:template] rescue nil
-          Array(templates || DEFAULT_TEMPLATE)
+        def template
+          Array(config[:template] || DEFAULT_TEMPLATE)
         end
 
         def send_line(url, room_id, line)
-          http.post(url) do |req|
-            req.body = {
-              :room_id => room_id,
-              :from => 'Travis CI',
-              :message => line,
-              :message_format => 'text',
-              :color => (build_passed? ? 'green' : 'red')
-            }
-          end
+          body = {
+            room_id: room_id,
+            from: 'Travis CI',
+            message: line,
+            message_format: 'text',
+            color: color
+          }
+          http.post(url, body)
         end
 
         def parse(target)
-          target =~ /(\w+)@([\w ]+)/
+          target =~ /^([\w]+)@([\w ]+)$/
           ["https://api.hipchat.com/v1/rooms/message?format=json&auth_token=#{$1}", $2]
         end
 
-        def build_passed?
-          data['build']['result'] == 0
+        def color
+          build[:result] == 0 ? 'green' : 'red'
+        end
+
+        def config
+          build[:config][:notifications][:hipchat] rescue {}
         end
 
         Notification::Instrument::Task::Hipchat.attach_to(self)

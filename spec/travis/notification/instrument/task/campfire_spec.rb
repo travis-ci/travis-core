@@ -4,8 +4,8 @@ describe Travis::Notification::Instrument::Task::Campfire do
   include Support::ActiveRecord
   include Travis::Testing::Stubs
 
-  let(:data)      { Travis::Api.data(build, :for => 'event', :version => 'v2') }
-  let(:task)      { Travis::Task::Campfire.new(data, :targets => %w(account:token@room)) }
+  let(:payload)   { Travis::Api.data(build, :for => 'event', :version => 'v0') }
+  let(:task)      { Travis::Task::Campfire.new(payload, :targets => %w(account:token@room)) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events[1] }
 
@@ -23,7 +23,7 @@ describe Travis::Notification::Instrument::Task::Campfire do
       :message => "travis.task.campfire.run:completed",
       :uuid => Travis.uuid
     }
-    event[:payload].except(:data).should == {
+    event[:payload].except(:payload).should == {
       :msg => 'Travis::Task::Campfire#run for #<Build id=1>',
       :repository => 'svenfuchs/minimal',
       :object_id => 1,
@@ -35,6 +35,6 @@ describe Travis::Notification::Instrument::Task::Campfire do
         "[travis-ci] Build details: http://travis-ci.org/svenfuchs/minimal/builds/1"
       ]
     }
-    event[:payload][:data].should_not be_nil
+    event[:payload][:payload].should_not be_nil
   end
 end

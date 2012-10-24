@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Travis::Notification::Instrument::Task::Irc do
   include Travis::Testing::Stubs
 
-  let(:data)      { Travis::Api.data(build, :for => 'event', :version => 'v2') }
-  let(:task)      { Travis::Task::Irc.new(data, :channels => { ['irc.freenode.net', 1234] => ['travis'] }) }
+  let(:payload)   { Travis::Api.data(build, :for => 'event', :version => 'v0') }
+  let(:task)      { Travis::Task::Irc.new(payload, :channels => ['irc.freenode.net:1234#travis']) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events[1] }
 
@@ -22,21 +22,21 @@ describe Travis::Notification::Instrument::Task::Irc do
   it 'publishes a payload' do
     event.except(:payload).should == {
       :message => "travis.task.irc.run:completed",
-            :uuid => Travis.uuid
+      :uuid => Travis.uuid
     }
-    event[:payload].except(:data).should == {
+    event[:payload].except(:payload).should == {
       :msg => 'Travis::Task::Irc#run for #<Build id=1>',
       :repository => 'svenfuchs/minimal',
       :object_id => 1,
       :object_type => 'Build',
-      :channels => { ['irc.freenode.net', 1234] => ['travis'] },
+      :channels => ['irc.freenode.net:1234#travis'],
       :messages => [
         'svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.',
         'Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
         'Build details : http://travis-ci.org/svenfuchs/minimal/builds/1'
       ]
     }
-    event[:payload][:data].should_not be_nil
+    event[:payload][:payload].should_not be_nil
   end
 end
 

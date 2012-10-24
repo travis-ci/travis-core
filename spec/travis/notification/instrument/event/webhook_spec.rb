@@ -3,15 +3,15 @@ require 'spec_helper'
 describe Travis::Notification::Instrument::Event::Handler::Webhook do
   include Travis::Testing::Stubs
 
-  let(:build)     { stub_build(:config => { :notifications => { :webhooks => 'http://example.com' } }) }
-  let(:handler)   { Travis::Event::Handler::Webhook.new('build:finished', build) }
+  let(:subject)   { Travis::Event::Handler::Webhook }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
+  let(:build)     { stub_build(:config => { :notifications => { :webhooks => 'http://example.com' } }) }
   let(:event)     { publisher.events[1] }
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
-    handler.stubs(:handle)
-    handler.notify
+    subject.any_instance.stubs(:handle)
+    subject.notify('build:finished', build)
   end
 
   it 'publishes a payload' do

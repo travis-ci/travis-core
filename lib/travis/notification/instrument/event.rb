@@ -3,9 +3,6 @@ module Travis
     class Instrument
       module Event
         class Handler < Instrument
-          class Archive < Handler
-          end
-
           class Campfire < Handler
             def notify_completed
               publish(:targets => handler.targets)
@@ -24,15 +21,9 @@ module Travis
             end
           end
 
-          class Github < Handler
+          class GithubStatus < Handler
             def notify_completed
-              publish(:url => handler.url)
-            end
-          end
-
-          class GithubCommitStatus < Handler
-            def notify_completed
-              publish(:url => handler.params[:url])
+              publish
             end
           end
 
@@ -60,15 +51,6 @@ module Travis
             end
           end
 
-          class Worker < Handler
-            def notify_completed
-              publish(
-                :repository => object.repository.slug,
-                :request_id => object.request_id
-              )
-            end
-          end
-
           attr_reader :handler, :object, :args, :result
 
           def initialize(message, status, payload)
@@ -89,12 +71,7 @@ module Travis
               :event => handler.event
             )
 
-            if handler.respond_to?(:payloads)
-              event[:payloads] = handler.payloads
-            elsif handler.respond_to?(:payload)
-              event[:payload] = handler.payload
-            end
-
+            event[:payload]    = handler.payload
             event[:request_id] = object.request_id if object.respond_to?(:request_id)
             event[:repository] = object.repository.slug if object.respond_to?(:repository)
             super(event)

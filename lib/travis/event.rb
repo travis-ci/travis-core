@@ -19,13 +19,14 @@ module Travis
     autoload :Subscription, 'travis/event/subscription'
     autoload :SecureConfig, 'travis/event/secure_config'
 
-    SUBSCRIBERS = %w(metrics worker)
+    SUBSCRIBERS = %w(metrics)
 
     class << self
       include Logging
 
       def subscriptions
         @subscriptions ||= subscribers.map do |name|
+          name = 'github_status' if name == 'github_commit_status' # TODO compat, remove once configs have been updated
           subscription = Subscription.new(name)
           subscription if subscription.subscriber
         end.compact

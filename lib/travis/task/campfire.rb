@@ -15,37 +15,33 @@ module Travis
       ]
 
       def targets
-        options[:targets]
+        params[:targets]
       end
 
       def message
-        @messages ||= templates.map do |template|
-          Shared::Template.new(template, data).interpolate
+        @message ||= template.map do |line|
+          Shared::Template.new(line, payload).interpolate
         end
       end
 
       private
 
         def process
-          targets.each { |target| send_lines(target, message) }
+          targets.each { |target| send_message(target, message) }
         end
 
-        def send_lines(target, lines)
+        def send_message(target, lines)
           url, token = parse(target)
           http.basic_auth(token, 'X')
           lines.each { |line| send_line(url, line) }
         end
 
-        def templates
-          templates = config[:template] rescue nil
-          Array(templates || DEFAULT_TEMPLATE)
+        def send_line(url, line)
+          http.post(url, { message: { body: line } }, 'Content-Type' => 'application/json')
         end
 
-        def send_line(url, line)
-          http.post(url) do |req|
-            req.body = MultiJson.encode({ :message => { :body => line } })
-            req.headers['Content-Type'] = 'application/json'
-          end
+        def template
+          Array(config[:template] || DEFAULT_TEMPLATE)
         end
 
         def parse(target)
@@ -54,8 +50,9 @@ module Travis
         end
 
         def config
-          data['build']['config']['notifications'][:campfire] rescue {}
+          build[:config][:notifications][:campfire] rescue {}
         end
+
         Notification::Instrument::Task::Campfire.attach_to(self)
     end
   end

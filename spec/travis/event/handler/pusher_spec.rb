@@ -47,18 +47,18 @@ describe Travis::Event::Handler::Pusher do
     end
   end
 
-  describe 'instrumentation' do
-    it 'instruments with "travis.event.handler.pusher.notify"' do
-      ActiveSupport::Notifications.stubs(:publish)
-      ActiveSupport::Notifications.expects(:publish).with do |event, data|
-        event =~ /travis.event.handler.pusher.notify/ && data[:target].is_a?(Travis::Event::Handler::Pusher)
-      end
-      Travis::Event.dispatch('build:finished', build)
-    end
+  # describe 'instrumentation' do
+  #   it 'instruments with "travis.event.handler.pusher.notify"' do
+  #     ActiveSupport::Notifications.stubs(:publish)
+  #     ActiveSupport::Notifications.expects(:publish).with do |event, data|
+  #       event =~ /travis.event.handler.pusher.notify/ && data[:target].is_a?(Travis::Event::Handler::Pusher)
+  #     end
+  #     Travis::Event.dispatch('build:finished', build)
+  #   end
 
-    it 'meters on "travis.event.handler.pusher.notify:completed"' do
-      Metriks.expects(:timer).with('v1.travis.event.handler.pusher.notify:completed').returns(stub('timer', :update => true))
-      Travis::Event.dispatch('build:finished', build)
-    end
-  end
+  #   it 'meters on "travis.event.handler.pusher.notify:completed"' do
+  #     Metriks.expects(:timer).with('v1.travis.event.handler.pusher.notify:completed').returns(stub('timer', :update => true))
+  #     Travis::Event.dispatch('build:finished', build)
+  #   end
+  # end
 end

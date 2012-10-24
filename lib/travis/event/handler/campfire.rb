@@ -11,32 +11,19 @@ module Travis
 
         EVENTS = /build:finished/
 
-        attr_reader :payload
-
-        def initialize(*)
-          super
-          @payload = Api.data(object, :for => 'event', :version => API_VERSION) if handle?
-        end
-
         def handle?
-          config.send_on_finish? && targets.present?
+          !pull_request? && targets.present? && config.send_on_finished_for?(:campfire)
         end
 
         def handle
-          Task.run(:campfire, payload, :targets => targets)
+          Task.run(:campfire, payload, targets: targets)
         end
 
         def targets
-          @targets ||= config.rooms
+          @targets ||= config.notification_values(:campfire, :rooms)
         end
 
-        private
-
-          def config
-            @config ||= Config::Campfire.new(object)
-          end
-
-          Notification::Instrument::Event::Handler::Campfire.attach_to(self)
+        Notification::Instrument::Event::Handler::Campfire.attach_to(self)
       end
     end
   end

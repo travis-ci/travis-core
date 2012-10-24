@@ -11,7 +11,7 @@ module Travis
           count    = package == :platinum ? 1 : 2
           sponsors = Travis.config.sponsors[package] || []
           sponsors.shuffle[0, count].map do |sponsor|
-            Hashr.new(sponsor.merge(:package => package))
+            Hashr.new(sponsor.merge(package: package))
           end
         end
 
@@ -51,9 +51,9 @@ module Travis
 
           time_pieces = []
 
-          time_pieces << I18n.t(:'datetime.distance_in_words.hours_exact',   :count => hours)   if hours > 0
-          time_pieces << I18n.t(:'datetime.distance_in_words.minutes_exact', :count => minutes) if hours > 0 || minutes > 0
-          time_pieces << I18n.t(:'datetime.distance_in_words.seconds_exact', :count => seconds)
+          time_pieces << I18n.t(:'datetime.distance_in_words.hours_exact',   count: hours)   if hours > 0
+          time_pieces << I18n.t(:'datetime.distance_in_words.minutes_exact', count: minutes) if hours > 0 || minutes > 0
+          time_pieces << I18n.t(:'datetime.distance_in_words.seconds_exact', count: seconds)
 
           time_pieces.to_sentence
         end
@@ -76,7 +76,7 @@ module Travis
         def notes_for(jobs, format)
           tags_for(jobs).map do |tag|
             rule = rule_for(tag)
-            rule.symbolize_keys.merge(:jobs => numbers_for(jobs, tag)) if rule
+            rule.symbolize_keys.merge(jobs: numbers_for(jobs, tag)) if rule
           end.compact
         end
 

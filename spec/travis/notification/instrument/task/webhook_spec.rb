@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Travis::Notification::Instrument::Task::Webhook do
   include Travis::Testing::Stubs
 
-  let(:data)      { Travis::Api.data(build, :for => 'webhook', :type => 'build/finished', :version => 'v1') }
-  let(:task)      { Travis::Task::Webhook.new(data, :targets => 'http://example.com') }
+  let(:payload)   { Travis::Api.data(build, :for => 'webhook', :type => 'build/finished', :version => 'v1') }
+  let(:task)      { Travis::Task::Webhook.new(payload, :targets => 'http://example.com') }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events[1] }
 
@@ -17,16 +17,16 @@ describe Travis::Notification::Instrument::Task::Webhook do
   it 'publishes a payload' do
     event.except(:payload).should == {
       :message => "travis.task.webhook.run:completed",
-            :uuid => Travis.uuid
+      :uuid => Travis.uuid
     }
-    event[:payload].except(:data).should == {
+    event[:payload].except(:payload).should == {
       :msg => 'Travis::Task::Webhook#run for #<Build id=1>',
       :repository => 'svenfuchs/minimal',
       :object_id => 1,
       :object_type => 'Build',
       :targets => 'http://example.com'
     }
-    event[:payload][:data].should_not be_nil
+    event[:payload][:payload].should_not be_nil
   end
 end
 
