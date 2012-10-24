@@ -2,10 +2,10 @@ source :rubygems
 
 gemspec
 
-gem 'travis-support',     :git => 'git://github.com/travis-ci/travis-support', :branch => 'sf-async-strategies'
-gem 'gh',                 :git => 'git://github.com/rkh/gh'
+gem 'travis-support',     github: 'travis-ci/travis-support', :branch => 'sf-async-strategies'
+gem 'gh',                 github: 'rkh/gh'
 gem 'newrelic_rpm',       '~> 3.4.2'
-gem 'hubble',             :git => 'git://github.com/roidrage/hubble'
+gem 'hubble',             github: 'roidrage/hubble'
 gem 'addressable'
 
 platform :mri do
@@ -21,7 +21,7 @@ platform :jruby do
 end
 
 group :development, :test do
-  gem 'micro_migrations', :git => 'git://gist.github.com/2087829.git'
+  gem 'micro_migrations', git: 'git://gist.github.com/2087829.git'
   gem 'data_migrations',  '~> 0.0.1'
 end
 
