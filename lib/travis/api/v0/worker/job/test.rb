@@ -24,6 +24,7 @@ module Travis
                 'commit' => commit.commit,
                 'branch' => commit.branch,
                 'ref' => commit.pull_request? ? commit.ref : nil,
+                'state' => job.state.to_s
               }
               data['pull_request'] = commit.pull_request? ? commit.pull_request_number : false
               data
