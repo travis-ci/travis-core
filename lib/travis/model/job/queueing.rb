@@ -4,7 +4,7 @@ class Job
       extend Travis::Instrumentation, Travis::Exceptions::Handling
 
       def run
-        Job.queueable.each { |job| Queueing.new(job).run } unless disabled?
+        Job.queueable.map { |job| Queueing.new(job).run } unless disabled?
       end
       instrument :run
       rescues :run, :from => Exception unless Travis.env == 'test' # move to travis-support?
