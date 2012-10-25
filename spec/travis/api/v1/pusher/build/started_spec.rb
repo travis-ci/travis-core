@@ -15,6 +15,7 @@ describe Travis::Api::V1::Pusher::Build::Started do
       'started_at' => json_format_time(Time.now.utc - 1.minute),
       'commit' => '62aae5f70ceee39123ef',
       'branch' => 'master',
+      'job_ids' => [1, 2],
       'message' => 'the commit message',
       'author_name' => 'Sven Fuchs',
       'author_email' => 'svenfuchs@artweb-design.de',
