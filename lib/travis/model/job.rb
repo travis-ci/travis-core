@@ -10,13 +10,19 @@ require 'active_record'
 class Job < ActiveRecord::Base
   autoload :Compat,    'travis/model/job/compat'
   autoload :Cleanup,   'travis/model/job/cleanup'
-  autoload :Limit,     'travis/model/job/limit'
   autoload :Queue,     'travis/model/job/queue'
-  autoload :Queueing,  'travis/model/job/queueing'
   autoload :States,    'travis/model/job/states'
   autoload :Sponsors,  'travis/model/job/sponsors'
   autoload :Tagging,   'travis/model/job/tagging'
   autoload :Test,      'travis/model/job/test'
+
+  class Queueing
+    class All
+      def run
+        Service::Jobs::Enqueue.run # bc, remove once apps use the service directly
+      end
+    end
+  end
 
   class << self
     # what we return from the json api
