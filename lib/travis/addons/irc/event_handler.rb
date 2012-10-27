@@ -1,0 +1,29 @@
+module Travis
+  module Addons
+    module Irc
+
+      # Publishes a build notification to IRC channels as defined in the
+      # configuration (`.travis.yml`).
+      class EventHandler < Event::Handler
+        API_VERSION = 'v2'
+
+        EVENTS = 'build:finished'
+
+        def handle?
+          !pull_request? && channels.present? && config.send_on_finished_for?(:irc)
+        end
+
+        def handle
+          Travis::Task.run(:irc, payload, channels: channels)
+        end
+
+        def channels
+          @channels ||= config.notification_values(:irc, :channels)
+        end
+
+        Instruments::EventHandler.attach_to(self)
+      end
+    end
+  end
+end
+

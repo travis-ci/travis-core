@@ -5,21 +5,6 @@ require 'active_support/core_ext/string'
 
 module Travis
   class Task
-    # autoload :Archive,      'travis/task/archive'
-    # autoload :Github,       'travis/task/github'
-    autoload :Campfire,     'travis/task/campfire'
-    autoload :Email,        'travis/task/email'
-    autoload :Flowdock,     'travis/task/flowdock'
-    autoload :GithubStatus, 'travis/task/github_status'
-    autoload :Hipchat,      'travis/task/hipchat'
-    autoload :Irc,          'travis/task/irc'
-    autoload :Pusher,       'travis/task/pusher'
-    autoload :Webhook,      'travis/task/webhook'
-
-    module Shared
-      autoload :Template,   'travis/task/shared/template'
-    end
-
     include Logging
     extend  Instrumentation, NewRelic, Exceptions::Handling, Async
 

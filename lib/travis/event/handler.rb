@@ -4,20 +4,8 @@ require 'core_ext/module/async'
 module Travis
   module Event
     class Handler
-      autoload :Campfire,     'travis/event/handler/campfire'
-      autoload :Email,        'travis/event/handler/email'
-      autoload :Flowdock,     'travis/event/handler/flowdock'
-      autoload :GithubStatus, 'travis/event/handler/github_status'
-      autoload :Hipchat,      'travis/event/handler/hipchat'
-      autoload :Irc,          'travis/event/handler/irc'
-      autoload :Metrics,      'travis/event/handler/metrics'
-      autoload :Pusher,       'travis/event/handler/pusher'
-      autoload :Trail,        'travis/event/handler/trail'
-      autoload :Webhook,      'travis/event/handler/webhook'
-
-      # autoload :Archive,            'travis/event/handler/archive'
-      # autoload :Github,             'travis/event/handler/github'
-      # autoload :Worker,             'travis/event/handler/worker'
+      autoload :Metrics, 'travis/event/handler/metrics'
+      autoload :Trail,   'travis/event/handler/trail'
 
       include Logging
       extend  Instrumentation

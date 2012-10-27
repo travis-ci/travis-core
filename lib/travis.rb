@@ -1,5 +1,6 @@
 require 'travis/support'
 require 'gh'
+require 'pusher'
 
 autoload :Account,      'travis/model/account'
 autoload :Artifact,     'travis/model/artifact'
@@ -41,6 +42,7 @@ autoload :Worker,       'travis/model/worker'
 # (needed in travis-hub in order to connect to the database) and Travis::Renderer
 # (our inferior layer on top of Rabl).
 module Travis
+  autoload :Addons,       'travis/addons'
   autoload :Api,          'travis/api'
   autoload :Config,       'travis/config'
   autoload :Event,        'travis/event'
