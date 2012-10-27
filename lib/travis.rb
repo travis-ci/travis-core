@@ -44,7 +44,6 @@ module Travis
   autoload :Config,       'travis/config'
   autoload :Event,        'travis/event'
   autoload :Features,     'travis/features'
-  autoload :Github,       'travis/github'
   autoload :Mailer,       'travis/mailer'
   autoload :Model,        'travis/model'
   autoload :Notification, 'travis/notification'
@@ -76,5 +75,5 @@ module Travis
     end
   end
 
-  Github.setup
+  Services::Github.setup
 end

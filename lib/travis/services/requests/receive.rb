@@ -2,7 +2,16 @@ module Travis
   module Services
     module Requests
       class Receive < Base
+        autoload :PullRequest, 'travis/services/requests/receive/pull_request'
+        autoload :Push,        'travis/services/requests/receive/push'
+
         extend Travis::Instrumentation
+
+        class << self
+          def payload_for(type, data)
+            const_get(type.camelize).new(data)
+          end
+        end
 
         attr_reader :request
 
@@ -33,7 +42,7 @@ module Travis
           end
 
           def payload
-            @payload ||= Travis::Github::Payload.for(event_type, params[:payload])
+            @payload ||= self.class.payload_for(event_type, params[:payload])
           end
 
           def event_type

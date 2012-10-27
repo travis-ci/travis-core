@@ -1,11 +1,10 @@
 require 'spec_helper'
 
-describe Travis::Github::Payload::PullRequest do
-  let(:payload) { Travis::Github::Payload.for('pull_request', GITHUB_PAYLOADS['pull-request']) }
+describe Travis::Services::Requests::Receive::PullRequest do
+  let(:payload) { Travis::Services::Requests::Receive.payload_for('pull_request', GITHUB_PAYLOADS['pull-request']) }
 
   describe 'accept' do
     before do
-      Travis::Features.start
       Travis::Features.enable_for_all(:pull_requests)
     end
 
@@ -119,3 +118,4 @@ describe Travis::Github::Payload::PullRequest do
     end
   end
 end
+
