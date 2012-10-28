@@ -19,7 +19,7 @@
           <h1 style="margin-top: 0;">
             <table class="result" background="https://<%= Travis.config.assets.host %>/<%= Travis.config.assets.version %>/images/mailer/<%= header_result(@build) %>-header-bg.png" style="font-size: 28px; font-weight: bold; color: white; width: 720px; height: 52px; margin-bottom: 18px; text-align: center; vertical-align: middle; border-collapse: collapse; background-repeat: no-repeat;">
               <tr style="text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);">
-                <td style="line-height: 36px; padding: 8px 0;"><%= @build.human_result_message %></td>
+                <td style="line-height: 36px; padding: 8px 0;"><%= human_result_message(@build) %></td>
               </tr>
             </table>
           </h1>

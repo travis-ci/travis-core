@@ -19,7 +19,7 @@
           <h1>
             <table class="result" background="https://<%= Travis.config.assets.host %>/<%= Travis.config.assets.version %>/images/mailer/<%= header_result(@build) %>-header-bg.png">
               <tr>
-                <td><%= @build.human_result_message %></td>
+                <td><%= human_result_message(@build) %></td>
               </tr>
             </table>
           </h1>

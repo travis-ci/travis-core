@@ -60,6 +60,7 @@ describe Travis::Mailer::Build do
 
     it 'contains the expected html part' do
       email.html_part.body.should include_lines(%(
+        The build passed.
         https://github.com/svenfuchs/minimal/compare/master...develop
         http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}
         62aae5f (master)
