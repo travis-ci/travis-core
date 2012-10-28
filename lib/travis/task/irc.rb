@@ -1,3 +1,5 @@
+require 'multi_json'
+
 module Travis
   class Task
     # Publishes a build notification to IRC channels as defined in the
@@ -12,7 +14,11 @@ module Travis
       ]
 
       def channels
-        options[:channels]
+        @channels ||= begin
+          channels = options[:channels]
+          channels = MultiJson.decode(channels) if channels.is_a?(String)
+          channels
+        end
       end
 
       def messages
