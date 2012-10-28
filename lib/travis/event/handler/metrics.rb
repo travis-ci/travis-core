@@ -12,7 +12,8 @@ module Travis
         end
 
         def handle?
-          true
+          # true
+          false
         end
 
         def handle

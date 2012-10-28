@@ -32,7 +32,7 @@ module Travis
       def subscriber
         self.class.handlers[name.to_sym] || Handler.const_get(name.to_s.camelize, false)
       rescue NameError => e
-        puts "Could not find event handler #{name}, ignoring."
+        puts "Could not find event handler #{name.inspect}, ignoring."
       end
 
       def patterns
