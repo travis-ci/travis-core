@@ -45,8 +45,10 @@ module Travis
           end
 
           def send_message(target)
-            url = team_inbox_url_for(target)
-            http.post(url, flowdock_payload, 'Content-Type' => 'application/json')
+            http.post(team_inbox_url_for(target)) do |r|
+              r.body = flowdock_payload
+              r.headers = { 'Content-Type' => 'application/json' }
+            end
           end
 
           def build_url

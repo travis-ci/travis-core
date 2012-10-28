@@ -37,14 +37,9 @@ module Travis
           end
 
           def send_line(url, room_id, line)
-            body = {
-              room_id: room_id,
-              from: 'Travis CI',
-              message: line,
-              message_format: 'text',
-              color: color
-            }
-            http.post(url, body)
+            http.post(url) do |r|
+              r.body = { room_id: room_id, message: line, color: color, from: 'Travis CI', message_format: 'text' }
+            end
           end
 
           def parse(target)
