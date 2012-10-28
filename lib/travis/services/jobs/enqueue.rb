@@ -44,8 +44,8 @@ module Travis
 
           def enqueue(jobs)
             jobs.each do |job|
-              job.enqueue
               publish(job)
+              job.enqueue
             end
           end
 
