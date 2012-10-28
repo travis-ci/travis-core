@@ -1,18 +1,15 @@
 require 'spec_helper'
 
-describe Travis::Github::Admin do
+describe Travis::Services::Github::FindAdmin do
   include Travis::Testing::Stubs
 
+  let(:subject) { Travis::Services::Github::FindAdmin }
+
   describe 'find' do
+    let(:result) { subject.new(repository).run }
+
     before :each do
       User.stubs(:with_permissions).with(:repository_id => repository.id, :admin => true).returns [user]
-    end
-
-    subject { Travis::Github::Admin.new(repository).find }
-
-    def ignore_exception(&block)
-      block.call
-    rescue Travis::AdminMissing
     end
 
     describe 'given a user has admin access to a repository (as seen by github)' do
@@ -21,7 +18,7 @@ describe Travis::Github::Admin do
       end
 
       it 'returns that user' do
-        subject.should == user
+        result.should == user
       end
     end
 
@@ -32,12 +29,12 @@ describe Travis::Github::Admin do
       end
 
       it 'raises an exception' do
-        lambda { subject }.should raise_error(Travis::AdminMissing, 'no admin available for svenfuchs/minimal')
+        lambda { result }.should raise_error(Travis::AdminMissing, 'no admin available for svenfuchs/minimal')
       end
 
       it 'revokes admin permissions for that user on our side' do
         user.expects(:update_attributes!).with(:permissions => { 'admin' => false })
-        ignore_exception { subject }
+        ignore_exception { result }
       end
     end
 
@@ -49,13 +46,19 @@ describe Travis::Github::Admin do
       end
 
       it 'raises an exception' do
-        lambda { subject }.should raise_error(Travis::AdminMissing, 'no admin available for svenfuchs/minimal')
+        lambda { result }.should raise_error(Travis::AdminMissing, 'no admin available for svenfuchs/minimal')
       end
 
       it 'does not revoke permissions' do
         user.expects(:update_permissions!).never
-        ignore_exception { subject }
+        ignore_exception { result }
       end
+    end
+
+    def ignore_exception(&block)
+      block.call
+    rescue Travis::AdminMissing
     end
   end
 end
+

@@ -44,7 +44,6 @@ module Travis
   autoload :Config,       'travis/config'
   autoload :Event,        'travis/event'
   autoload :Features,     'travis/features'
-  autoload :Github,       'travis/github'
   autoload :Mailer,       'travis/mailer'
   autoload :Model,        'travis/model'
   autoload :Notification, 'travis/notification'
@@ -63,6 +62,10 @@ module Travis
       @config ||= Config.new
     end
 
+    def setup(config = Travis.config.oauth2)
+      GH.set(:client_id => config[:client_id], :client_secret => config[:client_secret]) if config
+    end
+
     def pusher
       @pusher ||= ::Pusher.tap do |pusher|
         pusher.app_id = config.pusher.app_id
@@ -76,5 +79,5 @@ module Travis
     end
   end
 
-  Github.setup
+  setup
 end

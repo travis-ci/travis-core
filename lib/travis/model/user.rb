@@ -39,16 +39,7 @@ class User < ActiveRecord::Base
   end
 
   def sync
-    syncing { Travis::Github::Sync::User.new(self).run }
-  end
-
-  def syncing
-    update_attribute :is_syncing, true
-    result = yield
-    update_attribute :synced_at, Time.now
-    result
-  ensure
-    update_attribute :is_syncing, false
+    Travis::Services::Github::SyncUser.new(self).run # TODO remove once apps use the service
   end
 
   def syncing?
@@ -93,7 +84,7 @@ class User < ActiveRecord::Base
   alias_method :github_service_hooks, :service_hooks
 
   def authenticated_on_github(&block)
-    Travis::Github.authenticated(self, &block)
+    Travis::Services::Github.authenticated(self, &block) # TODO
   end
 
   protected

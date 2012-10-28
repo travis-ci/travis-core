@@ -18,7 +18,7 @@ class ServiceHook
 
   def set(active, user = nil)
     self.active, self.user = active, user
-    Travis::Github.authenticated(self.user) { update }
+    Travis::Services::Github.authenticated(self.user) { update } # TODO
     repository.update_column(:active, active)
   ensure
     self.active = repository.active

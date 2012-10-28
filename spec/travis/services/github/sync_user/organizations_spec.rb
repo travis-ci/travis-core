@@ -1,12 +1,13 @@
 require 'spec_helper'
 
-describe Travis::Github::Sync::Organizations do
+describe Travis::Services::Github::SyncUser::Organizations do
   include Support::ActiveRecord
 
   describe 'run' do
-    let(:user)   { Factory(:user, :login => 'sven', :github_oauth_token => '123456') }
-    let(:action) { lambda { Travis::Github::Sync::Organizations.new(user).run } }
-    let(:data)   { [{ 'id' => 1, 'login' => 'login' }] }
+    let(:subject) { Travis::Services::Github::SyncUser::Organizations }
+    let(:user)    { Factory(:user, :login => 'sven', :github_oauth_token => '123456') }
+    let(:action)  { lambda { subject.new(user).run } }
+    let(:data)    { [{ 'id' => 1, 'login' => 'login' }] }
 
     before :each do
       GH.stubs(:[]).with('user/orgs').returns(data)
