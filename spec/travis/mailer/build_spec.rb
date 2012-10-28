@@ -4,16 +4,16 @@ require 'spec_helper'
 describe Travis::Mailer::Build do
   include Travis::Testing::Stubs
 
-  let(:data)       { Travis::Api.data(build, :for => 'event', :version => 'v0') }
+  let(:data)       { Travis::Api.data(build, for: 'event', version: 'v0') }
   let(:recipients) { ['owner@example.com', 'committer@example.com', 'author@example.com'] }
-  let(:email)      { Travis::Mailer::Build.finished_email(data, recipients) }
+  let(:broadcasts) { [{ message: 'message' }] }
+  let(:email)      { Travis::Mailer::Build.finished_email(data, recipients, broadcasts) }
 
   before :each do
     Travis::Mailer.setup
     I18n.reload!
     ActionMailer::Base.delivery_method = :test
     build.commit.stubs(:author_name).returns('まつもとゆきひろ a.k.a. Matz')
-    Broadcast.stubs(:by_repo).with(build.repository).returns([])
   end
 
   describe 'finished build email notification' do
@@ -92,8 +92,8 @@ describe Travis::Mailer::Build do
       describe 'sponsors' do
         before :each do
           Travis.config.sponsors = {
-            :platinum => [{ :name => 'xing', :url => 'http://xing.de', :text => '<a href="http://xing.de">XING</a>' }],
-            :gold     => [{ :name => 'xing', :url => 'http://xing.de', :text => '<a href="http://xing.de">XING</a>' }]
+            platinum: [{ name: 'xing', url: 'http://xing.de', text: '<a href="http://xing.de">XING</a>' }],
+            gold: [{ name: 'xing', url: 'http://xing.de', text: '<a href="http://xing.de">XING</a>' }]
           }
         end
 
@@ -114,7 +114,7 @@ describe Travis::Mailer::Build do
     end
 
     describe 'broadcasts' do
-      let(:broadcasts) { [stub(:message => 'message 1'), stub(:message => 'message 2')] }
+      let(:broadcasts) { [{ message: 'message 1' }, { message: 'message 2' }] }
 
       it 'includes a the first broadcast' do
         Broadcast.stubs(:by_repo).with(build.repository).returns(broadcasts)

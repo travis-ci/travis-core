@@ -5,11 +5,11 @@
   </head>
   <body>
     <div id="body">
-      <% if @broadcast.try(:message) %>
+      <% @broadcasts.each do |broadcast| %>
         <table border="0" class="broadcast section">
           <tr>
             <td>
-              <%= @broadcast.message.html_safe %>
+              <%= broadcast.message.html_safe %>
             </td>
           </tr>
         </table>
@@ -30,7 +30,7 @@
             </tr>
             <tr>
               <th>Build #<%= @build.number %></th>
-              <td><%= link_to repository_build_url(:slug => @repository.slug, :id => @build.id), repository_build_url(:slug => @repository.slug, :id => @build.id) %></td>
+              <td><%= link_to repository_build_url(slug: @repository.slug, id: @build.id), repository_build_url(slug: @repository.slug, id: @build.id) %></td>
             </tr>
             <tr>
               <th>Changeset</th>

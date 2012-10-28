@@ -5,20 +5,21 @@ describe Travis::Addons::Email::Task do
 
   let(:subject)    { Travis::Addons::Email::Task }
   let(:mailer)     { Travis::Mailer::Build }
-  let(:payload)    { Travis::Api.data(build, for: 'event', version: 'v0') }
+  let(:payload)    { Travis::Api.data(build, for: 'event', version: 'v0').deep_symbolize_keys }
   let(:email)      { stub('email', deliver: true) }
-  let(:handler)    { subject.new(payload, recipients: recipients) }
+  let(:handler)    { subject.new(payload, recipients: recipients, broadcasts: broadcasts) }
+  let(:broadcasts) { [broadcast] }
 
   attr_reader :recipients
 
   before :each do
     @recipients = ['svenfuchs@artweb-design.de']
     mailer.stubs(:finished_email).returns(email)
-    Broadcast.stubs(:by_repo).returns([broadcast])
+    Broadcast.stubs(:by_repo).returns(broadcasts)
   end
 
   it 'creates an email for the build email recipients' do
-    mailer.expects(:finished_email).with(payload.deep_symbolize_keys, recipients).returns(email)
+    mailer.expects(:finished_email).with(payload, recipients, broadcasts).returns(email)
     handler.run
   end
 

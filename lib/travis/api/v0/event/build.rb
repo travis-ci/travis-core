@@ -5,14 +5,13 @@ module Travis
         class Build
           include Formats
 
-          attr_reader :build, :repository, :request, :commit, :broadcasts, :options
+          attr_reader :build, :repository, :request, :commit, :options
 
           def initialize(build, options = {})
             @build = build
             @repository = build.repository
             @request = build.request
             @commit = build.commit
-            # @broadcasts = Broadcast.by_repo(build.repository_id)
             # @options = options
           end
 

@@ -5,11 +5,11 @@
   </head>
   <body>
     <div id="body" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; color: #333; width: 754px; margin: 0 auto;">
-      <% if @broadcast.try(:message) %>
+      <% @broadcasts.each do |broadcast| %>
         <table border="0" class="broadcast section" style="margin-bottom: 16px; width: 754px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; text-align: center; font-size: 14px; font-weight: bold; color: #777; background-color: #f3f4fa; padding: 16px; border: 1px solid #ccc;" bgcolor="#f3f4fa">
           <tr>
             <td>
-              <%= @broadcast.message.html_safe %>
+              <%= broadcast.message.html_safe %>
             </td>
           </tr>
         </table>
@@ -30,7 +30,7 @@
             </tr>
             <tr>
               <th style="text-align: right; padding-right: 16px;" align="right">Build #<%= @build.number %></th>
-              <td><%= link_to repository_build_url(:slug => @repository.slug, :id => @build.id), repository_build_url(:slug => @repository.slug, :id => @build.id) %></td>
+              <td><%= link_to repository_build_url(slug: @repository.slug, id: @build.id), repository_build_url(slug: @repository.slug, id: @build.id) %></td>
             </tr>
             <tr>
               <th style="text-align: right; padding-right: 16px;" align="right">Changeset</th>
@@ -142,7 +142,7 @@
         <a href="http://love.travis-ci.org/sponsors" style="font-size: 13px; color: #aaa;">See all of our sponsors &rarr;</a>
       <p>
     </div>
-  
+
 <style type="text/css">
 img { margin-right: 16px !important; }
 </style>

@@ -10,6 +10,10 @@ module Travis
           @recipients ||= params[:recipients].select { |email| valid?(email) }
         end
 
+        def broadcasts
+          broadcasts = params[:broadcasts]
+        end
+
         def type
           :"#{build[:state]}_email"
         end
@@ -17,7 +21,7 @@ module Travis
         private
 
           def process
-            Travis::Mailer::Build.send(type, payload, recipients).deliver if recipients.any?
+            Travis::Mailer::Build.send(type, payload, recipients, broadcasts).deliver if recipients.any?
           end
 
           def valid?(email)

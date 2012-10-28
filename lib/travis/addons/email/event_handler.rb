@@ -13,7 +13,7 @@ module Travis
         end
 
         def handle
-          Travis::Addons::Email::Task.run(:email, payload, recipients: recipients)
+          Travis::Addons::Email::Task.run(:email, payload, recipients: recipients, broadcasts: broadcasts)
         end
 
         def recipients
@@ -26,6 +26,12 @@ module Travis
         end
 
         private
+
+          def broadcasts
+            Broadcast.by_repo(repository['id']).map do |broadcast|
+              { message: broadcast.message }
+            end
+          end
 
           def default_recipients
             [commit['committer_email'], commit['author_email'], repository['owner_email']]
