@@ -14,10 +14,9 @@ module Travis
       ]
 
       def channels
-        @channels ||= begin
-          channels = options[:channels]
-          channels = MultiJson.decode(channels) if channels.is_a?(String)
-          channels
+        @channels ||= options[:channels].inject({}) do |channels, (key, value)|
+          key = eval(key) if key.is_a?(String)
+          channels.merge(key => value)
         end
       end
 
