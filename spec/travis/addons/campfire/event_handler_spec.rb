@@ -28,6 +28,7 @@ describe Travis::Addons::Campfire::EventHandler do
 
   describe 'handler' do
     let(:event) { 'build:finished' }
+    let(:task)  { Travis::Addons::Campfire::Task }
 
     before :each do
       build.stubs(:config => { :notifications => { :campfire => 'room' } })
@@ -39,37 +40,37 @@ describe Travis::Addons::Campfire::EventHandler do
 
     it 'triggers a task if the build is a push request' do
       build.stubs(:pull_request?).returns(false)
-      Travis::Task.expects(:run).with(:campfire, payload, targets: ['room'])
+      task.expects(:run).with(:campfire, payload, targets: ['room'])
       notify
     end
 
     it 'does not trigger a task if the build is a pull request' do
       build.stubs(:pull_request?).returns(true)
-      Travis::Task.expects(:run).never
+      task.expects(:run).never
       notify
     end
 
     it 'triggers a task if rooms are present' do
       build.stubs(:config => { :notifications => { :campfire => 'room' } })
-      Travis::Task.expects(:run).with(:campfire, payload, targets: ['room'])
+      task.expects(:run).with(:campfire, payload, targets: ['room'])
       notify
     end
 
     it 'does not trigger a task if no rooms are present' do
       build.stubs(:config => { :notifications => { :campfire => [] } })
-      Travis::Task.expects(:run).never
+      task.expects(:run).never
       notify
     end
 
     it 'triggers a task if specified by the config' do
       Travis::Event::Config.any_instance.stubs(:send_on_finished_for?).with(:campfire).returns(false)
-      Travis::Task.expects(:run).never
+      task.expects(:run).never
       notify
     end
 
     it 'does not trigger task if specified by the config' do
       Travis::Event::Config.any_instance.stubs(:send_on_finish?).with(:campfire).returns(true)
-      Travis::Task.expects(:run).with(:campfire, payload, targets: ['room'])
+      task.expects(:run).with(:campfire, payload, targets: ['room'])
       notify
     end
   end

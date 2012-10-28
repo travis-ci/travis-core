@@ -13,7 +13,7 @@ module Travis
         end
 
         def handle
-          Travis::Task.run(:github_status, payload, token: token)
+          Travis::Addons::GithubStatus::Task.run(:github_status, payload, token: token)
         end
 
         private

@@ -28,6 +28,7 @@ describe Travis::Addons::Email::EventHandler do
 
   describe 'handler' do
     let(:event) { 'build:finished' }
+    let(:task)  { Travis::Addons::Email::Task }
 
     def notify
       subject.notify(event, build)
@@ -35,25 +36,25 @@ describe Travis::Addons::Email::EventHandler do
 
     it 'triggers a task if the build is a push request' do
       build.stubs(:pull_request?).returns(false)
-      Travis::Task.expects(:run).with(:email, payload, recipients: ['svenfuchs@artweb-design.de'])
+      task.expects(:run).with(:email, payload, recipients: ['svenfuchs@artweb-design.de'])
       notify
     end
 
     it 'triggers a task if the build is a pul request' do
       build.stubs(:pull_request?).returns(true)
-      Travis::Task.expects(:run).with(:email, payload, recipients: ['svenfuchs@artweb-design.de'])
+      task.expects(:run).with(:email, payload, recipients: ['svenfuchs@artweb-design.de'])
       notify
     end
 
     it 'triggers a task if specified by the config' do
       Travis::Event::Config.any_instance.stubs(:enabled?).with(:email).returns(false)
-      Travis::Task.expects(:run).never
+      task.expects(:run).never
       notify
     end
 
     it 'does not trigger task if specified by the config' do
       Travis::Event::Config.any_instance.stubs(:enabled?).with(:email).returns(true)
-      Travis::Task.expects(:run).with(:email, payload, recipients: ['svenfuchs@artweb-design.de'])
+      task.expects(:run).with(:email, payload, recipients: ['svenfuchs@artweb-design.de'])
       notify
     end
   end

@@ -12,15 +12,15 @@ module Travis
       extend Exceptions::Handling
 
       def run(type, *args)
-        Travis::Async.run(self, :perform, { :queue => type, :use => run_local? ? :threaded : :sidekiq }, type, *args)
+        Travis::Async.run(self, :perform, { :queue => type, :use => run_local? ? :threaded : :sidekiq }, *args)
       end
 
       def run_local?
         Travis::Features.feature_inactive?(:travis_tasks)
       end
 
-      def perform(type, *args)
-        const_get(type.to_s.camelize).new(*args).run
+      def perform(*args)
+        new(*args).run
       end
       rescues :perform, :from => Exception
     end

@@ -14,7 +14,7 @@ module Travis
         end
 
         def handle
-          Travis::Task.run(:irc, payload, channels: channels)
+          Travis::Addons::Irc::Task.run(:irc, payload, channels: channels)
         end
 
         def channels

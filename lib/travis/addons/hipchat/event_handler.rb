@@ -16,7 +16,7 @@ module Travis
         end
 
         def handle
-          Travis::Task.run(:hipchat, payload, targets: targets)
+          Travis::Addons::Hipchat::Task.run(:hipchat, payload, targets: targets)
         end
 
         def targets

@@ -28,6 +28,7 @@ describe Travis::Addons::Irc::EventHandler do
 
   describe 'handler' do
     let(:event) { 'build:finished' }
+    let(:task)  { Travis::Addons::Irc::Task }
 
     before :each do
       build.stubs(:config => { :notifications => { :irc => 'irc.freenode.net#travis' } })
@@ -39,37 +40,37 @@ describe Travis::Addons::Irc::EventHandler do
 
     it 'triggers a task if the build is a push request' do
       build.stubs(:pull_request?).returns(false)
-      Travis::Task.expects(:run).with(:irc, payload, channels: ['irc.freenode.net#travis'])
+      task.expects(:run).with(:irc, payload, channels: ['irc.freenode.net#travis'])
       notify
     end
 
     it 'does not trigger a task if the build is a pull request' do
       build.stubs(:pull_request?).returns(true)
-      Travis::Task.expects(:run).never
+      task.expects(:run).never
       notify
     end
 
     it 'triggers a task if channels are present' do
       build.stubs(:config => { :notifications => { :irc => 'irc.freenode.net#travis' } })
-      Travis::Task.expects(:run).with(:irc, payload, channels: ['irc.freenode.net#travis'])
+      task.expects(:run).with(:irc, payload, channels: ['irc.freenode.net#travis'])
       notify
     end
 
     it 'does not trigger a task if no channels are present' do
       build.stubs(:config => { :notifications => { :irc => [] } })
-      Travis::Task.expects(:run).never
+      task.expects(:run).never
       notify
     end
 
     it 'triggers a task if specified by the config' do
       Travis::Event::Config.any_instance.stubs(:send_on_finished_for?).with(:irc).returns(false)
-      Travis::Task.expects(:run).never
+      task.expects(:run).never
       notify
     end
 
     it 'does not trigger task if specified by the config' do
       Travis::Event::Config.any_instance.stubs(:send_on_finish?).with(:irc).returns(true)
-      Travis::Task.expects(:run).with(:irc, payload, channels: ['irc.freenode.net#travis'])
+      task.expects(:run).with(:irc, payload, channels: ['irc.freenode.net#travis'])
       notify
     end
   end

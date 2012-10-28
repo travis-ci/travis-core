@@ -20,7 +20,7 @@ module Travis
         end
 
         def handle
-          Travis::Task.run(:pusher, payload, :event => event, :version => API_VERSION)
+          Travis::Addons::Pusher::Task.run(:pusher, payload, :event => event, :version => API_VERSION)
         end
 
         private

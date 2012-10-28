@@ -13,7 +13,7 @@ module Travis
         end
 
         def handle
-          Travis::Task.run(:email, payload, recipients: recipients)
+          Travis::Addons::Email::Task.run(:email, payload, recipients: recipients)
         end
 
         def recipients
