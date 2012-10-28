@@ -123,6 +123,22 @@ describe Job do
       }
     end
 
+    it 'normalizes env vars which are hashes to strings' do
+      job = Job.new(:repository => Factory(:repository))
+      job.expects(:pull_request?).at_least_once.returns(false)
+
+      config = { :rvm => '1.8.7',
+                 :env => [{:FOO => 'bar', :BAR => 'baz'},
+                          job.repository.key.secure.encrypt('BAR=barbaz')]
+               }
+      job.config = config
+
+      job.obfuscated_config.should == {
+        :rvm => '1.8.7',
+        :env => 'FOO=bar BAR=baz BAR=[secure]'
+      }
+    end
+
     context 'when job is from a pull request' do
       let :job do
         job = Job.new(:repository => Factory(:repository))
@@ -153,6 +169,19 @@ describe Job do
           :env => nil
         }
       end
+
+      it 'normalizes env vars which are hashes to strings' do
+        config = { :rvm => '1.8.7',
+                   :env => [{:FOO => 'bar', :BAR => 'baz'},
+                            job.repository.key.secure.encrypt('BAR=barbaz')]
+                 }
+        job.config = config
+
+        job.obfuscated_config.should == {
+          :rvm => '1.8.7',
+          :env => 'FOO=bar BAR=baz'
+        }
+      end
     end
   end
 
@@ -175,6 +204,22 @@ describe Job do
       job.decrypted_config.should == {
         :rvm => '1.8.7',
         :env => nil
+      }
+    end
+
+    it 'normalizes env vars which are hashes to strings' do
+      job = Job.new(:repository => Factory(:repository))
+      job.expects(:pull_request?).at_least_once.returns(false)
+
+      config = { :rvm => '1.8.7',
+                 :env => [{:FOO => 'bar', :BAR => 'baz'},
+                          job.repository.key.secure.encrypt('BAR=barbaz')]
+               }
+      job.config = config
+
+      job.decrypted_config.should == {
+        :rvm => '1.8.7',
+        :env => ["FOO=bar BAR=baz", "SECURE BAR=barbaz"]
       }
     end
 

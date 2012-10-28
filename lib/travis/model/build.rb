@@ -158,8 +158,32 @@ class Build < ActiveRecord::Base
       next unless config[:env]
 
       config[:env] = [config[:env]] unless config[:env].is_a?(Array)
-      config[:env] = config[:env].map { |env| obfuscate_env(env).join(' ') } if config[:env]
+      if config[:env]
+        config[:env] = config[:env].map do |env|
+          env = normalize_env_hashes(env)
+          obfuscate_env(env).join(' ')
+        end
+      end
     end
+  end
+
+  def normalize_env_hashes(line)
+    if line.is_a?(Hash)
+      env_hash_to_string(line)
+    elsif line.is_a?(Array)
+      line.map do |line|
+        env_hash_to_string(line)
+      end
+    else
+      line
+    end
+  end
+
+  def env_hash_to_string(hash)
+    return hash unless hash.is_a?(Hash)
+    return hash if hash.has_key?(:secure)
+
+    hash.map { |k,v| "#{k}=#{v}" }.join(' ')
   end
 
   def pull_request?
@@ -185,23 +209,31 @@ class Build < ActiveRecord::Base
         values = values[:matrix]
       end
 
-      if global
+      result = if global
         global = [global] unless global.is_a?(Array)
+
+        values = [values] unless values.is_a?(Array)
+        values.map do |line|
+          line = [line] unless line.is_a?(Array)
+          (line + global).compact
+        end
       else
-        return values
+        values
       end
 
-      values = [values] unless values.is_a?(Array)
-      values.map do |line|
-        line = [line] unless line.is_a?(Array)
-        (line + global).compact
+      if result.is_a?(Array)
+        result.map { |env| normalize_env_hashes(env) }
+      else
+        normalize_env_hashes(result)
       end
     end
 
 
     def normalize_config(config)
       config = config.deep_symbolize_keys
-      config[:env] = normalize_env_values(config[:env]) if config[:env]
+      if config[:env]
+        config[:env] = normalize_env_values(config[:env])
+      end
       config
     end
 

@@ -113,6 +113,7 @@ class Job < ActiveRecord::Base
 
     def process_env(env)
       env = [env] unless env.is_a?(Array)
+      env = normalize_env(env)
       env = if pull_request?
         remove_encrypted_env_vars(env)
       else
@@ -124,6 +125,16 @@ class Job < ActiveRecord::Base
     def remove_encrypted_env_vars(env)
       env.reject do |var|
         var.is_a?(Hash) && var.has_key?(:secure)
+      end
+    end
+
+    def normalize_env(env)
+      env.map do |line|
+        if line.is_a?(Hash) && !line.has_key?(:secure)
+          line.map { |k, v| "#{k}=#{v}" }.join(' ')
+        else
+          line
+        end
       end
     end
 
