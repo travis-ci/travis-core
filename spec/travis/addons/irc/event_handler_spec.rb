@@ -69,7 +69,7 @@ describe Travis::Addons::Irc::EventHandler do
     end
 
     it 'does not trigger task if specified by the config' do
-      Travis::Event::Config.any_instance.stubs(:send_on_finish?).with(:irc).returns(true)
+      Travis::Event::Config.any_instance.stubs(:send_on_finished_for?).with(:irc).returns(true)
       task.expects(:run).with(:irc, payload, channels: ['irc.freenode.net#travis'])
       notify
     end

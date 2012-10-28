@@ -69,7 +69,7 @@ describe Travis::Addons::Webhook::EventHandler do
     end
 
     it 'does not trigger task if specified by the config' do
-      Travis::Event::Config.any_instance.stubs(:send_on_finish?).with(:webhooks).returns(true)
+      Travis::Event::Config.any_instance.stubs(:send_on_finished_for?).with(:webhooks).returns(true)
       task.expects(:run).with(:webhook, payload, targets: ['http://webhook.com'], token: 'token')
       notify
     end

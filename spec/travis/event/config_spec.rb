@@ -6,7 +6,7 @@ describe Travis::Event::Config do
   let(:payload) { Travis::Api.data(build, for: 'event', version: 'v0') }
   let(:config)  { Travis::Event::Config.new(payload) }
 
-  describe :send_on_finish? do
+  describe :send_on_finished_for? do
     before :each do
       build.stubs(:config => { :notifications => { :webhooks => 'http://example.com' } })
     end

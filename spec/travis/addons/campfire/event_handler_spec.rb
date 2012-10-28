@@ -69,7 +69,7 @@ describe Travis::Addons::Campfire::EventHandler do
     end
 
     it 'does not trigger task if specified by the config' do
-      Travis::Event::Config.any_instance.stubs(:send_on_finish?).with(:campfire).returns(true)
+      Travis::Event::Config.any_instance.stubs(:send_on_finished_for?).with(:campfire).returns(true)
       task.expects(:run).with(:campfire, payload, targets: ['room'])
       notify
     end

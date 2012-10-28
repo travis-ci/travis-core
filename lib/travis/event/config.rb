@@ -26,7 +26,7 @@ module Travis
         send(:"send_on_#{event}_for?", type)
       end
 
-      def send_on_start_for?(type)
+      def send_on_started_for?(type)
         config = with_fallbacks(type, :on_start, DEFAULTS[:start][type])
         config == true || config == :always
       end
