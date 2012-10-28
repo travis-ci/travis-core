@@ -49,7 +49,7 @@ module Travis
             def repository_data
               {
                 'id' => repository.id,
-                'key' => repository.key.public_key,
+                'key' => repository.key.try(:public_key),
                 'slug' => repository.slug,
                 'owner_email' => repository.owner_email,
                 'admin_token' => repository_admin_token

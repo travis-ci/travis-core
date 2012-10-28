@@ -4,7 +4,7 @@ describe Travis::Event::Handler::Metrics do
   include Travis::Testing::Stubs
 
   let(:subject) { Travis::Event::Handler::Metrics }
-  let(:payload) { Travis::Api.data(build, for: 'event', version: 'v0') }
+  let(:payload) { Travis::Api.data(test, for: 'event', version: 'v0') }
 
   describe 'subscription' do
     let(:handler) { subject.any_instance }

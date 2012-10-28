@@ -2,7 +2,7 @@ module Travis
   module Api
     module V0
       module Event
-        class Test
+        class Job
           include Formats
 
           attr_reader :job

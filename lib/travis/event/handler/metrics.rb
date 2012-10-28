@@ -8,12 +8,11 @@ module Travis
 
         def initialize(*)
           super
-          @payload = Api.data(object, for: 'event', version: 'v0', params: data)
+          @payload = Api.data(object, type: 'job', for: 'event', version: 'v0', params: data)
         end
 
         def handle?
-          # true
-          false
+          true
         end
 
         def handle

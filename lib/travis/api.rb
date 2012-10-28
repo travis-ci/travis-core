@@ -42,6 +42,7 @@ module Travis
         end
 
         def active_record?(object)
+          p object.respond_to?(:base_class)
           object.respond_to?(:base_class)
         end
     end
