@@ -32,7 +32,8 @@ module Travis
       def subscriber
         self.class.handlers[name.to_sym] || Handler.const_get(name.to_s.camelize)
       rescue NameError => e
-        Travis::Exceptions.handle(e)
+        puts 'Could not find event handler #{name}, ignoring.'
+        # Travis::Exceptions.handle(e)
       end
 
       def patterns
