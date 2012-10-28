@@ -94,7 +94,7 @@ class Repository < ActiveRecord::Base
   end
 
   def admin
-    @admin ||= Travis::Services::Github::FindAdmin.for_repository(self)
+    @admin ||= Travis::Services::Github::FindAdmin.new(self).run # TODO check who's using this
   end
 
   def slug
