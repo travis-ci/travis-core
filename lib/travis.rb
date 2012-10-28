@@ -65,6 +65,7 @@ module Travis
       @config ||= Config.new
     end
 
+    # TODO check with @rkh where this is actually required
     def setup(config = Travis.config.oauth2)
       GH.set(:client_id => config[:client_id], :client_secret => config[:client_secret]) if config
     end
