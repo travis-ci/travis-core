@@ -6,7 +6,6 @@ module Travis
   module Notification
     class Instrument
       autoload :EventHandler, 'travis/notification/instrument/event_handler'
-      autoload :Github,       'travis/notification/instrument/github'
       autoload :Services,     'travis/notification/instrument/services'
       autoload :Task,         'travis/notification/instrument/task'
 
