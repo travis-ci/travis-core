@@ -22,7 +22,8 @@ describe Travis::Api::V1::Pusher::Job::Started do
       'started_at' => json_format_time(Time.now.utc - 1.minute),
       'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4',
       'sponsor' => { 'name' => 'Railslove', 'url' => 'http://railslove.de' },
-      'state' => 'finished'
+      'state' => 'finished',
+      'log_id' => 1
     }
   end
 end
