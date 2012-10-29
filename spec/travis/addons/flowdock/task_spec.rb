@@ -49,7 +49,7 @@ describe Travis::Addons::Flowdock::Task do
   def expect_flowdock(token, payload)
     http.post("v1/messages/team_inbox/#{token}") do |env|
       env[:url].host.should == 'api.flowdock.com'
-      env[:body].should == payload
+      env[:body].should == MultiJson.encode(payload)
     end
   end
 end

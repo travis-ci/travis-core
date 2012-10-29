@@ -34,11 +34,15 @@ module Travis
           end
 
           def send_line(url, line)
-            http.post(url, { message: { body: line } }, 'Content-Type' => 'application/json')
+            http.post(url) do |r|
+              r.body = MultiJson.encode({ message: { body: line } })
+              r.headers['Content-Type'] = 'application/json'
+            end
           end
 
           def template
-            Array(config[:template] || DEFAULT_TEMPLATE)
+            template = config[:template] rescue nil
+            Array(template || DEFAULT_TEMPLATE)
           end
 
           def parse(target)

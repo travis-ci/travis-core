@@ -33,7 +33,8 @@ module Travis
           end
 
           def template
-            Array(config[:template] || DEFAULT_TEMPLATE)
+            template = config[:template] rescue nil
+            Array(template || DEFAULT_TEMPLATE)
           end
 
           def send_line(url, room_id, line)

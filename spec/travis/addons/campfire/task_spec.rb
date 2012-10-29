@@ -50,9 +50,10 @@ describe Travis::Addons::Campfire::Task do
     auth = Base64.encode64("#{token}:X").gsub("\n", '')
 
     Array(body).each do |line|
-      http.post(path, { message: { body: line } }) do |env|
+      http.post(path) do |env|
         env[:request_headers]['authorization'].should == "Basic #{auth}"
         env[:url].host.should == host
+        env[:body].should == MultiJson.encode({ message: { body: line } })
       end
     end
   end
