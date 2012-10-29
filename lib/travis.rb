@@ -1,4 +1,5 @@
 require 'travis/support'
+require 'gh'
 
 autoload :Account,      'travis/model/account'
 autoload :Artifact,     'travis/model/artifact'
