@@ -15,7 +15,7 @@ module Travis
         end
 
         def run
-          parse(fetch)
+          parse(fetch) || { '.result' => 'not_found' }
         rescue GH::Error => e
           if e.info[:response_status] == 404
             { '.result' => 'not_found' }
