@@ -14,10 +14,10 @@ module Travis
 
           class FetchConfig < Instrument
             def run_completed
-              config_url = target.url.gsub(/\?access_token=\w*/, '?access_token=[secure]')
+              config_url = target.config_url.gsub(/\access_token=\w*/, 'access_token=[secure]')
               publish(
-                :msg => "#{target.class.name}#fetch #{config_url}",
-                :url => target.url,
+                :msg => "#{target.class.name}#fetch #{target.config_url}",
+                :url => target.config_url,
                 :result => result
               )
             end

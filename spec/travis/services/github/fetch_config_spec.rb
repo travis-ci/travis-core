@@ -4,14 +4,13 @@ describe Travis::Services::Github::FetchConfig do
   include Travis::Testing::Stubs
 
   let(:subject)   { Travis::Services::Github::FetchConfig }
-  let(:yaml)      { { 'content' => ['foo: Foo'].pack('m') } }
+  let(:body)      { { 'content' => ['foo: Foo'].pack('m') } }
   let(:service)   { subject.new(request) }
   let(:result)    { service.run }
   let(:exception) { GH::Error.new }
 
-
   before :each do
-    GH.stubs(:[]).with(request.commit.config_url).returns(yaml)
+    GH.stubs(:[]).with(request.commit.config_url).returns(body)
   end
 
   describe 'config' do

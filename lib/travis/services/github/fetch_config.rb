@@ -23,12 +23,16 @@ module Travis
             { '.result' => 'server_error' }
           end
         end
-        # instrument :run
+        instrument :run
+
+        def config_url
+          request.commit.config_url
+        end
 
         private
 
           def fetch
-            GH[request.commit.config_url]['content'].to_s.unpack('m').first
+            GH[config_url]['content'].to_s.unpack('m').first
           end
 
           def parse(yaml)

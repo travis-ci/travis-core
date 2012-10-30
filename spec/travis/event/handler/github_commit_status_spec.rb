@@ -78,6 +78,10 @@ describe Travis::Event::Handler::GithubCommitStatus do
   describe 'instrumentation' do
     let(:handler) { Travis::Event::Handler::GithubCommitStatus.any_instance }
 
+    before :each do
+      Metriks.stubs(:timer).returns(stub(update: nil))
+    end
+
     it 'instruments with "travis.event.handler.github_commit_status.notify"' do
       ActiveSupport::Notifications.stubs(:publish)
       ActiveSupport::Notifications.expects(:publish).with do |event, data|
