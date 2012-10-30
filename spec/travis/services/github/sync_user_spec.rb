@@ -23,5 +23,11 @@ describe Travis::Services::Github::SyncUser do
       service.send(:syncing) { }
       user.synced_at.should >= time
     end
+
+    it 'handles exceptions' do
+      exception = nil
+      Travis::Exceptions.expects(:handle).with { |e| e.message.should == 'kaputt' }
+      service.send(:syncing) { raise('kaputt') }
+    end
   end
 end

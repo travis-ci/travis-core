@@ -27,7 +27,7 @@ module Travis
             user.update_attribute(:synced_at, Time.now)
             result
           rescue Timeout::Error, StandardError => e
-            Travis::Exception.handle(e)
+            Travis::Exceptions.handle(e)
           ensure
             user.update_attribute(:is_syncing, false)
           end
