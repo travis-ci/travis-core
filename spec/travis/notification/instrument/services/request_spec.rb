@@ -9,6 +9,8 @@ describe Travis::Notification::Instrument::Services::Requests::Receive do
   let(:event)     { publisher.events.last }
 
   before :each do
+    Request.any_instance.stubs(:configure)
+    Request.any_instance.stubs(:start)
     Travis::Notification.publishers.replace([publisher])
     service.run
   end

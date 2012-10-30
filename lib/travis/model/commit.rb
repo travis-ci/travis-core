@@ -8,10 +8,6 @@ class Commit < ActiveRecord::Base
 
   validates :commit, :branch, :message, :committed_at, :presence => true
 
-  def config_url
-    "https://api.github.com/repos/#{repository.slug}/contents/.travis.yml?ref=#{commit}"
-  end
-
   def pull_request?
     ref =~ %r(^refs/pull/\d+/merge$)
   end

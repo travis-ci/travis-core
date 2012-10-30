@@ -14,17 +14,17 @@ class Request < ActiveRecord::Base
 
   class << self
     def last_by_head_commit(head_commit)
-      where(:head_commit => head_commit).order(:id).last
+      where(head_commit: head_commit).order(:id).last
     end
   end
 
   belongs_to :commit
   belongs_to :repository
-  belongs_to :owner, :polymorphic => true
+  belongs_to :owner, polymorphic: true
   has_many   :builds
-  has_many   :events, :as => :source
+  has_many   :events, as: :source
 
-  validates :repository_id, :presence => true
+  validates :repository_id, presence: true
 
   serialize :config
   serialize :payload
@@ -35,5 +35,9 @@ class Request < ActiveRecord::Base
 
   def pull_request?
     event_type == 'pull_request'
+  end
+
+  def config_url
+    "https://api.github.com/repos/#{repository.slug}/contents/.travis.yml?ref=#{commit.commit}"
   end
 end

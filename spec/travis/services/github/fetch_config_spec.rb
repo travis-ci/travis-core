@@ -10,7 +10,7 @@ describe Travis::Services::Github::FetchConfig do
   let(:exception) { GH::Error.new }
 
   before :each do
-    GH.stubs(:[]).with(request.commit.config_url).returns(body)
+    GH.stubs(:[]).with(request.config_url).returns(body)
   end
 
   describe 'config' do
@@ -39,7 +39,7 @@ describe Travis::Services::Github::FetchConfig do
     end
 
     it "returns { '.result' => 'parsing_error' } if the .travis.yml is invalid" do
-      GH.stubs(:[]).with(request.commit.config_url).returns("\tfoo: Foo")
+      GH.stubs(:[]).returns("\tfoo: Foo")
       result['.result'].should == 'parsing_failed'
     end
   end

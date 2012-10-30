@@ -26,7 +26,7 @@ module Travis
         instrument :run
 
         def config_url
-          request.commit.config_url
+          request.config_url
         end
 
         private

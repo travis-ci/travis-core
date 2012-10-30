@@ -70,8 +70,9 @@ module Travis
           :head_commit => 'head-commit',
           :base_commit => 'base-commit',
           :token => 'token',
-          :comments_url => 'http://github.com/path/to/comments',
           :pull_request? => false,
+          :comments_url => 'http://github.com/path/to/comments',
+          :config_url => 'https://api.github.com/repos/svenfuchs/minimal/contents/.travis.yml?ref=62aae5f70ceee39123ef',
           :result => :accepted
         )
       end
@@ -89,7 +90,6 @@ module Travis
           :committer_email => 'svenfuchs@artweb-design.de',
           :committed_at => Time.now.utc - 3600,
           :compare_url => 'https://github.com/svenfuchs/minimal/compare/master...develop',
-          :config_url => 'https://api.github.com/repos/svenfuchs/minimal/contents/.travis.yml?ref=62aae5f70ceee39123ef',
           :pull_request? => false
         )
       end

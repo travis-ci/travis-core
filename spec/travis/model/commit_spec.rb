@@ -5,13 +5,6 @@ describe Commit do
 
   let(:commit) { Commit.new(:commit => '12345678') }
 
-  describe 'config_url' do
-    it 'returns the raw url to the .travis.yml file on github' do
-      commit.repository = Repository.new(:owner_name => 'travis-ci', :name => 'travis-ci')
-      commit.config_url.should == 'https://api.github.com/repos/travis-ci/travis-ci/contents/.travis.yml?ref=12345678'
-    end
-  end
-
   describe 'pull_request_number' do
     context 'when commit is from pull request' do
       before { commit.ref = 'refs/pull/180/merge' }
