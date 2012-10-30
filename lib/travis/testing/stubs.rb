@@ -30,6 +30,8 @@ module Travis
       def stub_repository(attributes = {})
         Stubs.stub 'repository', attributes.reverse_merge(
           :id => 1,
+          :owner_type => 'User',
+          :owner_id => 1,
           :owner_name => 'svenfuchs',
           :owner_email => 'svenfuchs@artweb-design.de',
           :name => 'minimal',
