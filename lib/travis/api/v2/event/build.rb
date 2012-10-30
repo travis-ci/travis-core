@@ -12,7 +12,7 @@ module Travis
             @repository = build.repository
             @request = build.request
             @commit = build.commit
-            @broadcasts = Broadcast.by_repo(build.repository_id)
+            @broadcasts = Broadcast.by_repo(build.repository)
             @options = options
           end
 

@@ -1,7 +1,7 @@
 require 'active_record'
 
 class Broadcast < ActiveRecord::Base
-  belongs_to :recipient, :polymorphic => true
+  belongs_to :recipient, polymorphic: true
 
   class << self
     def by_user(user)
@@ -14,8 +14,13 @@ class Broadcast < ActiveRecord::Base
       active.where(sql, 'Organization', user.organization_ids, 'User', user.id, 'Repository', user.repository_ids)
     end
 
-    def by_repo(repo_id)
-      active.where('recipient_type = ? AND recipient_id = ?', 'Repository', repo_id)
+    def by_repo(repository)
+      sql = %(
+        recipient_type IS NULL OR
+        recipient_type = ? AND recipient_id = ? OR
+        recipient_type = ? AND recipient_id = ?
+      )
+      active.where(sql, 'Repository', repository.id, repository.owner_type, repository.owner_id)
     end
 
     def active

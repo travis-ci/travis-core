@@ -13,7 +13,7 @@ describe Travis::Mailer::Build do
     I18n.reload!
     ActionMailer::Base.delivery_method = :test
     build.commit.stubs(:author_name).returns('まつもとゆきひろ a.k.a. Matz')
-    Broadcast.stubs(:by_repo).with(build.repository_id).returns([])
+    Broadcast.stubs(:by_repo).with(build.repository).returns([])
   end
 
   describe 'finished build email notification' do
@@ -117,7 +117,7 @@ describe Travis::Mailer::Build do
       let(:broadcasts) { [stub(:message => 'message 1'), stub(:message => 'message 2')] }
 
       it 'includes a the first broadcast' do
-        Broadcast.stubs(:by_repo).with(build.repository_id).returns(broadcasts)
+        Broadcast.stubs(:by_repo).with(build.repository).returns(broadcasts)
         email.deliver
         email.html_part.decoded.should =~ /message 1/
       end
