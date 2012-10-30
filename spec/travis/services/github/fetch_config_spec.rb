@@ -4,14 +4,14 @@ describe Travis::Services::Github::FetchConfig do
   include Travis::Testing::Stubs
 
   let(:subject)  { Travis::Services::Github::FetchConfig }
-  let(:url)      { 'https://raw.github.com/svenfuchs/minimal/62aae5f70ceee39123ef/.travis.yml' }
-  let(:response) { stub('response', :success? => true, :body => 'foo: Foo') }
-  let(:http)     { stub('http', :get => response) }
-  let(:service)  { subject.new(url) }
+  # let(:response) { stub('response', :success? => true, :body => 'foo: Foo') }
+  # let(:http)     { stub('http', :get => response) }
+  let(:yaml)     { 'foo: bar' }
+  let(:service)  { subject.new(request) }
   let(:result)   { service.run }
 
   before :each do
-    service.stubs(:http).returns(http)
+    GH.stubs(:[]).with(request.commit.config_url).returns(yaml)
   end
 
   describe 'config' do

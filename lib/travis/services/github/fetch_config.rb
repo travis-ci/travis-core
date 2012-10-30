@@ -8,44 +8,34 @@ module Travis
         include Logging
         extend Instrumentation
 
-        attr_accessor :url
+        attr_accessor :request
 
-        def initialize(url)
-          @url = url
+        def initialize(request)
+          @request = request
         end
 
         def run
-          if response.success?
-            parse(response.body)
-          elsif response.status == 404
+          parse(fetch)
+        rescue GH::Error => e
+          if e.info[:response_status] == 404
             { '.result' => 'not_found' }
           else
             { '.result' => 'server_error' }
           end
         end
-        instrument :run
+        # instrument :run
 
         private
+
+          def fetch
+            GH[request.commit.config_url]
+          end
 
           def parse(yaml)
             YAML.load(yaml).merge('.result' => 'configured')
           rescue StandardError, Psych::SyntaxError => e
             log_exception(e)
             { '.result' => 'parsing_failed' }
-          end
-
-          def response
-            @response ||= http.get(url)
-          end
-
-          def http
-            @http ||= Faraday.new(http_options) do |f|
-              f.adapter :net_http
-            end
-          end
-
-          def http_options
-            { :ssl => Travis.config.ssl.compact }
           end
 
           Notification::Instrument::Services::Github::FetchConfig.attach_to(self)

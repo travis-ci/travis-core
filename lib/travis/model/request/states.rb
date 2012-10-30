@@ -38,7 +38,7 @@ class Request
       end
 
       def fetch_config
-        Travis::Services::Github::FetchConfig.new(commit.config_url).run
+        Travis::Services::Github::FetchConfig.new(self).run
       end
 
       def add_build
