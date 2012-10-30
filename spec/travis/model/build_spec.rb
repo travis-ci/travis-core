@@ -159,6 +159,22 @@ describe Build do
         build.config[:foo][:bar].should == 'bar'
       end
 
+      it 'normalizes env vars global and matrix which are hashes to strings' do
+        env = {
+          'global' => [{:FOO => 'bar', :BAR => 'baz'}],
+          'matrix' => [{:ONE => 1, :TWO => '2'}]
+        }
+
+        config = { 'env' => env }
+        build = Factory(:build, :config => config)
+
+        build.config.should == {
+          :env => [
+            ["ONE=1 TWO=2", "FOO=bar BAR=baz"]
+          ]
+        }
+      end
+
       it 'works fine even if matrix part of env is undefined' do
         env = {
           'global' => ['FOO=bar']
@@ -212,6 +228,18 @@ describe Build do
     end
 
     describe 'obfuscated config' do
+      it 'normalizes env vars which are hashes to strings' do
+        build  = Build.new(:repository => Factory(:repository))
+        config = {
+          :env => [[build.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo'], [{:ONE => 1, :TWO => '2'}]]
+        }
+        build.config = config
+
+        build.obfuscated_config.should == {
+          :env => ['BAR=[secure] FOO=foo', 'ONE=1 TWO=2']
+        }
+      end
+
       it 'leaves regular vars untouched' do
         build = Build.new(:repository => Factory(:repository))
         build.config = { :rvm => ['1.8.7'], :env => ['FOO=foo'] }

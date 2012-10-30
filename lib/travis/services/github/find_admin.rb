@@ -9,7 +9,7 @@ module Travis
 
         class << self
           def for_repository(repository)
-            new(repository).find
+            new(repository).run
           end
         end
 
