@@ -28,7 +28,7 @@ module Travis
         private
 
           def fetch
-            GH[request.commit.config_url]
+            GH[request.commit.config_url]['content'].to_s.unpack('m').first
           end
 
           def parse(yaml)
