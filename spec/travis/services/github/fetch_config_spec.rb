@@ -3,12 +3,12 @@ require 'spec_helper'
 describe Travis::Services::Github::FetchConfig do
   include Travis::Testing::Stubs
 
-  let(:subject)  { Travis::Services::Github::FetchConfig }
-  # let(:response) { stub('response', :success? => true, :body => 'foo: Foo') }
-  # let(:http)     { stub('http', :get => response) }
-  let(:yaml)     { 'foo: bar' }
-  let(:service)  { subject.new(request) }
-  let(:result)   { service.run }
+  let(:subject)   { Travis::Services::Github::FetchConfig }
+  let(:yaml)      { { 'content' => ['foo: Foo'].pack('m') } }
+  let(:service)   { subject.new(request) }
+  let(:result)    { service.run }
+  let(:exception) { GH::Error.new }
+
 
   before :each do
     GH.stubs(:[]).with(request.commit.config_url).returns(yaml)
@@ -27,46 +27,21 @@ describe Travis::Services::Github::FetchConfig do
       result['.result'].should == 'configured'
     end
 
-    it "returns { '.result' => 'not_found' } if the repository has not .travis.yml" do
-      response.expects(:success?).returns(false)
-      response.expects(:status).returns(404)
+    it "returns { '.result' => 'not_found' } if a 404 is returned" do
+      exception.stubs(info: { response_status: 404 })
+      GH.stubs(:[]).raises(exception)
       result['.result'].should == 'not_found'
     end
 
-    it "returns { '.result' => 'server_error' } if a 500 server error is returned" do
-      response.expects(:success?).returns(false)
-      response.expects(:status).returns(500)
+    it "returns { '.result' => 'server_error' } if a 500 is returned" do
+      exception.stubs(info: { response_status: 500 })
+      GH.stubs(:[]).raises(exception)
       result['.result'].should == 'server_error'
     end
 
-    describe 'invalid yml' do
-      let(:response) { stub('response', :success? => true, :body => "\tfoo: Foo") }
-
-      it "returns { '.result' => 'parsing_error' } if the .travis.yml is invalid" do
-        result['.result'].should == 'parsing_failed'
-      end
-    end
-  end
-
-  describe 'http_options' do
-    before :each do
-      @ssl = Travis.config.ssl
-    end
-
-    after :each do
-      Travis.config.ssl = @ssl
-    end
-
-    it 'returns a hash containing a :ca_path value if present' do
-      Travis.config.ssl = { :ca_path => '/path/to/certs' }
-      service.send(:http_options)[:ssl][:ca_path].should == '/path/to/certs'
-    end
-
-    it 'returns a hash containing a :ca_file value if present' do
-      Travis.config.ssl = { :ca_file => '/path/to/cert.file' }
-      service.send(:http_options)[:ssl][:ca_file].should == '/path/to/cert.file'
+    it "returns { '.result' => 'parsing_error' } if the .travis.yml is invalid" do
+      GH.stubs(:[]).with(request.commit.config_url).returns("\tfoo: Foo")
+      result['.result'].should == 'parsing_failed'
     end
   end
 end
-
-

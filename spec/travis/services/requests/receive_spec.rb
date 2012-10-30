@@ -12,7 +12,8 @@ describe Travis::Services::Requests::Receive do
   let(:request) { service.run }
 
   before :each do
-    Request.any_instance.stubs(:start!)
+    Request.any_instance.stubs(:configure)
+    Request.any_instance.stubs(:start)
   end
 
   shared_examples_for 'creates a request and repository' do
