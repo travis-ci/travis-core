@@ -72,20 +72,20 @@ module Travis
       end
 
       # Returns (recipients, urls, channels) for (email, webhooks, irc)
-      # Supported data types are Hash, Array and String
+      # Notification type config can be nil, true/false, a string, an array of values,
+      # or a hash containing a key for these values.
       def notification_values(type, key)
         config = notifications[type] rescue {}
-        # Notification type config can be a string, an array of values,
-        # or a hash containing a key for these values.
-        normalize_array(config.is_a?(Hash) ? config[key] : config)
+        values = config.is_a?(Hash) ? config[key] : config
+        values ? normalize_array(values) : values
       end
 
       def notifications
         Travis::Event::SecureConfig.decrypt(config.fetch(:notifications, {}), repository['key'])
       end
 
-      def normalize_array(array)
-        Array(array).map { |room| room.split(',') }.flatten.map(&:strip).reject(&:blank?)
+      def normalize_array(values)
+        Array(values).compact.map { |value| value.split(',') }.flatten.map(&:strip).reject(&:blank?)
       end
     end
   end
