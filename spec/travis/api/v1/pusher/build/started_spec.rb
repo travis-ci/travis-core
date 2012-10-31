@@ -14,6 +14,7 @@ describe Travis::Api::V1::Pusher::Build::Started do
       'result' => nil,
       'started_at' => json_format_time(Time.now.utc - 1.minute),
       'commit' => '62aae5f70ceee39123ef',
+      'commit_id' => 1,
       'branch' => 'master',
       'job_ids' => [1, 2],
       'message' => 'the commit message',
