@@ -15,11 +15,27 @@ class Request
     end
 
     def configure
-      self.config = fetch_config if accepted? && config.blank?
+      if accepted? && config.blank?
+        self.config = fetch_config
+      else
+        if not accepted?
+          Travis.logger.info("Request #{id} was not accepted: #{approval.message}")
+        elsif config.blank?
+          Travis.logger.info("Request #{id} had a non-blank config.")
+        end
+      end
     end
 
     def finish
-      add_build if config.present? && approved?
+      if config.present? && approved?
+        add_build
+      else
+        if not config.present?
+          Travis.logger.info("Request #{id} didn't create a build because no config was present.")
+        elsif not approved?
+          Travis.logger.info("Request #{id} didn't create a build because it wasn't approved: #{approval.message}")
+        end
+      end
       self.result = approval.result
       self.message = approval.message
     end
