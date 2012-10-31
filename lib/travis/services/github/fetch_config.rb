@@ -15,7 +15,14 @@ module Travis
         end
 
         def run
-          parse(fetch) || { '.result' => 'not_found' }
+          retries = 0
+          config = nil
+          until retries > 3
+            config = parse(fetch)
+            break if config
+            retries += 1
+          end
+          config
         rescue GH::Error => e
           if e.info[:response_status] == 404
             { '.result' => 'not_found' }
@@ -32,7 +39,11 @@ module Travis
         private
 
           def fetch
-            GH[config_url]['content'].to_s.unpack('m').first
+            content = GH[config_url]['content']
+            Travis.logger.info("Got empty content for #{config_url}") if content.nil?
+            content = content.to_s.unpack('m').first
+            Travis.logger.info("Got empty unpacked content for #{config_url}, content was #{content.inspect}") if content.nil?
+            content
           end
 
           def parse(yaml)
