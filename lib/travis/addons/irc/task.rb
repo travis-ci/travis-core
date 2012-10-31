@@ -13,6 +13,10 @@ module Travis
 
         def channels
           @channels ||= params[:channels]
+          # @channels ||= options[:channels].inject({}) do |channels, (key, value)|
+          #   key = eval(key) if key.is_a?(String)
+          #   channels.merge(key => value)
+          # end
         end
 
         def messages
