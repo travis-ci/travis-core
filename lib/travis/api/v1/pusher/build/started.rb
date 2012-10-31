@@ -19,6 +19,7 @@ module Travis
                 'result' => nil,
                 'started_at' => format_date(build.started_at),
                 'commit' => commit.commit,
+                'commit_id' => commit.id,
                 'branch' => commit.branch,
                 'message' => commit.message,
                 'compare_url' => commit.compare_url,
