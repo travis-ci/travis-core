@@ -11,7 +11,9 @@ module Travis
                 'repository_id' => job.repository_id,
                 'number' => job.number,
                 'queue' => job.queue,
-                'state' => job.state.to_s
+                'state' => job.state.to_s,
+                'log_id' => job.log.id,
+                'allow_failure' => job.allow_failure
               }
             end
           end

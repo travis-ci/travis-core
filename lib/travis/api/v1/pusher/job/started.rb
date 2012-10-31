@@ -15,8 +15,7 @@ module Travis
                   'name' => 'Railslove',
                   'url' => 'http://railslove.de'
                 },
-                'state' => job.state.to_s,
-                'log_id' => job.log.id
+                'state' => job.state.to_s
               }
             end
           end

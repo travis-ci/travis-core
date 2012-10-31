@@ -12,7 +12,9 @@ describe Travis::Api::V1::Pusher::Job::Created do
       'repository_id' => test.repository_id,
       'number' => '2.1',
       'queue' => 'builds.common',
-      'state' => 'finished'
+      'state' => 'finished',
+      'log_id' => 1,
+      'allow_failure' => false
     }
   end
 end

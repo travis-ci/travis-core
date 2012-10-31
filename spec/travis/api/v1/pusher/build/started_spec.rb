@@ -24,9 +24,7 @@ describe Travis::Api::V1::Pusher::Build::Started do
       'committed_at' => json_format_time(Time.now.utc - 1.hour),
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
       'event_type' => 'push',
-      'state' => 'finished',
-      'duration' => 60,
-      'finished_at' => json_format_time(Time.now.utc)
+      'state' => 'finished'
     }
   end
 
