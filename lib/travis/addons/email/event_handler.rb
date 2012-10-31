@@ -28,7 +28,7 @@ module Travis
         private
 
           def broadcasts
-            Broadcast.by_repo(repository['id']).map do |broadcast|
+            Broadcast.by_repo(object.repository).map do |broadcast|
               { message: broadcast.message }
             end
           end

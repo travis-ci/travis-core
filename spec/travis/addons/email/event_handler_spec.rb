@@ -32,7 +32,7 @@ describe Travis::Addons::Email::EventHandler do
     let(:params) { { recipients: ['svenfuchs@artweb-design.de'], broadcasts: [{ message: 'message' }] }}
 
     before :each do
-      Broadcast.stubs(:by_repo).with(build.repository_id).returns([broadcast])
+      Broadcast.stubs(:by_repo).with(build.repository).returns([broadcast])
     end
 
     def notify
