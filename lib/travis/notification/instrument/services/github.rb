@@ -6,7 +6,7 @@ module Travis
           class FindAdmin < Instrument
             def run_completed
               publish(
-                :msg => "#{target.class.name}#find for #{target.repository.slug}: #{result.login}",
+                :msg => "#{target.class.name}#run for #{target.repository.slug}: #{result.login}",
                 :result => result
               )
             end
@@ -14,12 +14,15 @@ module Travis
 
           class FetchConfig < Instrument
             def run_completed
-              config_url = target.config_url.gsub(/\access_token=\w*/, 'access_token=[secure]')
               publish(
-                :msg => "#{target.class.name}#fetch #{target.config_url}",
-                :url => target.config_url,
+                :msg => "#{target.class.name}#run #{config_url}",
+                :url => config_url,
                 :result => result
               )
+            end
+
+            def config_url
+              target.config_url.gsub(/access_token=\w*/, 'access_token=[secure]')
             end
           end
 
