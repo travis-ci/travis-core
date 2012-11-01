@@ -63,14 +63,14 @@ describe Travis::Addons::Flowdock::EventHandler do
     end
 
     it 'triggers a task if specified by the config' do
-      Travis::Event::Config.any_instance.stubs(:send_on_finished_for?).with(:flowdock).returns(false)
-      task.expects(:run).never
+      Travis::Event::Config.any_instance.stubs(:send_on_finished_for?).with(:flowdock).returns(true)
+      task.expects(:run).with(:flowdock, payload, targets: ['room'])
       notify
     end
 
     it 'does not trigger task if specified by the config' do
-      Travis::Event::Config.any_instance.stubs(:send_on_finished_for?).with(:flowdock).returns(true)
-      task.expects(:run).with(:flowdock, payload, targets: ['room'])
+      Travis::Event::Config.any_instance.stubs(:send_on_finished_for?).with(:flowdock).returns(false)
+      task.expects(:run).never
       notify
     end
   end

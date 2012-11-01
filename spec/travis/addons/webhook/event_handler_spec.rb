@@ -5,6 +5,7 @@ describe Travis::Addons::Webhook::EventHandler do
 
   let(:subject) { Travis::Addons::Webhook::EventHandler }
   let(:payload) { Travis::Api.data(build, for: 'event', version: 'v0') }
+  let(:webhook_payload) { Travis::Api.data(build, for: 'webhook', type: 'build/finished', version: 'v1') }
 
   describe 'subscription' do
     let(:handler) { subject.any_instance }
@@ -40,19 +41,19 @@ describe Travis::Addons::Webhook::EventHandler do
 
     it 'triggers a task if the build is a push request' do
       build.stubs(:pull_request?).returns(false)
-      task.expects(:run).with(:webhook, payload, targets: ['http://webhook.com'], token: 'token')
+      task.expects(:run).with(:webhook, webhook_payload, targets: ['http://webhook.com'], token: 'token')
       notify
     end
 
-    it 'does not trigger a task if the build is a pull request' do
+    it 'triggers a task if the build is a pull request' do
       build.stubs(:pull_request?).returns(true)
-      task.expects(:run).never
+      task.expects(:run).with(:webhook, webhook_payload, targets: ['http://webhook.com'], token: 'token')
       notify
     end
 
     it 'triggers a task if webhooks are present' do
       build.stubs(:config => { :notifications => { :webhooks => 'http://webhook.com' } })
-      task.expects(:run).with(:webhook, payload, targets: ['http://webhook.com'], token: 'token')
+      task.expects(:run).with(:webhook, webhook_payload, targets: ['http://webhook.com'], token: 'token')
       notify
     end
 
@@ -63,14 +64,14 @@ describe Travis::Addons::Webhook::EventHandler do
     end
 
     it 'triggers a task if specified by the config' do
-      Travis::Event::Config.any_instance.stubs(:send_on_finished_for?).with(:webhooks).returns(false)
-      task.expects(:run).never
+      Travis::Event::Config.any_instance.stubs(:send_on_finished_for?).with(:webhooks).returns(true)
+      task.expects(:run).with(:webhook, webhook_payload, targets: ['http://webhook.com'], token: 'token')
       notify
     end
 
     it 'does not trigger task if specified by the config' do
-      Travis::Event::Config.any_instance.stubs(:send_on_finished_for?).with(:webhooks).returns(true)
-      task.expects(:run).with(:webhook, payload, targets: ['http://webhook.com'], token: 'token')
+      Travis::Event::Config.any_instance.stubs(:send_on_finished_for?).with(:webhooks).returns(false)
+      task.expects(:run).never
       notify
     end
   end
