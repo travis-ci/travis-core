@@ -25,6 +25,14 @@ describe Travis::Services::Builds::FindOne do
     end
   end
 
+  describe 'with newer associated record' do
+    it 'returns updated_at of newest result' do
+      build.update_attribute(:updated_at, 5.minutes.ago)
+      build.reload.updated_at.should < build.matrix.first.updated_at
+      service.updated_at.to_s.should == build.matrix.first.updated_at.to_s
+    end
+  end
+
   describe 'final?' do
     it 'returns true if the build is finished' do
       build.update_attributes!(:state => :finished)
