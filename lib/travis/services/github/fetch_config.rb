@@ -16,7 +16,7 @@ module Travis
 
         def run
           config = retrying(3) { parse(fetch) }
-          config || Travis.logger.info("[request:fetch_config] Empty config for request id=#{request.id} config_url=#{config_url.inspect}")
+          config || Travis.logger.warn("[request:fetch_config] Empty config for request id=#{request.id} config_url=#{config_url.inspect}")
         rescue GH::Error => e
           if e.info[:response_status] == 404
             { '.result' => 'not_found' }
@@ -52,7 +52,7 @@ module Travis
             until result || count > 3
               result = yield
               count += 1
-              Travis.logger.info("[request:fetch_config] Retrying to fetch config for #{config_url}")
+              Travis.logger.warn("[request:fetch_config] Retrying to fetch config for #{config_url}") unless result
             end
             result
           end

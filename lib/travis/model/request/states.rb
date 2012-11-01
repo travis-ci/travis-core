@@ -16,9 +16,9 @@ class Request
 
     def configure
       if !accepted?
-        Travis.logger.info("[request:configure] Request not accepted: event_type=#{event_type.inspect} commit=#{commit.commit.inspect} message=#{approval.message.inspect}")
+        Travis.logger.warn("[request:configure] Request not accepted: event_type=#{event_type.inspect} commit=#{commit.commit.inspect} message=#{approval.message.inspect}")
       elsif config.present?
-        Travis.logger.info("[request:configure] Request not configured: config not blank, config=#{config.inspect} commit=#{commit.commit.inspect}")
+        Travis.logger.warn("[request:configure] Request not configured: config not blank, config=#{config.inspect} commit=#{commit.commit.inspect}")
       else
         self.config = fetch_config
         Travis.logger.info("[request:configure] Request configured: config=#{config.inspect} commit=#{commit.commit.inspect}")
@@ -27,9 +27,9 @@ class Request
 
     def finish
       if config.blank?
-        Travis.logger.info("[request:finish] Request not creating a build: config is blank, config=#{config.inspect} commit=#{commit.commit.inspect}")
+        Travis.logger.warn("[request:finish] Request not creating a build: config is blank, config=#{config.inspect} commit=#{commit.commit.inspect}")
       elsif !approved?
-        Travis.logger.info("[request:finish] Request not creating a build: not approved commit=#{commit.commit.inspect} message=#{approval.message.inspect}")
+        Travis.logger.warn("[request:finish] Request not creating a build: not approved commit=#{commit.commit.inspect} message=#{approval.message.inspect}")
       else
         add_build
         Travis.logger.info("[request:finish] Request created a build. commit=#{commit.commit.inspect}")
