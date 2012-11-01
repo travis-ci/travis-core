@@ -5,7 +5,7 @@ describe Travis::Services::Github::FetchConfig do
 
   let(:subject)   { Travis::Services::Github::FetchConfig }
   let(:body)      { { 'content' => ['foo: Foo'].pack('m') } }
-  let(:service)   { subject.new(request) }
+  let(:service)   { subject.new(nil, request: request) }
   let(:result)    { service.run }
   let(:exception) { GH::Error.new }
 

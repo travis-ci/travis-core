@@ -3,10 +3,8 @@ require 'spec_helper'
 describe Travis::Services::Github::FindAdmin do
   include Travis::Testing::Stubs
 
-  let(:subject) { Travis::Services::Github::FindAdmin }
-
   describe 'find' do
-    let(:result) { subject.new(repository).run }
+    let(:result) { described_class.new(nil, repository: repository).run }
 
     before :each do
       User.stubs(:with_permissions).with(:repository_id => repository.id, :admin => true).returns [user]

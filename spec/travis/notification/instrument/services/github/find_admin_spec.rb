@@ -5,7 +5,7 @@ describe Travis::Notification::Instrument::Services::Github::FindAdmin do
 
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events[1] }
-  let(:service)   { Travis::Services::Github::FindAdmin.new(repository) }
+  let(:service)   { Travis::Services::Github::FindAdmin.new(nil, repository: repository) }
 
   before :each do
     Travis::Notification.publishers.replace([publisher])

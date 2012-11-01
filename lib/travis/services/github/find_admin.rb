@@ -3,7 +3,7 @@ require 'faraday/error'
 module Travis
   module Services
     module Github
-      class FindAdmin
+      class FindAdmin < Base
         extend Travis::Instrumentation
         include Travis::Logging
 
@@ -13,17 +13,15 @@ module Travis
           end
         end
 
-        attr_reader :repository
-
-        def initialize(repository)
-          @repository = repository
-        end
-
         def run
           admin = candidates.detect { |user| validate(user) }
           admin || raise_admin_missing
         end
         instrument :run
+
+        def repository
+          params[:repository]
+        end
 
         private
 

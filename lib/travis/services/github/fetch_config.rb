@@ -4,15 +4,9 @@ module Travis
   module Services
     module Github
       # encapsulates fetching a .travis.yml from a given commit's config_url
-      class FetchConfig
+      class FetchConfig < Base
         include Logging
         extend Instrumentation
-
-        attr_accessor :request
-
-        def initialize(request)
-          @request = request
-        end
 
         def run
           parse(fetch) || { '.result' => 'not_found' }
@@ -24,6 +18,10 @@ module Travis
           end
         end
         instrument :run
+
+        def request
+          params[:request]
+        end
 
         def config_url
           request.config_url

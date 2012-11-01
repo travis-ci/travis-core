@@ -4,7 +4,7 @@ describe Travis::Notification::Instrument::Services::Github::FetchConfig do
   include Travis::Testing::Stubs
 
   let(:body)      { { 'content' => ['foo: Foo'].pack('m') } }
-  let(:service)   { Travis::Services::Github::FetchConfig.new(request) }
+  let(:service)   { Travis::Services::Github::FetchConfig.new(nil, request: request) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events[1] }
 
