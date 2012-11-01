@@ -93,7 +93,6 @@ describe Travis::Services::Requests::Receive::PullRequest do
   describe 'request' do
     it 'returns all attributes required for a Request' do
       payload.request.should == {
-        :payload => GITHUB_PAYLOADS['pull-request'],
         :comments_url => 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments',
         :base_commit => 'ee644876520685ea3ce144bc8449c1155cee56b4',
         :head_commit => '5442e1772f6de100a2451bd1e08824d3be37a46f'

@@ -1,3 +1,5 @@
+require 'gh'
+
 module Travis
   module Services
     module Requests
@@ -9,7 +11,8 @@ module Travis
 
         class << self
           def payload_for(type, data)
-            const_get(type.camelize).new(data)
+            event = GH.load(data)
+            const_get(type.camelize).new(event)
           end
         end
 
@@ -29,6 +32,7 @@ module Travis
 
           def create
             @request = repo.requests.create!(payload.request.merge(
+              :payload => params[:payload],
               :event_type => event_type,
               :state => :created,
               :commit => commit,

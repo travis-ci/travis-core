@@ -1,15 +1,12 @@
-require 'gh'
-
 module Travis
   module Services
     module Requests
       class Receive
         class Push
-          attr_reader :payload, :gh
+          attr_reader :event
 
-          def initialize(payload)
-            @payload = payload
-            @gh = GH.load(payload)
+          def initialize(event)
+            @event = event
           end
 
           def accept?
@@ -18,42 +15,40 @@ module Travis
 
           def repository
             @repository ||= {
-              :name        => gh['repository']['name'],
-              :description => gh['repository']['description'],
-              :url         => gh['repository']['_links']['html']['href'],
-              :owner_name  => gh['repository']['owner']['login'],
-              :owner_email => gh['repository']['owner']['email'],
-              :owner_type  => gh['repository']['owner']['type'],
-              :private     => !!gh['repository']['private']
+              :name        => event['repository']['name'],
+              :description => event['repository']['description'],
+              :url         => event['repository']['_links']['html']['href'],
+              :owner_name  => event['repository']['owner']['login'],
+              :owner_email => event['repository']['owner']['email'],
+              :owner_type  => event['repository']['owner']['type'],
+              :private     => !!event['repository']['private']
             }
           end
 
           def owner
             @owner ||= {
-              :type  => gh['repository']['owner']['type'],
-              :login => gh['repository']['owner']['login']
+              :type  => event['repository']['owner']['type'],
+              :login => event['repository']['owner']['login']
             }
           end
 
           def request
-            @request ||= {
-              :payload => payload,
-            }
+            @request ||= {}
           end
 
           def commit
-            @commit ||= if commit = gh['commits'].last
+            @commit ||= if commit = event['commits'].last
               {
                 :commit          => commit['sha'],
                 :message         => commit['message'],
-                :branch          => gh['ref'].split('/', 3).last,
-                :ref             => gh['ref'],
+                :branch          => event['ref'].split('/', 3).last,
+                :ref             => event['ref'],
                 :committed_at    => commit['date'],
                 :committer_name  => commit['committer']['name'],
                 :committer_email => commit['committer']['email'],
                 :author_name     => commit['author']['name'],
                 :author_email    => commit['author']['email'],
-                :compare_url     => gh['compare']
+                :compare_url     => event['compare']
               }
             end
           end

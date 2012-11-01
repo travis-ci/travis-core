@@ -26,14 +26,6 @@ describe Travis::Services::Requests::Receive::Push do
     end
   end
 
-  describe 'request' do
-    it 'returns all attributes required for a Request' do
-      payload.request.should == {
-        :payload => GITHUB_PAYLOADS['gem-release'],
-      }
-    end
-  end
-
   describe 'commit' do
     it 'returns all attributes required for a Commit' do
       payload.commit.should == {
@@ -56,12 +48,12 @@ describe Travis::Services::Requests::Receive::Push do
       end
 
       it 'returns travis when ref is ref/heads/travis' do
-        payload.gh.data['ref'] = "ref/heads/travis"
+        payload.event.data['ref'] = "ref/heads/travis"
         payload.commit[:branch].should == 'travis'
       end
 
       it 'returns features/travis-ci when ref is ref/heads/features/travis-ci' do
-        payload.gh.data['ref'] = "ref/heads/features/travis-ci"
+        payload.event.data['ref'] = "ref/heads/features/travis-ci"
         payload.commit[:branch].should == 'features/travis-ci'
       end
     end

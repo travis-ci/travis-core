@@ -1,18 +1,12 @@
-require 'gh'
-
 module Travis
   module Services
     module Requests
       class Receive
         class PullRequest
-          attr_reader :payload
+          attr_reader :event
 
-          def initialize(payload)
-            @payload = payload
-          end
-
-          def event
-            @event ||= GH.load(payload)
+          def initialize(event)
+            @event = event
           end
 
           def accept?
@@ -47,9 +41,15 @@ module Travis
             }
           end
 
+          def admin
+            @admin ||= begin
+              repo = Repository.where(owner_name: repository['owner_name'], name: repository['name']).first
+              repo.admin
+            end
+          end
+
           def request
             @request ||= {
-              :payload      => payload,
               :comments_url => pull_request['_links']['comments']['href'],
               :base_commit  => base_commit['sha'],
               :head_commit  => head_commit['sha']
