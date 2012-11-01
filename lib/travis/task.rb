@@ -25,12 +25,14 @@ module Travis
     class << self
       extend Exceptions::Handling
 
+      attr_accessor :run_local
+
       def run(type, *args)
         Travis::Async.run(self, :perform, { :queue => type, :use => run_local? ? :threaded : :sidekiq }, type, *args)
       end
 
       def run_local?
-        Travis::Features.feature_inactive?(:travis_tasks)
+        !!run_local || Travis::Features.feature_inactive?(:travis_tasks)
       end
 
       def perform(type, *args)

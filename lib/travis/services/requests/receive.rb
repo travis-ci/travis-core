@@ -16,7 +16,11 @@ module Travis
         attr_reader :request
 
         def run
-          create && start if accept?
+          if accept?
+            create && start
+          else
+            Travis.logger.info("Github event rejected: event_type=#{event_type.inspect} repo=\"#{payload.repository['owner_name']}/#{payload.repository['name']}\" #{"commit=#{payload.commit.commit.inspect}" if payload.commit} action=#{payload.action.inspect}")
+          end
           request
         end
         instrument :run
@@ -38,7 +42,7 @@ module Travis
           end
 
           def start
-            request.start! if request
+            request.start!
           end
 
           def payload
@@ -58,7 +62,7 @@ module Travis
           end
 
           def commit
-            @commit = repo.commits.create!(payload.commit) if payload.commit
+            @commit ||= repo.commits.create!(payload.commit) if payload.commit
           end
 
           Travis::Notification::Instrument::Services::Requests::Receive.attach_to(self)

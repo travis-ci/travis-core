@@ -38,9 +38,9 @@ describe Travis::Services::Github::FetchConfig do
       result['.result'].should == 'server_error'
     end
 
-    it "returns { '.result' => 'parsing_error' } if the .travis.yml is invalid" do
+    it "returns { '.result' => 'parse_error' } if the .travis.yml is invalid" do
       GH.stubs(:[]).returns("\tfoo: Foo")
-      result['.result'].should == 'parsing_failed'
+      result['.result'].should == 'parse_error'
     end
   end
 end

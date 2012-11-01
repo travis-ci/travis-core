@@ -15,9 +15,8 @@ module Travis
         end
 
         def run
-          config = parse(fetch)
-          Travis.logger.info("Empty config for request #{request.id}") if config.nil?
-          config
+          config = retrying(3) { parse(fetch) }
+          config || Travis.logger.info("Empty config for request id=#{request.id} config_url=#{config_url.inspect}")
         rescue GH::Error => e
           if e.info[:response_status] == 404
             { '.result' => 'not_found' }
@@ -45,7 +44,17 @@ module Travis
             YAML.load(yaml).merge('.result' => 'configured')
           rescue StandardError, Psych::SyntaxError => e
             log_exception(e)
-            { '.result' => 'parsing_failed' }
+            { '.result' => 'parse_error' }
+          end
+
+          def retrying(times)
+            count, result = 0, nil
+            until result || count > 3
+              result = yield
+              count += 1
+              Travis.logger.info("Retrying to fetch config for #{config_url}")
+            end
+            result
           end
 
           Notification::Instrument::Services::Github::FetchConfig.attach_to(self)

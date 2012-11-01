@@ -20,7 +20,7 @@ describe Travis::Notification::Instrument::Services::Github::FindAdmin do
       :uuid => Travis.uuid,
       :payload => {
         :result => user,
-        :msg => 'Travis::Services::Github::FindAdmin#find for svenfuchs/minimal: svenfuchs'
+        :msg => 'Travis::Services::Github::FindAdmin#run for svenfuchs/minimal: svenfuchs'
       }
     }
   end
