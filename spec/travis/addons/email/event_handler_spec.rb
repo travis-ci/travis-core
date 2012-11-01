@@ -52,13 +52,13 @@ describe Travis::Addons::Email::EventHandler do
     end
 
     it 'triggers a task if specified by the config' do
-      Travis::Event::Config.any_instance.stubs(:enabled?).with(:email).returns(true)
+      build.stubs(config: { notifications: { email: { recipients: 'svenfuchs@artweb-design.de' } } })
       task.expects(:run).with(:email, payload, params)
       notify
     end
 
     it 'does not trigger task if specified by the config' do
-      Travis::Event::Config.any_instance.stubs(:enabled?).with(:email).returns(false)
+      build.stubs(config: { notifications: { email: false } })
       task.expects(:run).never
       notify
     end

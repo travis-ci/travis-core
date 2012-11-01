@@ -9,7 +9,7 @@ module Travis
         EVENTS = 'build:finished'
 
         def handle?
-          recipients.present? && config.enabled?(:email) && config.send_on_finished_for?(:email)
+          config.enabled?(:email) && config.send_on_finished_for?(:email) && recipients.present?
         end
 
         def handle
