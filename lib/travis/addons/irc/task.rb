@@ -20,9 +20,7 @@ module Travis
         end
 
         def messages
-          @messages ||= templates.map do |template|
-            Util::Template.new(template, payload).interpolate
-          end
+          @messages ||= template.map { |line| Util::Template.new(line, payload).interpolate }
         end
 
         private
@@ -72,8 +70,9 @@ module Travis
             !config[:skip_join]
           end
 
-          def templates
-            Array(config[:template] || DEFAULT_TEMPLATE)
+          def template
+            template = config[:template] rescue nil
+            Array(template || DEFAULT_TEMPLATE)
           end
 
           def client_options(port, ssl)
