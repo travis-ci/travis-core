@@ -16,27 +16,27 @@ class Request
 
     def configure
       if !accepted?
-        Travis.logger.info("Request not accepted: event_type=#{event_type.inspect} commit=#{commit.commit.inspect} message=#{approval.message.inspect}")
+        Travis.logger.info("[request:configure] Request not accepted: event_type=#{event_type.inspect} commit=#{commit.commit.inspect} message=#{approval.message.inspect}")
       elsif config.present?
-        Travis.logger.info("Request not configured: config not blank, config=#{config.inspect} commit=#{commit.commit.inspect}")
+        Travis.logger.info("[request:configure] Request not configured: config not blank, config=#{config.inspect} commit=#{commit.commit.inspect}")
       else
         self.config = fetch_config
-        Travis.logger.info("Request configured: config=#{config.inspect} commit=#{commit.commit.inspect}")
+        Travis.logger.info("[request:configure] Request configured: config=#{config.inspect} commit=#{commit.commit.inspect}")
       end
     end
 
     def finish
       if config.blank?
-        Travis.logger.info("Request not creating a build: config is blank, config=#{config.inspect} commit=#{commit.commit.inspect}")
+        Travis.logger.info("[request:finish] Request not creating a build: config is blank, config=#{config.inspect} commit=#{commit.commit.inspect}")
       elsif !approved?
-        Travis.logger.info("Request not creating a build: not approved commit=#{commit.commit.inspect} message=#{approval.message.inspect}")
+        Travis.logger.info("[request:finish] Request not creating a build: not approved commit=#{commit.commit.inspect} message=#{approval.message.inspect}")
       else
         add_build
-        Travis.logger.info("Request created a build. commit=#{commit.commit.inspect}")
+        Travis.logger.info("[request:finish] Request created a build. commit=#{commit.commit.inspect}")
       end
       self.result = approval.result
       self.message = approval.message
-      Travis.logger.info("Request finished. result=#{result.inspect} message=#{message.inspect} commit=#{commit.commit.inspect}")
+      Travis.logger.info("[request:finish] Request finished. result=#{result.inspect} message=#{message.inspect} commit=#{commit.commit.inspect}")
     end
 
     def requeueable?
