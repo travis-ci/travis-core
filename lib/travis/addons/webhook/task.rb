@@ -16,9 +16,10 @@ module Travis
           end
 
           def send_webhook(target)
-            body = { payload: payload.except(:params).to_json }
-            headers = { Authorization: authorization }
-            response = http.post(target, body, headers)
+            response = http.post(target) do |req|
+              req.body = { payload: payload.except(:params).to_json }
+              req.headers['Authorization'] = authorization
+            end
             response.success? ? log_success(response) : log_error(response)
           end
 
