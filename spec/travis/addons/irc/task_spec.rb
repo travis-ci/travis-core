@@ -40,6 +40,12 @@ describe Travis::Addons::Irc::Task do
     run
   end
 
+  it 'one irc notification w/ channel given as a string' do
+    payload['build']['config']['notifications'] = { irc: 'irc.freenode.net:1234#travis' }
+    expect_irc 'irc.freenode.net', 1234, 'travis', simple_irc_notfication_messages
+    run
+  end
+
   it 'one irc notification using notice' do
     payload['build']['config']['notifications'] = { irc: { use_notice: true } }
 

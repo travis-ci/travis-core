@@ -63,24 +63,23 @@ module Travis
           end
 
           def notice?
-            !!config[:use_notice]
+            !!try_config(:use_notice)
           end
 
           def join?
-            !config[:skip_join]
+            !try_config(:skip_join)
           end
 
           def template
-            template = config[:template] rescue nil
-            Array(template || DEFAULT_TEMPLATE)
+            Array(try_config(:template) || DEFAULT_TEMPLATE)
           end
 
           def client_options(port, ssl)
             {
               :port => port,
               :ssl => (ssl == :ssl),
-              :password => config[:password],
-              :nickserv_password => config[:nickserv_password]
+              :password => try_config(:password),
+              :nickserv_password => try_config(:nickserv_password)
             }
           end
 
@@ -91,7 +90,11 @@ module Travis
           end
 
           def nick
-            config[:nick] || Travis.config.irc.try(:nick) || 'travis-ci'
+            try_config(:nick) || Travis.config.irc.try(:nick) || 'travis-ci'
+          end
+
+          def try_config(option)
+            config.is_a?(Hash) and config[option]
           end
 
           def config
@@ -103,4 +106,3 @@ module Travis
     end
   end
 end
-
