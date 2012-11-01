@@ -7,15 +7,6 @@ module Travis
         extend Travis::Instrumentation
         include Travis::Logging
 
-<<<<<<< HEAD
-=======
-        class << self
-          def for_repository(repository)
-            new(repository).run
-          end
-        end
-
->>>>>>> ac0a8e4c86c7e088b4397e38a69c0d80b83475b5
         def run
           admin = candidates.detect { |user| validate(user) }
           admin || raise_admin_missing
