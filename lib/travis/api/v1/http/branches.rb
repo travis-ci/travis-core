@@ -17,7 +17,7 @@ module Travis
           end
 
           def updated_at
-            builds.map(&:finished_at).compact.sort { |lft, rgt| lft.finished_at <=> rgt.finished_at }.first
+            builds.compact.map(&:finished_at).compact.sort.first
           end
 
           def data
