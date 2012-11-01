@@ -21,7 +21,7 @@ class Request
         Travis.logger.warn("[request:configure] Request not configured: config not blank, config=#{config.inspect} commit=#{commit.commit.inspect}")
       else
         self.config = fetch_config
-        Travis.logger.info("[request:configure] Request configured: config=#{config.inspect} commit=#{commit.commit.inspect}")
+        Travis.logger.info("[request:configure] Request successfully configured commit=#{commit.commit.inspect}")
       end
     end
 
