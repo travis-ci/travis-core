@@ -40,17 +40,25 @@ module Travis
       end
 
       def send_on_success_for?(type)
-        !!if build['result'] == 1
+        !!if build_passed?
           config = with_fallbacks(type, :on_success, DEFAULTS[:success][type])
-          config == :always || (config == :change && build['previous_result'] != 1)
+          config == :always || (config == :change && !previous_build_passed?)
         end
       end
 
       def send_on_failure_for?(type)
-        !!if build['result'] == 0
+        !!if !build_passed?
           config = with_fallbacks(type, :on_failure, DEFAULTS[:failure][type])
-          config == :always || (config == :change && build['previous_result'] == 1)
+          config == :always || (config == :change && previous_build_passed?)
         end
+      end
+
+      def build_passed?
+        build['result'] == 0
+      end
+
+      def previous_build_passed?
+        build['previous_result'] == 0
       end
 
       # Fetches config with fallbacks. (notification type > global > default)

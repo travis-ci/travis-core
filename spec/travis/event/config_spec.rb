@@ -22,7 +22,7 @@ describe Travis::Event::Config do
       [false, false, { :notifications => { :on_success => 'always' } }, true ],
 
       [nil,   true,  { :notifications => { :on_failure => 'always' } }, true ],
-      # [true,  true,  { :notifications => { :on_failure => 'always' } }, true ],
+      [true,  true,  { :notifications => { :on_failure => 'always' } }, true ],
       [false, true,  { :notifications => { :on_failure => 'always' } }, true ],
 
       [nil,   false, { :notifications => { :on_failure => 'always' } }, true ],
@@ -39,7 +39,7 @@ describe Travis::Event::Config do
       [false, false, { :notifications => { :on_success => 'change' } }, true ],
 
       [nil,   true,  { :notifications => { :on_failure => 'change' } }, true ],
-      # [true,  true,  { :notifications => { :on_failure => 'change' } }, true ], # TODO
+      [true,  true,  { :notifications => { :on_failure => 'change' } }, true ],
       [false, true,  { :notifications => { :on_failure => 'change' } }, true ],
 
       [nil,   false, { :notifications => { :on_failure => 'change' } }, false ],
@@ -56,7 +56,7 @@ describe Travis::Event::Config do
       [false, false, { :notifications => { :on_success => 'never' } }, true ],
 
       [nil,   true,  { :notifications => { :on_failure => 'never' } }, true ],
-      # [true,  true,  { :notifications => { :on_failure => 'never' } }, true ], # TODO
+      [true,  true,  { :notifications => { :on_failure => 'never' } }, true ],
       [false, true,  { :notifications => { :on_failure => 'never' } }, true ],
 
       [nil,   false, { :notifications => { :on_failure => 'never' } }, false ],
@@ -68,7 +68,7 @@ describe Travis::Event::Config do
     combinations.each do |previous, current, data, result|
       it "returns #{result} if the previous build #{results[previous]}, the current build #{results[current]} and config is #{data}" do
         data = build.config.deep_merge(data)
-        build.stubs(:config => data, :result => current ? 1 : 0, :failed? => !current, :previous_result => previous ? 1 : 0)
+        build.stubs(:config => data, :result => current ? 0 : 1, :failed? => !current, :previous_result => previous ? 0 : 1)
         config.send_on_finished_for?(:webhooks).should == result
       end
     end
