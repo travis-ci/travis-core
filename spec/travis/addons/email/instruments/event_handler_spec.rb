@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Travis::Addons::Email::Instruments::EventHandler do
   include Travis::Testing::Stubs
 
+  let(:build)     { stub_build(result: 1) }
   let(:subject)   { Travis::Addons::Email::EventHandler }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events[1] }
