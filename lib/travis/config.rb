@@ -63,7 +63,15 @@ module Travis
 
       def normalize(data)
         data.deep_symbolize_keys!
-        (data[:database] ||= {}).merge!(database_from_env) if database_env_url
+        if database_from_env
+          data[:database].merge! database_from_env do |key, old_value, new_value|
+            if old_value == new_value
+              old_value
+            else
+              fail "Conflict in database config between ENV and travis.yml: #{key} is #{old_value.inspect} vs #{new_value}"
+            end
+          end
+        end
         data
       end
     end
