@@ -136,7 +136,7 @@ class Repository < ActiveRecord::Base
 
   def last_build_result_on(params)
     params = params.symbolize_keys.slice(*Build.matrix_keys_for(params)).compact
-    params.empty? ? last_build_result || last_build.try(:previous_result) : builds.last_result_on(params[:branch])
+    params.empty? ? last_build_result || last_build.try(:previous_result) : builds.last_result_on(params[:branch], params.slice(*Build::Matrix::ENV_KEYS))
   end
 
   def last_finished_builds_by_branches
