@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::Services::Accounts::FindAll do
+describe Travis::Services::Users::FindAccounts do
   include Support::ActiveRecord
 
   let!(:sven)    { Factory(:user, :login => 'sven') }
@@ -14,7 +14,7 @@ describe Travis::Services::Accounts::FindAll do
     Factory(:repository, :owner => sinatra, :owner_name => 'sinatra', :name => 'sinatra')
   end
 
-  let(:service) { Travis::Services::Accounts::FindAll.new(sven, {}) }
+  let(:service) { Travis::Services::Users::FindAccounts.new(sven, {}) }
 
   before :each do
     Repository.all.each do |repo|
