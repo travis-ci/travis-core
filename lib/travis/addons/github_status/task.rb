@@ -24,6 +24,7 @@ module Travis
         private
 
           def process
+            info("Update commit status on #{url} to #{state}")
             authenticated do
               GH.post(url, :state => state, :description => description, :target_url => target_url)
             end
