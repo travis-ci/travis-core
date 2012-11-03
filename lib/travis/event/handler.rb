@@ -35,33 +35,33 @@ module Travis
 
       private
 
-          def config
-            @config ||= Config.new(payload)
-          end
+        def config
+          @config ||= Config.new(payload)
+        end
 
-          def repository
-            @repository ||= payload['repository']
-          end
+        def repository
+          @repository ||= payload['repository']
+        end
 
-          def job
-            @job ||= payload['job']
-          end
+        def job
+          @job ||= payload['job']
+        end
 
-          def build
-            @build ||= payload['build']
-          end
+        def build
+          @build ||= payload['build']
+        end
 
-          def request
-            @request ||= payload['request']
-          end
+        def request
+          @request ||= payload['request']
+        end
 
-          def commit
-            @commit ||= payload['commit']
-          end
+        def commit
+          @commit ||= payload['commit']
+        end
 
-          def pull_request?
-            build['pull_request']
-          end
+        def pull_request?
+          build['pull_request']
+        end
     end
   end
 end
