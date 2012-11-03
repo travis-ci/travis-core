@@ -1,7 +1,6 @@
 module Travis
   module Services
     autoload :Base,          'travis/services/base'
-    autoload :Accounts,      'travis/services/accounts'
     autoload :Artifacts,     'travis/services/artifacts'
     autoload :Builds,        'travis/services/builds'
     autoload :Branches,      'travis/services/branches'
