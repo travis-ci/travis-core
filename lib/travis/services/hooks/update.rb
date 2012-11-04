@@ -3,11 +3,11 @@ module Travis
     module Hooks
       class Update < Base
         def run
-          hook.set(active?, current_user) if hook
-          nil
+          service(:github, :set_hook, id: params[:id], active: active?).run
+          repo.update_column(:active, active?)
         end
 
-        # TODO change hook.set to communicate result and GH errors
+        # TODO
         # def messages
         #   messages = []
         #   messages << { :notice => "The service hook was successfully #{active? ? 'enabled' : 'disabled'}." } if what?
@@ -17,8 +17,8 @@ module Travis
 
         private
 
-          def hook
-            @hook ||= service(:hooks, :find_one, params).run
+          def repo
+            @repo ||= service(:hooks, :find_one, params).run
           end
 
           def active?

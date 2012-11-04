@@ -15,22 +15,22 @@ describe Travis::Services::Hooks::FindAll do
 
   it 'finds repositories where the current user has admin access' do
     @params = {}
-    service.run.map(&:repository).should include(repo)
+    service.run.should include(repo)
   end
 
   it 'does not find repositories where the current user does not have admin access' do
     @params = {}
     user.permissions.delete_all
-    service.run.map(&:repository).should_not include(repo)
+    service.run.should_not include(repo)
   end
 
   it 'finds repositories by a given owner_name where the current user has admin access' do
     @params = { :owner_name => repo.owner_name }
-    service.run.map(&:repository).should include(repo)
+    service.run.should include(repo)
   end
 
-  it 'does not find repositories where the current user does not have admin access' do
+  it 'does not find repositories by a given owner_name where the current user does not have admin access' do
     @params = { :owner_name => 'rails' }
-    service.run.map(&:repository).should_not include(repo)
+    service.run.should_not include(repo)
   end
 end
