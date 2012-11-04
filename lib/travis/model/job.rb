@@ -19,7 +19,7 @@ class Job < ActiveRecord::Base
   class Queueing
     class All
       def run
-        Service::Jobs::Enqueue.run # bc, remove once apps use the service directly
+        Travis::Services.run(:jobs, :enqueue) # bc, remove once apps use the service directly
       end
     end
   end

@@ -38,7 +38,7 @@ class Request
       end
 
       def fetch_config
-        Travis.service(:github, :fetch_config, request: self).run
+        Travis::Services.run(:github, :fetch_config, request: self)
       end
 
       def add_build
