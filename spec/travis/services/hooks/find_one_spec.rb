@@ -15,17 +15,17 @@ describe Travis::Services::Hooks::FindOne do
 
   it 'finds a hook by id where the current user has admin access' do
     @params = { :id => repo.id }
-    service.run.repository.should == repo
+    service.run.should == repo
   end
 
   it 'finds a hook by slug where the current user has admin access' do
     @params = { :slug => repo.slug }
-    service.run.repository.should == repo
+    service.run.should == repo
   end
 
   it 'finds a hook by owner_name and name where the current user has admin access' do
     @params = { :owner_name => repo.owner_name, :name => repo.name }
-    service.run.repository.should == repo
+    service.run.should == repo
   end
 
   it 'does not raise if the repository could not be found' do

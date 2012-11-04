@@ -3,30 +3,30 @@ module Travis
     module V1
       module Http
         class Hooks
-          attr_reader :hooks, :options
+          attr_reader :repos, :options
 
-          def initialize(hooks, options = {})
-            @hooks = hooks
+          def initialize(repos, options = {})
+            @repos = repos
             @options = options
           end
 
           def data
             {
-              'hooks' => hooks.map { |hook| hook_data(hook) },
+              'hooks' => repos.map { |repo| repo_data(repo) },
             }
           end
 
           private
 
-            def hook_data(hook)
+            def repo_data(repo)
               {
-                'uid' => [hook.owner_name, hook.name].join(':'),
-                'url' => "https://github.com/#{hook.owner_name}/#{hook.name}",
-                'name' => hook.name,
-                'owner_name' => hook.owner_name,
-                'description' => hook.description,
-                'active' => hook.active,
-                'private' => hook.private
+                'uid' => [repo.owner_name, repo.name].join(':'),
+                'url' => "https://github.com/#{repo.owner_name}/#{repo.name}",
+                'name' => repo.name,
+                'owner_name' => repo.owner_name,
+                'description' => repo.description,
+                'active' => repo.active,
+                'private' => repo.private
               }
             end
         end

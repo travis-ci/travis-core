@@ -124,18 +124,11 @@ describe User do
     end
 
     it "contains repositories where the user has an admin role" do
-      service_hook = user.service_hooks.last
-      service_hook.uid.should == 'svenfuchs:own-repo'
-      service_hook.owner_name.should == 'svenfuchs'
-      service_hook.name.should == 'own-repo'
-      service_hook.description.should == 'description'
-      service_hook.url.should == 'https://github.com/svenfuchs/own-repo'
-      service_hook.active.should be_true
+      user.service_hooks.should include(own_repo)
     end
 
     it "does not contain repositories where the user does not have an admin role" do
-      service_hooks = user.service_hooks
-      service_hooks.any? { |s| s.name == 'other-repo' }.should be_false
+      user.service_hooks.should_not include(other_repo)
     end
   end
 end

@@ -105,15 +105,6 @@ class Repository < ActiveRecord::Base
     private? ? "git@github.com:#{slug}.git": "git://github.com/#{slug}.git"
   end
 
-  def service_hook
-    @service_hook ||= ::ServiceHook.new(
-      :owner_name => owner_name,
-      :name => name,
-      :active => active,
-      :repository => self
-    )
-  end
-
   def branches
     self.class.connection.select_values %(
       SELECT DISTINCT ON (branch) branch

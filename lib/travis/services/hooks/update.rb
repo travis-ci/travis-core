@@ -5,14 +5,12 @@ module Travis
         extend Travis::Instrumentation
 
         def run
-          if hook
-            hook.set(active?, current_user)
-            true
-          end
+          service(:github, :set_hook, id: params[:id], active: active?).run
+          repo.update_column(:active, active?)
         end
         instrument :run
 
-        # TODO change hook.set to communicate result and GH errors
+        # TODO
         # def messages
         #   messages = []
         #   messages << { :notice => "The service hook was successfully #{active? ? 'enabled' : 'disabled'}." } if what?
@@ -20,8 +18,9 @@ module Travis
         #   messages
         # end
 
-        def hook
-          @hook ||= service(:hooks, :find_one, params).run
+        def repo
+          # TODO this service is only used here, so i guess we can inline it
+          @repo ||= service(:hooks, :find_one, params).run
         end
 
         def active?
