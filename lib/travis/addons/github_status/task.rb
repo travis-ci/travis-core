@@ -53,7 +53,7 @@ module Travis
           end
 
           def http_options
-            super.merge(token: params[:token])
+            super.merge(token: params[:admin_token])
           end
 
           Instruments::Task.attach_to(self)
