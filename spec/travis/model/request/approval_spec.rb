@@ -48,6 +48,7 @@ describe Request::Approval do
 
     it 'returns "private repository" if the repository is private' do
       request.repository.stubs(:private?).returns(true)
+      request.stubs(:config).returns({key: 'value'})
       approval.message.should == 'private repository'
     end
 
