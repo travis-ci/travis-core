@@ -46,12 +46,6 @@ class User < ActiveRecord::Base
     is_syncing?
   end
 
-  def service_hooks(options = {})
-    hooks = repositories.administratable.order('owner_name, name')
-    hooks = hooks.where(options.slice(:owner_name, :name)) if options.key?(:owner_name) || options.key?(:name)
-    hooks
-  end
-
   def organization_ids
     @organization_ids ||= memberships.map(&:organization_id)
   end
@@ -70,6 +64,24 @@ class User < ActiveRecord::Base
     #   then these fallbacks (email hash and zeros) are superfluous and can be removed.
     gravatar_id.presence || (email? && Digest::MD5.hexdigest(email)) || '0' * 32
   end
+
+  def service_hooks(options = {})
+    scope = repositories.administratable.order('owner_name, name')
+    scope = scope.by_owner_name(options[:owner_name]) if options[:owner_name]
+    scope.map do |repo|
+      ServiceHook.new(
+        :id => repo.id,
+        :uid => [repo.owner_name, repo.name].join(':'),
+        :owner_name => repo.owner_name,
+        :name => repo.name,
+        :url => "https://github.com/#{repo.slug}", # TODO shouldn't be needed, really
+        :active => repo.active,
+        :description => repo.description,
+        :private => repo.private
+      )
+    end.compact
+  end
+  alias_method :github_service_hooks, :service_hooks
 
   def authenticated_on_github(&block)
     Travis::Services::Github.authenticated(self, &block) # TODO

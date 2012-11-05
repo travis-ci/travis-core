@@ -1,49 +1,20 @@
 require 'spec_helper'
 
-describe Travis::Services::Hooks::Update do
-  include Travis::Testing::Stubs
+describe Travis::Services::Hooks do
+  include Support::ActiveRecord
 
+  let(:user)    { User.first || Factory(:user) }
+  let(:repo)    { Factory(:repository) }
   let(:service) { Travis::Services::Hooks::Update.new(user, params) }
-  let(:params)  { { id: repo.id, active: true } }
 
   before :each do
-    repo.stubs(:update_column)
-    service.stubs(:service).returns(stub(run: repo))
+    user.permissions.create!(:repository => repo, :admin => true)
   end
 
-  it 'finds the repo by the given id' do
-    service.expects(:service).with(:hooks, :find_one, params).returns(stub(run: repo))
+  let(:params) { { :id => repo.id, :active => 'true' } }
+
+  it 'sets the given :active param to the hook' do
+    ServiceHook.any_instance.expects(:set).with(true, user)
     service.run
-  end
-
-  it 'calls the Github::SetHook service to update the hook' do
-    service.expects(:service).with(:github, :set_hook, id: repo.id, active: true).returns(stub(run: nil))
-    service.run
-  end
-
-  describe 'sets the repo to the active param' do
-    it 'given true' do
-      service.params.update(active: true)
-      repo.expects(:update_column).with(:active, true)
-      service.run
-    end
-
-    it 'given false' do
-      service.params.update(active: false)
-      repo.expects(:update_column).with(:active, false)
-      service.run
-    end
-
-    it 'given "true"' do
-      service.params.update(active: 'true')
-      repo.expects(:update_column).with(:active, true)
-      service.run
-    end
-
-    it 'given "false"' do
-      service.params.update(active: 'false')
-      repo.expects(:update_column).with(:active, false)
-      service.run
-    end
   end
 end

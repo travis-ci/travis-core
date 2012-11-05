@@ -3,7 +3,6 @@ module Travis
     module Github
       autoload :FetchConfig, 'travis/services/github/fetch_config'
       autoload :FindAdmin,   'travis/services/github/find_admin'
-      autoload :SetHook,     'travis/services/github/set_hook'
       autoload :SyncUser,    'travis/services/github/sync_user'
 
       class << self

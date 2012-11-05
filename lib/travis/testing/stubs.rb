@@ -11,7 +11,6 @@ module Travis
         def included(base)
           base.send(:instance_eval) do
             let(:repository) { stub_repository }
-            let(:repo)       { stub_repository }
             let(:request)    { stub_request }
             let(:commit)     { stub_commit }
             let(:build)      { stub_build }
@@ -42,8 +41,6 @@ module Travis
           :source_url => 'git://github.com/svenfuchs/minimal.git',
           :key => stub_key,
           :admin => stub_user,
-          :active => true,
-          :private => false,
           :private? => false,
           :last_build_id => 1,
           :last_build_number => 2,
@@ -202,8 +199,7 @@ module Travis
           :github_oauth_token => 'token',
           :syncing? => false,
           :is_syncing => false,
-          :synced_at => Time.now.utc - 3600,
-          :tokens => [stub('token', token: 'token')]
+          :synced_at => Time.now.utc - 3600
         )
       end
 

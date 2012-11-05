@@ -3,8 +3,14 @@ module Travis
     module Hooks
       class FindOne < Base
         def run
-          current_user.service_hooks.first
+          repo.service_hook if repo
         end
+
+        private
+
+          def repo
+            @repo ||= current_user.repositories.administratable.find_by(params)
+          end
       end
     end
   end
