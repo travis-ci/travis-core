@@ -3,7 +3,7 @@ source :rubygems
 gemspec
 
 gem 'travis-support',     github: 'travis-ci/travis-support'
-gem 'travis-sidekiqs',    github: 'travis-ci/travis-sidekiqs'
+gem 'travis-sidekiqs',    github: 'travis-ci/travis-sidekiqs', require: nil
 gem 'gh',                 github: 'rkh/gh'
 gem 'newrelic_rpm',       '~> 3.4.2'
 gem 'hubble',             github: 'roidrage/hubble'
