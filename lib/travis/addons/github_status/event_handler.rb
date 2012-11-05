@@ -9,24 +9,17 @@ module Travis
         EVENTS = /build:(started|finished)/
 
         def handle?
-          admin_token.present?
+          token.present?
         end
 
         def handle
-          Travis::Addons::GithubStatus::Task.run(:github_status, payload, admin_token: admin_token)
+          Travis::Addons::GithubStatus::Task.run(:github_status, payload, token: token)
         end
 
         private
 
-          def admin_token
-            admin.try(:github_oauth_token)
-          rescue Travis::AdminMissing => error
-            Travis.logger.error error.message
-            nil
-          end
-
-          def admin
-            @admin ||= Travis::Services.run(:github, :find_admin, repository: object.repository)
+          def token
+            repository['admin_token']
           end
 
           Instruments::EventHandler.attach_to(self)

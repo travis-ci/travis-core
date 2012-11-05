@@ -14,7 +14,7 @@ describe Travis::Addons::GithubStatus::Task do
   end
 
   def run
-    subject.new(payload, admin_token: '12345').run
+    subject.new(payload, token: '12345').run
   end
 
   it 'posts status info for a pending build' do
