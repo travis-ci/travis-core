@@ -18,7 +18,7 @@ describe Travis::Addons::Hipchat::Task do
   end
 
   it "sends hipchat notifications to the given targets" do
-    targets = ['12345@room_1', '23456@room_2']
+    targets = ['12345@room_1', '23456@room_2', '34567@[Dev] room3']
     message = [
       'svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): the build has passed',
       'Change view: https://github.com/svenfuchs/minimal/compare/master...develop',
@@ -27,6 +27,7 @@ describe Travis::Addons::Hipchat::Task do
 
     expect_hipchat('room_1', '12345', message)
     expect_hipchat('room_2', '23456', message)
+    expect_hipchat('[Dev] room3', '34567', message)
 
     run(targets)
     http.verify_stubbed_calls
