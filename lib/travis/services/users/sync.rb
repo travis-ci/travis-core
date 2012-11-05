@@ -1,4 +1,4 @@
-require 'travis/sidekiq/workers'
+require 'travis/sidekiq/synchronize_user'
 
 module Travis
   module Services
