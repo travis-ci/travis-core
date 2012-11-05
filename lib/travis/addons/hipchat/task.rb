@@ -44,7 +44,7 @@ module Travis
           end
 
           def parse(target)
-            target =~ /^([\w]+)@([\w ]+)$/
+            target =~ /^([\w]+)@([\S ]+)$/
             ["https://api.hipchat.com/v1/rooms/message?format=json&auth_token=#{$1}", $2]
           end
 
