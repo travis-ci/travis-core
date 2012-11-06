@@ -43,6 +43,7 @@ describe Travis::Api::V0::Worker::Job::Test do
           'last_build_number' => 2,
           'last_build_duration' => 60,
           'last_build_result' => 0,
+          'description' => 'the repo description'
         },
         'config' => {
           'rvm' => '1.8.7',
@@ -93,6 +94,7 @@ describe Travis::Api::V0::Worker::Job::Test do
           'last_build_number' => 2,
           'last_build_duration' => 60,
           'last_build_result' => 0,
+          'description' => 'the repo description'
         },
         'config' => {
           'rvm' => '1.8.7',
