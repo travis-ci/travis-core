@@ -22,7 +22,7 @@ module Travis
           if accept?
             create && start
           else
-            Travis.logger.info("[request:receive] Github event rejected: event_type=#{event_type.inspect} repo=\"#{payload.repository['owner_name']}/#{payload.repository['name']}\" #{"commit=#{payload.commit.commit.inspect}" if payload.commit} action=#{payload.action.inspect}")
+            Travis.logger.info("[request:receive] Github event rejected: event_type=#{event_type.inspect} repo=\"#{payload.repository['owner_name']}/#{payload.repository['name']}\" #{"commit=#{payload.commit.try(:commit).inspect}" if payload.commit} action=#{payload.action.inspect}")
           end
           request
         end
