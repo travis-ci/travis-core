@@ -45,12 +45,12 @@ module Travis
             }
           end
 
-          def admin
-            @admin ||= begin
-              repo = Repository.where(owner_name: repository['owner_name'], name: repository['name']).first
-              repo.admin
-            end
-          end
+          # def admin
+          #   @admin ||= begin
+          #     repo = Repository.where(owner_name: repository['owner_name'], name: repository['name']).first
+          #     repo.admin
+          #   end
+          # end
 
           def request
             @request ||= {
