@@ -56,7 +56,12 @@ module Travis
 
         def decrypt_value(value)
           decoded = Base64.decode64(value)
-          key.decrypt(decoded)
+          # TODO should probably be checked earlier
+          if key.respond_to?(:decrypt)
+            key.decrypt(decoded)
+          else
+            Travis.logger.error("Can not decrypt secure config value: #{value.inspect[0..10]} using key: #{key.inspect[0..10]}")
+          end
         rescue OpenSSL::PKey::RSAError => e
           value
         end
