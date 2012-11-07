@@ -20,14 +20,12 @@ module Travis
         private
 
           def syncing
-            user.update_attribute(:is_syncing, true)
+            user.update_column(:is_syncing, true) unless user.is_syncing?
             result = yield
-            user.update_attribute(:synced_at, Time.now)
+            user.update_column(:synced_at, Time.now)
             result
-          rescue Timeout::Error, StandardError => e
-            Travis::Exceptions.handle(e)
           ensure
-            user.update_attribute(:is_syncing, false)
+            user.update_column(:is_syncing, false)
           end
       end
     end

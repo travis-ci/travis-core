@@ -26,8 +26,9 @@ describe Travis::Services::Github::SyncUser do
 
     it 'handles exceptions' do
       exception = nil
-      Travis::Exceptions.expects(:handle).with { |e| e.message.should == 'kaputt' }
-      service.send(:syncing) { raise('kaputt') }
+      expect {
+        service.send(:syncing) { raise('kaputt') }
+      }.to raise_error
     end
   end
 end
