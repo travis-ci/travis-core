@@ -84,8 +84,13 @@ module Travis
       # or a hash containing a key for these values.
       def notification_values(type, key)
         config = notifications[type] rescue {}
-        values = config.is_a?(Hash) ? config[key] : config
-        values ? normalize_array(values) : values
+        value  = config.is_a?(Hash) ? config[key] : config
+        case value
+        when Array, String
+          normalize_array(value)
+        else
+          value
+        end
       end
 
       def notifications
