@@ -1,3 +1,5 @@
+# TODO this is duplicate with Github::SyncUser, isn't it?
+#
 module Travis
   module Services
     module Users
