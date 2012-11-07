@@ -27,8 +27,6 @@ class Request
     def message
       if !commit.present?
         'missing commit'
-      elsif repository.private?
-        'private repository'
       elsif rails_fork?
         'rails fork'
       elsif skipped?
@@ -39,6 +37,8 @@ class Request
         'missing config'
       elsif !branch_approved?
         'branch not included or excluded'
+      elsif repository.private?
+        'private repository'
       end
     end
 

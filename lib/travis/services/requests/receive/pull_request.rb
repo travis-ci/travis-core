@@ -10,12 +10,16 @@ module Travis
           end
 
           def accept?
-            return false if pull_requests_disabled?
+            return false if disabled?
             case action
             when :opened, :reopened then !!merge_commit
             when :synchronize       then head_change?
             else false
             end
+          end
+
+          def disabled?
+            Travis::Features.feature_deactivated?(:pull_requests)
           end
 
           def head_change?
@@ -41,12 +45,12 @@ module Travis
             }
           end
 
-          def admin
-            @admin ||= begin
-              repo = Repository.where(owner_name: repository['owner_name'], name: repository['name']).first
-              repo.admin
-            end
-          end
+          # def admin
+          #   @admin ||= begin
+          #     repo = Repository.where(owner_name: repository['owner_name'], name: repository['name']).first
+          #     repo.admin
+          #   end
+          # end
 
           def request
             @request ||= {
@@ -93,19 +97,13 @@ module Travis
             pull_request['merge_commit']
           end
 
-          def pull_requests_disabled?
-            Travis::Features.feature_deactivated?(:pull_requests)
+          def repo
+            @repo ||= event['repository']
           end
 
-          private
-
-            def repo
-              @repo ||= event['repository']
-            end
-
-            def repo_owner
-              @repo_owner ||= repo['owner']
-            end
+          def repo_owner
+            @repo_owner ||= repo['owner']
+          end
         end
       end
     end

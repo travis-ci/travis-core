@@ -39,6 +39,8 @@ module Travis
         # 1 minutes and 1 second
         # 15 seconds
         def duration_in_words(started_at, finished_at)
+          return '?' if started_at.nil? || finished_at.nil?
+
           started_at  = Time.parse(started_at)  if started_at.is_a?(String)
           finished_at = Time.parse(finished_at) if finished_at.is_a?(String)
 
