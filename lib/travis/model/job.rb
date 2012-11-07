@@ -103,6 +103,7 @@ class Job < ActiveRecord::Base
   end
 
   def matrix_config?(config)
+    return false unless config.respond_to?(:to_hash)
     config = config.to_hash.symbolize_keys
     Build.matrix_keys_for(config).map do |key|
       self.config[key.to_sym] == config[key] || commit.branch == config[key]
