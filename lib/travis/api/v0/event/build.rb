@@ -50,8 +50,7 @@ module Travis
                 'id' => repository.id,
                 'key' => repository.key.try(:public_key),
                 'slug' => repository.slug,
-                'owner_email' => repository.owner_email,
-                'admin_token' => repository_admin_token
+                'owner_email' => repository.owner_email
                 # 'description' => repository.description,
                 # 'last_build_id' => repository.last_build_id,
                 # 'last_build_number' => repository.last_build_number,
@@ -61,13 +60,6 @@ module Travis
                 # 'last_build_started_at' => format_date(repository.last_build_started_at),
                 # 'last_build_finished_at' => format_date(repository.last_build_finished_at),
               }
-            end
-
-            def repository_admin_token
-              repository.admin.try(:github_oauth_token)
-            rescue Travis::AdminMissing => error
-              Travis.logger.error error.message
-              nil
             end
 
             def request_data

@@ -19,7 +19,14 @@ module Travis
         private
 
           def token
-            repository['admin_token']
+            admin.try(:github_oauth_token)
+          rescue Travis::AdminMissing => error
+            Travis.logger.error error.message
+            nil
+          end
+
+          def admin
+            @admin ||= Travis::Services.run(:github, :find_admin, repository: object.repository)
           end
 
           Instruments::EventHandler.attach_to(self)

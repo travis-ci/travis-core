@@ -32,6 +32,10 @@ describe Travis::Addons::GithubStatus::EventHandler do
 
     attr_reader :url, :event
 
+    before :each do
+      Travis::Services::Github::FindAdmin.any_instance.stubs(:run).returns(user)
+    end
+
     def notify
       subject.notify(event, build)
     end

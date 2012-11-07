@@ -15,6 +15,12 @@ module Travis
     autoload :Workers,       'travis/services/workers'
     autoload :Users,         'travis/services/users'
 
+    extend self
+
+    def run(type, name, params = {})
+      service(type, name, params).run
+    end
+
     def service(type, name, params = {})
       user = current_user if respond_to?(:current_user)
       const(type, name).new(user, params)
