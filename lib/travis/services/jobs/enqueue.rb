@@ -36,6 +36,7 @@ module Travis
 
           def enqueue_all
             jobs.group_by(&:owner).each do |owner, jobs|
+              next unless owner
               limit = Limit.new(owner, jobs)
               enqueue(limit.queueable)
               reports[owner.login] = limit.report
