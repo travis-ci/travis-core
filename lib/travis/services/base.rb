@@ -13,6 +13,10 @@ module Travis
       def scope(key)
         key.to_s.camelize.constantize
       end
+
+      def logger
+        Travis.logger
+      end
     end
   end
 end
