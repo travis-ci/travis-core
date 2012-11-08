@@ -61,15 +61,21 @@ module Travis
   class AdminMissing < StandardError; end
 
   class << self
-    attr_writer :services
+    # TODO check with @rkh where this is actually required
+    def setup(config = Travis.config.oauth2)
+      GH.set(:client_id => config[:client_id], :client_secret => config[:client_secret]) if config
+    end
 
     def config
       @config ||= Config.new
     end
 
-    # TODO check with @rkh where this is actually required
-    def setup(config = Travis.config.oauth2)
-      GH.set(:client_id => config[:client_id], :client_secret => config[:client_secret]) if config
+    def services=(services)
+      @services ||= services
+    end
+
+    def services
+      @services ||= Travis::Services
     end
 
     def pusher
@@ -78,10 +84,6 @@ module Travis
         pusher.key    = config.pusher.key
         pusher.secret = config.pusher.secret
       end
-    end
-
-    def services
-      @services || raise('no services namespace set')
     end
   end
 
