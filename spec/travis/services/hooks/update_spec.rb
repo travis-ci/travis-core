@@ -15,6 +15,7 @@ describe Travis::Services::Hooks do
 
   it 'sets the given :active param to the hook' do
     ServiceHook.any_instance.expects(:set).with(true, user)
-    service.run
+    result = service.run
+    result.should be_true
   end
 end

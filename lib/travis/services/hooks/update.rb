@@ -3,8 +3,10 @@ module Travis
     module Hooks
       class Update < Base
         def run
-          hook.set(active?, current_user) if hook
-          nil
+          if hook
+            hook.set(active?, current_user)
+            true
+          end
         end
 
         # TODO change hook.set to communicate result and GH errors
