@@ -18,11 +18,7 @@ describe Travis::Services do
   let(:object) { Test::Foo.new }
 
   before :each do
-    Travis.services = Test::Services
-  end
-
-  after :each do
-    Travis.services = Travis::Services
+    Travis.stubs(:services).returns(Test::Services)
   end
 
   describe 'service' do
