@@ -98,7 +98,9 @@ module Travis
       end
 
       def normalize_array(values)
-        Array(values).compact.map { |value| value.split(',') }.flatten.map(&:strip).reject(&:blank?)
+        values = Array(values).compact
+        values = values.map { |value| value.split(',') if value.is_a?(String) }
+        values.compact.flatten.map(&:strip).reject(&:blank?)
       end
     end
   end
