@@ -5,7 +5,7 @@ describe Travis::Addons::GithubStatus::Task do
 
   let(:subject)    { Travis::Addons::GithubStatus::Task }
   let(:url)        { '/repos/svenfuchs/minimal/statuses/62aae5f70ceee39123ef' }
-  let(:target_url) { 'http://travis-ci.org/#!/svenfuchs/minimal/builds/1' }
+  let(:target_url) { 'https://travis-ci.org/svenfuchs/minimal/builds/1' }
   let(:payload)    { Travis::Api.data(build, for: 'event', version: 'v0') }
   let(:io)         { StringIO.new }
 

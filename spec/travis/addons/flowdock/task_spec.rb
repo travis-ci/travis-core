@@ -24,7 +24,7 @@ describe Travis::Addons::Flowdock::Task do
       <li>Branch: <code>master</code></li>
       <li>Latest commit: <code><a href="https://github.com/svenfuchs/minimal/commit/62aae5f70ceee39123ef">62aae5f</a></code> by <a href="mailto:svenfuchs@artweb-design.de">Sven Fuchs</a></li>
       <li>Change view: https://github.com/svenfuchs/minimal/compare/master...develop</li>
-      <li>Build details: http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}</li>
+      <li>Build details: https://travis-ci.org/svenfuchs/minimal/builds/#{build.id}</li>
       </ul>
     msg
     payload = {
@@ -36,7 +36,7 @@ describe Travis::Addons::Flowdock::Task do
       project:      'Build Status',
       format:       'html',
       tags:         ['ci', 'ok'],
-      link:         "http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}"
+      link:         "https://travis-ci.org/svenfuchs/minimal/builds/#{build.id}"
     }
 
     expect_flowdock('12345', payload)

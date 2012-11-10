@@ -54,7 +54,7 @@ describe Travis::Mailer::Build do
         Author: まつもとゆきひろ a.k.a. Matz
         Message: the commit message
         View the changeset: https://github.com/svenfuchs/minimal/compare/master...develop
-        View the full build log and details: http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}
+        View the full build log and details: https://travis-ci.org/svenfuchs/minimal/builds/#{build.id}
       ))
     end
 
@@ -62,7 +62,7 @@ describe Travis::Mailer::Build do
       email.html_part.body.should include_lines(%(
         The build passed.
         https://github.com/svenfuchs/minimal/compare/master...develop
-        http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}
+        https://travis-ci.org/svenfuchs/minimal/builds/#{build.id}
         62aae5f (master)
         まつもとゆきひろ a.k.a. Matz
         the commit message

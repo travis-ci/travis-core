@@ -33,7 +33,7 @@ module Travis
           end
 
           def target_url
-            "#{Travis.config.http_host}/#!/#{repository[:slug]}/builds/#{build[:id]}"
+            "#{Travis.config.http_host}/#{repository[:slug]}/builds/#{build[:id]}"
           end
 
           def sha
