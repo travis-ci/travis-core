@@ -120,7 +120,7 @@ module Travis
     end
 
     def http_host
-      "http://#{host}"
+      "https://#{host}"
     end
 
     def http_shorten_host
