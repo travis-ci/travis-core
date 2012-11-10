@@ -2,12 +2,15 @@ module Travis
   module Services
     module Hooks
       class Update < Base
+        extend Travis::Instrumentation
+
         def run
           if hook
             hook.set(active?, current_user)
             true
           end
         end
+        instrument :run
 
         # TODO change hook.set to communicate result and GH errors
         # def messages
@@ -17,17 +20,17 @@ module Travis
         #   messages
         # end
 
-        private
+        def hook
+          @hook ||= service(:hooks, :find_one, params).run
+        end
 
-          def hook
-            @hook ||= service(:hooks, :find_one, params).run
-          end
+        def active?
+          active = params[:active]
+          active = { 'true' => true, 'false' => false }[active] if active.is_a?(String)
+          !!active
+        end
 
-          def active?
-            active = params[:active]
-            active = { 'true' => true, 'false' => false }[active] if active.is_a?(String)
-            !!active
-          end
+        Notification::Instrument::Services::Hooks::Update.attach_to(self)
       end
     end
   end
