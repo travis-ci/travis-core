@@ -1,6 +1,5 @@
-require 'mail'
 require 'active_support/core_ext/object/try'
-require 'thread'
+require 'core_ext/hash/compact'
 
 module Travis
   module Notification
@@ -10,8 +9,6 @@ module Travis
       autoload :Task,         'travis/notification/instrument/task'
 
       class << self
-        extend Travis::Async
-
         def attach_to(const)
           namespace = const.name.underscore.gsub('/', '.')
           statuses = %w(received completed failed)
@@ -34,28 +31,27 @@ module Travis
           event = :"#{method}_#{status}"
           instrument.respond_to?(event) ? instrument.send(event) : instrument.publish
         end
-
-        # # TODO this should probably be decoupled somewhere else
-        # async :publish, :queue => :instrumentation
       end
 
-      attr_reader :message, :method, :status, :target, :result, :exception, :started_at, :finished_at
+      attr_reader :target, :method, :status, :result, :meta
 
       def initialize(message, method, status, payload)
-        @message, @method, @status = message, method, status.to_sym
-        @target, @result, @exception = payload.values_at(:target, :result, :exception)
-        @started_at, @finished_at = payload.values_at(:started_at, :finished_at)
-      end
-
-      def duration
-        @duration ||= (finished_at ? finished_at - started_at : nil)
+        @method, @status = method, status
+        @target, @result = payload.values_at(:target, :result)
+        started_at, finished_at = payload.values_at(:started_at, :finished_at)
+        @meta = {
+          uuid:        Travis.uuid,
+          message:     message,
+          started_at:  started_at,
+          finished_at: finished_at,
+          duration:    finished_at ? finished_at - started_at : nil,
+          exception:   payload[:exception]
+        }.compact
       end
 
       def publish(event = {})
         event[:msg] = "#{target.class.name}##{method} #{event[:msg]}".strip
-        payload = { message: message, uuid: Travis.uuid, payload: event }
-        payload[:exception] = exception if exception
-        Notification.publish(payload)
+        Notification.publish(meta.merge(payload: event))
       end
     end
   end

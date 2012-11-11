@@ -17,14 +17,13 @@ describe Travis::Notification::Instrument::Services::Hooks::Update do
 
   it 'publishes a payload' do
     service.run
-    event.should == {
-      :message => "travis.services.hooks.update.run:completed",
-      :uuid => Travis.uuid,
+    event.should publish_instrumentation_event(
+      :message => 'travis.services.hooks.update.run:completed',
       :payload => {
         :msg => 'Travis::Services::Hooks::Update#run for svenfuchs/minimal active=true (svenfuchs)',
         :result => true
       }
-    }
+    )
   end
 end
 

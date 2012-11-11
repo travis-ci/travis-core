@@ -15,10 +15,9 @@ describe Travis::Addons::Webhook::Instruments::EventHandler do
   end
 
   it 'publishes a payload' do
-    event.except(:payload).should == {
-      :message => "travis.addons.webhook.event_handler.notify:completed",
-      :uuid => Travis.uuid
-    }
+    event.should publish_instrumentation_event(
+      :message => 'travis.addons.webhook.event_handler.notify:completed'
+    )
     event[:payload].except(:payload).should == {
       :msg => 'Travis::Addons::Webhook::EventHandler#notify (build:finished) for #<Build id=1>',
       :repository => 'svenfuchs/minimal',

@@ -16,10 +16,9 @@ describe Travis::Addons::Flowdock::Instruments::Task do
   end
 
   it 'publishes a payload' do
-    event.except(:payload).should == {
-      :message => "travis.addons.flowdock.task.run:completed",
-      :uuid => Travis.uuid
-    }
+    event.should publish_instrumentation_event(
+      :message => 'travis.addons.flowdock.task.run:completed'
+    )
     event[:payload].except(:payload).should == {
       :msg => 'Travis::Addons::Flowdock::Task#run for #<Build id=1>',
       :repository => 'svenfuchs/minimal',

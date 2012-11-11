@@ -15,15 +15,14 @@ describe Travis::Notification::Instrument::Services::Github::FetchConfig do
 
   it 'publishes a payload' do
     service.run
-    event.should == {
-      :message => "travis.services.github.fetch_config.run:completed",
-      :uuid => Travis.uuid,
+    event.should publish_instrumentation_event(
+      :message => 'travis.services.github.fetch_config.run:completed',
       :payload => {
         :result => { 'foo' => 'Foo', '.result' => 'configured' },
         :msg => 'Travis::Services::Github::FetchConfig#run https://api.github.com/repos/svenfuchs/minimal/contents/.travis.yml?ref=62aae5f70ceee39123ef',
         :url => 'https://api.github.com/repos/svenfuchs/minimal/contents/.travis.yml?ref=62aae5f70ceee39123ef'
       }
-    }
+    )
   end
 
   it 'strips an access_token if present (1)' do

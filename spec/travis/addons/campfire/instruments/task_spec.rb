@@ -16,10 +16,9 @@ describe Travis::Addons::Campfire::Instruments::Task do
   end
 
   it 'publishes a payload' do
-    event.except(:payload).should == {
-      :message => "travis.addons.campfire.task.run:completed",
-      :uuid => Travis.uuid
-    }
+    event.should publish_instrumentation_event(
+      :message => 'travis.addons.campfire.task.run:completed'
+    )
     event[:payload].except(:payload).should == {
       :msg => 'Travis::Addons::Campfire::Task#run for #<Build id=1>',
       :repository => 'svenfuchs/minimal',
@@ -29,7 +28,7 @@ describe Travis::Addons::Campfire::Instruments::Task do
       :message => [
         '[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): the build has passed',
         '[travis-ci] Change view: https://github.com/svenfuchs/minimal/compare/master...develop',
-        "[travis-ci] Build details: http://travis-ci.org/svenfuchs/minimal/builds/1"
+        '[travis-ci] Build details: http://travis-ci.org/svenfuchs/minimal/builds/1'
       ]
     }
     event[:payload][:payload].should_not be_nil

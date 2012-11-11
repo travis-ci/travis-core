@@ -15,10 +15,9 @@ describe Travis::Addons::Hipchat::Instruments::EventHandler do
   end
 
   it 'publishes a payload' do
-    event.except(:payload).should == {
-      :message => "travis.addons.hipchat.event_handler.notify:completed",
-      :uuid => Travis.uuid
-    }
+    event.should publish_instrumentation_event(
+      :message => 'travis.addons.hipchat.event_handler.notify:completed'
+    )
     event[:payload].except(:payload).should == {
       :event => 'build:finished',
       :targets => ['hipchat_room'],

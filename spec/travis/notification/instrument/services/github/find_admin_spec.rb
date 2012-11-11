@@ -15,14 +15,13 @@ describe Travis::Notification::Instrument::Services::Github::FindAdmin do
   end
 
   it 'publishes a payload' do
-    event.should == {
-      :message => "travis.services.github.find_admin.run:completed",
-      :uuid => Travis.uuid,
+    event.should publish_instrumentation_event(
+      :message => 'travis.services.github.find_admin.run:completed',
       :payload => {
         :result => user,
         :msg => 'Travis::Services::Github::FindAdmin#run for svenfuchs/minimal: svenfuchs'
       }
-    }
+    )
   end
 end
 

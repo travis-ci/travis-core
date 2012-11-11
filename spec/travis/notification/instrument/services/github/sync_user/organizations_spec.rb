@@ -20,28 +20,26 @@ describe Travis::Notification::Instrument::Services::Github::SyncUser::Organizat
   end
 
   it 'publishes a payload on :run' do
-    events[3].should == {
-      :message => "travis.services.github.sync_user.organizations.run:completed",
+    events[3].should publish_instrumentation_event(
+      :message => 'travis.services.github.sync_user.organizations.run:completed',
       :payload => {
         :msg => %(Travis::Services::Github::SyncUser::Organizations#run for #<User id=#{user.id} login="sven">),
         :result => {
           :synced => [{ :id => travis.id, :login => 'travis-ci' }, { :id => sinatra.id, :login => 'sinatra' }],
           :removed => []
         }
-      },
-      :uuid => Travis.uuid
-    }
+      }
+    )
   end
 
   it 'publishes a payload on :fetch' do
-    events[2].should == {
-      :message => "travis.services.github.sync_user.organizations.fetch:completed",
+    events[2].should publish_instrumentation_event(
+      :message => 'travis.services.github.sync_user.organizations.fetch:completed',
       :payload => {
         :msg => %(Travis::Services::Github::SyncUser::Organizations#fetch for #<User id=#{user.id} login="sven">),
         :result => data
-      },
-      :uuid => Travis.uuid
-    }
+      }
+    )
   end
 end
 

@@ -15,10 +15,9 @@ describe Travis::Addons::Email::Instruments::EventHandler do
   end
 
   it 'publishes a payload' do
-    event.except(:payload).should == {
-      :message => "travis.addons.email.event_handler.notify:completed",
-      :uuid => Travis.uuid
-    }
+    event.should publish_instrumentation_event(
+      :message => 'travis.addons.email.event_handler.notify:completed'
+    )
     event[:payload].except(:payload).should == {
       :msg => 'Travis::Addons::Email::EventHandler#notify (build:finished) for #<Build id=1>',
       :repository => 'svenfuchs/minimal',

@@ -17,10 +17,9 @@ describe Travis::Addons::GithubStatus::Instruments::EventHandler do
     build.request.stubs(:pull_request?).returns(false)
     subject.notify('build:finished', build)
 
-    event.except(:payload).should == {
-      :message => "travis.addons.github_status.event_handler.notify:completed",
-      :uuid => Travis.uuid
-    }
+    event.should publish_instrumentation_event(
+      :message => 'travis.addons.github_status.event_handler.notify:completed'
+    )
 
     event[:payload].except(:payload).should == {
       :msg => 'Travis::Addons::GithubStatus::EventHandler#notify (build:finished) for #<Build id=1>',
@@ -38,10 +37,9 @@ describe Travis::Addons::GithubStatus::Instruments::EventHandler do
     build.request.stubs(:pull_request?).returns(true)
     subject.notify('build:finished', build)
 
-    event.except(:payload).should == {
-      :message => "travis.addons.github_status.event_handler.notify:completed",
-      :uuid => Travis.uuid
-    }
+    event.should publish_instrumentation_event(
+      :message => 'travis.addons.github_status.event_handler.notify:completed'
+    )
 
     event[:payload].except(:payload).should == {
       :msg => 'Travis::Addons::GithubStatus::EventHandler#notify (build:finished) for #<Build id=1>',

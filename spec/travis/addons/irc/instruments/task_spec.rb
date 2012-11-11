@@ -16,10 +16,9 @@ describe Travis::Addons::Irc::Instruments::Task do
   end
 
   it 'publishes a payload' do
-    event.except(:payload).should == {
-      :message => "travis.addons.irc.task.run:completed",
-      :uuid => Travis.uuid
-    }
+    event.should publish_instrumentation_event(
+      :message => 'travis.addons.irc.task.run:completed'
+    )
     event[:payload].except(:payload).should == {
       :msg => 'Travis::Addons::Irc::Task#run for #<Build id=1>',
       :repository => 'svenfuchs/minimal',

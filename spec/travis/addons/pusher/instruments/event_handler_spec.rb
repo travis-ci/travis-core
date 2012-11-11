@@ -16,10 +16,9 @@ describe Travis::Addons::Pusher::Instruments::EventHandler do
     it 'publishes a payload' do
       subject.notify('job:test:started', test)
 
-      event.except(:payload).should == {
-        :message => "travis.addons.pusher.event_handler.notify:completed",
-        :uuid => Travis.uuid
-      }
+      event.should publish_instrumentation_event(
+        :message => 'travis.addons.pusher.event_handler.notify:completed'
+      )
       event[:payload].except(:payload).should == {
         :msg => 'Travis::Addons::Pusher::EventHandler#notify (job:test:started) for #<Test id=1>',
         :repository => 'svenfuchs/minimal',
@@ -36,10 +35,9 @@ describe Travis::Addons::Pusher::Instruments::EventHandler do
     it 'publishes a payload' do
       subject.notify('build:finished', build)
 
-      event.except(:payload).should == {
-        :message => "travis.addons.pusher.event_handler.notify:completed",
-        :uuid => Travis.uuid
-      }
+      event.should publish_instrumentation_event(
+        :message => 'travis.addons.pusher.event_handler.notify:completed'
+      )
       event[:payload].except(:payload).should == {
         :msg => 'Travis::Addons::Pusher::EventHandler#notify (build:finished) for #<Build id=1>',
         :repository => 'svenfuchs/minimal',

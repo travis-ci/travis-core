@@ -16,9 +16,8 @@ describe Travis::Notification::Instrument::Services::Requests::Receive do
   end
 
   it 'publishes a payload' do
-    event.should == {
-      :message => "travis.services.requests.receive.run:completed",
-      :uuid => Travis.uuid,
+    event.should publish_instrumentation_event(
+      :message => 'travis.services.requests.receive.run:completed',
       :payload => {
         :msg => 'Travis::Services::Requests::Receive#run type="push"',
         :type => 'push',
@@ -26,6 +25,6 @@ describe Travis::Notification::Instrument::Services::Requests::Receive do
         :accept? => true,
         :payload => payload
       }
-    }
+    )
   end
 end

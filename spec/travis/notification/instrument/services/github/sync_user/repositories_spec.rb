@@ -17,8 +17,8 @@ describe Travis::Notification::Instrument::Services::Github::SyncUser::Repositor
   end
 
   it 'publishes a payload on :run' do
-    events[3].should == {
-      :message => "travis.services.github.sync_user.repositories.run:completed",
+    events[3].should publish_instrumentation_event(
+      :message => 'travis.services.github.sync_user.repositories.run:completed',
       :payload => {
         :msg => %(Travis::Services::Github::SyncUser::Repositories#run for #<User id=#{user.id} login="sven">),
         :resources => ['user/repos'],
@@ -26,20 +26,18 @@ describe Travis::Notification::Instrument::Services::Github::SyncUser::Repositor
           :synced => [{ :id => Repository.last.id, :owner => 'sven', :name => 'minimal' }],
           :removed => []
         }
-      },
-      :uuid => Travis.uuid
-    }
+      }
+    )
   end
 
   it 'publishes a payload on :fetch' do
-    events[2].should == {
-      :message => "travis.services.github.sync_user.repositories.fetch:completed",
+    events[2].should publish_instrumentation_event(
+      :message => 'travis.services.github.sync_user.repositories.fetch:completed',
       :payload => {
         :msg => %(Travis::Services::Github::SyncUser::Repositories#fetch for #<User id=#{user.id} login="sven">),
         :resources => ['user/repos'],
         :result => data
-      },
-      :uuid => Travis.uuid
-    }
+      }
+    )
   end
 end

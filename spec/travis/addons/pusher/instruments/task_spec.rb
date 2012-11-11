@@ -18,10 +18,9 @@ describe Travis::Addons::Pusher::Instruments::Task do
     let(:task)    { subject.new(payload, :event => 'job:test:started') }
 
     it 'publishes a payload' do
-      event.except(:payload).should == {
-        :message => "travis.addons.pusher.task.run:completed",
-        :uuid => Travis.uuid
-      }
+      event.should publish_instrumentation_event(
+        :message => 'travis.addons.pusher.task.run:completed'
+      )
       event[:payload].except(:payload).should == {
         :msg => 'Travis::Addons::Pusher::Task#run for #<Job id=1> (channels: common)',
         # :repository => 'svenfuchs/minimal', # TODO
@@ -40,10 +39,9 @@ describe Travis::Addons::Pusher::Instruments::Task do
     let(:task)    { subject.new(payload, :event => 'build:finished') }
 
     it 'publishes a payload' do
-      event.except(:payload).should == {
-        :message => "travis.addons.pusher.task.run:completed",
-        :uuid => Travis.uuid
-      }
+      event.should publish_instrumentation_event(
+        :message => 'travis.addons.pusher.task.run:completed'
+      )
       event[:payload].except(:payload).should == {
         :msg => 'Travis::Addons::Pusher::Task#run for #<Build id=1> (channels: common)',
         # :repository => 'svenfuchs/minimal', # TODO
