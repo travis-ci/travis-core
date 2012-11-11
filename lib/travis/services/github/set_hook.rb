@@ -13,7 +13,7 @@ module Travis
         private
 
           def repo
-            @repo ||= Repository.find(params[:id])
+            @repo ||= service(:repositories, :find_one, current_user, id: params[:id]).run
           end
 
           def active?
