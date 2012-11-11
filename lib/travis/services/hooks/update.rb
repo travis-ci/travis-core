@@ -5,7 +5,7 @@ module Travis
         extend Travis::Instrumentation
 
         def run
-          service(:github, :set_hook, id: params[:id], active: active?).run
+          service(:github, :set_hook, id: repo.id, active: active?).run
           repo.update_column(:active, active?)
         end
         instrument :run
