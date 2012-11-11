@@ -24,7 +24,7 @@ module Travis
           end
 
           def authorization
-            Digest::SHA2.hexdigest(repository.values_at(:owner_name, :name).join('/') + params[:token])
+            Digest::SHA2.hexdigest(repository.values_at(:owner_name, :name).join('/') + params[:token].to_s)
           end
 
           def log_success(response)

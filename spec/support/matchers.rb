@@ -1,15 +1,3 @@
-RSpec::Matchers.define :publish_instrumentation_event do |data|
-  match do |event|
-    data.each do |key, value|
-      event[key].should == value
-    end
-    [:uuid, :message, :started_at, :finished_at, :duration, :payload].each do |key|
-      event.key?(key).should be_true
-    end
-    true
-  end
-end
-
 RSpec::Matchers.define :be_queued_to do |publisher|
   match do |jobs|
     expected = jobs.map(&:id)
