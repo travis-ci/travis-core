@@ -20,12 +20,9 @@ module Travis
 
         def attach_to(const)
           namespace = const.name.underscore.gsub('/', '.')
-          instrumented_methods(const).each do |method|
-            next unless match = method.to_s.match(/^(.*)_(completed|failed|received)$/)
-            event, status = match.captures
-            p "#{namespace}(\..+)?.#{event}:#{status}"
+          instrumented_methods(const).each do |event, status|
             ActiveSupport::Notifications.subscribe(/^#{namespace}(\..+)?.#{event}:#{status}/) do |message, args|
-              publish(message, status, args, method)
+              publish(message, event, status, args)
             end
           end
         end
@@ -36,11 +33,11 @@ module Travis
           # find methods that end with received, completed, failed and strip the suffix
           methods = methods.map { |method| method.to_s =~ /^(.*)_(received|completed|failed)$/ && $1 }
           # subscribe to each of them with all the suffixes
-          methods.compact.uniq.product(%w(received completed failed)).map { |method| method.join('_') }
+          methods.compact.uniq.product(%w(received completed failed))
         end
 
-        def publish(message, status, args, method)
-          new(message, status, args).send(method)
+        def publish(message, event, status, args)
+          new(message, event, status, args).send("#{event}_#{status}")
         end
 
         # # TODO this should probably be decoupled somewhere else
@@ -49,10 +46,10 @@ module Travis
 
       attr_reader :config, :target, :result, :exception, :started_at, :finished_at, :message, :status
 
-      def initialize(message, status, payload)
+      def initialize(message, method, status, payload)
         @target, @result, @exception = payload.values_at(:target, :result, :exception)
         @started_at, @finished_at = payload.values_at(:started_at, :finished_at)
-        @config = { :message => message }
+        @config = { :message => message, :method => method, :status => status }
         @config[:exception] = exception if exception
         @status = status.to_sym
       end
@@ -64,9 +61,10 @@ module Travis
       private
 
         def publish(event = {})
-          method = config[:message].split(':').first.split('.').last rescue ''
-          event[:msg] = "#{target.class.name}##{method} #{event[:msg]}".strip
-          Notification.publish(config.merge(uuid: Travis.uuid, payload: event))
+          event[:msg] = "#{target.class.name}##{config[:method]} #{event[:msg]}".strip
+          payload = { message: config[:message], uuid: Travis.uuid, payload: event }
+          payload[:exception] = exception if exception
+          Notification.publish(payload)
         end
     end
   end

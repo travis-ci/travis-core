@@ -4,7 +4,7 @@ module Travis
       class Task < Instrument
         attr_reader :task, :payload
 
-        def initialize(message, status, payload)
+        def initialize(message, method, status, payload)
           @task = payload[:target]
           @payload = task.payload
           super

@@ -4,7 +4,7 @@ module Travis
       class EventHandler < Instrument
         attr_reader :handler, :object, :args, :result
 
-        def initialize(message, status, payload)
+        def initialize(message, method, status, payload)
           @handler, @args, @result = payload.values_at(:target, :args, :result)
           @object = handler.object
           super
