@@ -11,9 +11,7 @@ module Travis
           end
 
           def data
-            {
-              'hooks' => repos.map { |repo| repo_data(repo) },
-            }
+            repos.map { |repo| repo_data(repo) }
           end
 
           private
