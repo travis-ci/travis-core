@@ -53,7 +53,11 @@ class User < ActiveRecord::Base
   def service_hooks(options = {})
     hooks = repositories.administratable.order('owner_name, name')
     # TODO remove owner_name/name once we're on api everywhere
-    hooks = hooks.where(options.slice(:id, :owner_name, :name)) if options.key?(:id) || options.key?(:owner_name) || options.key?(:name)
+    if options.key?(:id)
+      hooks = hooks.where(options.slice(:id))
+    elsif options.key?(:owner_name) || options.key?(:name)
+      hooks = hooks.where(options.slice(:id, :owner_name, :name))
+    end
     hooks
   end
 
