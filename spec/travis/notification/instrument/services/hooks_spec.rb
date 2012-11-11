@@ -10,8 +10,8 @@ describe Travis::Notification::Instrument::Services::Hooks::Update do
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
-    Travis::Services::Hooks::FindOne.any_instance.stubs(:run).returns(repo)
     Travis::Services::Github::SetHook.any_instance.stubs(:run)
+    user.stubs(:service_hook).returns(repo)
     repo.stubs(:update_column).returns(true)
   end
 

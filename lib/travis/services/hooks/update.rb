@@ -19,8 +19,7 @@ module Travis
         # end
 
         def repo
-          # TODO this service is only used here, so i guess we can inline it
-          @repo ||= service(:hooks, :find_one, params).run
+          @repo ||= current_user.service_hook(params.slice(:id, :owner_name, :name))
         end
 
         def active?

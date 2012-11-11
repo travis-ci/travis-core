@@ -46,6 +46,10 @@ class User < ActiveRecord::Base
     is_syncing?
   end
 
+  def service_hook(options = {})
+    service_hooks(options).first
+  end
+
   def service_hooks(options = {})
     hooks = repositories.administratable.order('owner_name, name')
     hooks = hooks.where(options.slice(:owner_name, :name)) if options.key?(:owner_name) || options.key?(:name)

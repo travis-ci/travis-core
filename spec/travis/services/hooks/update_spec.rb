@@ -9,10 +9,11 @@ describe Travis::Services::Hooks::Update do
   before :each do
     repo.stubs(:update_column)
     service.stubs(:service).returns(stub(run: repo))
+    user.stubs(:service_hook).returns(repo)
   end
 
-  it 'finds the repo by the given id' do
-    service.expects(:service).with(:hooks, :find_one, params).returns(stub(run: repo))
+  it 'finds the repo by the given params' do
+    user.expects(:service_hook).with(id: repo.id).returns(repo)
     service.run
   end
 
