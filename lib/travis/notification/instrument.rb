@@ -20,17 +20,23 @@ module Travis
 
         def attach_to(const)
           namespace = const.name.underscore.gsub('/', '.')
-          # TODO could instead somehow figure out or keep track of instrumented methods?
-          consts = ancestors.select { |const| const.name[0..5] == 'Travis' }
-          methods = consts.map { |const| const.public_instance_methods(false) }.flatten.uniq
-
-          methods.each do |method|
+          instrumented_methods(const).each do |method|
             next unless match = method.to_s.match(/^(.*)_(completed|failed|received)$/)
             event, status = match.captures
+            p "#{namespace}(\..+)?.#{event}:#{status}"
             ActiveSupport::Notifications.subscribe(/^#{namespace}(\..+)?.#{event}:#{status}/) do |message, args|
               publish(message, status, args, method)
             end
           end
+        end
+
+        def instrumented_methods(const)
+          consts = ancestors.select { |const| const.name[0..5] == 'Travis' }
+          methods = consts.map { |const| const.public_instance_methods(false) }.flatten.uniq
+          # find methods that end with received, completed, failed and strip the suffix
+          methods = methods.map { |method| method.to_s =~ /^(.*)_(received|completed|failed)$/ && $1 }
+          # subscribe to each of them with all the suffixes
+          methods.compact.uniq.product(%w(received completed failed)).map { |method| method.join('_') }
         end
 
         def publish(message, status, args, method)
