@@ -23,7 +23,7 @@ describe Travis::Addons::GithubStatus::Instruments::EventHandler do
     }
 
     event[:payload].except(:payload).should == {
-      :msg => 'Travis::Addons::GithubStatus::EventHandler#notify(build:finished) for #<Build id=1>',
+      :msg => 'Travis::Addons::GithubStatus::EventHandler#notify (build:finished) for #<Build id=1>',
       :repository => 'svenfuchs/minimal',
       :request_id => 1,
       :object_id => 1,
@@ -44,7 +44,7 @@ describe Travis::Addons::GithubStatus::Instruments::EventHandler do
     }
 
     event[:payload].except(:payload).should == {
-      :msg => 'Travis::Addons::GithubStatus::EventHandler#notify(build:finished) for #<Build id=1>',
+      :msg => 'Travis::Addons::GithubStatus::EventHandler#notify (build:finished) for #<Build id=1>',
       :repository => 'svenfuchs/minimal',
       :request_id => 1,
       :object_id => 1,

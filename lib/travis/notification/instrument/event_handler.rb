@@ -16,7 +16,7 @@ module Travis
 
         def publish(event = {})
           event = event.reverse_merge(
-            :msg => "#{handler.class.name}#notify(#{handler.event}) for #<#{object.class.name} id=#{object.id}>",
+            :msg => "(#{handler.event}) for #<#{object.class.name} id=#{object.id}>",
             :object_type => object.class.name,
             :object_id => object.id,
             :event => handler.event

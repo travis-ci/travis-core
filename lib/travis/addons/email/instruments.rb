@@ -11,7 +11,7 @@ module Travis
         class Task < Notification::Instrument::Task
           def run_completed
             publish(
-              :msg => "#{task.class.name}#run for #<Build id=#{payload[:build][:id]}>",
+              :msg => "for #<Build id=#{payload[:build][:id]}>",
               :repository => payload[:repository][:slug],
               # :request_id => payload['request_id'], # TODO
               :object_type => 'Build',

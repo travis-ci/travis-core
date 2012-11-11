@@ -6,7 +6,7 @@ module Travis
           class FindAdmin < Instrument
             def run_completed
               publish(
-                :msg => "#{target.class.name}#run for #{target.repository.slug}: #{result.login}",
+                :msg => "for #{target.repository.slug}: #{result.login}",
                 :result => result
               )
             end
@@ -15,7 +15,7 @@ module Travis
           class FetchConfig < Instrument
             def run_completed
               publish(
-                :msg => "#{target.class.name}#run #{config_url}",
+                :msg => "#{config_url}",
                 :url => config_url,
                 :result => result
               )
@@ -34,14 +34,14 @@ module Travis
                 end
 
                 publish(
-                  :msg => %(#{target.class.name}#run for #<User id=#{target.user.id} login="#{target.user.login}">),
+                  :msg => %(for #<User id=#{target.user.id} login="#{target.user.login}">),
                   :result => { :synced => format.call(result[:synced]), :removed => format.call(result[:removed]) }
                 )
               end
 
               def fetch_completed
                 publish(
-                  :msg => %(#{target.class.name}#fetch for #<User id=#{target.user.id} login="#{target.user.login}">),
+                  :msg => %(for #<User id=#{target.user.id} login="#{target.user.login}">),
                   :result => result
                 )
               end
@@ -54,7 +54,7 @@ module Travis
                 end
 
                 publish(
-                  :msg => %(#{target.class.name}#run for #<User id=#{target.user.id} login="#{target.user.login}">),
+                  :msg => %(for #<User id=#{target.user.id} login="#{target.user.login}">),
                   :resources => target.resources,
                   :result => { :synced => format.call(result[:synced]), :removed => format.call(result[:removed]) }
                 )
@@ -62,7 +62,7 @@ module Travis
 
               def fetch_completed
                 publish(
-                  :msg => %(#{target.class.name}#fetch for #<User id=#{target.user.id} login="#{target.user.login}">),
+                  :msg => %(for #<User id=#{target.user.id} login="#{target.user.login}">),
                   :resources => target.resources,
                   :result => result
                 )

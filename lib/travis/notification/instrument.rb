@@ -58,6 +58,8 @@ module Travis
       private
 
         def publish(event = {})
+          method = config[:message].split(':').first.split('.').last rescue ''
+          event[:msg] = "#{target.class.name}##{method} #{event[:msg]}".strip
           Notification.publish(config.merge(uuid: Travis.uuid, payload: event))
         end
     end

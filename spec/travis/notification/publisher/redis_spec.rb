@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Travis::Notification::Publisher::Redis do
   include Support::Notifications
+
   let(:redis) { Redis.connect(:url => Travis.config.redis.url) }
   let(:key) { "events:#{Travis.uuid}" }
 
@@ -58,9 +59,9 @@ describe Travis::Notification::Publisher::Redis do
     end
 
     event.should be == {
-      "message" => "",
+      "message" => "foo.bar.instrumented",
       "uuid"    => Travis.uuid,
-      "payload" => { "foo" => "bar" }
+      "payload" => { "foo" => "bar", "msg" => "Object#instrumented" }
     }
   end
 end

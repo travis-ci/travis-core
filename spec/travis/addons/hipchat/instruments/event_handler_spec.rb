@@ -22,7 +22,7 @@ describe Travis::Addons::Hipchat::Instruments::EventHandler do
     event[:payload].except(:payload).should == {
       :event => 'build:finished',
       :targets => ['hipchat_room'],
-      :msg => 'Travis::Addons::Hipchat::EventHandler#notify(build:finished) for #<Build id=1>',
+      :msg => 'Travis::Addons::Hipchat::EventHandler#notify (build:finished) for #<Build id=1>',
       :repository => 'svenfuchs/minimal',
       :request_id => 1,
       :object_id => 1,

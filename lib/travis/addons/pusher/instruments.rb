@@ -11,9 +11,7 @@ module Travis
         class Task < Notification::Instrument::Task
           def run_completed
             publish(
-              :msg => "#{task.class.name}#run for #<#{type.camelize} id=#{id}> (channels: #{task.channels.join(', ')})",
-              # :repository => payload[:repository][:slug],
-              # :request_id => payload['request_id'], # TODO
+              :msg => "for #<#{type.camelize} id=#{id}> (channels: #{task.channels.join(', ')})",
               :object_type => type.camelize,
               :object_id => id,
               :event => task.event,

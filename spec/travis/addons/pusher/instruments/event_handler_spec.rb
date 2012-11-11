@@ -21,7 +21,7 @@ describe Travis::Addons::Pusher::Instruments::EventHandler do
         :uuid => Travis.uuid
       }
       event[:payload].except(:payload).should == {
-        :msg => 'Travis::Addons::Pusher::EventHandler#notify(job:test:started) for #<Test id=1>',
+        :msg => 'Travis::Addons::Pusher::EventHandler#notify (job:test:started) for #<Test id=1>',
         :repository => 'svenfuchs/minimal',
         :request_id => 1,
         :object_id => 1,
@@ -41,7 +41,7 @@ describe Travis::Addons::Pusher::Instruments::EventHandler do
         :uuid => Travis.uuid
       }
       event[:payload].except(:payload).should == {
-        :msg => 'Travis::Addons::Pusher::EventHandler#notify(build:finished) for #<Build id=1>',
+        :msg => 'Travis::Addons::Pusher::EventHandler#notify (build:finished) for #<Build id=1>',
         :repository => 'svenfuchs/minimal',
         :request_id => 1,
         :object_id => 1,

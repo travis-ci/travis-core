@@ -22,7 +22,7 @@ describe Travis::Addons::Flowdock::Instruments::EventHandler do
     event[:payload].except(:payload).should == {
       :event => 'build:finished',
       :targets => ['flowdock_room'],
-      :msg => 'Travis::Addons::Flowdock::EventHandler#notify(build:finished) for #<Build id=1>',
+      :msg => 'Travis::Addons::Flowdock::EventHandler#notify (build:finished) for #<Build id=1>',
       :repository => 'svenfuchs/minimal',
       :request_id => 1,
       :object_id => 1,

@@ -8,6 +8,7 @@ module Support
 
     def instrument(payload = {})
       status = payload.delete(:status) || :completed
+      payload = { target: Object.new, message: 'foo.bar.instrumented' }.merge(payload)
       Instrument.new(payload[:message].to_s, status, payload)
     end
 

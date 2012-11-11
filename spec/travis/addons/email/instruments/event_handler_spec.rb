@@ -20,7 +20,7 @@ describe Travis::Addons::Email::Instruments::EventHandler do
       :uuid => Travis.uuid
     }
     event[:payload].except(:payload).should == {
-      :msg => 'Travis::Addons::Email::EventHandler#notify(build:finished) for #<Build id=1>',
+      :msg => 'Travis::Addons::Email::EventHandler#notify (build:finished) for #<Build id=1>',
       :repository => 'svenfuchs/minimal',
       :request_id => 1,
       :object_id => 1,
