@@ -9,13 +9,10 @@ describe Travis::Notification::Instrument do
     end
   end
 
-  it 'automatically generates a received event' do
-    klass.should be_method_defined(:foo_received)
-    klass.new('', :foo, :received, {}).foo_received.should == 42
-  end
-
-  it 'automatically generates a failed event' do
-    klass.should be_method_defined(:foo_failed)
-    klass.new('', :foo, :failed, {}).foo_failed.should == 42
-  end
+  it 'calls a run_received method if defined'
+  it 'calls publish if run_received is not defined'
+  it 'calls a run_completed method if defined'
+  it 'calls publish if run_completed is not defined'
+  it 'calls a run_failed method if defined'
+  it 'calls publish if run_failed is not defined'
 end
