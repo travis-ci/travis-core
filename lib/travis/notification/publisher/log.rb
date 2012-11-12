@@ -7,7 +7,7 @@ module Travis
 
           level = event.key?(:exception) ? :error : :info
           message = event[:message]
-          message = "#{message} (#{event[:duration]})" if event[:duration]
+          message = "#{message} (#{'%.5f' % event[:duration]}s)" if event[:duration]
           log(level, message)
 
           if level == :error || Travis.logger.level == ::Logger::DEBUG
