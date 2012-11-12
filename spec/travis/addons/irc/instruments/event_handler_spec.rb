@@ -5,7 +5,7 @@ describe Travis::Addons::Irc::Instruments::EventHandler do
 
   let(:subject)   { Travis::Addons::Irc::EventHandler }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
-  let(:build)     { stub_build(:config => { :notifications => { :irc => 'irc.freenode.net:1234#travis' } }) }
+  let(:build)     { stub_build(config: { notifications: { irc: 'irc.freenode.net:1234#travis' } }) }
   let(:event)     { publisher.events[1] }
 
   before :each do
@@ -14,20 +14,20 @@ describe Travis::Addons::Irc::Instruments::EventHandler do
     subject.notify('build:finished', build)
   end
 
-  it 'publishes a payload' do
+  it 'publishes a event' do
     event.should publish_instrumentation_event(
-      :message => 'travis.addons.irc.event_handler.notify:completed'
+      event: 'travis.addons.irc.event_handler.notify:completed',
+      message: 'Travis::Addons::Irc::EventHandler#notify (build:finished) for #<Build id=1>',
     )
-    event[:payload].except(:payload).should == {
-      :msg => 'Travis::Addons::Irc::EventHandler#notify (build:finished) for #<Build id=1>',
-      :repository => 'svenfuchs/minimal',
-      :request_id => 1,
-      :object_id => 1,
-      :object_type => 'Build',
-      :event => 'build:finished',
-      :channels => ['irc.freenode.net:1234#travis']
+    event[:data].except(:payload).should == {
+      repository: 'svenfuchs/minimal',
+      request_id: 1,
+      object_id: 1,
+      object_type: 'Build',
+      event: 'build:finished',
+      channels: ['irc.freenode.net:1234#travis']
     }
-    event[:payload][:payload].should_not be_nil
+    event[:data][:payload].should_not be_nil
   end
 end
 

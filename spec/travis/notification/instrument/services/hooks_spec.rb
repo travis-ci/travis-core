@@ -4,7 +4,7 @@ describe Travis::Notification::Instrument::Services::Hooks::Update do
   include Travis::Testing::Stubs
 
   let(:service)   { Travis::Services::Hooks::Update.new(user, params) }
-  let(:params)    { { :id => repository.id, :active => 'true' } }
+  let(:params)    { { id: repository.id, active: 'true' } }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events.last }
 
@@ -15,14 +15,12 @@ describe Travis::Notification::Instrument::Services::Hooks::Update do
     repo.stubs(:update_column).returns(true)
   end
 
-  it 'publishes a payload' do
+  it 'publishes a event' do
     service.run
     event.should publish_instrumentation_event(
-      :message => 'travis.services.hooks.update.run:completed',
-      :payload => {
-        :msg => 'Travis::Services::Hooks::Update#run for svenfuchs/minimal active=true (svenfuchs)',
-        :result => true
-      }
+      event: 'travis.services.hooks.update.run:completed',
+      message: 'Travis::Services::Hooks::Update#run for svenfuchs/minimal active=true (svenfuchs)',
+      result: true
     )
   end
 end

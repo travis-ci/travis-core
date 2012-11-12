@@ -6,13 +6,13 @@ module Travis
           return if ignore?(event)
 
           level = event.key?(:exception) ? :error : :info
-          message = event[:payload][:msg]
+          message = event[:message]
           message = "#{message} (#{event[:duration]})" if event[:duration]
           log(level, message)
 
           if level == :error || Travis.logger.level == ::Logger::DEBUG
-            event[:payload].each do |key, value|
-              next if key == :msg
+            event.each do |key, value|
+              next if key == :message
               level = event.key?(:exception) ? :error : :debug
               log(level, "  #{key}: #{value.inspect}")
             end
@@ -28,12 +28,12 @@ module Travis
         end
 
         def event_received?(event)
-          event[:message].end_with?("received")
+          event[:event].end_with?("received")
         end
 
         # TODO why do ignore these again?
         def sync_or_request_handler?(event)
-          msg = event[:payload][:msg]
+          msg = event[:message]
           msg && msg =~ /Travis::Hub::Handler::(Sync|Request)#handle/
         end
       end

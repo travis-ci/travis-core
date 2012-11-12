@@ -14,20 +14,20 @@ describe Travis::Addons::Email::Instruments::EventHandler do
     subject.notify('build:finished', build)
   end
 
-  it 'publishes a payload' do
+  it 'publishes a event' do
     event.should publish_instrumentation_event(
-      :message => 'travis.addons.email.event_handler.notify:completed'
+      event: 'travis.addons.email.event_handler.notify:completed',
+      message: 'Travis::Addons::Email::EventHandler#notify (build:finished) for #<Build id=1>',
     )
-    event[:payload].except(:payload).should == {
-      :msg => 'Travis::Addons::Email::EventHandler#notify (build:finished) for #<Build id=1>',
-      :repository => 'svenfuchs/minimal',
-      :request_id => 1,
-      :object_id => 1,
-      :object_type => 'Build',
-      :event => 'build:finished',
-      :recipients => ['svenfuchs@artweb-design.de'],
+    event[:data].except(:payload).should == {
+      repository: 'svenfuchs/minimal',
+      request_id: 1,
+      object_id: 1,
+      object_type: 'Build',
+      event: 'build:finished',
+      recipients: ['svenfuchs@artweb-design.de'],
     }
-    event[:payload][:payload].should_not be_nil
+    event[:data][:payload].should_not be_nil
   end
 end
 

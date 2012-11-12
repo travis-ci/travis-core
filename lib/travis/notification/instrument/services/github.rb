@@ -6,8 +6,8 @@ module Travis
           class FindAdmin < Instrument
             def run_completed
               publish(
-                :msg => "for #{target.repository.slug}: #{result.login}",
-                :result => result
+                msg: "for #{target.repository.slug}: #{result.login}",
+                result: result
               )
             end
           end
@@ -15,9 +15,9 @@ module Travis
           class FetchConfig < Instrument
             def run_completed
               publish(
-                :msg => "#{config_url}",
-                :url => config_url,
-                :result => result
+                msg: "#{config_url}",
+                url: config_url,
+                result: result
               )
             end
 
@@ -30,19 +30,19 @@ module Travis
             class Organizations < Instrument
               def run_completed
                 format = lambda do |orgs|
-                  orgs.map { |org| { :id => org.id, :login => org.login } }
+                  orgs.map { |org| { id: org.id, login: org.login } }
                 end
 
                 publish(
-                  :msg => %(for #<User id=#{target.user.id} login="#{target.user.login}">),
-                  :result => { :synced => format.call(result[:synced]), :removed => format.call(result[:removed]) }
+                  msg: %(for #<User id=#{target.user.id} login="#{target.user.login}">),
+                  result: { synced: format.call(result[:synced]), removed: format.call(result[:removed]) }
                 )
               end
 
               def fetch_completed
                 publish(
-                  :msg => %(for #<User id=#{target.user.id} login="#{target.user.login}">),
-                  :result => result
+                  msg: %(for #<User id=#{target.user.id} login="#{target.user.login}">),
+                  result: result
                 )
               end
             end
@@ -50,21 +50,21 @@ module Travis
             class Repositories < Instrument
               def run_completed
                 format = lambda do |repos|
-                  repos.map { |repo| { :id => repo.id, :owner => repo.owner_name, :name => repo.name } }
+                  repos.map { |repo| { id: repo.id, owner: repo.owner_name, name: repo.name } }
                 end
 
                 publish(
-                  :msg => %(for #<User id=#{target.user.id} login="#{target.user.login}">),
-                  :resources => target.resources,
-                  :result => { :synced => format.call(result[:synced]), :removed => format.call(result[:removed]) }
+                  msg: %(for #<User id=#{target.user.id} login="#{target.user.login}">),
+                  resources: target.resources,
+                  result: { synced: format.call(result[:synced]), removed: format.call(result[:removed]) }
                 )
               end
 
               def fetch_completed
                 publish(
-                  :msg => %(for #<User id=#{target.user.id} login="#{target.user.login}">),
-                  :resources => target.resources,
-                  :result => result
+                  msg: %(for #<User id=#{target.user.id} login="#{target.user.login}">),
+                  resources: target.resources,
+                  result: result
                 )
               end
             end

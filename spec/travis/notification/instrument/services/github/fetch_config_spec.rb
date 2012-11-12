@@ -16,11 +16,11 @@ describe Travis::Notification::Instrument::Services::Github::FetchConfig do
   it 'publishes a payload' do
     service.run
     event.should publish_instrumentation_event(
-      :message => 'travis.services.github.fetch_config.run:completed',
-      :payload => {
-        :result => { 'foo' => 'Foo', '.result' => 'configured' },
-        :msg => 'Travis::Services::Github::FetchConfig#run https://api.github.com/repos/svenfuchs/minimal/contents/.travis.yml?ref=62aae5f70ceee39123ef',
-        :url => 'https://api.github.com/repos/svenfuchs/minimal/contents/.travis.yml?ref=62aae5f70ceee39123ef'
+      event: 'travis.services.github.fetch_config.run:completed',
+      message: 'Travis::Services::Github::FetchConfig#run https://api.github.com/repos/svenfuchs/minimal/contents/.travis.yml?ref=62aae5f70ceee39123ef',
+      result: { 'foo' => 'Foo', '.result' => 'configured' },
+      data: {
+        url: 'https://api.github.com/repos/svenfuchs/minimal/contents/.travis.yml?ref=62aae5f70ceee39123ef'
       }
     )
   end
@@ -28,12 +28,12 @@ describe Travis::Notification::Instrument::Services::Github::FetchConfig do
   it 'strips an access_token if present (1)' do
     service.stubs(:config_url).returns('/foo/bar?access_token=123456')
     service.run
-    event[:payload][:url].should == '/foo/bar?access_token=[secure]'
+    event[:data][:url].should == '/foo/bar?access_token=[secure]'
   end
 
   it 'strips an access_token if present (2)' do
     service.stubs(:config_url).returns('/foo/bar?ref=abcd&access_token=123456')
     service.run
-    event[:payload][:url].should == '/foo/bar?ref=abcd&access_token=[secure]'
+    event[:data][:url].should == '/foo/bar?ref=abcd&access_token=[secure]'
   end
 end

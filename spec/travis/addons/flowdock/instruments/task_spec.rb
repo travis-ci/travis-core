@@ -4,8 +4,8 @@ describe Travis::Addons::Flowdock::Instruments::Task do
   include Travis::Testing::Stubs
 
   let(:subject)   { Travis::Addons::Flowdock::Task }
-  let(:payload)   { Travis::Api.data(build, :for => 'event', :version => 'v0') }
-  let(:task)      { subject.new(payload, :targets => %w(322fdcced7226b1d66396c68efedb0c1)) }
+  let(:payload)   { Travis::Api.data(build, for: 'event', version: 'v0') }
+  let(:task)      { subject.new(payload, targets: %w(322fdcced7226b1d66396c68efedb0c1)) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events[1] }
 
@@ -15,17 +15,17 @@ describe Travis::Addons::Flowdock::Instruments::Task do
     task.run
   end
 
-  it 'publishes a payload' do
+  it 'publishes a event' do
     event.should publish_instrumentation_event(
-      :message => 'travis.addons.flowdock.task.run:completed'
+      event: 'travis.addons.flowdock.task.run:completed',
+      message: 'Travis::Addons::Flowdock::Task#run for #<Build id=1>',
     )
-    event[:payload].except(:payload).should == {
-      :msg => 'Travis::Addons::Flowdock::Task#run for #<Build id=1>',
-      :repository => 'svenfuchs/minimal',
-      :object_id => 1,
-      :object_type => 'Build',
-      :targets => %w(322fdcced7226b1d66396c68efedb0c1),
-      :message => <<-msg.gsub(/^\s*/, '')
+    event[:data].except(:payload).should == {
+      repository: 'svenfuchs/minimal',
+      object_id: 1,
+      object_type: 'Build',
+      targets: %w(322fdcced7226b1d66396c68efedb0c1),
+      message: <<-msg.gsub(/^\s*/, '')
         <ul>
         <li><code><a href="https://github.com/svenfuchs/minimal">svenfuchs/minimal</a></code> build #2 has passed!</li>
         <li>Branch: <code>master</code></li>
@@ -35,7 +35,7 @@ describe Travis::Addons::Flowdock::Instruments::Task do
         </ul>
       msg
     }
-    event[:payload][:payload].should_not be_nil
+    event[:data][:payload].should_not be_nil
   end
 end
 

@@ -5,7 +5,7 @@ describe Travis::Addons::Campfire::Instruments::EventHandler do
 
   let(:subject)   { Travis::Addons::Campfire::EventHandler }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
-  let(:build)     { stub_build(:config => { :notifications => { :campfire => 'campfire_room' } }) }
+  let(:build)     { stub_build(config: { notifications: { campfire: 'campfire_room' } }) }
   let(:event)     { publisher.events[1] }
 
   before :each do
@@ -14,19 +14,19 @@ describe Travis::Addons::Campfire::Instruments::EventHandler do
     subject.notify('build:finished', build)
   end
 
-  it 'publishes a payload' do
+  it 'publishes a event' do
     event.should publish_instrumentation_event(
-      :message => 'travis.addons.campfire.event_handler.notify:completed'
+      event: 'travis.addons.campfire.event_handler.notify:completed',
+      message: 'Travis::Addons::Campfire::EventHandler#notify (build:finished) for #<Build id=1>',
     )
-    event[:payload].except(:payload).should == {
-      :event => 'build:finished',
-      :targets => ['campfire_room'],
-      :msg => 'Travis::Addons::Campfire::EventHandler#notify (build:finished) for #<Build id=1>',
-      :repository => 'svenfuchs/minimal',
-      :request_id => 1,
-      :object_id => 1,
-      :object_type => 'Build'
+    event[:data].except(:payload).should == {
+      event: 'build:finished',
+      targets: ['campfire_room'],
+      repository: 'svenfuchs/minimal',
+      request_id: 1,
+      object_id: 1,
+      object_type: 'Build'
     }
-    event[:payload][:payload].should_not be_nil
+    event[:data][:payload].should_not be_nil
   end
 end

@@ -9,18 +9,16 @@ describe Travis::Notification::Instrument::Services::Github::FindAdmin do
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
-    User.stubs(:with_permissions).with(:repository_id => repository.id, :admin => true).returns [user]
+    User.stubs(:with_permissions).with(repository_id: repository.id, admin: true).returns [user]
     GH.stubs(:[]).with("repos/#{repository.slug}").returns('permissions' => { 'admin' => true })
     service.run
   end
 
-  it 'publishes a payload' do
+  it 'publishes a event' do
     event.should publish_instrumentation_event(
-      :message => 'travis.services.github.find_admin.run:completed',
-      :payload => {
-        :result => user,
-        :msg => 'Travis::Services::Github::FindAdmin#run for svenfuchs/minimal: svenfuchs'
-      }
+      event: 'travis.services.github.find_admin.run:completed',
+      message: 'Travis::Services::Github::FindAdmin#run for svenfuchs/minimal: svenfuchs',
+      result: user,
     )
   end
 end

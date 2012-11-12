@@ -32,7 +32,7 @@ RSpec::Matchers.define :publish_instrumentation_event do |data|
     data.each do |key, value|
       event[key].should == value
     end
-    [:uuid, :message, :started_at, :finished_at, :duration, :payload].each do |key|
+    [:uuid, :event, :started_at, :finished_at, :duration].each do |key|
       event.key?(key).should be_true
     end
     true

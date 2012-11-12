@@ -26,32 +26,34 @@ module Travis
           methods.compact.uniq
         end
 
-        def publish(message, method, status, payload)
-          instrument = new(message, method, status, payload)
-          event = :"#{method}_#{status}"
-          instrument.respond_to?(event) ? instrument.send(event) : instrument.publish
+        def publish(event, method, status, payload)
+          instrument = new(event, method, status, payload)
+          callback = :"#{method}_#{status}"
+          instrument.respond_to?(callback) ? instrument.send(callback) : instrument.publish
         end
       end
 
-      attr_reader :target, :method, :status, :result, :meta
+      attr_reader :target, :method, :status, :result, :exception, :meta
 
-      def initialize(message, method, status, payload)
+      def initialize(event, method, status, payload)
         @method, @status = method, status
-        @target, @result = payload.values_at(:target, :result)
+        @target, @result, @exception = payload.values_at(:target, :result, :exception)
         started_at, finished_at = payload.values_at(:started_at, :finished_at)
         @meta = {
           uuid:        Travis.uuid,
-          message:     message,
+          event:       event,
           started_at:  started_at,
           finished_at: finished_at,
           duration:    finished_at ? finished_at - started_at : nil,
-          exception:   payload[:exception]
         }.compact
       end
 
-      def publish(event = {})
-        event[:msg] = "#{target.class.name}##{method} #{event[:msg]}".strip
-        Notification.publish(meta.merge(payload: event))
+      def publish(data = {})
+        message = "#{target.class.name}##{method} #{data.delete(:msg)}".strip
+        payload = meta.merge(message: message, data: data)
+        payload[:result] = data.delete(:result) if data.key?(:result)
+        payload[:exception] = exception if exception
+        Notification.publish(payload)
       end
     end
   end

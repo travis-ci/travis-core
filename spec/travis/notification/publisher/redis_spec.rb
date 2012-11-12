@@ -59,9 +59,10 @@ describe Travis::Notification::Publisher::Redis do
     end
 
     event.should be == {
-      "message" => "foo.bar.instrumented",
       "uuid"    => Travis.uuid,
-      "payload" => { "foo" => "bar", "msg" => "Object#instrumented" }
+      "event"   => "foo.bar.instrumented",
+      "message" => "Object#instrumented",
+      "data" => { "foo" => "bar" }
     }
   end
 end

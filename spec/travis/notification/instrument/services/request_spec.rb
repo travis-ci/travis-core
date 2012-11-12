@@ -4,7 +4,7 @@ describe Travis::Notification::Instrument::Services::Requests::Receive do
   include Support::ActiveRecord
 
   let(:payload)   { JSON.parse(GITHUB_PAYLOADS['gem-release']) }
-  let(:service)   { Travis::Services::Requests::Receive.new(nil, :event_type => 'push', :payload => payload, :token => 'token') }
+  let(:service)   { Travis::Services::Requests::Receive.new(nil, event_type: 'push', payload: payload, token: 'token') }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events.last }
 
@@ -15,15 +15,15 @@ describe Travis::Notification::Instrument::Services::Requests::Receive do
     service.run
   end
 
-  it 'publishes a payload' do
+  it 'publishes a event' do
     event.should publish_instrumentation_event(
-      :message => 'travis.services.requests.receive.run:completed',
-      :payload => {
-        :msg => 'Travis::Services::Requests::Receive#run type="push"',
-        :type => 'push',
-        :token => 'token',
-        :accept? => true,
-        :payload => payload
+      event: 'travis.services.requests.receive.run:completed',
+      message: 'Travis::Services::Requests::Receive#run type="push"',
+      data: {
+        type: 'push',
+        token: 'token',
+        accept?: true,
+        payload: payload
       }
     )
   end

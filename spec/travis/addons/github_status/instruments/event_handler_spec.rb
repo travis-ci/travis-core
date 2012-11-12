@@ -13,43 +13,43 @@ describe Travis::Addons::GithubStatus::Instruments::EventHandler do
     subject.any_instance.stubs(:handle)
   end
 
-  it 'publishes a payload for push events' do
+  it 'publishes a event for push events' do
     build.request.stubs(:pull_request?).returns(false)
     subject.notify('build:finished', build)
 
     event.should publish_instrumentation_event(
-      :message => 'travis.addons.github_status.event_handler.notify:completed'
+      event: 'travis.addons.github_status.event_handler.notify:completed',
+      message: 'Travis::Addons::GithubStatus::EventHandler#notify (build:finished) for #<Build id=1>',
     )
 
-    event[:payload].except(:payload).should == {
-      :msg => 'Travis::Addons::GithubStatus::EventHandler#notify (build:finished) for #<Build id=1>',
-      :repository => 'svenfuchs/minimal',
-      :request_id => 1,
-      :object_id => 1,
-      :object_type => 'Build',
-      :event => 'build:finished'
+    event[:data].except(:payload).should == {
+      repository: 'svenfuchs/minimal',
+      request_id: 1,
+      object_id: 1,
+      object_type: 'Build',
+      event: 'build:finished'
     }
 
-    event[:payload][:payload].should_not be_nil
+    event[:data][:payload].should_not be_nil
   end
 
-  it 'publishes a payload for pull request events' do
+  it 'publishes a event for pull request events' do
     build.request.stubs(:pull_request?).returns(true)
     subject.notify('build:finished', build)
 
     event.should publish_instrumentation_event(
-      :message => 'travis.addons.github_status.event_handler.notify:completed'
+      event: 'travis.addons.github_status.event_handler.notify:completed',
+      message: 'Travis::Addons::GithubStatus::EventHandler#notify (build:finished) for #<Build id=1>',
     )
 
-    event[:payload].except(:payload).should == {
-      :msg => 'Travis::Addons::GithubStatus::EventHandler#notify (build:finished) for #<Build id=1>',
-      :repository => 'svenfuchs/minimal',
-      :request_id => 1,
-      :object_id => 1,
-      :object_type => 'Build',
-      :event => 'build:finished'
+    event[:data].except(:payload).should == {
+      repository: 'svenfuchs/minimal',
+      request_id: 1,
+      object_id: 1,
+      object_type: 'Build',
+      event: 'build:finished'
     }
 
-    event[:payload][:payload].should_not be_nil
+    event[:data][:payload].should_not be_nil
   end
 end
