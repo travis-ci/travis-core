@@ -21,7 +21,8 @@ module Travis
 
           def all_resources
             if result
-              [result, result.commit, result.request, result.matrix.to_a].flatten
+              all = [result, result.commit, result.request, result.matrix.to_a]
+              all.flatten.find_all { |r| r.updated_at }
             else
               []
             end

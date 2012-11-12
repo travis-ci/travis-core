@@ -33,6 +33,15 @@ describe Travis::Services::Builds::FindOne do
     end
   end
 
+  describe 'without updated_at in one of the resources' do
+    it 'returns updated_at of newest result' do
+      Build.any_instance.stubs(updated_at: nil)
+      expect {
+        service.updated_at
+      }.to_not raise_error
+    end
+  end
+
   describe 'final?' do
     it 'returns true if the build is finished' do
       build.update_attributes!(:state => :finished)
