@@ -6,7 +6,7 @@ class Commit < ActiveRecord::Base
   has_one :request
   belongs_to :repository
 
-  validates :commit, :branch, :message, :committed_at, :presence => true
+  validates :commit, :branch, :committed_at, :presence => true
 
   def pull_request?
     ref =~ %r(^refs/pull/\d+/merge$)
