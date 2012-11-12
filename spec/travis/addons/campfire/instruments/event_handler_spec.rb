@@ -17,7 +17,7 @@ describe Travis::Addons::Campfire::Instruments::EventHandler do
   it 'publishes a event' do
     event.should publish_instrumentation_event(
       event: 'travis.addons.campfire.event_handler.notify:completed',
-      message: 'Travis::Addons::Campfire::EventHandler#notify (build:finished) for #<Build id=1>',
+      message: 'Travis::Addons::Campfire::EventHandler#notify:completed (build:finished) for #<Build id=1>',
     )
     event[:data].except(:payload).should == {
       event: 'build:finished',

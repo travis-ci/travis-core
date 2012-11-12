@@ -17,7 +17,7 @@ describe Travis::Notification::Instrument::Services::Github::FindAdmin do
   it 'publishes a event' do
     event.should publish_instrumentation_event(
       event: 'travis.services.github.find_admin.run:completed',
-      message: 'Travis::Services::Github::FindAdmin#run for svenfuchs/minimal: svenfuchs',
+      message: 'Travis::Services::Github::FindAdmin#run:completed for svenfuchs/minimal: svenfuchs',
       result: user,
     )
   end

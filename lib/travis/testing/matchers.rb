@@ -29,13 +29,23 @@ end
 
 RSpec::Matchers.define :publish_instrumentation_event do |data|
   match do |event|
-    data.each do |key, value|
-      event[key].should == value
+    non_matching = data.map { |key, value| [key, value, event[key]] unless event[key] == value }.compact
+    expected_keys = [:uuid, :event, :started_at]
+    missing_keys = expected_keys.select { |key| !event.key?(key) }
+
+    failure_message do
+      message =  "Expected a notification event to be published:\n\n\t#{event.inspect}\n\n"
+      message << "Including:\n\n\t#{data.inspect}\n\n"
+
+      non_matching.each do |key, expected, actual|
+        message << "#{key.inspect} expected to be\n\n\t#{expected.inspect}\n\nbut was\n\n\t#{actual.inspect}\n\n"
+      end
+
+      message << "Expected #{missing_keys.map(&:inspect).join(', ')} to be present." if missing_keys.present?
+      message
     end
-    [:uuid, :event, :started_at, :finished_at, :duration].each do |key|
-      event.key?(key).should be_true
-    end
-    true
+
+    non_matching.empty? && missing_keys.empty?
   end
 end
 

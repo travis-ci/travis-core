@@ -17,7 +17,7 @@ describe Travis::Notification::Instrument::Services::Github::FetchConfig do
     service.run
     event.should publish_instrumentation_event(
       event: 'travis.services.github.fetch_config.run:completed',
-      message: 'Travis::Services::Github::FetchConfig#run https://api.github.com/repos/svenfuchs/minimal/contents/.travis.yml?ref=62aae5f70ceee39123ef',
+      message: 'Travis::Services::Github::FetchConfig#run:completed https://api.github.com/repos/svenfuchs/minimal/contents/.travis.yml?ref=62aae5f70ceee39123ef',
       result: { 'foo' => 'Foo', '.result' => 'configured' },
       data: {
         url: 'https://api.github.com/repos/svenfuchs/minimal/contents/.travis.yml?ref=62aae5f70ceee39123ef'

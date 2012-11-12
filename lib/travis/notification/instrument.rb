@@ -49,7 +49,7 @@ module Travis
       end
 
       def publish(data = {})
-        message = "#{target.class.name}##{method} #{data.delete(:msg)}".strip
+        message = "#{target.class.name}##{method}:#{status} #{data.delete(:msg)}".strip
         payload = meta.merge(message: message, data: data)
         payload[:result] = data.delete(:result) if data.key?(:result)
         payload[:exception] = exception if exception

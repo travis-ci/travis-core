@@ -18,7 +18,7 @@ describe Travis::Addons::Hipchat::Instruments::Task do
   it 'publishes a event' do
     event.should publish_instrumentation_event(
       event: 'travis.addons.hipchat.task.run:completed',
-      message: 'Travis::Addons::Hipchat::Task#run for #<Build id=1>',
+      message: 'Travis::Addons::Hipchat::Task#run:completed for #<Build id=1>',
     )
     event[:data].except(:payload).should == {
       repository: 'svenfuchs/minimal',

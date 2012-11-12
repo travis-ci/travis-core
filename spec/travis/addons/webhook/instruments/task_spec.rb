@@ -18,7 +18,7 @@ describe Travis::Addons::Webhook::Instruments::Task do
   it 'publishes a event' do
     event.should publish_instrumentation_event(
       event: 'travis.addons.webhook.task.run:completed',
-      message: 'Travis::Addons::Webhook::Task#run for #<Build id=1>',
+      message: 'Travis::Addons::Webhook::Task#run:completed for #<Build id=1>',
     )
     event[:data].except(:payload).should == {
       repository: 'svenfuchs/minimal',

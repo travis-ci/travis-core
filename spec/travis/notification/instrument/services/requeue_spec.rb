@@ -16,7 +16,7 @@ describe Travis::Notification::Instrument::Services::Requests::Requeue do
   # it 'publishes a event' do
   #   event.should publish_instrumentation_event(
   #     event: 'travis.services.requests.requeue.run:completed',
-  #     message: 'Travis::Services::Requests::Requeue#run type="push"',
+  #     message: 'Travis::Services::Requests::Requeue#run:completed type="push"',
   #     data: {
   #       type: 'push',
   #       token: 'token',

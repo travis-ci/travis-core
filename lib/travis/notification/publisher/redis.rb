@@ -9,13 +9,13 @@ module Travis
         attr_accessor :redis, :ttl
 
         def initialize(options = {})
-          @redis = options[:redis] || ::Redis.connect(:url => Travis.config.redis.url)
+          @redis = options[:redis] || ::Redis.connect(url: Travis.config.redis.url)
           @ttl   = options[:ttl]   || 10
         end
 
         def publish(event)
           payload = MultiJson.encode(event)
-          list    = "events:" << event[:uuid]
+          list    = 'events:' << event[:uuid]
 
           redis.publish list, payload
 
@@ -29,7 +29,7 @@ module Travis
           # end
         end
 
-        rescues :publish, :from => Exception
+        rescues :publish, from: Exception
       end
     end
   end

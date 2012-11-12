@@ -19,17 +19,17 @@ describe Travis::Notification::Publisher::Log do
 
   it 'prints out the :msg value' do
     publish msg: 'FOO BAR'
-    log.should include('Object#instrumented FOO BAR')
+    log.should include('Object#instrumented:completed FOO BAR')
   end
 
   it 'defaults to INFO' do
     publish(msg: 'foo bar')
-    log.should include('I Object#instrumented foo bar')
+    log.should include('I Object#instrumented:completed foo bar')
   end
 
   it 'uses ERROR if an exception occured' do
     instrument(exception: true).publish(msg: 'foo bar')
-    log.should include('E Object#instrumented foo bar')
+    log.should include('E Object#instrumented:completed foo bar')
   end
 
   it 'does not include extra information if no exception occured' do

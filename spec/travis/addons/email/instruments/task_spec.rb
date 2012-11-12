@@ -18,7 +18,7 @@ describe Travis::Addons::Email::Instruments::Task do
   it 'publishes a event' do
     event.should publish_instrumentation_event(
       event: 'travis.addons.email.task.run:completed',
-      message: 'Travis::Addons::Email::Task#run for #<Build id=1>',
+      message: 'Travis::Addons::Email::Task#run:completed for #<Build id=1>',
     )
     event[:data].except(:payload).should == {
       repository: 'svenfuchs/minimal',

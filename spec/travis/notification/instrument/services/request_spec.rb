@@ -18,7 +18,7 @@ describe Travis::Notification::Instrument::Services::Requests::Receive do
   it 'publishes a event' do
     event.should publish_instrumentation_event(
       event: 'travis.services.requests.receive.run:completed',
-      message: 'Travis::Services::Requests::Receive#run type="push"',
+      message: 'Travis::Services::Requests::Receive#run:completed type="push"',
       data: {
         type: 'push',
         token: 'token',

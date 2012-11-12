@@ -17,7 +17,7 @@ describe Travis::Addons::Flowdock::Instruments::EventHandler do
   it 'publishes a event' do
     event.should publish_instrumentation_event(
       event: 'travis.addons.flowdock.event_handler.notify:completed',
-      message: 'Travis::Addons::Flowdock::EventHandler#notify (build:finished) for #<Build id=1>',
+      message: 'Travis::Addons::Flowdock::EventHandler#notify:completed (build:finished) for #<Build id=1>',
     )
     event[:data].except(:payload).should == {
       event: 'build:finished',

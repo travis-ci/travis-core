@@ -19,7 +19,7 @@ describe Travis::Addons::GithubStatus::Instruments::EventHandler do
 
     event.should publish_instrumentation_event(
       event: 'travis.addons.github_status.event_handler.notify:completed',
-      message: 'Travis::Addons::GithubStatus::EventHandler#notify (build:finished) for #<Build id=1>',
+      message: 'Travis::Addons::GithubStatus::EventHandler#notify:completed (build:finished) for #<Build id=1>',
     )
 
     event[:data].except(:payload).should == {
@@ -39,7 +39,7 @@ describe Travis::Addons::GithubStatus::Instruments::EventHandler do
 
     event.should publish_instrumentation_event(
       event: 'travis.addons.github_status.event_handler.notify:completed',
-      message: 'Travis::Addons::GithubStatus::EventHandler#notify (build:finished) for #<Build id=1>',
+      message: 'Travis::Addons::GithubStatus::EventHandler#notify:completed (build:finished) for #<Build id=1>',
     )
 
     event[:data].except(:payload).should == {

@@ -18,7 +18,7 @@ describe Travis::Addons::Pusher::Instruments::EventHandler do
 
       event.should publish_instrumentation_event(
         event: 'travis.addons.pusher.event_handler.notify:completed',
-        message: 'Travis::Addons::Pusher::EventHandler#notify (job:test:started) for #<Test id=1>',
+        message: 'Travis::Addons::Pusher::EventHandler#notify:completed (job:test:started) for #<Test id=1>',
       )
       event[:data].except(:payload).should == {
         repository: 'svenfuchs/minimal',
@@ -37,7 +37,7 @@ describe Travis::Addons::Pusher::Instruments::EventHandler do
 
       event.should publish_instrumentation_event(
         event: 'travis.addons.pusher.event_handler.notify:completed',
-        message: 'Travis::Addons::Pusher::EventHandler#notify (build:finished) for #<Build id=1>',
+        message: 'Travis::Addons::Pusher::EventHandler#notify:completed (build:finished) for #<Build id=1>',
       )
       event[:data].except(:payload).should == {
         repository: 'svenfuchs/minimal',

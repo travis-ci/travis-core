@@ -19,7 +19,7 @@ describe Travis::Notification::Instrument::Services::Hooks::Update do
     service.run
     event.should publish_instrumentation_event(
       event: 'travis.services.hooks.update.run:completed',
-      message: 'Travis::Services::Hooks::Update#run for svenfuchs/minimal active=true (svenfuchs)',
+      message: 'Travis::Services::Hooks::Update#run:completed for svenfuchs/minimal active=true (svenfuchs)',
       result: true
     )
   end
