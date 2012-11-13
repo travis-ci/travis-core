@@ -8,7 +8,7 @@ module Travis
       autoload :Trail,   'travis/event/handler/trail'
 
       include Logging
-      extend  Instrumentation
+      extend  Instrumentation, Exceptions::Handling
 
       class << self
         def notify(event, object, data = {})
@@ -32,6 +32,7 @@ module Travis
       end
       # TODO disable instrumentation in tests
       instrument :notify
+      rescues :notify, from: Exception
 
       private
 
