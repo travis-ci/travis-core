@@ -39,11 +39,15 @@ module Travis
                 begin
                   send_message(client, channel)
                   info("Successfully notified #{host}:#{port}##{channel}")
-                # rescue StandardError => e
-                #   error("Could not notify #{host}:#{port}##{channel} : #{e.inspect}")
+                rescue StandardError => e
+                  # TODO notify the repo
+                  error("Could not notify #{host}:#{port}##{channel}: #{e.inspect}")
                 end
               end
             end
+          rescue StandardError => e
+            # TODO notify the repo
+            error("Could not connect to #{host}: #{e.inspect}")
           end
 
           def send_message(client, channel)
