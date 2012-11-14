@@ -35,8 +35,6 @@ class Build
       self.result = matrix_result
       self.duration = matrix_duration
       self.finished_at = data[:finished_at]
-
-      save!
     end
 
     def pending?
