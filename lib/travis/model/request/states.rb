@@ -23,6 +23,7 @@ class Request
         self.config = fetch_config
         Travis.logger.info("[request:configure] Request successfully configured commit=#{commit.commit.inspect}")
       end
+      save!
     end
 
     def finish
@@ -57,7 +58,7 @@ class Request
       end
 
       def add_build
-        builds.build(:repository => repository, :commit => commit, :config => config, :owner => owner)
+        builds.create!(:repository => repository, :commit => commit, :config => config, :owner => owner)
       end
   end
 end
