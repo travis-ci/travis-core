@@ -44,6 +44,7 @@ module Travis
   autoload :Addons,       'travis/addons'
   autoload :Api,          'travis/api'
   autoload :Config,       'travis/config'
+  autoload :Enqueue,      'travis/enqueue'
   autoload :Event,        'travis/event'
   autoload :Features,     'travis/features'
   autoload :Mailer,       'travis/mailer'

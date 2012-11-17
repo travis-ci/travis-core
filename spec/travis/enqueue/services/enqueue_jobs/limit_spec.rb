@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::Services::EnqueueJobs::Limit do
+describe Travis::Enqueue::Services::EnqueueJobs::Limit do
   include Travis::Testing::Stubs
   include Support::ActiveRecord
 
