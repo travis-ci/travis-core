@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Travis::Services::GithubSyncUser::Repositories do
+describe Travis::Github::Services::SyncUser::Repositories do
   include Travis::Testing::Stubs
 
-  let(:repository)   { Travis::Services::GithubSyncUser::Repository }
+  let(:repository)   { Travis::Github::Services::SyncUser::Repository }
 
   let(:public_repo)  { stub_repository(:slug => 'sven/public')  }
   let(:private_repo) { stub_repository(:slug => 'sven/private') }
@@ -118,10 +118,10 @@ describe Travis::Services::GithubSyncUser::Repositories do
   end
 end
 
-describe Travis::Services::GithubSyncUser::Repositories::Instrument do
+describe Travis::Github::Services::SyncUser::Repositories::Instrument do
   include Support::ActiveRecord
 
-  let(:service)   { Travis::Services::GithubSyncUser::Repositories.new(user) }
+  let(:service)   { Travis::Github::Services::SyncUser::Repositories.new(user) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:events)    { publisher.events }
 
@@ -136,8 +136,8 @@ describe Travis::Services::GithubSyncUser::Repositories::Instrument do
 
   it 'publishes a event on :run' do
     events[3].should publish_instrumentation_event(
-      event: 'travis.services.github_sync_user.repositories.run:completed',
-      message: %(Travis::Services::GithubSyncUser::Repositories#run:completed for #<User id=#{user.id} login="sven">),
+      event: 'travis.github.services.sync_user.repositories.run:completed',
+      message: %(Travis::Github::Services::SyncUser::Repositories#run:completed for #<User id=#{user.id} login="sven">),
       result: {
         synced: [{ id: Repository.last.id, owner: 'sven', name: 'minimal' }],
         removed: []
@@ -150,8 +150,8 @@ describe Travis::Services::GithubSyncUser::Repositories::Instrument do
 
   it 'publishes a event on :fetch' do
     events[2].should publish_instrumentation_event(
-      event: 'travis.services.github_sync_user.repositories.fetch:completed',
-      message: %(Travis::Services::GithubSyncUser::Repositories#fetch:completed for #<User id=#{user.id} login="sven">),
+      event: 'travis.github.services.sync_user.repositories.fetch:completed',
+      message: %(Travis::Github::Services::SyncUser::Repositories#fetch:completed for #<User id=#{user.id} login="sven">),
       result: data,
       data: {
         resources: ['user/repos'],

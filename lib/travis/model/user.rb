@@ -80,10 +80,6 @@ class User < ActiveRecord::Base
     gravatar_id.presence || (email? && Digest::MD5.hexdigest(email)) || '0' * 32
   end
 
-  def authenticated_on_github(&block)
-    Travis::Services::Github.authenticated(self, &block) # TODO
-  end
-
   protected
 
     def set_as_recent

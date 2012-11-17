@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::Services::GithubSetHook do
+describe Travis::Github::Services::SetHook do
   include Travis::Testing::Stubs
 
   let(:hooks_url)     { 'repos/svenfuchs/minimal/hooks' }

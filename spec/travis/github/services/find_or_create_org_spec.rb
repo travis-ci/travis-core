@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::Services::GithubFindOrCreateOrg do
+describe Travis::Github::Services::FindOrCreateOrg do
   include Travis::Testing::Stubs
 
   let(:service) { described_class.new(nil, {}) }

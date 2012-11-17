@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::Services::GithubSyncUser do
+describe Travis::Github::Services::SyncUser do
   include Support::ActiveRecord
 
   let(:user)    { Factory(:user) }

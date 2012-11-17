@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::Services::GithubFetchConfig do
+describe Travis::Github::Services::FetchConfig do
   include Travis::Testing::Stubs
 
   let(:body)      { { 'content' => ['foo: Foo'].pack('m') } }
@@ -44,11 +44,11 @@ describe Travis::Services::GithubFetchConfig do
   end
 end
 
-describe Travis::Services::GithubFetchConfig::Instrument do
+describe Travis::Github::Services::FetchConfig::Instrument do
   include Travis::Testing::Stubs
 
   let(:body)      { { 'content' => ['foo: Foo'].pack('m') } }
-  let(:service)   { Travis::Services::GithubFetchConfig.new(nil, request: request) }
+  let(:service)   { Travis::Github::Services::FetchConfig.new(nil, request: request) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events[1] }
 
@@ -60,8 +60,8 @@ describe Travis::Services::GithubFetchConfig::Instrument do
   it 'publishes a payload' do
     service.run
     event.should publish_instrumentation_event(
-      event: 'travis.services.github_fetch_config.run:completed',
-      message: 'Travis::Services::GithubFetchConfig#run:completed https://api.github.com/repos/svenfuchs/minimal/contents/.travis.yml?ref=62aae5f70ceee39123ef',
+      event: 'travis.github.services.fetch_config.run:completed',
+      message: 'Travis::Github::Services::FetchConfig#run:completed https://api.github.com/repos/svenfuchs/minimal/contents/.travis.yml?ref=62aae5f70ceee39123ef',
       result: { 'foo' => 'Foo', '.result' => 'configured' },
       data: {
         url: 'https://api.github.com/repos/svenfuchs/minimal/contents/.travis.yml?ref=62aae5f70ceee39123ef'

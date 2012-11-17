@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::Services::GithubSyncUser::Organizations do
+describe Travis::Github::Services::SyncUser::Organizations do
   include Support::ActiveRecord
 
   describe 'run' do
@@ -49,10 +49,10 @@ describe Travis::Services::GithubSyncUser::Organizations do
   end
 end
 
-describe Travis::Services::GithubSyncUser::Organizations::Instrument do
+describe Travis::Github::Services::SyncUser::Organizations::Instrument do
   include Support::ActiveRecord
 
-  let(:service)   { Travis::Services::GithubSyncUser::Organizations.new(user) }
+  let(:service)   { Travis::Github::Services::SyncUser::Organizations.new(user) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:events)    { publisher.events }
 
@@ -70,8 +70,8 @@ describe Travis::Services::GithubSyncUser::Organizations::Instrument do
 
   it 'publishes a event on :run' do
     events[3].should publish_instrumentation_event(
-      event: 'travis.services.github_sync_user.organizations.run:completed',
-      message: %(Travis::Services::GithubSyncUser::Organizations#run:completed for #<User id=#{user.id} login="sven">),
+      event: 'travis.github.services.sync_user.organizations.run:completed',
+      message: %(Travis::Github::Services::SyncUser::Organizations#run:completed for #<User id=#{user.id} login="sven">),
       result: {
         synced: [{ id: travis.id, login: 'travis-ci' }, { id: sinatra.id, login: 'sinatra' }],
         removed: []
@@ -81,8 +81,8 @@ describe Travis::Services::GithubSyncUser::Organizations::Instrument do
 
   it 'publishes a event on :fetch' do
     events[2].should publish_instrumentation_event(
-      event: 'travis.services.github_sync_user.organizations.fetch:completed',
-      message: %(Travis::Services::GithubSyncUser::Organizations#fetch:completed for #<User id=#{user.id} login="sven">),
+      event: 'travis.github.services.sync_user.organizations.fetch:completed',
+      message: %(Travis::Github::Services::SyncUser::Organizations#fetch:completed for #<User id=#{user.id} login="sven">),
       result: data
     )
   end
