@@ -25,7 +25,7 @@ module Travis
 
       def user
         # TODO check that clients are only passing the id
-        current_user || User.find(params[:id]).sync
+        @user ||= current_user || User.find(params[:id])
       end
 
       def publisher

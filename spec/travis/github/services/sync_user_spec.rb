@@ -23,11 +23,14 @@ describe Travis::Github::Services::SyncUser do
       user.synced_at.should >= time
     end
 
-    it 'handles exceptions' do
+    it 'raises exceptions' do
       exception = nil
-      expect {
-        service.send(:syncing) { raise('kaputt') }
-      }.to raise_error
+      expect { service.send(:syncing) { raise('kaputt') } }.to raise_error
+    end
+
+    it 'ensures the user is set back to not sycing when an exception raises' do
+      service.send(:syncing) { raise('kaputt') } rescue nil
+      user.should_not be_syncing
     end
   end
 end
