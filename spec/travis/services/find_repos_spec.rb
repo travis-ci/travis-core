@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::Services::FindRepositories do
+describe Travis::Services::FindRepos do
   include Support::ActiveRecord
 
   let!(:repo)   { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }

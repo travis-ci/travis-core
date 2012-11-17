@@ -2,8 +2,8 @@ require 'travis/services/base'
 
 module Travis
   module Services
-    class FindRepository < Base
-      register :find_repository
+    class FindRepo < Base
+      register :find_repo
 
       def run(options = {})
         result

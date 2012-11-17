@@ -22,11 +22,11 @@ describe Travis::Api::V2::Http::Repository do
   end
 end
 
-describe 'Travis::Api::V2::Http::Repository using Travis::Services::Repositories::FindOne' do
+describe 'Travis::Api::V2::Http::Repository using Travis::Services::FindRepo' do
   include Support::ActiveRecord
 
   let!(:record) { Factory(:repository) }
-  let(:repo)    { Travis.run_service(:find_repository, :id => record.id) }
+  let(:repo)    { Travis.run_service(:find_repo, :id => record.id) }
   let(:data)    { Travis::Api::V2::Http::Repository.new(repo).data }
 
   it 'queries' do

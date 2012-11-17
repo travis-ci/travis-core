@@ -23,7 +23,7 @@ describe Travis::Github::Services::SetHook do
 
   before :each do
     Travis.config.stubs(:service_hook_url).returns('staging.travis-ci.org')
-    Travis::Services::FindRepository.any_instance.stubs(:run).returns(repo)
+    Travis::Services::FindRepo.any_instance.stubs(:run).returns(repo)
   end
 
   describe 'activating' do
