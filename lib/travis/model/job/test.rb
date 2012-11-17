@@ -15,13 +15,6 @@ class Job
 
     include Test::States, Sponsors, Tagging
 
-    class << self
-      def append_log!(id, chars)
-        job = find(id)
-        job.append_log!(chars)
-      end
-    end
-
     def append_log!(chars)
       Artifact::Log.append(id, chars)
       super
