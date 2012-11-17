@@ -5,7 +5,6 @@ module Travis
   module Notification
     class Instrument
       autoload :EventHandler, 'travis/notification/instrument/event_handler'
-      autoload :Services,     'travis/notification/instrument/services'
       autoload :Task,         'travis/notification/instrument/task'
 
       class << self
