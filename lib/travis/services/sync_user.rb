@@ -7,8 +7,7 @@ module Travis
       register :sync_user
 
       def run
-        return if current_user.syncing?
-        trigger_sync
+        trigger_sync unless current_user.syncing?
       end
 
       def trigger_sync

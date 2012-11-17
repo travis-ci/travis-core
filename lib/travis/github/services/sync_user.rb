@@ -21,7 +21,7 @@ module Travis
         private
 
           def syncing
-            user.update_column(:is_syncing, true) unless user.is_syncing?
+            user.update_column(:is_syncing, true)
             result = yield
             user.update_column(:synced_at, Time.now)
             result
