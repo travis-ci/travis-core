@@ -51,6 +51,7 @@ module Travis
   autoload :Mailer,       'travis/mailer'
   autoload :Model,        'travis/model'
   autoload :Notification, 'travis/notification'
+  autoload :Requests,     'travis/requests'
   autoload :Services,     'travis/services'
   autoload :Task,         'travis/task'
   autoload :Testing,      'travis/testing'

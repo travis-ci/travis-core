@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe Travis::Services::ReceiveRequest::Push do
-  let(:payload) { Travis::Services::ReceiveRequest.payload_for('push', GITHUB_PAYLOADS['gem-release']) }
+describe Travis::Requests::Services::Receive::Push do
+  let(:payload) { Travis::Requests::Services::Receive.payload_for('push', GITHUB_PAYLOADS['gem-release']) }
 
   describe 'repository' do
     it 'returns all attributes required for a Repository' do

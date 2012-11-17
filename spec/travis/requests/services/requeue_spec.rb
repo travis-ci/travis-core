@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::Services::RequeueRequest do
+describe Travis::Requests::Services::Requeue do
   include Support::ActiveRecord
 
   let(:user)    { User.first || Factory(:user) }
@@ -21,7 +21,7 @@ describe Travis::Services::RequeueRequest do
   end
 end
 
-describe Travis::Services::RequeueRequest::Instrument do
+describe Travis::Requests::Services::Requeue::Instrument do
   include Support::ActiveRecord
 
   # let(:payload)   { JSON.parse(GITHUB_PAYLOADS['gem-release']) }

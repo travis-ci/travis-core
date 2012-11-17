@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe Travis::Services::ReceiveRequest::PullRequest do
-  let(:payload) { Travis::Services::ReceiveRequest.payload_for('pull_request', GITHUB_PAYLOADS['pull-request']) }
+describe Travis::Requests::Services::Receive::PullRequest do
+  let(:payload) { Travis::Requests::Services::Receive.payload_for('pull_request', GITHUB_PAYLOADS['pull-request']) }
 
   describe 'accept' do
     before do

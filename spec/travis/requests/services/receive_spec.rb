@@ -1,9 +1,10 @@
 require 'spec_helper'
+require 'travis/github'
 
 # TODO this is really an integration test. should move it
 # somewhere else and add unit tests
 
-describe Travis::Services::ReceiveRequest do
+describe Travis::Requests::Services::Receive do
   include Support::ActiveRecord
 
   let(:owner)   { User.first || Factory(:user) }
@@ -168,11 +169,11 @@ describe Travis::Services::ReceiveRequest do
   end
 end
 
-describe Travis::Services::ReceiveRequest::Instrument do
+describe Travis::Requests::Services::Receive::Instrument do
   include Support::ActiveRecord
 
   let(:payload)   { JSON.parse(GITHUB_PAYLOADS['gem-release']) }
-  let(:service)   { Travis::Services::ReceiveRequest.new(nil, event_type: 'push', payload: payload, token: 'token') }
+  let(:service)   { Travis::Requests::Services::Receive.new(nil, event_type: 'push', payload: payload, token: 'token') }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events.last }
 
@@ -185,8 +186,8 @@ describe Travis::Services::ReceiveRequest::Instrument do
 
   it 'publishes a event' do
     event.should publish_instrumentation_event(
-      event: 'travis.services.receive_request.run:completed',
-      message: 'Travis::Services::ReceiveRequest#run:completed type="push"',
+      event: 'travis.requests.services.receive.run:completed',
+      message: 'Travis::Requests::Services::Receive#run:completed type="push"',
       data: {
         type: 'push',
         token: 'token',
