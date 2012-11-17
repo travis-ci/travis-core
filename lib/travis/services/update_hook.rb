@@ -1,3 +1,6 @@
+require 'travis/services/base'
+require 'travis/github'
+
 module Travis
   module Services
     class UpdateHook < Base

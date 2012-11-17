@@ -6,21 +6,17 @@ module Travis
       register :append_log
 
       def run
-        job.append_log!(log)
+        job.append_log!(data[:log])
       end
 
       private
 
         def job
-          Job::Test.find(id)
+          Job::Test.find(data[:id])
         end
 
-        def id
-          params[:data][:id]
-        end
-
-        def log
-          params[:data][:log]
+        def data
+          @data ||= params[:data].symbolize_keys
         end
     end
   end

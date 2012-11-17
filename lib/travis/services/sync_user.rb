@@ -1,3 +1,4 @@
+require 'travis/services/base'
 require 'travis/sidekiq/synchronize_user'
 
 module Travis

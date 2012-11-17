@@ -1,3 +1,5 @@
+require 'backports'
+
 module Travis
   module Services
     class << self
@@ -10,7 +12,7 @@ module Travis
       end
     end
 
-    def run(key, *args)
+    def run_service(key, *args)
       service(key, *args).run
     end
 

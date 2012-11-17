@@ -1,7 +1,5 @@
 require 'travis/services/base'
 
-# TODO move stuff from travis/model/worker/status to here
-#
 module Travis
   module Services
     class UpdateWorkers < Base
@@ -17,6 +15,10 @@ module Travis
 
       private
 
+        def reports
+          @reports ||= params[:reports].map(&:symbolize_keys)
+        end
+
         def create(report)
           Worker.create!(report)
         end
@@ -24,10 +26,6 @@ module Travis
         def update(record, report)
           record.update_attributes!(report)
           record.notify(:update)
-        end
-
-        def reports
-          params[:reports]
         end
 
         def touch_all

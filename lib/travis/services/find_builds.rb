@@ -1,4 +1,5 @@
 require 'core_ext/active_record/none_scope'
+require 'travis/services/base'
 
 # v2 builds.all
 #   build => commit, request, matrix.id

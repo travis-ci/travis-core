@@ -9,9 +9,9 @@ module Travis
 
       attr_reader :current_user, :params
 
-      def initialize(current_user = nil, params = {})
-        @current_user = current_user
-        @params = params.symbolize_keys
+      def initialize(*args)
+        @params = args.last.is_a?(Hash) ? args.pop.symbolize_keys : {}
+        @current_user = args.last
       end
 
       def scope(key)

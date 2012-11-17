@@ -7,21 +7,17 @@ module Travis
       register :update_job
 
       def run
-        job.update_attributes(attrs) # TODO really should be update_attributes!
+        job.update_attributes(data.except(:id)) # TODO really should be update_attributes!
       end
 
       private
 
         def job
-          Job::Test.find(id)
+          Job::Test.find(data[:id])
         end
 
-        def id
-          params[:data][:id]
-        end
-
-        def attrs
-          params[:data].except(:id)
+        def data
+          @data ||= params[:data].symbolize_keys
         end
     end
   end

@@ -8,7 +8,7 @@ describe Travis::Services::UpdateHook do
 
   before :each do
     repo.stubs(:update_column)
-    service.stubs(:service).returns(stub(run: repo))
+    Travis.stubs(:run_service)
     user.stubs(:service_hook).returns(repo)
   end
 
@@ -18,7 +18,7 @@ describe Travis::Services::UpdateHook do
   end
 
   it 'sets the given :active param to the hook' do
-    service.expects(:service).with(:github_set_hook, params).returns(stub(run: nil))
+    Travis.expects(:run_service).with(:github_set_hook, is_a(Hash))
     service.run
   end
 

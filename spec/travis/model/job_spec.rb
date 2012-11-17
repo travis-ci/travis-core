@@ -28,7 +28,7 @@ describe Job do
 
     it 'notifies observers' do
       Travis::Event.expects(:dispatch).with('job:test:log', job, :_log => 'chars')
-      Job::Test.append_log!(job.id, 'chars')
+      job.append_log!('chars')
     end
   end
 
