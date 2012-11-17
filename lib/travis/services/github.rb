@@ -1,11 +1,6 @@
 module Travis
   module Services
     module Github
-      autoload :FetchConfig, 'travis/services/github/fetch_config'
-      autoload :FindAdmin,   'travis/services/github/find_admin'
-      autoload :SetHook,     'travis/services/github/set_hook'
-      autoload :SyncUser,    'travis/services/github/sync_user'
-
       class << self
         def authenticated(user, &block)
           fail "we don't have a github token for #{user.inspect}" if user.github_oauth_token.blank?

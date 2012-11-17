@@ -2,7 +2,7 @@ module Travis
   module Notification
     class Instrument
       module Services
-        autoload :Hooks,    'travis/notification/instrument/services/hooks'
+        autoload :UpdateHook, 'travis/notification/instrument/services/update_hook'
         autoload :Github,   'travis/notification/instrument/services/github'
         autoload :Requests, 'travis/notification/instrument/services/requests'
       end

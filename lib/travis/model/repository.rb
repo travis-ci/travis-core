@@ -94,7 +94,7 @@ class Repository < ActiveRecord::Base
   end
 
   def admin
-    @admin ||= Travis::Services.run(:github, :find_admin, repository: self) # TODO check who's using this
+    @admin ||= Travis::Services.run_service(:find_admin, repository: self) # TODO check who's using this
   end
 
   def slug

@@ -44,7 +44,7 @@ end
 describe 'Travis::Api::V2::Http::Jobs using Travis::Services::Jobs::FindAll' do
   include Support::ActiveRecord
 
-  let(:jobs) { Travis::Services::Jobs::FindAll.new(nil).run }
+  let(:jobs) { Travis::Services.run_service(:find_jobs, nil) }
   let(:data) { Travis::Api::V2::Http::Jobs.new(jobs).data }
 
   before :each do

@@ -3,6 +3,10 @@ module Travis
     class Base
       include Services
 
+      def self.register(key)
+        Travis::Services.register(key, self)
+      end
+
       attr_reader :current_user, :params
 
       def initialize(current_user = nil, params = {})

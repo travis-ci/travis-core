@@ -26,7 +26,7 @@ describe 'Travis::Api::V2::Http::Repository using Travis::Services::Repositories
   include Support::ActiveRecord
 
   let!(:record) { Factory(:repository) }
-  let(:repo)    { Travis::Services::Repositories::FindOne.new(nil, :id => record.id).run }
+  let(:repo)    { Travis::Services.run_service(:find_repository, :id => record.id) }
   let(:data)    { Travis::Api::V2::Http::Repository.new(repo).data }
 
   it 'queries' do

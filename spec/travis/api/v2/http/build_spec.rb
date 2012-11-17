@@ -53,7 +53,7 @@ describe 'Travis::Api::V2::Http::Build using Travis::Services::Builds::FindOne' 
   include Support::ActiveRecord
 
   let!(:record) { Factory(:build) }
-  let(:build)   { Travis::Services::Builds::FindOne.new(nil, :id => record.id).run }
+  let(:build)   { Travis.run_service(:find_build, nil, :id => record.id) }
   let(:data)    { Travis::Api::V2::Http::Build.new(build).data }
 
   it 'queries' do

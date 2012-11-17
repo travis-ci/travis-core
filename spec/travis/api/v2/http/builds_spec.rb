@@ -43,7 +43,7 @@ describe 'Travis::Api::V2::Http::Builds using Travis::Services::Builds::FindAll'
   include Support::ActiveRecord
 
   let!(:repo)  { Factory(:repository) }
-  let(:builds) { Travis::Services::Builds::FindAll.new(nil, :event_type => 'push', :repository_id => repo.id).run }
+  let(:builds) { Travis::Services.run_service(:find_builds, nil, :event_type => 'push', :repository_id => repo.id) }
   let(:data)   { Travis::Api::V2::Http::Builds.new(builds).data }
 
   before :each do
