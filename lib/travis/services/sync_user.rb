@@ -4,6 +4,8 @@ require 'travis/sidekiq/synchronize_user'
 module Travis
   module Services
     class SyncUser < Base
+      register :sync_user
+
       def run
         return if current_user.syncing?
         trigger_sync

@@ -29,7 +29,7 @@ module Travis
         end
 
         def repo
-          @repo ||= Travis.run_service(:find_repo, params)
+          @repo ||= run_service(:find_repo, params)
         end
     end
   end

@@ -8,7 +8,7 @@ describe Travis::Services::UpdateHook do
 
   before :each do
     repo.stubs(:update_column)
-    Travis.stubs(:run_service)
+    service.stubs(:run_service)
     user.stubs(:service_hook).returns(repo)
   end
 
@@ -18,7 +18,7 @@ describe Travis::Services::UpdateHook do
   end
 
   it 'sets the given :active param to the hook' do
-    Travis.expects(:run_service).with(:github_set_hook, is_a(Hash))
+    service.expects(:run_service).with(:github_set_hook, is_a(Hash))
     service.run
   end
 
@@ -59,7 +59,7 @@ describe Travis::Services::UpdateHook::Instrument do
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
-    Travis.stubs(:run_service)
+    service.stubs(:run_service)
     user.stubs(:service_hook).returns(repo)
     repo.stubs(:update_column).returns(true)
   end
