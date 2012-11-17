@@ -76,7 +76,7 @@ describe Request::States do
 
   describe 'configure' do
     it 'fetches the .travis.yml config from Github' do
-      Travis::Services.expects(:run_service).returns(config)
+      Travis.expects(:run_service).returns(config)
       request.configure
     end
 

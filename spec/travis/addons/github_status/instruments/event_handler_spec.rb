@@ -8,7 +8,7 @@ describe Travis::Addons::GithubStatus::Instruments::EventHandler do
   let(:event)     { publisher.events[1] }
 
   before :each do
-    Travis::Services.stubs(:run_service).returns(user)
+    Travis.stubs(:run_service).returns(user)
     Travis::Notification.publishers.replace([publisher])
     subject.any_instance.stubs(:handle)
   end

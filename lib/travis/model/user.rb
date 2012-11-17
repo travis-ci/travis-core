@@ -39,7 +39,7 @@ class User < ActiveRecord::Base
   end
 
   def sync
-    Travis::Services.run_service(:sync_user, self) # TODO remove once apps use the service
+    Travis.run_service(:sync_user, self) # TODO remove once apps use the service
   end
 
   def syncing?

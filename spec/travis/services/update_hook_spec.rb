@@ -59,7 +59,7 @@ describe Travis::Services::UpdateHook::Instrument do
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
-    service.stubs(:run_service)
+    Travis.stubs(:run_service)
     user.stubs(:service_hook).returns(repo)
     repo.stubs(:update_column).returns(true)
   end

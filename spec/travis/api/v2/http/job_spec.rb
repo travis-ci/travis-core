@@ -55,7 +55,7 @@ describe 'Travis::Api::V2::Http::Job using Travis::Services::Jobs::FindOne' do
   include Support::ActiveRecord
 
   let!(:record) { Factory(:test) }
-  let(:job)     { Travis::Services.run_service(:find_job, nil, :id => record.id) }
+  let(:job)     { Travis.run_service(:find_job, nil, :id => record.id) }
   let(:data)    { Travis::Api::V2::Http::Job.new(job).data }
 
   it 'queries' do

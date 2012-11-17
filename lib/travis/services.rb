@@ -1,7 +1,5 @@
 module Travis
   module Services
-    extend self
-
     class << self
       def services
         @services ||= {}
@@ -12,7 +10,7 @@ module Travis
       end
     end
 
-    def run_service(key, *args)
+    def run(key, *args)
       service(key, *args).run
     end
 

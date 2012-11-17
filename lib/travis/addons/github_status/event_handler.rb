@@ -26,7 +26,7 @@ module Travis
           end
 
           def admin
-            @admin ||= Travis::Services.run_service(:find_admin, repository: object.repository)
+            @admin ||= Travis.run_service(:find_admin, repository: object.repository)
           end
 
           Instruments::EventHandler.attach_to(self)

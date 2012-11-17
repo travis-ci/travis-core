@@ -24,7 +24,7 @@ end
 describe 'Travis::Api::V2::Http::Repositories using Travis::Services::Repositories::FindAll' do
   include Support::ActiveRecord
 
-  let(:repos) { Travis::Services.run_service(:find_repositories) }
+  let(:repos) { Travis.run_service(:find_repositories) }
   let(:data)  { Travis::Api::V2::Http::Repositories.new(repos).data }
 
   before :each do

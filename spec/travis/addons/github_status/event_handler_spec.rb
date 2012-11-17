@@ -33,7 +33,7 @@ describe Travis::Addons::GithubStatus::EventHandler do
     attr_reader :url, :event
 
     before :each do
-      Travis::Services.stubs(:run_service).returns(user)
+      Travis.stubs(:run_service).returns(user)
     end
 
     def notify

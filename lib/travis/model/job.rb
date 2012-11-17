@@ -16,14 +16,6 @@ class Job < ActiveRecord::Base
   autoload :Tagging,   'travis/model/job/tagging'
   autoload :Test,      'travis/model/job/test'
 
-  class Queueing
-    class All
-      def run
-        Travis::Services.run_service(:enqueue_jobs) # bc, remove once apps use the service directly
-      end
-    end
-  end
-
   class << self
     # what we return from the json api
     def queued(queue = nil)

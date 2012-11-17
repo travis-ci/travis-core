@@ -54,7 +54,7 @@ class Request
       end
 
       def fetch_config
-        Travis::Services.run_service(:fetch_config, request: self)
+        Travis.run_service(:fetch_config, request: self) # TODO move to a service, have it pass the config to configure
       end
 
       def add_build
