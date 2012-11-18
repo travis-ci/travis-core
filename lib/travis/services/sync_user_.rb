@@ -4,7 +4,7 @@ module Travis
   module Services
     class SyncUser < Base
       def run
-        trigger_sync unless current_user.syncing?
+        trigger_sync unless user.syncing?
       end
 
       def trigger_sync
