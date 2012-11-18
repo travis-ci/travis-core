@@ -1,7 +1,7 @@
-require 'travis/services/base'
+require 'travis/services'
 
 module Travis
-  class Logs
+  module Logs
     module Services
       class Append < Travis::Services::Base
         register :append_log

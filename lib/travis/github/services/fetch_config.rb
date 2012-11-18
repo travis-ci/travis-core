@@ -1,4 +1,5 @@
 require 'active_support/core_ext/class/attribute'
+require 'travis/services'
 
 module Travis
   module Github

@@ -14,11 +14,11 @@ module Test
   end
 
   class Foo
-    include Travis::Services
+    include Travis::Services::Helpers
   end
 end
 
-describe Travis::Services do
+describe Travis::Services::Helpers do
   include Travis::Testing::Stubs
 
   let(:object) { Test::Foo.new }

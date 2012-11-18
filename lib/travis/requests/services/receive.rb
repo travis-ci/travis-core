@@ -1,6 +1,6 @@
 require 'gh'
-require 'travis/requests/services/receive/push'
-require 'travis/requests/services/receive/pull_request'
+require 'travis/services'
+Backports.require_relative_dir 'receive'
 
 module Travis
   module Requests

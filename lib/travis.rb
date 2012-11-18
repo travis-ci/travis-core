@@ -56,7 +56,7 @@ module Travis
   autoload :Task,         'travis/task'
   autoload :Testing,      'travis/testing'
 
-  extend Services
+  extend Services::Helpers
 
   class UnknownRepository < StandardError; end
   class GithubApiError < StandardError; end

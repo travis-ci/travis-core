@@ -1,3 +1,5 @@
+require 'travis/services'
+
 module Travis
   module Requests
     module Services

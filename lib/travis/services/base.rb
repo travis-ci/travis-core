@@ -1,11 +1,13 @@
+require 'travis/services/helpers'
+
 module Travis
   module Services
     class Base
-      include Services
-
       def self.register(key)
         Travis::Services.register(key, self)
       end
+
+      include Helpers
 
       attr_reader :current_user, :params
 

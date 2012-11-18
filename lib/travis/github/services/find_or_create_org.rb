@@ -1,3 +1,5 @@
+require 'travis/services'
+
 module Travis
   module Github
     module Services

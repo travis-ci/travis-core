@@ -1,3 +1,4 @@
+require 'travis/services'
 Backports.require_relative_dir 'sync_user'
 
 module Travis

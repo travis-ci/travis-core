@@ -1,4 +1,5 @@
 require 'gh'
+require 'travis/services'
 
 module Travis
   module Github

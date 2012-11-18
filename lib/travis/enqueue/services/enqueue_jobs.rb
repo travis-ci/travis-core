@@ -1,3 +1,4 @@
+require 'travis/services'
 require 'travis/enqueue/services/enqueue_jobs/limit'
 
 module Travis
