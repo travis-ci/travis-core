@@ -1,4 +1,3 @@
-require 'travis/services/base'
 require 'faraday/error'
 
 # TODO extract github specific stuff to a separate service
@@ -8,8 +7,6 @@ module Travis
     class FindAdmin < Base
       extend Travis::Instrumentation
       include Travis::Logging
-
-      register :find_admin
 
       def run
         admin = candidates.detect { |user| validate(user) }

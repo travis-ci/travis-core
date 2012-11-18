@@ -1,10 +1,6 @@
-require 'travis/services/base'
-
 module Travis
   module Services
     class FindJob < Base
-      register :find_job
-
       def run(options = {})
         preload(result) if result
       end

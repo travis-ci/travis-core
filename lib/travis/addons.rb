@@ -12,7 +12,7 @@ module Travis
 
     class << self
       def register
-        constants.each do |name|
+        constants(false).each do |name|
           key = name.to_s.underscore
           const = const_get(name).const_get(:EventHandler) rescue nil
           Travis::Event::Subscription.register(key, const) if const

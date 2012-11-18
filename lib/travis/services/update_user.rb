@@ -1,10 +1,6 @@
-require 'travis/services/base'
-
 module Travis
   module Services
     class UpdateUser < Base
-      register :update_user
-
       # TODO how to figure these out
       LOCALES = %w(en es fr ja eb nl pl pt-Br ru)
 

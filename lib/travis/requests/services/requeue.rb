@@ -1,12 +1,8 @@
-require 'travis/services'
-
 module Travis
   module Requests
     module Services
       class Requeue < Travis::Services::Base
         extend Travis::Instrumentation
-
-        register :requeue_request
 
         def run
           requeue if request && accept?

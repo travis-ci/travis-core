@@ -1,14 +1,10 @@
 require 'core_ext/active_record/none_scope'
-require 'travis/services/base'
-
 # v2 builds.all
 #   build => commit, request, matrix.id
 
 module Travis
   module Services
     class FindBuilds < Base
-      register :find_builds
-
       def run
         preload(result)
       end

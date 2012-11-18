@@ -1,10 +1,8 @@
-require 'travis/services/helpers'
-
 module Travis
   module Services
     class Base
       def self.register(key)
-        Travis::Services.register(key, self)
+        Travis.services.register(key, self)
       end
 
       include Helpers

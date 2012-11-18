@@ -1,10 +1,6 @@
-require 'travis/services/base'
-
 module Travis
   module Services
     class FindRepos < Base
-      register :find_repos
-
       def run
         result
       end

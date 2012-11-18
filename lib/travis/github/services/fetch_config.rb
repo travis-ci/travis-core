@@ -1,5 +1,4 @@
 require 'active_support/core_ext/class/attribute'
-require 'travis/services'
 
 module Travis
   module Github
@@ -8,8 +7,6 @@ module Travis
       class FetchConfig < Travis::Services::Base
         include Logging
         extend Instrumentation
-
-        register :github_fetch_config
 
         def run
           config = retrying(3) { parse(fetch) }

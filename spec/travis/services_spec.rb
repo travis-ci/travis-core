@@ -2,9 +2,9 @@ require 'spec_helper'
 
 module Test
   module Services
-    class DoStuff < Travis::Services::Base
-      register :do_stuff
+    extend Travis::Services::Registry
 
+    class DoStuff < Travis::Services::Base
       attr_reader :current_user, :params
 
       def initialize(current_user, params)
@@ -25,6 +25,7 @@ describe Travis::Services::Helpers do
 
   before :each do
     Travis.stubs(:services).returns(Test::Services)
+    Test::Services.add(:do_stuff, Test::Services::DoStuff)
   end
 
   describe 'service' do

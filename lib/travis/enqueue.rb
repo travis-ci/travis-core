@@ -1,2 +1,6 @@
-Backports.require_relative_dir 'enqueue/services'
+module Travis
+  module Enqueue
+    autoload :Services, 'travis/enqueue/services'
+  end
+end
 

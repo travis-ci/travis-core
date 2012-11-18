@@ -1,11 +1,10 @@
-require 'travis/services'
-Backports.require_relative_dir 'sync_user'
-
 module Travis
   module Github
     module Services
       class SyncUser < Travis::Services::Base
-        register :github_sync_user
+        autoload :Organizations, 'travis/github/services/sync_user/organizations'
+        autoload :Repositories,  'travis/github/services/sync_user/repositories'
+        autoload :Repository,    'travis/github/services/sync_user/repository'
 
         def run
           syncing do

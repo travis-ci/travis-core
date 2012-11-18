@@ -1,10 +1,6 @@
-require 'travis/services/base'
-
 module Travis
   module Services
     class UpdateWorkers < Base
-      register :update_workers
-
       def run
         reports.each do |report|
           record = record_for(report)

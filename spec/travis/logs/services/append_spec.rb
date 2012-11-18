@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'travis/logs/services/append'
 
 describe Travis::Logs::Services::Append do
   include Travis::Testing::Stubs

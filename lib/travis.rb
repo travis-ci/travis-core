@@ -48,6 +48,7 @@ module Travis
   autoload :Event,        'travis/event'
   autoload :Features,     'travis/features'
   autoload :Github,       'travis/github'
+  autoload :Logs,         'travis/logs'
   autoload :Mailer,       'travis/mailer'
   autoload :Model,        'travis/model'
   autoload :Notification, 'travis/notification'
@@ -66,18 +67,17 @@ module Travis
     # TODO check with @rkh where this is actually required
     def setup(config = Travis.config.oauth2)
       GH.set(:client_id => config[:client_id], :client_secret => config[:client_secret]) if config
+
+      Addons.register
+      Services.register
+      Enqueue::Services.register
+      Github::Services.register
+      Logs::Services.register
+      Requests::Services.register
     end
 
     def config
       @config ||= Config.new
-    end
-
-    def services=(services)
-      @services ||= services
-    end
-
-    def services
-      @services ||= Travis::Services
     end
 
     def pusher
@@ -86,6 +86,16 @@ module Travis
         pusher.key    = config.pusher.key
         pusher.secret = config.pusher.secret
       end
+    end
+
+    def services=(services)
+      # puts "setting services: #{services}"
+      # puts caller
+      @services = services
+    end
+
+    def services
+      @services ||= Travis::Services
     end
   end
 

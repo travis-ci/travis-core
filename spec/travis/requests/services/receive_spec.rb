@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'travis/github'
 
 # TODO this is really an integration test. should move it
 # somewhere else and add unit tests

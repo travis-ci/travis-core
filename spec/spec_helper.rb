@@ -20,7 +20,6 @@ require 'patches/rspec_hash_diff'
 Travis.logger = Logger.new(StringIO.new)
 Travis.services = Travis::Services
 Travis::Features.start
-Travis::Addons.register
 
 include Mocha::API
 

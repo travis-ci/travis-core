@@ -1,10 +1,6 @@
-require 'travis/services/base'
-
 module Travis
   module Services
     class FindDailyTestsStats < Base
-      register :find_daily_tests_stats
-
       def run
         select scope(:job).
           select(['date(created_at) AS date', 'count(created_at) AS count']).

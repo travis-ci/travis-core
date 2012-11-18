@@ -1,10 +1,6 @@
-require 'travis/services/base'
-
 module Travis
   module Services
     class FindDailyReposStats < Base
-      register :find_daily_repos_stats
-
       def run
         select scope(:repository).
           select(['date(created_at) AS date', 'count(created_at) AS count']).

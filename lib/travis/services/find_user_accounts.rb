@@ -1,10 +1,6 @@
-require 'travis/services/base'
-
 module Travis
   module Services
     class FindUserAccounts < Base
-      register :find_user_accounts
-
       def run
         ([current_user] + orgs).map do |record|
           ::Account.from(record, :repos_count => repos_counts[record.login])

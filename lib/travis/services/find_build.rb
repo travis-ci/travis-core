@@ -1,10 +1,6 @@
-require 'travis/services/base'
-
 module Travis
   module Services
     class FindBuild < Base
-      register :find_build
-
       def run(options = {})
         preload(result) if result
       end

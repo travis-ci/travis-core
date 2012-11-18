@@ -1,6 +1,3 @@
-require 'travis/services'
-require 'travis/enqueue/services/enqueue_jobs/limit'
-
 module Travis
   module Enqueue
     module Services
@@ -12,7 +9,7 @@ module Travis
       class EnqueueJobs < Travis::Services::Base
         extend Travis::Instrumentation, Travis::Exceptions::Handling
 
-        register :enqueue_jobs
+        autoload :Limit, 'travis/enqueue/services/enqueue_jobs/limit'
 
         def self.run
           new.run

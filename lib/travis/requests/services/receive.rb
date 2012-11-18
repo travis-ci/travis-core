@@ -1,14 +1,13 @@
 require 'gh'
-require 'travis/services'
-Backports.require_relative_dir 'receive'
 
 module Travis
   module Requests
     module Services
       class Receive < Travis::Services::Base
-        extend Travis::Instrumentation
+        autoload :PullRequest, 'travis/requests/services/receive/pull_request'
+        autoload :Push,        'travis/requests/services/receive/push'
 
-        register :receive_request
+        extend Travis::Instrumentation
 
         class << self
           def payload_for(type, data)

@@ -1,10 +1,6 @@
-require 'travis/services/base'
-
 module Travis
   module Services
     class FindEvents < Base
-      register :find_events
-
       def run
         preload(result)
       end

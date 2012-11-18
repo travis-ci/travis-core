@@ -4,8 +4,6 @@ module Travis
   module Github
     module Services
       class FindOrCreateOrg < Travis::Services::Base
-        register :github_find_or_create_org
-
         def run
           find || create
         end
