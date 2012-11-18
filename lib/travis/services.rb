@@ -26,8 +26,12 @@ module Travis
     autoload :UpdateWorkers,       'travis/services/update_workers'
 
     module Registry
-      def add(key, const)
-        services[key.to_sym] = const
+      def add(key, const = nil)
+        if key.is_a?(Hash)
+          key.each { |key, const| add(key, const) }
+        else
+          services[key.to_sym] = const
+        end
       end
 
       def [](key)

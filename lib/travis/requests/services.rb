@@ -6,9 +6,10 @@ module Travis
 
       class << self
         def register
-          constants(false).each do |name|
-            Travis.services.add(name.to_s.underscore, const_get(name))
-          end
+          Travis.services.add(
+            receive_request: Receive,
+            requeue_request: Requeue
+          )
         end
       end
     end
