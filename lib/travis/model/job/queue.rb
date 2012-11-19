@@ -12,6 +12,7 @@ class Job
       def for(job)
         slug = job.repository.try(:slug)
         language = job.config[:language]
+        language = language.flatten.compact.first if language.is_a?(Array)
         queues.detect { |queue| queue.send(:matches?, slug, language) } || default
       end
 
