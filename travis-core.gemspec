@@ -37,7 +37,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'simple_states',     '~> 0.1.1'
 
   # apis
-  s.add_dependency 'pusher',            '~> 0.9.2'
+  s.add_dependency 'pusher',            '~> 0.11.0'
   s.add_dependency 'gh'
   s.add_dependency 'multi_json'
 end
