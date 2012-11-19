@@ -17,4 +17,10 @@ class Commit < ActiveRecord::Base
       num.to_i
     end
   end
+
+  def range
+    if compare_url && compare_url =~ /\/([0-9a-f]+\.\.\.[0-9a-f]+$)/
+      $1
+    end
+  end
 end

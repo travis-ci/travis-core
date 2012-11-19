@@ -44,4 +44,30 @@ describe Commit do
       commit.pull_request?.should be_true
     end
   end
+
+  describe '#range' do
+    context 'with compare_url present' do
+      before { commit.compare_url = 'https://github.com/rails/rails/compare/ffaab2c4ffee...60790e852a4f' }
+
+      it 'returns range' do
+        commit.range.should == 'ffaab2c4ffee...60790e852a4f'
+      end
+    end
+
+    context 'with invalid compare_url' do
+      before { commit.compare_url = 'https://github.com/rails/rails/compare/ffaab2c4ffee.....60790e852a4f' }
+
+      it 'returns nil' do
+        commit.range.should be_nil
+      end
+    end
+
+    context 'without compare_url' do
+      before { commit.compare_url = nil }
+
+      it 'returns nil' do
+        commit.range.should be_nil
+      end
+    end
+  end
 end
