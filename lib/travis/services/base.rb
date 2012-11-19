@@ -2,7 +2,7 @@ module Travis
   module Services
     class Base
       def self.register(key)
-        Travis.services.register(key, self)
+        Travis.services.add(key, self)
       end
 
       include Helpers

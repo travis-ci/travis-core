@@ -2,6 +2,8 @@ module Travis
   module Logs
     module Services
       class Append < Travis::Services::Base
+        register :logs_append
+
         def run
           job.append_log!(data[:log])
         end

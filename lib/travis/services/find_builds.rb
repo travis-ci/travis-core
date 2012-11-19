@@ -5,6 +5,8 @@ require 'core_ext/active_record/none_scope'
 module Travis
   module Services
     class FindBuilds < Base
+      register :find_builds
+
       def run
         preload(result)
       end

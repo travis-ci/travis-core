@@ -2,6 +2,8 @@ module Travis
   module Github
     module Services
       class FindOrCreateUser < Travis::Services::Base
+        register :github_find_or_create_user
+
         def run
           find || create
         end

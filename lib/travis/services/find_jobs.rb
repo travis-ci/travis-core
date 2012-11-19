@@ -1,6 +1,8 @@
 module Travis
   module Services
     class FindJobs < Base
+      register :find_jobs
+
       def run
         preload(result)
       end

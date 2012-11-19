@@ -6,10 +6,7 @@ module Travis
 
       class << self
         def register
-          Travis.services.add(
-            receive_request: Receive,
-            requeue_request: Requeue
-          )
+          constants(false).each { |name| const_get(name) }
         end
       end
     end

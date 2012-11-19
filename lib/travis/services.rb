@@ -15,6 +15,7 @@ module Travis
     autoload :FindRepo,            'travis/services/find_repo'
     autoload :FindRepos,           'travis/services/find_repos'
     autoload :FindUserAccounts,    'travis/services/find_user_accounts'
+    autoload :FindUserBroadcasts,  'travis/services/find_user_broadcasts'
     autoload :FindUserPermissions, 'travis/services/find_user_permissions'
     autoload :FindWorker,          'travis/services/find_worker'
     autoload :FindWorkers,         'travis/services/find_workers'
@@ -35,7 +36,7 @@ module Travis
       end
 
       def [](key)
-        services[key.to_sym] || raise("can not use unregistered service #{key}")
+        services[key.to_sym] || raise("can not use unregistered service #{key}. known services are: #{services.keys.inspect}")
       end
 
       private
@@ -49,10 +50,7 @@ module Travis
 
     class << self
       def register
-        constants(false).each do |name|
-          const = const_get(name)
-          Travis.services.add(name.to_s.underscore, const) if const < Base
-        end
+        constants(false).each { |name| const_get(name) }
       end
     end
   end

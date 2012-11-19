@@ -4,6 +4,8 @@ module Travis
       class SetHook < Travis::Services::Base
         EVENTS = [:push, :pull_request, :issue_comment, :public, :member]
 
+        register :github_set_hook
+
         def run
           Github.authenticated(current_user) do
             update

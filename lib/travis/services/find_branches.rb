@@ -3,6 +3,8 @@ require 'core_ext/active_record/none_scope'
 module Travis
   module Services
     class FindBranches < Base
+      register :find_branches
+
       def run
         result
       end

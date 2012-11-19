@@ -6,6 +6,8 @@ module Travis
         autoload :Repositories,  'travis/github/services/sync_user/repositories'
         autoload :Repository,    'travis/github/services/sync_user/repository'
 
+        register :github_sync_user
+
         def run
           syncing do
             Organizations.new(user).run

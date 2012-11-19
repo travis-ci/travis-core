@@ -4,6 +4,8 @@ module Travis
       class Requeue < Travis::Services::Base
         extend Travis::Instrumentation
 
+        register :request_requeue
+
         def run
           requeue if request && accept?
         end

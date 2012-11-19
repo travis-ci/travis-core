@@ -1,6 +1,8 @@
 module Travis
   module Services
     class FindArtifact < Base
+      register :find_artifact
+
       def run(options = {})
         result if result
       end

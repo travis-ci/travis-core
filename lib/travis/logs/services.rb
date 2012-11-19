@@ -5,9 +5,7 @@ module Travis
 
       class << self
         def register
-          constants(false).each do |name|
-            Travis.services.add(:"logs_#{name.to_s.underscore}", const_get(name))
-          end
+          constants(false).each { |name| const_get(name) }
         end
       end
     end

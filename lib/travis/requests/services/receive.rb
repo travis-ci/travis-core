@@ -9,6 +9,8 @@ module Travis
 
         extend Travis::Instrumentation
 
+        register :request_receive
+
         class << self
           def payload_for(type, data)
             event = GH.load(data)

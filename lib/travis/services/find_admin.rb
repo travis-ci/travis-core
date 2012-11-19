@@ -8,6 +8,8 @@ module Travis
       extend Travis::Instrumentation
       include Travis::Logging
 
+      register :find_admin
+
       def run
         admin = candidates.detect { |user| validate(user) }
         admin || raise_admin_missing

@@ -8,6 +8,8 @@ module Travis
         include Logging
         extend Instrumentation
 
+        register :github_fetch_config
+
         def run
           config = retrying(3) { parse(fetch) }
           config || Travis.logger.warn("[request:fetch_config] Empty config for request id=#{request.id} config_url=#{config_url.inspect}")

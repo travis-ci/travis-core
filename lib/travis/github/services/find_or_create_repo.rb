@@ -2,6 +2,8 @@ module Travis
   module Github
     module Services
       class FindOrCreateRepo < Travis::Services::Base
+        register :github_find_or_create_repo
+
         def run
           repo = find || create
           repo.update_attributes(params)
