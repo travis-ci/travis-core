@@ -62,12 +62,12 @@ module Travis
           def owner
             @owner ||= begin
               type = payload.owner[:type] == 'User' ? 'user' : 'org'
-              Travis.run_service(:"github_find_or_create_#{type}", payload.owner)
+              run_service(:"github_find_or_create_#{type}", payload.owner)
             end
           end
 
           def repo
-            @repo ||= Travis.run_service(:github_find_or_create_repo, payload.repository.merge(:owner => owner))
+            @repo ||= run_service(:github_find_or_create_repo, payload.repository.merge(:owner => owner))
           end
 
           def commit

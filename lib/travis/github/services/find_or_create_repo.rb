@@ -13,7 +13,7 @@ module Travis
         private
 
           def find
-            Travis.run_service(:find_repo, params)
+            run_service(:find_repo, params)
           end
 
           def create
