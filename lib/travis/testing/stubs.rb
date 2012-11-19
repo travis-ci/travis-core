@@ -106,7 +106,7 @@ module Travis
           :request => request,
           :commit_id => commit.id,
           :commit => commit,
-          :matrix => [stub_test(:id => 1, :number => '2.1'), stub_test(:id => 2, :number => '2.2')],
+          :matrix => attributes[:matrix] || [stub_test(:id => 1, :number => '2.1'), stub_test(:id => 2, :number => '2.2')],
           :matrix_ids => [1, 2],
           :number => 2,
           :config => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
@@ -127,7 +127,7 @@ module Travis
       end
 
       def stub_test(attributes = {})
-        Stubs.stub 'test', attributes.reverse_merge(
+        result = Stubs.stub 'test', attributes.reverse_merge(
           :id => 1,
           :owner => stub_user,
           :repository_id => 1,
@@ -153,6 +153,9 @@ module Travis
           :worker => 'ruby3.worker.travis-ci.org:travis-ruby-4',
           :tags => 'tag-a,tag-b'
         )
+        source = stub_build(:matrix => [result])
+        result.define_singleton_method(:source) { source }
+        result
       end
 
       def stub_log(attributes = {})
