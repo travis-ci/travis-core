@@ -83,6 +83,7 @@ module Travis
         Stubs.stub 'commit', attributes.reverse_merge(
           :id => 1,
           :commit => '62aae5f70ceee39123ef',
+          :range  => '0cd9ffaab2c4ffee...62aae5f70ceee39123ef',
           :branch => 'master',
           :ref => 'refs/master',
           :message => 'the commit message',
