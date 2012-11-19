@@ -29,6 +29,11 @@ describe 'Job::Queue' do
       job = stub('job', :config => { :language => 'clojure' }, :repository => stub('repository', :slug => 'travis-ci/travis-ci'))
       Job::Queue.for(job).name.should == 'builds.clojure'
     end
+
+    it 'handles language being passed as an array gracefully' do
+      job = stub('job', :config => { :language => ['clojure'] }, :repository => stub('repository', :slug => 'travis-ci/travis-ci'))
+      Job::Queue.for(job).name.should == 'builds.clojure'
+    end
   end
 
   describe 'Queue.queues' do
