@@ -27,7 +27,12 @@ describe Travis::Api::V0::Worker::Job::Test do
         # TODO legacy. remove this once workers respond to a 'job' key
         'build' => {
           'id' => 1,
-          'number' => 2
+          'number' => '2.1',
+          'commit' => '62aae5f70ceee39123ef',
+          'branch' => 'master',
+          'ref'    => nil,
+          'pull_request' => false,
+          'state' => 'finished'
         },
         'repository' => {
           'id' => 1,
@@ -74,7 +79,12 @@ describe Travis::Api::V0::Worker::Job::Test do
         # TODO legacy. remove this once workers respond to a 'job' key
         'build' => {
           'id' => 1,
-          'number' => 2
+          'number' => '2.1',
+          'commit' => '62aae5f70ceee39123ef',
+          'branch' => 'master',
+          'ref'    => 'refs/pull/180/merge',
+          'pull_request' => 180,
+          'state' => 'finished'
         },
         'repository' => {
           'id' => 1,
