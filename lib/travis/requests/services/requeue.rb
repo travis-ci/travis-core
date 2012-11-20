@@ -47,7 +47,7 @@ module Travis
           end
 
           def build
-            @build ||= service(:builds, :find_one, :id => params[:build_id]).run
+            @build ||= service(:find_build, :id => params[:build_id]).run
           end
 
           class Instrument < Notification::Instrument

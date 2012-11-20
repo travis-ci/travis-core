@@ -9,7 +9,7 @@ describe Travis::Requests::Services::Requeue do
   let(:service) { described_class.new(user, :build_id => build.id, :token => 'token') }
 
   before :each do
-    service.expects(:service).with(:builds, :find_one, :id => build.id).returns(stub(:run => build))
+    service.expects(:service).with(:find_build, :id => build.id).returns(stub(:run => build))
     user.permissions.create!(:repository_id => build.repository_id, :push => true)
   end
 
