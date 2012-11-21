@@ -12,7 +12,8 @@ describe Request::States do
   let(:config)     { { :from => '.travis.yml' } }
 
   before :each do
-    Travis::Services.stubs(:run_service).with(:github_fetch_config, Anything).returns(config)
+    repository.save!
+    Travis.stubs(:run_service).with(:github_fetch_config, is_a(Hash)).returns(config)
     request.stubs(:add_build) # can't stub on the stupic association?
   end
 
