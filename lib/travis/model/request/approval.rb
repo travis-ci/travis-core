@@ -53,11 +53,11 @@ class Request
       end
 
       def whitelisted_repository?
-        Travis.config.repository_whitelist.any? { |rule| repository.slug =~ rule }
+        Travis.config.repository_filter.whitelist.any? { |rule| repository.slug =~ rule }
       end
 
       def blacklisted_repository?
-        Travis.config.repository_blacklist.any? { |rule| repository.slug =~ rule }
+        Travis.config.repository_filter.blacklist.any? { |rule| repository.slug =~ rule }
       end
 
       def branch_approved?
