@@ -11,7 +11,7 @@ class Request
     def accepted?
       commit.present? &&
         !repository.private? &&
-        !rails_fork? &&
+        !blacklisted_repository? &&
         !skipped? &&
         !github_pages?
     end
@@ -27,8 +27,8 @@ class Request
     def message
       if !commit.present?
         'missing commit'
-      elsif rails_fork?
-        'rails fork'
+      elsif blacklisted_repository?
+        'blacklisted repository'
       elsif skipped?
         'skipped through commit message'
       elsif github_pages?
@@ -52,8 +52,24 @@ class Request
         commit.ref =~ /gh[-_]pages/i
       end
 
-      def rails_fork?
-        repository.slug != 'rails/rails' && repository.slug =~ %r(/rails$)
+      def blacklisted_repository?
+        whitelist_rules.each do |rule|
+          return false if repository.slug =~ rule
+        end
+
+        blacklist_rules.each do |rule|
+          return true if repository.slug =~ rule
+        end
+
+        return false
+      end
+      
+      def whitelist_rules
+        @whitelist_rules ||= YAML.load_file('whiteblacklist.yml')['whitelist_rules'].map{|r| Regexp.new(r)} rescue []
+      end
+
+      def blacklist_rules
+        @blacklist_rules ||= YAML.load_file('whiteblacklist.yml')['blacklist_rules'].map{|r| Regexp.new(r)} rescue []
       end
 
       def branch_approved?

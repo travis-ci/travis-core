@@ -4,6 +4,11 @@ describe Request::Approval do
   include Travis::Testing::Stubs
 
   let(:approval) { Request::Approval.new(request) }
+  
+  before(:each) do
+    request.stubs(:whitelist_rules).returns([/^rails\/rails/])
+    request.stubs(:blacklist_rules).returns([/\/rails$/])
+  end
 
   describe 'accepted?' do
     it 'accepts a request that has a commit, belongs to a public repository, is not skipped and does not belong to the github_pages branch and it is not a rails fork' do
@@ -20,7 +25,7 @@ describe Request::Approval do
       approval.should_not be_accepted
     end
 
-    it 'does not accept a request that belongs to a rails fork' do
+    it 'does not accept a request that belongs to a blacklisted repository' do
       request.repository.stubs(:slug).returns('svenfuchs/rails')
       approval.should_not be_accepted
     end
@@ -52,9 +57,9 @@ describe Request::Approval do
       approval.message.should == 'private repository'
     end
 
-    it 'returns "rails fork" if the repository is a rails fork' do
+    it 'returns "blacklisted repository" if the repository is a blacklisted repository' do
       request.repository.stubs(:slug).returns('svenfuchs/rails')
-      approval.message.should == 'rails fork'
+      approval.message.should == 'blacklisted repository'
     end
 
     it 'returns "github pages branch" if the branch is a github pages branch' do
@@ -113,20 +118,20 @@ describe Request::Approval do
     end
   end
 
-  describe 'rails_fork?' do
-    it 'returns true if the repository is a rails fork' do
+  describe 'blacklisted_repository?' do
+    it 'returns true if the repository is a blacklisted repository' do
       request.repository.stubs(:slug).returns 'josh/rails'
-      approval.send(:rails_fork?).should be_true
+      approval.send(:blacklisted_repository?).should be_true
     end
 
-    it 'returns false if the repository is rails/rails' do
+    it 'returns false if the repository is whitelisted repository' do
       request.repository.stubs(:slug).returns 'rails/rails'
-      approval.send(:rails_fork?).should be_false
+      approval.send(:blacklisted_repository?).should be_false
     end
 
-    it 'returns false if the repository is not owned by the rails org' do
+    it 'returns false if the repository is neither blacklisted nor whitelisted' do
       request.repository.stubs(:slug).returns 'josh/completeness-fu'
-      approval.send(:rails_fork?).should be_false
+      approval.send(:blacklisted_repository?).should be_false
     end
   end
 end
