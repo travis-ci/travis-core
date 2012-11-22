@@ -37,7 +37,7 @@ module Travis
           end
 
           def commit
-            @commit ||= if commit = event['commits'].last
+            @commit ||= if commit = last_unskipped_commit(event['commits']) || event['commits'].last
               {
                 :commit          => commit['sha'],
                 :message         => commit['message'],
@@ -51,6 +51,16 @@ module Travis
                 :compare_url     => event['compare']
               }
             end
+          end
+
+          private
+
+          def last_unskipped_commit(commits)
+            commits.reverse.find { |commit| !skip_commit?(commit) }
+          end
+
+          def skip_commit?(commit)
+            commit['message'].to_s =~ /\[ci(?: |:)([\w ]*)\]/i && $1.downcase == 'skip'
           end
         end
       end

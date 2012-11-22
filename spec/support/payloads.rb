@@ -63,6 +63,109 @@ GITHUB_PAYLOADS = {
     "ref": "refs/heads/master",
     "compare": "https://github.com/svenfuchs/gem-release/compare/af674bd...9854592"
   }),
+  
+  "skip-last" => %({
+    "repository": {
+      "url": "http://github.com/svenfuchs/gem-release",
+      "name": "gem-release",
+      "description": "Release your gems with ease",
+      "owner": {
+        "email": "svenfuchs@artweb-design.de",
+        "name": "svenfuchs"
+      }
+    },
+    "commits": [{
+      "id":        "60aaa2faaa5fdbd87719a10e308d396b828e5a01",
+      "message":   "Bump to 0.0.14",
+      "timestamp": "2010-10-12T08:47:06Z",
+      "committer": {
+        "name":  "Sven Fuchs",
+        "email": "svenfuchs@artweb-design.de"
+      },
+      "author": {
+        "name":  "Sven Fuchs",
+        "email": "svenfuchs@artweb-design.de"
+      }
+    },{
+      "id":        "586374eac43853e5542a2e2faafd48047127e4be",
+      "message":   "Update the readme",
+      "timestamp": "2010-10-14T04:00:37Z",
+      "committer": {
+        "name":  "Sven Fuchs",
+        "email": "svenfuchs@artweb-design.de"
+      },
+      "author": {
+        "name":  "Christopher Floess",
+        "email": "chris@flooose.de"
+      }
+    },{
+      "id":        "46ebe012ef3c0be5542a2e2faafd48047127e4be",
+      "message":   "Bump to 0.0.15\\n\\n[ci skip]",
+      "timestamp": "2010-10-27T04:32:37Z",
+      "committer": {
+        "name":  "Sven Fuchs",
+        "email": "svenfuchs@artweb-design.de"
+      },
+      "author": {	
+        "name":  "Christopher Floess",
+        "email": "chris@flooose.de"
+      }
+    }],
+    "ref": "refs/heads/master",
+    "compare": "https://github.com/svenfuchs/gem-release/compare/af674bd...9854592"
+  }),
+
+  "skip-all" => %({
+    "repository": {
+      "url": "http://github.com/svenfuchs/gem-release",
+      "name": "gem-release",
+      "description": "Release your gems with ease",
+      "owner": {
+        "email": "svenfuchs@artweb-design.de",
+        "name": "svenfuchs"
+      }
+    },
+    "commits": [{
+      "id":        "60aaa2faaa5fdbd87719a10e308d396b828e5a01",
+      "message":   "Bump to 0.0.14\\n\\n[ci skip]",
+      "timestamp": "2010-10-12T08:47:06Z",
+      "committer": {
+        "name":  "Sven Fuchs",
+        "email": "svenfuchs@artweb-design.de"
+      },
+      "author": {
+        "name":  "Sven Fuchs",
+        "email": "svenfuchs@artweb-design.de"
+      }
+    },{
+      "id":        "586374eac43853e5542a2e2faafd48047127e4be",
+      "message":   "Update the readme\\n\\n[ci skip]",
+      "timestamp": "2010-10-14T04:00:37Z",
+      "committer": {
+        "name":  "Sven Fuchs",
+        "email": "svenfuchs@artweb-design.de"
+      },
+      "author": {
+        "name":  "Christopher Floess",
+        "email": "chris@flooose.de"
+      }
+    },{
+      "id":        "46ebe012ef3c0be5542a2e2faafd48047127e4be",
+      "message":   "Bump to 0.0.15\\n\\n[ci skip]",
+      "timestamp": "2010-10-27T04:32:37Z",
+      "committer": {
+        "name":  "Sven Fuchs",
+        "email": "svenfuchs@artweb-design.de"
+      },
+      "author": {	
+        "name":  "Christopher Floess",
+        "email": "chris@flooose.de"
+      }
+    }],
+    "ref": "refs/heads/master",
+    "compare": "https://github.com/svenfuchs/gem-release/compare/af674bd...9854592"
+  }),
+
 
   "travis-core" => %({
     "repository": {
