@@ -11,7 +11,7 @@ class Request
     def accepted?
       commit.present? &&
         !repository.private? &&
-        !blacklisted_repository? &&
+        (!blacklisted_repository? || whitelisted_repository?) &&
         !skipped? &&
         !github_pages?
     end
@@ -52,16 +52,12 @@ class Request
         commit.ref =~ /gh[-_]pages/i
       end
 
+      def whitelisted_repository?
+        Travis.config.repository_whitelist.any? { |rule| repository.slug =~ rule }
+      end
+
       def blacklisted_repository?
-        Travis.config.repository_whitelist.each do |rule|
-          return false if repository.slug =~ rule
-        end
-
-        Travis.config.repository_blacklist.each do |rule|
-          return true if repository.slug =~ rule
-        end
-
-        return false
+        Travis.config.repository_blacklist.any? { |rule| repository.slug =~ rule }
       end
 
       def branch_approved?

@@ -113,18 +113,25 @@ describe Request::Approval do
     end
   end
 
+  describe 'whitelisted_repository?' do
+    it 'returns true if the repository is whitelisted repository' do
+      request.repository.stubs(:slug).returns 'rails/rails'
+      approval.send(:whitelisted_repository?).should be_true
+    end
+
+    it 'returns false if the repository is not whitelisted' do
+      request.repository.stubs(:slug).returns 'josh/completeness-fu'
+      approval.send(:whitelisted_repository?).should be_false
+    end
+  end
+
   describe 'blacklisted_repository?' do
     it 'returns true if the repository is a blacklisted repository' do
       request.repository.stubs(:slug).returns 'josh/rails'
       approval.send(:blacklisted_repository?).should be_true
     end
 
-    it 'returns false if the repository is whitelisted repository' do
-      request.repository.stubs(:slug).returns 'rails/rails'
-      approval.send(:blacklisted_repository?).should be_false
-    end
-
-    it 'returns false if the repository is neither blacklisted nor whitelisted' do
+    it 'returns false if the repository is not whitelisted' do
       request.repository.stubs(:slug).returns 'josh/completeness-fu'
       approval.send(:blacklisted_repository?).should be_false
     end
