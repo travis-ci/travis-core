@@ -53,23 +53,15 @@ class Request
       end
 
       def blacklisted_repository?
-        whitelist_rules.each do |rule|
+        Travis.config.repository_whitelist.each do |rule|
           return false if repository.slug =~ rule
         end
 
-        blacklist_rules.each do |rule|
+        Travis.config.repository_blacklist.each do |rule|
           return true if repository.slug =~ rule
         end
 
         return false
-      end
-      
-      def whitelist_rules
-        @whitelist_rules ||= YAML.load_file('whiteblacklist.yml')['whitelist_rules'].map{|r| Regexp.new(r)} rescue []
-      end
-
-      def blacklist_rules
-        @blacklist_rules ||= YAML.load_file('whiteblacklist.yml')['blacklist_rules'].map{|r| Regexp.new(r)} rescue []
       end
 
       def branch_approved?

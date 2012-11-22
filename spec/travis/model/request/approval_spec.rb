@@ -4,11 +4,6 @@ describe Request::Approval do
   include Travis::Testing::Stubs
 
   let(:approval) { Request::Approval.new(request) }
-  
-  before(:each) do
-    request.stubs(:whitelist_rules).returns([/^rails\/rails/])
-    request.stubs(:blacklist_rules).returns([/\/rails$/])
-  end
 
   describe 'accepted?' do
     it 'accepts a request that has a commit, belongs to a public repository, is not skipped and does not belong to the github_pages branch and it is not a rails fork' do
