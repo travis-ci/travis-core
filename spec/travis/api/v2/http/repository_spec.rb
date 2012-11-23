@@ -18,6 +18,7 @@ describe Travis::Api::V2::Http::Repository do
       'last_build_result' => 0,
       'last_build_language' => 'ruby',
       'last_build_duration' => 60,
+      'public_key' => '-----BEGIN PUBLIC KEY-----',
     }
   end
 end
@@ -30,6 +31,6 @@ describe 'Travis::Api::V2::Http::Repository using Travis::Services::Repositories
   let(:data)    { Travis::Api::V2::Http::Repository.new(repo).data }
 
   it 'queries' do
-    lambda { data }.should issue_queries(1)
+    lambda { data }.should issue_queries(2)
   end
 end

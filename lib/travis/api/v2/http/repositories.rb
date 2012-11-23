@@ -14,7 +14,7 @@ module Travis
 
           def data
             {
-              'repos' => repositories.map { |repos| Repository.new(repos, options).data['repo'] }
+              'repos' => repositories.map { |repos| Repository.new(repos, options).data_for_list['repo'] }
             }
           end
         end
