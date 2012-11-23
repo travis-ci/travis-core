@@ -186,6 +186,10 @@ class Build < ActiveRecord::Base
     hash.map { |k,v| "#{k}=#{v}" }.join(' ')
   end
 
+  def cancelable?
+    matrix_cancelable?
+  end
+
   def pull_request?
     request.pull_request?
   end

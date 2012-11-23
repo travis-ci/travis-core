@@ -80,6 +80,10 @@ class Job < ActiveRecord::Base
     super(config ? config.deep_symbolize_keys : {})
   end
 
+  def cancelable?
+    created?
+  end
+
   def obfuscated_config
     config.dup.tap do |config|
       next unless config[:env]
