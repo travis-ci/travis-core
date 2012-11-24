@@ -16,7 +16,7 @@ module Travis
                   'name' => 'Railslove',
                   'url' => 'http://railslove.de'
                 },
-                'state' => job.state.to_s,
+                'state' => job.finished? ? 'finished' : job.state.to_s,
                 'result' => job.result
               }
             end

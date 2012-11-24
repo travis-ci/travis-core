@@ -3,7 +3,7 @@ module Travis
     module V1
       module Http
         class Branches
-          include Formats
+          include Formats, Helpers::Legacy
 
           attr_reader :builds, :options
 
@@ -28,7 +28,7 @@ module Travis
                 'commit' => build.commit.commit,
                 'branch' => build.commit.branch,
                 'message' => build.commit.message,
-                'result' => build.result,
+                'result' => legacy_build_result(build),
                 'finished_at' => format_date(build.finished_at),
                 'started_at' => format_date(build.started_at)
               }

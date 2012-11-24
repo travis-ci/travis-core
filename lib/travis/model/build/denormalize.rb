@@ -15,8 +15,8 @@ class Build
     end
 
     DENORMALIZE = {
-      :start  => %w(id language number result duration started_at finished_at),
-      :finish => %w(duration result finished_at)
+      :start  => %w(id language number state duration started_at finished_at),
+      :finish => %w(duration state finished_at)
     }
 
     def denormalize?(event)

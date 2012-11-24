@@ -11,31 +11,32 @@ require 'active_record'
 # A repository also has a ServiceHook that can be used to de/activate service
 # hooks on Github.
 class Repository < ActiveRecord::Base
-  autoload :Compat, 'travis/model/repository/compat'
+  autoload :Compat,      'travis/model/repository/compat'
+  autoload :StatusImage, 'travis/model/repository/status_image'
 
   include Compat
 
-  has_many :commits, :dependent => :delete_all
-  has_many :requests, :dependent => :delete_all
-  has_many :builds, :dependent => :delete_all
+  has_many :commits, dependent: :delete_all
+  has_many :requests, dependent: :delete_all
+  has_many :builds, dependent: :delete_all
   has_many :events
   has_many :permissions
-  has_many :users, :through => :permissions
+  has_many :users, through: :permissions
 
-  has_one :last_build,   :class_name => 'Build', :order => 'id DESC', :conditions => { :state  => ['started', 'finished']  }
-  has_one :last_success, :class_name => 'Build', :order => 'id DESC', :conditions => { :result => 0 }
-  has_one :last_failure, :class_name => 'Build', :order => 'id DESC', :conditions => { :result => 1 }
-  has_one :key, :class_name => 'SslKey'
-  belongs_to :owner, :polymorphic => true
+  has_one :last_build,   class_name: 'Build', order: 'id DESC', conditions: { state: ['started', 'finished']  }
+  has_one :last_success, class_name: 'Build', order: 'id DESC', conditions: { result: 0 }
+  has_one :last_failure, class_name: 'Build', order: 'id DESC', conditions: { result: 1 }
+  has_one :key, class_name: 'SslKey'
+  belongs_to :owner, polymorphic: true
 
-  validates :name,       :presence => true, :uniqueness => { :scope => :owner_name }
-  validates :owner_name, :presence => true
+  validates :name,       presence: true, uniqueness: { scope: :owner_name }
+  validates :owner_name, presence: true
 
   before_create do
     build_key
   end
 
-  delegate :public_key, :to => :key
+  delegate :public_key, to: :key
 
   class << self
     def timeline
@@ -51,15 +52,15 @@ class Repository < ActiveRecord::Base
     end
 
     def by_owner_name(owner_name)
-      where(:owner_name => owner_name)
+      where(owner_name: owner_name)
     end
 
     def by_member(login)
-      joins(:users).where(:users => { :login => login })
+      joins(:users).where(users: { login: login })
     end
 
     def by_slug(slug)
-      where(:owner_name => slug.split('/').first, :name => slug.split('/').last)
+      where(owner_name: slug.split('/').first, name: slug.split('/').last)
     end
 
     def search(query)
@@ -68,7 +69,7 @@ class Repository < ActiveRecord::Base
     end
 
     def active
-      where(:active => true)
+      where(active: true)
     end
 
     def find_by(params)
@@ -116,22 +117,12 @@ class Repository < ActiveRecord::Base
     )
   end
 
-  def last_build_result(params = {})
-    if params.blank?
-      read_attribute(:last_build_result)
-    else
-      puts '[DEPRECATED] last_build_results with params is deprecated. please use last_build_result_on(params)'
-      last_build_result_on(params)
-    end
-  end
-
-  def last_build_result_on(params)
-    params = params.symbolize_keys.slice(*Build.matrix_keys_for(params)).compact
-    params.empty? ? last_build_result || last_build.try(:previous_result) : builds.last_result_on(params[:branch], params.slice(*Build::Matrix::ENV_KEYS))
+  def build_status(branch)
+    builds.pushes.last_state_on(state: [:passed, :failed], branch: branch)
   end
 
   def last_finished_builds_by_branches
-    builds.where(:id => last_finished_builds_by_branches_ids).order(:finished_at)
+    builds.where(id: last_finished_builds_by_branches_ids).order(:finished_at)
   end
 
   def last_finished_builds_by_branches_ids

@@ -7,61 +7,61 @@ describe Build, 'matrix' do
   after  { Build.send :protected, :matrix_config, :expand_matrix_config }
 
   describe :matrix_finished? do
-    context "if at least one job has not finished" do
+    context 'if at least one job has not finished' do
       it 'returns false' do
         build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'] })
-        build.matrix[0].update_attributes(state: :finished)
+        build.matrix[0].update_attributes(state: :passed)
         build.matrix[1].update_attributes(state: :started)
 
         build.matrix_finished?.should_not be_true
       end
     end
 
-    context "if all jobs have finished" do
+    context 'if all jobs have finished' do
       it 'returns true' do
         build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'] })
-        build.matrix[0].update_attributes!(state: :finished)
-        build.matrix[1].update_attributes!(state: :finished)
+        build.matrix[0].update_attributes!(state: :passed)
+        build.matrix[1].update_attributes!(state: :passed)
 
         build.matrix_finished?.should_not be_nil
       end
     end
   end
 
-  describe :matrix_result do
-    context "if any job has the result 1" do
-      it 'returns 1 ' do
+  describe :matrix_state do
+    context 'if any job has failed' do
+      it 'returns :failed' do
         build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'] })
-        build.matrix[0].update_attributes!(result: 1, state: :finished)
-        build.matrix[1].update_attributes!(result: 0, state: :finished)
-        build.matrix_result.should == 1
+        build.matrix[0].update_attributes!(state: :passed)
+        build.matrix[1].update_attributes!(state: :failed)
+        build.matrix_state.should == :failed
       end
     end
 
-    context "if all jobs have the result 0" do
-      it 'returns 0' do
+    context 'if all jobs have passed' do
+      it 'returns :passed' do
         build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'] })
-        build.matrix[0].update_attributes!(result: 0, state: :finished)
-        build.matrix[1].update_attributes!(result: 0, state: :finished)
-        build.matrix_result.should == 0
+        build.matrix[0].update_attributes!(state: :passed)
+        build.matrix[1].update_attributes!(state: :passed)
+        build.matrix_state.should == :passed
       end
     end
 
-    context "if a failed job is allowed to fail" do
-      it 'returns 0' do
+    context 'if a failed job is allowed to fail' do
+      it 'returns :passed' do
         build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'] })
-        build.matrix[0].update_attributes!(result: 0, state: :finished)
-        build.matrix[1].update_attributes!(result: 1, state: :finished, allow_failure: true)
-        build.matrix_result.should == 0
+        build.matrix[0].update_attributes!(state: :passed)
+        build.matrix[1].update_attributes!(state: :failed, allow_failure: true)
+        build.matrix_state.should == :passed
       end
     end
 
-    context "if all jobs fail and one is allowed to fail" do
-      it 'returns 1' do
+    context 'if all jobs have failed and only one is allowed to fail' do
+      it 'returns :failed' do
         build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'] })
-        build.matrix[0].update_attributes!(result: 1, state: :finished)
-        build.matrix[1].update_attributes!(result: 1, state: :finished, allow_failure: true)
-        build.matrix_result.should == 1
+        build.matrix[0].update_attributes!(state: :failed)
+        build.matrix[1].update_attributes!(state: :failed, allow_failure: true)
+        build.matrix_state.should == :failed
       end
     end
   end
@@ -74,14 +74,14 @@ describe Build, 'matrix' do
        ])
     end
 
-    context "if the matrix is finished" do
+    context 'if the matrix is finished' do
       it 'returns the sum of the matrix job durations' do
         build.stubs(:matrix_finished?).returns(true)
         build.matrix_duration.should == 30
       end
     end
 
-    context "if the matrix is not finished" do
+    context 'if the matrix is not finished' do
       it 'returns nil' do
         build.stubs(:matrix_finished?).returns(false)
         build.matrix_duration.should be_nil
@@ -89,16 +89,16 @@ describe Build, 'matrix' do
     end
   end
 
-  describe "for Ruby projects" do
+  describe 'for Ruby projects' do
     let(:no_matrix_config) {
       YAML.load <<-yml
-      script: "rake ci"
+      script: 'rake ci'
     yml
     }
 
     let(:single_test_config) {
       YAML.load <<-yml
-      script: "rake ci"
+      script: 'rake ci'
       rvm:
         - 1.8.7
       gemfile:
@@ -110,7 +110,7 @@ describe Build, 'matrix' do
 
     let(:env_global_config) {
       YAML.load <<-yml
-      script: "rake ci"
+      script: 'rake ci'
       rvm:
         - 1.9.2
         - 1.9.3
@@ -127,7 +127,7 @@ describe Build, 'matrix' do
 
     let(:multiple_tests_config) {
       YAML.load <<-yml
-      script: "rake ci"
+      script: 'rake ci'
       rvm:
         - 1.8.7
         - 1.9.1
@@ -344,8 +344,8 @@ describe Build, 'matrix' do
           build = Factory(:build, config: multiple_tests_config_with_exculsion)
           matrix_exclusion = {
             exclude: [
-              { rvm: "1.8.7", gemfile: "gemfiles/rails-3.1.x" },
-              { rvm: "1.9.2", gemfile: "gemfiles/rails-2.3.x" }
+              { rvm: '1.8.7', gemfile: 'gemfiles/rails-3.1.x' },
+              { rvm: '1.9.2', gemfile: 'gemfiles/rails-2.3.x' }
             ]
           }
 
@@ -360,7 +360,7 @@ describe Build, 'matrix' do
         it 'does not exclude a matrix config when the matrix exclusion definition is incomplete' do
           build = Factory(:build, config: multiple_tests_config_with_invalid_exculsion)
 
-          matrix_exclusion = { exclude: [{ rvm: "1.9.2", gemfile: "gemfiles/rails-3.0.x" }] }
+          matrix_exclusion = { exclude: [{ rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.x' }] }
 
           build.matrix.map(&:config).should == [
             { rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x', env: 'FOO=bar', matrix: matrix_exclusion },
@@ -451,7 +451,7 @@ describe Build, 'matrix' do
     end
   end
 
-  describe "for Scala projects" do
+  describe 'for Scala projects' do
     it 'with a single Scala version given as a string' do
       build = Factory(:build, config: { scala: '2.8.2', env: 'NETWORK=false' })
       expected = [

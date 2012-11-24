@@ -3,7 +3,7 @@ module Travis
     module V1
       module Http
         class Jobs
-          include Formats
+          include Formats, Helpers::Legacy
 
           attr_reader :jobs
 
@@ -21,7 +21,7 @@ module Travis
               'id' => job.id,
               'repository_id' => job.repository_id,
               'number' => job.number,
-              'state' => job.state.to_s,
+              'state' => legacy_job_state(job),
               'queue' => job.queue,
               'allow_failure' => job.allow_failure
             }

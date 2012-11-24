@@ -17,20 +17,20 @@ class Job
     module States
       extend ActiveSupport::Concern
 
-      # TODO remove status after migrating to result columns
-      FINISHING_ATTRIBUTES = [:status, :result, :finished_at]
+      FINISHED_STATES      = [:finished, :passed, :failed, :errored, :canceled] # TODO remove :finished once we've updated the state column
+      FINISHING_ATTRIBUTES = [:result, :finished_at]
 
       included do
         include SimpleStates, Job::States, Travis::Event
 
-        states :created, :queued, :started, :finished # :cloned, :installed, ...
+        states :created, :queued, :started, :passed, :failed, :errored, :canceled
 
-        event :start,   to: :started
-        event :finish,  to: :finished, after: :add_tags
+        event :start,  to: :started
+        event :finish, to: :finished, after: :add_tags
         event :all, after: [:notify, :propagate]
       end
 
-      def enqueue
+      def enqueue # TODO rename to queue and make it an event, simple_states should support that now
         update_attributes!(state: :queued, queued_at: Time.now.utc)
         notify(:queue)
       end
@@ -42,9 +42,21 @@ class Job
       end
 
       def finish(data = {})
-        FINISHING_ATTRIBUTES.each do |key|
-          send(:"#{key}=", data[key]) if data.key?(key)
+        data.symbolize_keys.slice(*FINISHING_ATTRIBUTES).each do |key, value|
+          if key.to_sym == :result
+            self.state = map_legacy_result(value) || value.to_sym
+          else
+            send(:"#{key}=", data[key])
+          end
         end
+      end
+
+      def finished?
+        FINISHED_STATES.include?(state.to_sym)
+      end
+
+      def result=(result)
+        Travis.logger.warn("[deprecated] trying to set #{result.inspect} to #{inspect}\n#{caller[0..2].join("\n")}")
       end
 
       def append_log!(chars)
@@ -55,6 +67,12 @@ class Job
 
         def extract_finishing_attributes(attributes)
           extract!(attributes, *FINISHING_ATTRIBUTES)
+        end
+
+        LEGACY_RESULTS = { 0 => :passed, 1 => :failed }
+
+        def map_legacy_result(result)
+          LEGACY_RESULTS[result.to_i] if result.to_s =~ /^[\d]+$/
         end
     end
   end

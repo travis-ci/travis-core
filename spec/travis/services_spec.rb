@@ -38,7 +38,7 @@ describe Travis::Services::Helpers do
     end
 
     it 'passes the given params' do
-      params = { :some => :thing }
+      params = { some: :thing }
       object.service(:do_stuff, params).params.should == params
     end
 

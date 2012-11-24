@@ -28,27 +28,26 @@ class Job
 
     def update_attributes(attributes)
       if content = attributes.delete(:log)
-        log.update_attributes(content: content) # TODO is this still used?
+        log.update_attributes(content: content)
       end
       update_states(attributes.deep_symbolize_keys)
       super
     end
 
     def passed?
-      result == 0
+      state == :passed || result == 0 # TODO remove as soon we're using state everywhere
     end
 
-    # TODO should be able to merge this with passed?. either the failure is not allowed or the build has passed.
-    def passed_or_allowed_to_fail?
+    def passed_or_allowed_failure?
       passed? || allow_failure
     end
 
     def failed?
-      result == 1
+      state == :failed || result == 1 # TODO remove as soon we're using state everywhere
     end
 
     def unknown?
-      result == nil
+      !passed? && !failed? && result == nil
     end
 
     protected
@@ -74,5 +73,3 @@ class Job
       end
   end
 end
-
-

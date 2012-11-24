@@ -14,11 +14,10 @@ describe Travis::Api::V2::Http::Jobs do
       'commit_id' => 1,
       'log_id' => 1,
       'number' => '2.1',
-      'state' => 'finished',
+      'state' => 'passed',
       'started_at' => json_format_time(Time.now.utc - 1.minute),
       'finished_at' => json_format_time(Time.now.utc),
       'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
-      'result' => 0,
       'queue' => 'builds.common',
       'allow_failure' => false,
       'tags' => 'tag-a,tag-b'

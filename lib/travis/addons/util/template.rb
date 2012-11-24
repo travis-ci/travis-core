@@ -26,7 +26,7 @@ module Travis
             commit:         data[:commit][:sha][0..6],
             author:         data[:commit][:author_name],
             commit_message: data[:commit][:message],
-            result:         data[:build][:result] == 0 ? 'passed' : 'failed',
+            result:         data[:build][:state].to_s,
             message:        message,
             compare_url:    compare_url,
             build_url:      build_url

@@ -56,7 +56,7 @@ module Travis
           end
 
           def build_passed?
-            build[:result] == 0
+            build[:state] == 'passed'
           end
 
           def build_result

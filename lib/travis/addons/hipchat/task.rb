@@ -49,7 +49,7 @@ module Travis
           end
 
           def color
-            build[:result] == 0 ? 'green' : 'red'
+            build[:state] == 'passed' ? 'green' : 'red'
           end
 
           def config

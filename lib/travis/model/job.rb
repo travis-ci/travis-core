@@ -38,6 +38,11 @@ class Job < ActiveRecord::Base
       scope
     end
 
+    def unfinished
+      # TODO conflate Job and Job::Test and use States::FINISHED_STATES
+      where('state NOT IN (?)', [:finished, :passed, :failed, :errored, :canceled])
+    end
+
     def owned_by(owner)
       where(owner_id: owner.id, owner_type: owner.class.to_s)
     end

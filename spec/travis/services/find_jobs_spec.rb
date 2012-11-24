@@ -30,8 +30,8 @@ describe Travis::Services::FindJobs do
     it 'returns the latest updated_at time' do
       @params = { :queue => 'builds.common' }
       Job.delete_all
-      Factory(:test, :repository => repo, :state => :finished, :queue => 'build.common', :updated_at => Time.now - 1.hour)
-      Factory(:test, :repository => repo, :state => :finished, :queue => 'build.common', :updated_at => Time.now)
+      Factory(:test, :repository => repo, :state => :queued, :queue => 'build.common', :updated_at => Time.now - 1.hour)
+      Factory(:test, :repository => repo, :state => :queued, :queue => 'build.common', :updated_at => Time.now)
       service.updated_at.to_s.should == Time.now.to_s
     end
   end

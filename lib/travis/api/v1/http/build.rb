@@ -5,7 +5,7 @@ module Travis
         class Build
           autoload :Job, 'travis/api/v1/http/build/job'
 
-          include Formats
+          include Formats, Helpers::Legacy
 
           attr_reader :build, :commit, :request
 
@@ -21,9 +21,9 @@ module Travis
               'repository_id' => build.repository_id,
               'number' => build.number,
               'config' => build.obfuscated_config.stringify_keys,
-              'state' => build.state.to_s,
-              'result' => build.result,
-              'status' => build.result,
+              'state' => legacy_build_state(build),
+              'result' => legacy_build_result(build),
+              'status' => legacy_build_result(build),
               'started_at' => format_date(build.started_at),
               'finished_at' => format_date(build.finished_at),
               'duration' => build.duration,

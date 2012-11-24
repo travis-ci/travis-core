@@ -14,7 +14,7 @@ module Travis
                 'result' => build.result,
                 'finished_at' => format_date(build.finished_at),
                 'duration' => build.duration,
-                'state' => build.state.to_s
+                'state' => build.finished? ? 'finished' : build.state.to_s
               }
             end
 

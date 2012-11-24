@@ -126,7 +126,7 @@ describe Travis::Mailer::Build do
 
     describe 'for a successful build' do
       before :each do
-        build.stubs(:result).returns(0)
+        build.stubs(:state).returns(:passed)
       end
 
       it 'subject' do
@@ -136,7 +136,7 @@ describe Travis::Mailer::Build do
 
     describe 'for a broken build' do
       before :each do
-        build.stubs(:result).returns(1)
+        build.stubs(:state).returns(:failed)
       end
 
       it 'subject' do
@@ -146,7 +146,7 @@ describe Travis::Mailer::Build do
 
     describe 'for a broken build with tags' do
       before :each do
-        build.stubs(:result).returns(1)
+        build.stubs(:state).returns(:failed)
         build.matrix[0].stubs(:tags).returns('database_missing,rake_not_bundled')
         build.matrix[1].stubs(:tags).returns('database_missing,log_limit_exceeded')
 

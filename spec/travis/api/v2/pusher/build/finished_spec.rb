@@ -14,7 +14,7 @@ describe Travis::Api::V2::Pusher::Build::Finished do
       'last_build_number' => 2,
       'last_build_started_at' => json_format_time(Time.now.utc - 1.minute),
       'last_build_finished_at' => json_format_time(Time.now.utc),
-      'last_build_result' => 0,
+      'last_build_state' => 'passed',
       'last_build_language' => 'ruby',
       'last_build_duration' => 60,
     }
@@ -29,8 +29,7 @@ describe Travis::Api::V2::Pusher::Build::Finished do
       'number' => 2,
       'pull_request' => false,
       'config' => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
-      'state' => 'finished',
-      'result' => 0,
+      'state' => 'passed',
       'started_at' => json_format_time(Time.now.utc - 1.minute),
       'finished_at' => json_format_time(Time.now.utc),
       'duration' => 60

@@ -25,16 +25,12 @@ class Job
         def stalled
           unfinished.where('created_at < ?', Time.now.utc - Travis.config.jobs.retry.after)
         end
-
-        def unfinished
-          where("state <> 'finished'")
-        end
       end
     end
 
     def force_finish
       append_log!("\n#{FORCE_FINISH_MESSAGE}") if respond_to?(:append_log!)
-      finish!(:result => 1, :finished_at => Time.now.utc)
+      finish!(state: :errored, finished_at: Time.now.utc)
     end
 
     def requeueable?

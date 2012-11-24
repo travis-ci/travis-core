@@ -51,7 +51,7 @@ module Travis
                 'last_build_started_at' => format_date(repository.last_build_started_at),
                 'last_build_finished_at' => format_date(repository.last_build_finished_at),
                 'last_build_duration' => repository.last_build_duration,
-                'last_build_result' => repository.last_build_result,
+                'last_build_state' => repository.last_build_state.to_s,
                 'description' => repository.description
               }
             end

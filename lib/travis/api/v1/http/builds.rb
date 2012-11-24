@@ -3,7 +3,7 @@ module Travis
     module V1
       module Http
         class Builds
-          include Formats
+          include Formats, Helpers::Legacy
 
           attr_reader :builds
 
@@ -20,8 +20,8 @@ module Travis
               'id' => build.id,
               'repository_id' => build.repository_id,
               'number' => build.number,
-              'state' => build.state.to_s,
-              'result' => build.result,
+              'state' => legacy_build_state(build),
+              'result' => legacy_build_result(build),
               'started_at' => format_date(build.started_at),
               'finished_at' => format_date(build.finished_at),
               'duration' => build.duration,

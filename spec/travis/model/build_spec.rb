@@ -139,14 +139,14 @@ describe Build do
     end
 
     it 'sets previous_build_result to nil if no last build exists on the same branch' do
-      build = Factory(:build, result: 1, commit: Factory(:commit, branch: 'master'))
-      build.previous_result.should == nil
+      build = Factory(:build, commit: Factory(:commit, branch: 'master'))
+      build.previous_state.should == nil
     end
 
     it 'sets previous_build_result to the result of the last build on the same branch if exists' do
-      build = Factory(:build, result: 1, commit: Factory(:commit, branch: 'master'))
+      build = Factory(:build, state: :canceled, commit: Factory(:commit, branch: 'master'))
       build = Factory(:build, commit: Factory(:commit, branch: 'master'))
-      build.previous_result.should == 1
+      build.previous_state.should == :canceled
     end
 
     describe 'config' do
@@ -305,30 +305,30 @@ describe Build do
     end
 
     describe :passed? do
-      it 'passed? returns true if result is 0' do
-        build = Factory(:build, result: 0)
+      it 'passed? returns true if state equals :passed' do
+        build = Factory(:build, state: :passed)
         build.passed?.should be_true
       end
 
-      it 'passed? returns true if result is 1' do
-        build = Factory(:build, result: 1)
+      it 'passed? returns true if result does not equal :passed' do
+        build = Factory(:build, state: :failed)
         build.passed?.should be_false
       end
     end
 
     describe :color do
       it 'returns "green" if the build has passed' do
-        build = Factory(:build, result: 0, state: :finished)
+        build = Factory(:build, state: :passed)
         build.color.should == 'green'
       end
 
       it 'returns "red" if the build has failed' do
-        build = Factory(:build, result: 1, state: :finished)
+        build = Factory(:build, state: :failed)
         build.color.should == 'red'
       end
 
       it 'returns "yellow" if the build is pending' do
-        build = Factory(:build, result: nil, state: :started)
+        build = Factory(:build, state: :started)
         build.color.should == 'yellow'
       end
     end

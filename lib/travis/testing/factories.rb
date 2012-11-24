@@ -9,7 +9,7 @@ FactoryGirl.define do
     started_at { Time.now.utc }
     finished_at { Time.now.utc }
     number 1
-    result 0
+    state :passed
   end
 
   factory :commit do
@@ -55,7 +55,7 @@ FactoryGirl.define do
     last_duration 60
     created_at { |r| Time.utc(2011, 01, 30, 5, 25) }
     updated_at { |r| r.created_at + 5.minutes }
-    last_build_result 0
+    last_build_state :passed
     last_build_number '2'
     last_build_id 2
     last_build_started_at { Time.now.utc }

@@ -9,6 +9,8 @@ gem 'newrelic_rpm',       '~> 3.4.2'
 gem 'hubble',             github: 'roidrage/hubble'
 gem 'addressable'
 
+gem 'simple_states', github: 'svenfuchs/simple_states', branch: 'sf-set-state-early'
+
 platform :mri do
   gem 'bunny',            '~> 0.7.9'
   gem 'pg',               '~> 0.14.0'

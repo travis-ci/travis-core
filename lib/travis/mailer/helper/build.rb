@@ -15,10 +15,6 @@ module Travis
           end
         end
 
-        def header_result(build)
-          build.result == 0 ? 'success' : 'failure'
-        end
-
         def encode_image(path)
           path = File.expand_path("../../views/#{path}", __FILE__)
           type = Rack::Mime.mime_type(File.extname(path))

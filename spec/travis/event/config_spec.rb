@@ -3,72 +3,68 @@ require 'spec_helper'
 describe Travis::Event::Config do
   include Travis::Testing::Stubs
 
-  let(:payload) { Travis::Api.data(build, for: 'event', version: 'v0') }
-  let(:config)  { Travis::Event::Config.new(payload) }
-
   describe :send_on_finished_for? do
-    before :each do
-      build.stubs(:config => { :notifications => { :webhooks => 'http://example.com' } })
-    end
-
-    # TODO check these ...
     combinations = [
-      [nil,   true,  { :notifications => { :on_success => 'always' } }, true ],
-      [true,  true,  { :notifications => { :on_success => 'always' } }, true ],
-      [false, true,  { :notifications => { :on_success => 'always' } }, true ],
+      [nil,     :passed, { on_success: 'always' }, true ],
+      [:passed, :passed, { on_success: 'always' }, true ],
+      [:failed, :passed, { on_success: 'always' }, true ],
 
-      [nil,   false, { :notifications => { :on_success => 'always' } }, true ],
-      [true,  false, { :notifications => { :on_success => 'always' } }, true ],
-      [false, false, { :notifications => { :on_success => 'always' } }, true ],
+      [nil,     :failed, { on_success: 'always' }, true ],
+      [:passed, :failed, { on_success: 'always' }, true ],
+      [:failed, :failed, { on_success: 'always' }, true ],
 
-      [nil,   true,  { :notifications => { :on_failure => 'always' } }, true ],
-      [true,  true,  { :notifications => { :on_failure => 'always' } }, true ],
-      [false, true,  { :notifications => { :on_failure => 'always' } }, true ],
+      [nil,     :passed, { on_failure: 'always' }, true ],
+      [:passed, :passed, { on_failure: 'always' }, true ],
+      [:failed, :passed, { on_failure: 'always' }, true ],
 
-      [nil,   false, { :notifications => { :on_failure => 'always' } }, true ],
-      [true,  false, { :notifications => { :on_failure => 'always' } }, true ],
-      [false, false, { :notifications => { :on_failure => 'always' } }, true ],
-
-
-      [nil,   true,  { :notifications => { :on_success => 'change' } }, true ],
-      [true,  true,  { :notifications => { :on_success => 'change' } }, false ],
-      [false, true,  { :notifications => { :on_success => 'change' } }, true ],
-
-      [nil,   false, { :notifications => { :on_success => 'change' } }, true ],
-      [true,  false, { :notifications => { :on_success => 'change' } }, true ],
-      [false, false, { :notifications => { :on_success => 'change' } }, true ],
-
-      [nil,   true,  { :notifications => { :on_failure => 'change' } }, true ],
-      [true,  true,  { :notifications => { :on_failure => 'change' } }, true ],
-      [false, true,  { :notifications => { :on_failure => 'change' } }, true ],
-
-      [nil,   false, { :notifications => { :on_failure => 'change' } }, false ],
-      [true,  false, { :notifications => { :on_failure => 'change' } }, true ],
-      [false, false, { :notifications => { :on_failure => 'change' } }, false ],
+      [nil,     :failed, { on_failure: 'always' }, true ],
+      [:passed, :failed, { on_failure: 'always' }, true ],
+      [:failed, :failed, { on_failure: 'always' }, true ],
 
 
-      [nil,   true,  { :notifications => { :on_success => 'never' } }, false ],
-      [true,  true,  { :notifications => { :on_success => 'never' } }, false ],
-      [false, true,  { :notifications => { :on_success => 'never' } }, false ],
+      [nil,     :passed, { on_success: 'change' }, true ],
+      [:passed, :passed, { on_success: 'change' }, false],
+      [:failed, :passed, { on_success: 'change' }, true ],
 
-      [nil,   false, { :notifications => { :on_success => 'never' } }, true ],
-      [true,  false, { :notifications => { :on_success => 'never' } }, true ],
-      [false, false, { :notifications => { :on_success => 'never' } }, true ],
+      [nil,     :failed, { on_success: 'change' }, true ],
+      [:passed, :failed, { on_success: 'change' }, true ],
+      [:failed, :failed, { on_success: 'change' }, true ],
 
-      [nil,   true,  { :notifications => { :on_failure => 'never' } }, true ],
-      [true,  true,  { :notifications => { :on_failure => 'never' } }, true ],
-      [false, true,  { :notifications => { :on_failure => 'never' } }, true ],
+      [nil,     :passed, { on_failure: 'change' }, true ],
+      [:passed, :passed, { on_failure: 'change' }, true ],
+      [:failed, :passed, { on_failure: 'change' }, true ],
 
-      [nil,   false, { :notifications => { :on_failure => 'never' } }, false ],
-      [true,  false, { :notifications => { :on_failure => 'never' } }, false ],
-      [false, false, { :notifications => { :on_failure => 'never' } }, false ],
+      [nil,     :failed, { on_failure: 'change' }, false],
+      [:passed, :failed, { on_failure: 'change' }, true ],
+      [:failed, :failed, { on_failure: 'change' }, false],
+
+
+      [nil,     :passed, { on_success: 'never' }, false ],
+      [:passed, :passed, { on_success: 'never' }, false ],
+      [:failed, :passed, { on_success: 'never' }, false ],
+
+      [nil,     :failed, { on_success: 'never' }, true  ],
+      [:passed, :failed, { on_success: 'never' }, true  ],
+      [:failed, :failed, { on_success: 'never' }, true  ],
+
+      [nil,     :passed, { on_failure: 'never' }, true  ],
+      [:passed, :passed, { on_failure: 'never' }, true  ],
+      [:failed, :passed, { on_failure: 'never' }, true  ],
+
+      [nil,     :failed, { on_failure: 'never' }, false ],
+      [:passed, :failed, { on_failure: 'never' }, false ],
+      [:failed, :failed, { on_failure: 'never' }, false ],
     ]
-    results = { nil => 'is missing', true => 'passed', false => 'failed' }
 
-    combinations.each do |previous, current, data, result|
-      it "returns #{result} if the previous build #{results[previous]}, the current build #{results[current]} and config is #{data}" do
-        data = build.config.deep_merge(data)
-        build.stubs(:config => data, :result => current ? 0 : 1, :failed? => !current, :previous_result => previous ? 0 : 1)
+    combinations.each do |previous, current, config, result|
+      it "returns #{result} for :webhooks if the previous build #{previous ? previous : 'is missing'}, the current build #{current} and config is #{config}" do
+        build.stubs(
+          config: build.config.deep_merge(notifications: config),
+          state: current,
+          previous_state: previous
+        )
+        payload = Travis::Api.data(build, for: 'event', version: 'v0')
+        config  = Travis::Event::Config.new(payload)
         config.send_on_finished_for?(:webhooks).should == result
       end
     end

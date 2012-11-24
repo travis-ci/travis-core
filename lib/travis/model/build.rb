@@ -49,12 +49,12 @@ class Build < ActiveRecord::Base
 
   belongs_to :commit
   belongs_to :request
-  belongs_to :repository, :autosave => true
-  belongs_to :owner, :polymorphic => true
-  has_many   :matrix, :as => :source, :order => :id, :class_name => 'Job::Test', :dependent => :destroy
-  has_many   :events, :as => :source
+  belongs_to :repository, autosave: true
+  belongs_to :owner, polymorphic: true
+  has_many   :matrix, as: :source, order: :id, class_name: 'Job::Test', dependent: :destroy
+  has_many   :events, as: :source
 
-  validates :repository_id, :commit_id, :request_id, :presence => true
+  validates :repository_id, :commit_id, :request_id, presence: true
 
   serialize :config
 
@@ -64,16 +64,19 @@ class Build < ActiveRecord::Base
     end
 
     def was_started
-      where(:state => ['started', 'finished'])
+      where('state <> ?', :created)
     end
 
     def finished
-      where(:state => 'finished')
+      where(state: [:finished, :passed, :failed, :errored, :canceled]) # TODO extract
     end
 
-    def on_branch(branches)
-      branches = normalize_to_array(branches)
-      pushes.joins(:commit).where(branches.present? ? ["commits.branch IN (?)", branches] : [])
+    def on_state(state)
+      where(state.present? ? ['builds.state IN (?)', state] : [])
+    end
+
+    def on_branch(branch)
+      pushes.joins(:commit).where(branch.present? ? ['commits.branch IN (?)', normalize_to_array(branch)] : [])
     end
 
     def by_event_type(event_type)
@@ -81,19 +84,15 @@ class Build < ActiveRecord::Base
     end
 
     def pushes
-      joins(:request).where(:requests => { :event_type => ['push', '', nil] })
+      joins(:request).where(requests: { event_type: ['push', '', nil] })
     end
 
     def pull_requests
-      where(:event_type => 'pull_request')
+      where(event_type: 'pull_request')
     end
 
     def previous(build)
-      where("builds.repository_id = ? AND builds.id < ?", build.repository_id, build.id).finished.descending.limit(1).first
-    end
-
-    def last_result_on(branches, options = {})
-      finished.on_branch(branches).descending.first.try(:matrix_result, options)
+      where('builds.repository_id = ? AND builds.id < ?', build.repository_id, build.id).finished.descending.limit(1).first
     end
 
     def descending
@@ -103,6 +102,13 @@ class Build < ActiveRecord::Base
     def paged(options)
       page = (options[:page] || 1).to_i
       limit(per_page).offset(per_page * (page - 1))
+    end
+
+    def last_state_on(options)
+      scope = descending
+      scope = scope.on_state(options[:state])   if options[:state]
+      scope = scope.on_branch(options[:branch]) if options[:branch]
+      scope.first.try(:state).try(:to_sym)
     end
 
     def older_than(build = nil)
@@ -133,7 +139,7 @@ class Build < ActiveRecord::Base
   # set the build number and expand the matrix
   before_create do
     self.number = repository.builds.next_number
-    self.previous_result ||= last_on_branch.try(:result)
+    self.previous_state ||= last_on_branch.try(:state).try(:to_sym)
     self.event_type = request.event_type
     expand_matrix
   end

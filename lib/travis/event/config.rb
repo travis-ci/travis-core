@@ -2,9 +2,9 @@ module Travis
   module Event
     class Config
       DEFAULTS = {
-        :start   => { :email => false,   :webhooks => false,   :campfire => false,   :hipchat => false,   :irc => false,   :flowdock => false },
-        :success => { :email => :change, :webhooks => :always, :campfire => :always, :hipchat => :always, :irc => :always, :flowdock => :always },
-        :failure => { :email => :always, :webhooks => :always, :campfire => :always, :hipchat => :always, :irc => :always, :flowdock => :always }
+        start:   { email: false,   webhooks: false,   campfire: false,   hipchat: false,   irc: false,   flowdock: false },
+        success: { email: :change, webhooks: :always, campfire: :always, hipchat: :always, irc: :always, flowdock: :always },
+        failure: { email: :always, webhooks: :always, campfire: :always, hipchat: :always, irc: :always, flowdock: :always }
       }
 
       attr_reader :payload, :build, :repository, :config
@@ -17,7 +17,7 @@ module Travis
       end
 
       def enabled?(key)
-        return !!notifications[key] if notifications.has_key?(key) # TODO this seems inconsistent. what if :email => { :disabled => true }
+        return !!notifications[key] if notifications.has_key?(key) # TODO this seems inconsistent. what if email: { disabled: true }
         [:disabled, :disable].each { |key| return !notifications[key] if notifications.has_key?(key) } # TODO deprecate disabled and disable
         true
       end
@@ -36,7 +36,7 @@ module Travis
       end
 
       def send_on_initial_build?
-        build['previous_result'].nil?
+        build['previous_state'].nil?
       end
 
       def send_on_success_for?(type)
@@ -54,11 +54,11 @@ module Travis
       end
 
       def build_passed?
-        build['result'] == 0
+        build['state'].try(:to_sym) == :passed
       end
 
       def previous_build_passed?
-        build['previous_result'] == 0
+        build['previous_state'].try(:to_sym) == :passed
       end
 
       # Fetches config with fallbacks. (notification type > global > default)
@@ -66,10 +66,10 @@ module Travis
       # If no rules are configured for the given type, then fall back to the global rules, and then to the defaults.
       def with_fallbacks(type, key, default)
         config = if (notifications[type] && notifications[type].is_a?(Hash) && notifications[type].has_key?(key))
-          # Returns the type config if key is present (:notifications => :email => [:on_success])
+          # Returns the type config if key is present (notifications: email: [:on_success])
           notifications[type][key]
         elsif notifications.has_key?(key)
-          # Returns the global config if key is present (:notifications => [:on_success])
+          # Returns the global config if key is present (notifications: [:on_success])
           notifications[key]
         else
           # Else, returns the given default

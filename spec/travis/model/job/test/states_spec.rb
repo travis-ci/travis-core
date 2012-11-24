@@ -59,9 +59,9 @@ describe Job::Test::States do
     describe 'finishing the job' do
       let(:data) { WORKER_PAYLOADS['job:test:finished'] }
 
-      it 'sets the state to :finished' do
+      it 'sets the state to the given result state' do
         job.finish(data)
-        job.state.should == :finished
+        job.state.should == :passed
       end
 
       it 'notifies observers' do
@@ -100,7 +100,7 @@ describe Job::Test::States do
 
         it 'finishes the job' do
           job.update_attributes(data)
-          job.state.should == :finished
+          job.state.should == :passed
         end
       end
     end

@@ -56,10 +56,14 @@ class Build
       tests = matrix_for(config)
       if tests.blank?
         nil
-      elsif tests.all?(&:passed_or_allowed_to_fail?)
-        0
+      elsif tests.all?(&:passed_or_allowed_failure?)
+        :passed
+      elsif tests.any?(&:canceled?)
+        :canceled
+      elsif tests.any?(&:errored?)
+        :errored
       elsif tests.any?(&:failed?)
-        1
+        :failed
       else
         nil
       end
@@ -70,9 +74,7 @@ class Build
       # expand the matrix (i.e. create test jobs) and update the config for each job
       def expand_matrix
         matrix_config.expand.each_with_index do |row, ix|
-          attributes = self.attributes.slice(*Job.column_names).symbolize_keys
-          # TODO remove this once migration to the :result column is done
-          attributes.delete(:status)
+          attributes = self.attributes.slice(*Job.column_names - ['status', 'result']).symbolize_keys
           attributes.merge!(
             :owner => owner,
             :number => "#{number}.#{ix + 1}",

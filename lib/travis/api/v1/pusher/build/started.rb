@@ -33,7 +33,7 @@ module Travis
                 'event_type' => request.event_type,
                 'matrix' => build.matrix.map { |job| Job.new(job).data },
                 'job_ids' => build.matrix.map(&:id),
-                'state' => build.state.to_s
+                'state' => build.finished? ? 'finished' : build.state.to_s
               }
             end
 

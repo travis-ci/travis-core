@@ -36,8 +36,7 @@ module Travis
                 'pull_request' => build.pull_request?,
                 'config' => build.config,
                 'state' => build.state.to_s,
-                'result' => build.result,
-                'previous_result' => build.previous_result,
+                'previous_state' => build.previous_state.to_s,
                 'started_at' => format_date(build.started_at),
                 'finished_at' => format_date(build.finished_at),
                 'duration' => build.duration,
@@ -54,7 +53,7 @@ module Travis
                 # 'description' => repository.description,
                 # 'last_build_id' => repository.last_build_id,
                 # 'last_build_number' => repository.last_build_number,
-                # 'last_build_result' => repository.last_build_result,
+                # 'last_build_state' => repository.last_build_state,
                 # 'last_build_duration' => repository.last_build_duration,
                 # 'last_build_language' => repository.last_build_language,
                 # 'last_build_started_at' => format_date(repository.last_build_started_at),
@@ -89,7 +88,7 @@ module Travis
               {
                 'id' => job.id,
                 'number' => job.number,
-                'result' => job.result,
+                'state' => job.state.to_s,
                 'tags' => job.tags
                 # 'repository_id' => job.repository_id,
                 # 'build_id' => job.source_id,

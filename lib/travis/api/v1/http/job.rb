@@ -3,7 +3,7 @@ module Travis
     module V1
       module Http
         class Job
-          include Formats
+          include Formats, Helpers::Legacy
 
           attr_reader :job, :commit
 
@@ -19,9 +19,9 @@ module Travis
               'config' => job.obfuscated_config.stringify_keys,
               'repository_id' => job.repository_id,
               'build_id' => job.source_id,
-              'state' => job.state.to_s,
-              'result' => job.result,
-              'status' => job.result,
+              'state' => job.finished? ? 'finished' : job.state.to_s,
+              'result' => legacy_job_result(job),
+              'status' => legacy_job_result(job),
               'started_at' => format_date(job.started_at),
               'finished_at' => format_date(job.finished_at),
               'log' => job.log.content,

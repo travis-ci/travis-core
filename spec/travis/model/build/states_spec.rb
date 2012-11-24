@@ -3,7 +3,7 @@ require 'spec_helper'
 class BuildMock
   include Build::States
   class << self; def name; 'Build'; end; end
-  attr_accessor :state, :result, :started_at, :finished_at, :duration
+  attr_accessor :state, :started_at, :finished_at, :duration
   def denormalize(*); end
 end
 
@@ -78,12 +78,12 @@ describe Build::States do
 
       describe 'when the matrix is finished' do
         before(:each) do
-          build.stubs(matrix_finished?: true, matrix_result: 0, matrix_duration: 30)
+          build.stubs(:matrix_finished? => true, :matrix_state => :passed, :matrix_duration => 30)
         end
 
-        it 'sets the state to :finished' do
+        it 'sets the state to the matrix state' do
           build.finish(data)
-          build.state.should == :finished
+          build.state.should == :passed
         end
 
         it 'calculates the duration based on the matrix durations' do

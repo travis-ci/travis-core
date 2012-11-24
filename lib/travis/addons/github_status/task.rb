@@ -6,15 +6,19 @@ module Travis
       # belongs to.
       class Task < Travis::Task
         STATES = {
-          nil => 'pending',
-          0   => 'success',
-          1   => 'failure'
+          'created'  => 'pending',
+          'queued'   => 'pending',
+          'started'  => 'pending',
+          'passed'   => 'success',
+          'failed'   => 'failure',
+          'errored'  => 'failure', # TODO can we use custom states and descriptions?
+          'canceled' => 'failure'  # TODO can we use custom states and descriptions?
         }
 
         DESCRIPTIONS = {
-          nil => 'The Travis build is in progress',
-          0   => 'The Travis build passed',
-          1   => 'The Travis build failed'
+          'pending' => 'The Travis build is in progress',
+          'success' => 'The Travis build passed',
+          'failure' => 'The Travis build failed'
         }
 
         def url
@@ -40,12 +44,12 @@ module Travis
             pull_request? ? request[:head_commit] : commit[:sha]
           end
 
-          def description
-            DESCRIPTIONS[build[:result]]
+          def state
+            STATES[build[:state]]
           end
 
-          def state
-            STATES[build[:result]]
+          def description
+            DESCRIPTIONS[state]
           end
 
           def authenticated(&block)

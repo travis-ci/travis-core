@@ -3,7 +3,7 @@ module Travis
     module V1
       module Http
         class Repositories
-          include Formats
+          include Formats, Helpers::Legacy
 
           attr_reader :repositories
 
@@ -22,8 +22,8 @@ module Travis
               'description' => repository.description,
               'last_build_id' => repository.last_build_id,
               'last_build_number' => repository.last_build_number,
-              'last_build_status' => repository.last_build_result,
-              'last_build_result' => repository.last_build_result,
+              'last_build_status' => legacy_repository_last_build_result(repository),
+              'last_build_result' => legacy_repository_last_build_result(repository),
               'last_build_duration' => repository.last_build_duration,
               'last_build_language' => repository.last_build_language,
               'last_build_started_at' => format_date(repository.last_build_started_at),

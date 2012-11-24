@@ -5,6 +5,10 @@ describe Travis::Api::V2::Pusher::Job::Started do
 
   let(:data) { Travis::Api::V2::Pusher::Job::Started.new(test).data }
 
+  before :each do
+    test.stubs(state: :started)
+  end
+
   it 'job' do
     data['job'].should == {
       'id' => 1,
@@ -14,11 +18,10 @@ describe Travis::Api::V2::Pusher::Job::Started do
       'commit_id' => 1,
       'log_id' => 1,
       'number' => '2.1',
-      'state' => 'finished',
+      'state' => 'started',
       'started_at' => json_format_time(Time.now.utc - 1.minute),
       'finished_at' => json_format_time(Time.now.utc),
       'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
-      'result' => 0,
       'queue' => 'builds.common',
       'allow_failure' => false,
       'tags' => 'tag-a,tag-b'

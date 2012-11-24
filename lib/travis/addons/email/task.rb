@@ -1,4 +1,4 @@
-require 'net/smtp'
+require 'mail'
 
 module Travis
   module Addons
@@ -15,7 +15,7 @@ module Travis
         end
 
         def type
-          :"#{build[:state]}_email"
+          :finished_email
         end
 
         private

@@ -63,7 +63,7 @@ GITHUB_PAYLOADS = {
     "ref": "refs/heads/master",
     "compare": "https://github.com/svenfuchs/gem-release/compare/af674bd...9854592"
   }),
-  
+
   "skip-last" => %({
     "repository": {
       "url": "http://github.com/svenfuchs/gem-release",
@@ -106,7 +106,7 @@ GITHUB_PAYLOADS = {
         "name":  "Sven Fuchs",
         "email": "svenfuchs@artweb-design.de"
       },
-      "author": {	
+      "author": {
         "name":  "Christopher Floess",
         "email": "chris@flooose.de"
       }
@@ -157,7 +157,7 @@ GITHUB_PAYLOADS = {
         "name":  "Sven Fuchs",
         "email": "svenfuchs@artweb-design.de"
       },
-      "author": {	
+      "author": {
         "name":  "Christopher Floess",
         "email": "chris@flooose.de"
       }
@@ -575,7 +575,11 @@ WORKER_PAYLOADS = {
   'job:test:log:1'         => { 'id' => 1, 'log' => 'the '  },
   'job:test:log:2'         => { 'id' => 1, 'log' => 'full ' },
   'job:test:log:3'         => { 'id' => 1, 'log' => 'log'   },
-  'job:test:finished'      => { 'id' => 1, 'state' => 'finished', 'finished_at' => '2011-01-01 00:03:00 +0200', 'result' => 0, 'log' => 'the full log' }
+  'job:test:finished'      => { 'id' => 1, 'result' => 'passed', 'finished_at' => '2011-01-01 00:03:00 +0200', 'log' => 'the full log' }
+}
+
+WORKER_LEGACY_PAYLOADS = {
+  'job:test:finished' => { 'id' => 1, 'state' => 'finished', 'finished_at' => '2011-01-01 00:03:00 +0200', 'result' => 0, 'log' => 'the full log' }
 }
 
 QUEUE_PAYLOADS = {

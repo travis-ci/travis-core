@@ -20,7 +20,7 @@ class Build
     included do
       include SimpleStates, Denormalize, Travis::Event
 
-      states :created, :started, :finished
+      states :created, :started, :passed, :failed, :errored, :canceled
 
       event :start,  :to => :started,  :unless => :started?
       event :finish, :to => :finished, :if => :matrix_finished?
@@ -32,21 +32,17 @@ class Build
     end
 
     def finish(data = {})
-      self.result = matrix_result
+      self.state = matrix_state
       self.duration = matrix_duration
       self.finished_at = data[:finished_at]
     end
 
     def pending?
-      !finished?
+      created? || started?
     end
 
-    def passed?
-      result == 0
-    end
-
-    def failed?
-      !passed?
+    def finished?
+      passed? || failed? || errored? || canceled?
     end
 
     def color

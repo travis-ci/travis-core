@@ -17,20 +17,34 @@ describe Travis::Addons::GithubStatus::Task do
     subject.new(payload, token: '12345').run
   end
 
-  it 'posts status info for a pending build' do
-    build.stubs(result: nil)
+  it 'posts status info for a created build' do
+    build.stubs(state: :created)
     GH.expects(:post).with(url, state: 'pending', description: 'The Travis build is in progress', target_url: target_url)
     run
   end
 
   it 'posts status info for a passed build' do
-    build.stubs(result: 0)
+    build.stubs(state: :passed)
     GH.expects(:post).with(url, state: 'success', description: 'The Travis build passed', target_url: target_url)
     run
   end
 
   it 'posts status info for a failed build' do
-    build.stubs(result: 1)
+    build.stubs(state: :failed)
+    GH.expects(:post).with(url, state: 'failure', description: 'The Travis build failed', target_url: target_url)
+    run
+  end
+
+  # TODO verify, can we use custom states and descriptions?
+  it 'posts status info for a errored build' do
+    build.stubs(state: :errored)
+    GH.expects(:post).with(url, state: 'failure', description: 'The Travis build failed', target_url: target_url)
+    run
+  end
+
+  # TODO verify, can we use custom states and descriptions?
+  it 'posts status info for a canceled build' do
+    build.stubs(state: :canceled)
     GH.expects(:post).with(url, state: 'failure', description: 'The Travis build failed', target_url: target_url)
     run
   end
