@@ -9,7 +9,7 @@ module Travis
 
         extend Travis::Instrumentation
 
-        register :request_receive
+        register :receive_request
 
         class << self
           def payload_for(type, data)
