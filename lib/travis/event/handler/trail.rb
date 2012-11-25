@@ -32,7 +32,7 @@ module Travis
         #     data[:commit]  = object.commit.try(:commit)      if object.respond_to?(:commit)
         #     data[:type]    = object.request.try(:event_type) if object.respond_to?(:request)
         #     data[:number]  = object.number  if object.respond_to?(:number)
-        #     data[:result]  = object.result  if object.respond_to?(:result)
+        #     data[:state]   = object.result  if object.respond_to?(:state)
         #     data[:message] = object.message if object.respond_to?(:message)
         #     data
         #   end

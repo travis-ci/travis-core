@@ -18,7 +18,7 @@ class Job
       extend ActiveSupport::Concern
 
       FINISHED_STATES      = [:finished, :passed, :failed, :errored, :canceled] # TODO remove :finished once we've updated the state column
-      FINISHING_ATTRIBUTES = [:result, :finished_at]
+      FINISHING_ATTRIBUTES = [:result, :state, :finished_at]
 
       included do
         include SimpleStates, Job::States, Travis::Event
