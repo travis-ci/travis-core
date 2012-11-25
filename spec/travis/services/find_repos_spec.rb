@@ -20,7 +20,7 @@ describe Travis::Services::FindRepos do
 
   it 'applies timeline only if no other params are given' do
     repo = Factory(:repository, :owner_name => 'foo', :name => 'bar', :last_build_started_at => nil)
-    @params = { by_slug: 'foo/bar' }
+    @params = { slug: 'foo/bar' }
     service.run.should include(repo)
   end
 
