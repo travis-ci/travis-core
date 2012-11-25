@@ -18,24 +18,10 @@ module Travis
             }
           end
 
-          def data_for_list
-            {
-              'repo' => repository_data_for_list(repository)
-            }
-          end
-
           private
 
-            def repository_data(repository)
-              result = repository_data_for_list(repository)
-
-              result['public_key'] = repository.key.public_key
-
-              result
-            end
-
             # TODO why does this not include the last build? (i.e. 'builds' => { last build here })
-            def repository_data_for_list(repository)
+            def repository_data(repository)
               {
                 'id' => repository.id,
                 'slug' => repository.slug,
