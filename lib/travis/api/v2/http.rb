@@ -15,6 +15,7 @@ module Travis
         autoload :Permissions,  'travis/api/v2/http/permissions'
         autoload :Repositories, 'travis/api/v2/http/repositories'
         autoload :Repository,   'travis/api/v2/http/repository'
+        autoload :SslKey,       'travis/api/v2/http/ssl_key'
         autoload :User,         'travis/api/v2/http/user'
         autoload :Workers,      'travis/api/v2/http/workers'
         autoload :Worker,       'travis/api/v2/http/worker'
