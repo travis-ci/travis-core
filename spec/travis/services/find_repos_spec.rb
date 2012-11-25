@@ -18,6 +18,12 @@ describe Travis::Services::FindRepos do
     service.run.should include(repo)
   end
 
+  it 'applies timeline only if no other params are given' do
+    repo = Factory(:repository, :owner_name => 'foo', :name => 'bar', :last_build_started_at => nil)
+    @params = { by_slug: 'foo/bar' }
+    service.run.should include(repo)
+  end
+
   describe 'given a member name' do
     it 'finds a repository where that member has permissions' do
       @params = { :member => 'joshk' }

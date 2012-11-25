@@ -22,11 +22,17 @@ module Travis
         end
 
         def by_params
-          scope = self.scope(:repository).timeline.recent
+          scope = self.scope(:repository).recent
           scope = scope.by_member(params[:member])         if params[:member]
           scope = scope.by_owner_name(params[:owner_name]) if params[:owner_name]
           scope = scope.by_slug(params[:slug])             if params[:slug]
           scope = scope.search(params[:search])            if params[:search].present?
+
+          if (params.keys & [:member, :owner_name, :slug, :search]).present?
+            # apply timeline scope only if it's default /repos request
+            scope = scope.timeline
+          end
+
           scope
         end
     end
