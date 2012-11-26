@@ -37,14 +37,14 @@ require 'core_ext/hash/deep_symbolize_keys'
 #                  TODO probably should be cleaned up and moved to
 #                  travis/notification)
 class Build < ActiveRecord::Base
-  autoload :Compat,      'travis/model/build/compat'
-  autoload :Denormalize, 'travis/model/build/denormalize'
-  autoload :Matrix,      'travis/model/build/matrix'
-  autoload :Messages,    'travis/model/build/messages'
-  autoload :Metrics,     'travis/model/build/metrics'
-  autoload :States,      'travis/model/build/states'
+  autoload :Compat,        'travis/model/build/compat'
+  autoload :Denormalize,   'travis/model/build/denormalize'
+  autoload :Matrix,        'travis/model/build/matrix'
+  autoload :Metrics,       'travis/model/build/metrics'
+  autoload :ResultMessage, 'travis/model/build/result_message'
+  autoload :States,        'travis/model/build/states'
 
-  include Compat, Matrix, States, Messages
+  include Compat, Matrix, States
   include Travis::Model::EnvHelpers
 
   belongs_to :commit

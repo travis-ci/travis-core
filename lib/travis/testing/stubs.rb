@@ -115,7 +115,6 @@ module Travis
           obfuscated_config: { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
           state: 'passed',
           result: 0, # see build/compat.rb
-          result_message: 'Passed',
           passed?: true,
           failed?: false,
           finished?: true,

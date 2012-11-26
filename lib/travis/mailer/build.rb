@@ -3,11 +3,9 @@ require 'action_mailer'
 module Travis
   module Mailer
     class Build < ActionMailer::Base
-      include ::Build::Messages
+      helper Helper::Build
 
-      helper Helper::Build, ::Build::Messages
-
-      attr_reader :build, :commit, :repository, :jobs
+      attr_reader :build, :commit, :repository, :jobs, :result_message
 
       def finished_email(data, recipients, broadcasts)
         data = data.deep_symbolize_keys
@@ -17,6 +15,7 @@ module Travis
         @commit     = Hashr.new(data[:commit])
         @jobs       = data[:jobs].map { |job| Hashr.new(job) }
         @broadcasts = Array(broadcasts).map { |broadcast| Hashr.new(broadcast) }
+        @result_message = ::Build::ResultMessage.new(@build)
 
         mail(from: from, to: recipients, subject: subject, template_path: 'build')
       end
@@ -24,7 +23,7 @@ module Travis
       private
 
         def subject
-          "[#{result_message(build)}] #{repository.slug}##{build.number} (#{commit.branch} - #{commit.sha[0..6]})"
+          "[#{result_message.short}] #{repository.slug}##{build.number} (#{commit.branch} - #{commit.sha[0..6]})"
         end
 
         def from

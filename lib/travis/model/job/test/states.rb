@@ -17,7 +17,8 @@ class Job
     module States
       extend ActiveSupport::Concern
 
-      FINISHED_STATES      = [:finished, :passed, :failed, :errored, :canceled] # TODO remove :finished once we've updated the state column
+      # TODO remove :finished once we've updated the state column
+      FINISHED_STATES      = [:finished, :passed, :failed, :errored, :canceled]
       FINISHING_ATTRIBUTES = [:result, :state, :finished_at]
 
       included do

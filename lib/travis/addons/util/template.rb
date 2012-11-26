@@ -5,8 +5,6 @@ module Travis
   module Addons
     module Util
       class Template
-        include Build::Messages
-
         attr_reader :template, :data
 
         def initialize(template, data)
@@ -34,7 +32,7 @@ module Travis
         end
 
         def message
-          RESULT_MESSAGE_SENTENCES[result_key(data[:build])]
+          Build::ResultMessage.new(data[:build]).full
         end
 
         def compare_url

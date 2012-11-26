@@ -16,8 +16,8 @@ module Travis
                 'config' => build.obfuscated_config.stringify_keys,
                 'status' => build.result,
                 'result' => build.result,
-                'status_message' => build.result_message,
-                'result_message' => build.result_message,
+                'status_message' => result_message,
+                'result_message' => result_message,
                 'started_at' => format_date(build.started_at),
                 'finished_at' => format_date(build.finished_at),
                 'duration' => build.duration,
@@ -42,6 +42,10 @@ module Travis
                 'owner_name' => repository.owner_name,
                 'url' => repository.url
               }
+            end
+
+            def result_message
+              @result_message ||= ::Build::ResultMessage.new(build).short
             end
           end
         end
