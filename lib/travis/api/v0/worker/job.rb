@@ -22,6 +22,10 @@ module Travis
           def request
             job.source
           end
+
+          def build
+            request
+          end
         end
       end
     end

@@ -35,6 +35,10 @@ describe Travis::Api::V0::Worker::Job::Test do
           'pull_request' => false,
           'state' => 'finished'
         },
+        'source' => {
+          'id' => 1,
+          'number' => 2
+        },
         'repository' => {
           'id' => 1,
           'slug' => 'svenfuchs/minimal',
@@ -87,6 +91,10 @@ describe Travis::Api::V0::Worker::Job::Test do
           'ref'    => 'refs/pull/180/merge',
           'pull_request' => 180,
           'state' => 'finished'
+        },
+        'source' => {
+          'id' => 1,
+          'number' => 2
         },
         'repository' => {
           'id' => 1,
