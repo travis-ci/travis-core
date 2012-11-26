@@ -193,7 +193,7 @@ class Build < ActiveRecord::Base
   end
 
   def cancelable?
-    matrix_cancelable?
+    matrix_finished?
   end
 
   def pull_request?

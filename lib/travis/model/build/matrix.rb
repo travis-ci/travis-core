@@ -52,7 +52,7 @@ class Build
       matrix.all?(&:finished?)
     end
 
-    def matrix_result(config = {})
+    def matrix_state(config = {})
       tests = matrix_for(config)
       if tests.blank?
         nil
