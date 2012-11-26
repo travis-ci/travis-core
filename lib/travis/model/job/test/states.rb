@@ -37,19 +37,15 @@ class Job
       end
 
       def start(data = {})
-        log.update_attributes!(content: '')
+        log.update_attributes!(content: '') # TODO this should be in a restart method, right?
         self.started_at = data[:started_at]
         self.worker = data[:worker]
       end
 
       def finish(data = {})
-        data.symbolize_keys.slice(*FINISHING_ATTRIBUTES).each do |key, value|
-          if key.to_sym == :result
-            self.state = map_legacy_result(value) || value.to_sym
-          else
-            send(:"#{key}=", data[key])
-          end
-        end
+        data = data.symbolize_keys.slice(*FINISHING_ATTRIBUTES)
+        data.delete(:state) if data.key?(:result) # TODO legacy payload, remove once workers set :state
+        data.each { |key, value| send(:"#{key}=", value) }
       end
 
       def finished?
@@ -57,7 +53,8 @@ class Job
       end
 
       def result=(result)
-        Travis.logger.warn("[deprecated] trying to set #{result.inspect} to #{inspect}\n#{caller[0..2].join("\n")}")
+        Travis.logger.warn("[DEPRECATED] setting result #{result.inspect} to #{inspect}. Set :state instead.")
+        self.state = map_legacy_result(result) || result
       end
 
       def append_log!(chars)
@@ -70,7 +67,7 @@ class Job
           extract!(attributes, *FINISHING_ATTRIBUTES)
         end
 
-        LEGACY_RESULTS = { 0 => :passed, 1 => :failed }
+        LEGACY_RESULTS = { 0 => 'passed', 1 => 'failed' }
 
         def map_legacy_result(result)
           LEGACY_RESULTS[result.to_i] if result.to_s =~ /^[\d]+$/

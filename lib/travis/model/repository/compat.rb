@@ -11,6 +11,11 @@ class Repository
       puts '[DEPRECATED] Repositoriy#last_build_result is deprecated. use last_build_state'
       last_build_state.try(:to_sym) == :passed ? 0 : 1
     end
+
+    # TODO remove once we've populated the last_build_state column
+    def last_build_state
+      super || (read_attribute(:last_build_result) == 0 ? :passed : :failed)
+    end
   end
 end
 

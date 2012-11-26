@@ -21,6 +21,13 @@ class Build
     def result
       state.try(:to_sym) == :passed ? 0 : 1
     end
+
+    # TODO remove once we've populated the state column
+    def state
+      state = read_attribute(:state)
+      state = read_attribute(:result) == 0 ? 'passed' : 'failed' if state == 'finished'
+      state
+    end
   end
 end
 

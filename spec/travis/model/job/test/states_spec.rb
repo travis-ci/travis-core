@@ -14,7 +14,7 @@ class TestMock
 
   include Job::Test::States
 
-  attr_accessor :state, :config, :result, :started_at, :finished_at, :worker
+  attr_accessor :state, :config, :started_at, :finished_at, :worker
   def source; @source ||= stub('build', :start => nil, :finish => nil, :state => nil, :state= => nil) end
   def log; @log ||= stub('artifact', :content => nil, :update_attributes! => nil) end
   def save!; end
@@ -59,9 +59,14 @@ describe Job::Test::States do
     describe 'finishing the job' do
       let(:data) { WORKER_PAYLOADS['job:test:finished'] }
 
+      it 'sets the state to the given result state (legacy: passing result=[0|1])' do
+        job.finish(data.merge('result' => 0, 'state' => 'finished'))
+        job.state.should == 'passed'
+      end
+
       it 'sets the state to the given result state' do
         job.finish(data)
-        job.state.should == :passed
+        job.state.should == 'passed'
       end
 
       it 'notifies observers' do
@@ -100,7 +105,7 @@ describe Job::Test::States do
 
         it 'finishes the job' do
           job.update_attributes(data)
-          job.state.should == :passed
+          job.state.should == 'passed'
         end
       end
     end

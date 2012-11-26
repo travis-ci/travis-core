@@ -8,21 +8,21 @@ describe Build do
   describe 'class methods' do
     describe 'recent' do
       it 'returns recent builds ordered by creation time descending' do
-        Factory(:build, state: 'finished')
+        Factory(:build, state: 'passed')
         Factory(:build, state: 'started')
         Factory(:build, state: 'created')
 
-        Build.recent.all.map(&:state).should == ['created', 'started', 'finished']
+        Build.recent.all.map(&:state).should == ['created', 'started', 'passed']
       end
     end
 
     describe 'was_started' do
       it 'returns builds that are either started or finished' do
-        Factory(:build, state: 'finished')
+        Factory(:build, state: 'passed')
         Factory(:build, state: 'started')
         Factory(:build, state: 'created')
 
-        Build.was_started.map(&:state).sort.should == ['finished', 'started']
+        Build.was_started.map(&:state).sort.should == ['passed', 'started']
       end
     end
 
