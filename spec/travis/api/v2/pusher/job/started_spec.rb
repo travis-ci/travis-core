@@ -9,6 +9,7 @@ describe Travis::Api::V2::Pusher::Job::Started do
     data['job'].should == {
       'id' => 1,
       'repository_id' => 1,
+      'repository_slug' => 'svenfuchs/minimal',
       'build_id' => 1,
       'commit_id' => 1,
       'log_id' => 1,

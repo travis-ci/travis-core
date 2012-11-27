@@ -25,6 +25,7 @@ module Travis
               {
                 'id' => job.id,
                 'repository_id' => job.repository_id,
+                'repository_slug' => job.repository.slug,
                 'build_id' => job.source_id,
                 'commit_id' => job.commit_id,
                 'log_id' => job.log.id,

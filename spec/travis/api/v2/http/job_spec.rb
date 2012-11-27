@@ -9,6 +9,7 @@ describe Travis::Api::V2::Http::Job do
     data['job'].should == {
       'id' => 1,
       'repository_id' => 1,
+      'repository_slug' => 'svenfuchs/minimal',
       'build_id' => 1,
       'commit_id' => 1,
       'log_id' => 1,
@@ -59,6 +60,6 @@ describe 'Travis::Api::V2::Http::Job using Travis::Services::Jobs::FindOne' do
   let(:data)    { Travis::Api::V2::Http::Job.new(job).data }
 
   it 'queries' do
-    lambda { data }.should issue_queries(3)
+    lambda { data }.should issue_queries(4)
   end
 end
