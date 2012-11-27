@@ -66,6 +66,8 @@ module Travis
   class << self
     # TODO check with @rkh where this is actually required
     def setup(config = Travis.config.oauth2)
+      Travis.logger.info('Setting up Travis::Core')
+
       GH.set(:client_id => config[:client_id], :client_secret => config[:client_secret]) if config
 
       Addons.register
@@ -89,8 +91,7 @@ module Travis
     end
 
     def services=(services)
-      # puts "setting services: #{services}"
-      # puts caller
+      # Travis.logger.info("Using services: #{services}")
       @services = services
     end
 

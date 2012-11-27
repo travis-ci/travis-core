@@ -24,7 +24,7 @@ class Broadcast < ActiveRecord::Base
     end
 
     def active
-      where('created_at >= ? AND (expired IS NULL OR expired <> ?)', 14.days.ago, true)
+      where('created_at >= ? AND (expired IS NULL OR expired <> ?)', 14.days.ago, true).order('id DESC')
     end
   end
 end
