@@ -2,9 +2,13 @@ module Travis
   module Addons
     module Pusher
       module Instruments
+        def self.publish?(event)
+          Travis::Features.feature_active?(:instrument_log_updates) || event.to_s != 'job:test:log'
+        end
+
         class EventHandler < Notification::Instrument::EventHandler
           def notify_completed
-            super unless handler.event.to_s == 'job:test:log'
+            publish if Instruments.publish?(handler.event)
           end
         end
 
@@ -17,7 +21,7 @@ module Travis
               :event => task.event,
               :client_event => task.client_event,
               :channels => task.channels
-            ) unless task.event.to_s == 'job:test:log'
+            ) if Instruments.publish?(task.event)
           end
 
           def type
