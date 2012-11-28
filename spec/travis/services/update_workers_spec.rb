@@ -16,6 +16,7 @@ describe Travis::Services::UpdateWorkers do
   before :each do
     Worker.create!(:name => 'ruby-1', :host => 'ruby.workers.travis-ci.org', :state => :ready, :last_seen_at => Time.now - 10)
     Worker.create!(:name => 'ruby-2', :host => 'ruby.workers.travis-ci.org', :state => :ready, :last_seen_at => Time.now - 10)
+    Worker.any_instance.stubs(:notify)
   end
 
   it 'creates a worker record if missing' do
@@ -33,14 +34,24 @@ describe Travis::Services::UpdateWorkers do
   end
 
   it 'notifies about the worker creation' do
-    Worker.any_instance.stubs(:notify)
     Worker.any_instance.expects(:notify).with(:add).once
     service.run
   end
 
   it 'notifies about worker state changes' do
-    Worker.any_instance.stubs(:notify)
     Worker.any_instance.expects(:notify).with(:update).once
+    service.run
+  end
+
+  it "does not update if the state does not change" do
+    reports.first.merge!('state' => 'ready')
+    Worker.any_instance.expects(:update_attributes!).never
+    service.run
+  end
+
+  it "does not notify if the state does not change" do
+    reports.first.merge!('state' => 'ready')
+    Worker.any_instance.expects(:notify).with(:update).never
     service.run
   end
 end

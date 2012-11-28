@@ -22,8 +22,13 @@ module Travis
         end
 
         def update(record, report)
+          return unless change?(record, report)
           record.update_attributes!(report)
           record.notify(:update)
+        end
+
+        def change?(record, report)
+          record.state.to_s != report[:state].to_s
         end
 
         def touch_all
