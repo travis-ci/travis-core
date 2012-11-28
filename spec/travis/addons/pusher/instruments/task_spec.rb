@@ -20,7 +20,7 @@ describe Travis::Addons::Pusher::Instruments::Task do
     it 'publishes a event' do
       event.should publish_instrumentation_event(
         event: 'travis.addons.pusher.task.run:completed',
-        message: 'Travis::Addons::Pusher::Task#run:completed for #<Job id=1> (channels: common)',
+        message: 'Travis::Addons::Pusher::Task#run:completed for #<Job id=1> (event: job:test:started, channels: common)',
       )
       event[:data].except(:payload).should == {
         # repository: 'svenfuchs/minimal', # TODO
@@ -41,7 +41,7 @@ describe Travis::Addons::Pusher::Instruments::Task do
     it 'publishes a event' do
       event.should publish_instrumentation_event(
         event: 'travis.addons.pusher.task.run:completed',
-        message: 'Travis::Addons::Pusher::Task#run:completed for #<Build id=1> (channels: common)',
+        message: 'Travis::Addons::Pusher::Task#run:completed for #<Build id=1> (event: build:finished, channels: common)',
       )
       event[:data].except(:payload).should == {
         # repository: 'svenfuchs/minimal', # TODO
