@@ -9,6 +9,7 @@ module Travis
                 'id' => job.id,
                 'build_id' => job.source_id,
                 'repository_id' => job.repository_id,
+                'repository_slug' => job.repository.slug,
                 'number' => job.number,
                 'queue' => job.queue,
                 'state' => job.state.to_s,
