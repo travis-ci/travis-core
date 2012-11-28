@@ -10,6 +10,7 @@ describe Travis::Api::V1::Pusher::Job::Created do
       'id' => test.id,
       'build_id' => test.source_id,
       'repository_id' => test.repository_id,
+      'repository_slug' => 'svenfuchs/minimal',
       'number' => '2.1',
       'queue' => 'builds.common',
       'state' => 'finished',
