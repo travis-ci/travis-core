@@ -20,7 +20,7 @@ describe Request::Approval do
       approval.should_not be_accepted
     end
 
-    it 'does not accept a request that belongs to a blacklisted repository' do
+    it 'does not accept a request that belongs to an excluded repository' do
       request.repository.stubs(:slug).returns('svenfuchs/rails')
       approval.should_not be_accepted
     end
@@ -52,9 +52,9 @@ describe Request::Approval do
       approval.message.should == 'private repository'
     end
 
-    it 'returns "blacklisted repository" if the repository is a blacklisted repository' do
+    it 'returns "excluded repository" if the repository is an excluded repository' do
       request.repository.stubs(:slug).returns('svenfuchs/rails')
-      approval.message.should == 'blacklisted repository'
+      approval.message.should == 'excluded repository'
     end
 
     it 'returns "github pages branch" if the branch is a github pages branch' do
@@ -113,27 +113,27 @@ describe Request::Approval do
     end
   end
 
-  describe 'whitelisted_repository?' do
-    it 'returns true if the repository is whitelisted repository' do
+  describe 'included_repository?' do
+    it 'returns true if the repository is an included repository' do
       request.repository.stubs(:slug).returns 'rails/rails'
-      approval.send(:whitelisted_repository?).should be_true
+      approval.send(:included_repository?).should be_true
     end
 
-    it 'returns false if the repository is not whitelisted' do
+    it 'returns false if the repository is not included' do
       request.repository.stubs(:slug).returns 'josh/completeness-fu'
-      approval.send(:whitelisted_repository?).should be_false
+      approval.send(:included_repository?).should be_false
     end
   end
 
-  describe 'blacklisted_repository?' do
-    it 'returns true if the repository is a blacklisted repository' do
+  describe 'excluded_repository?' do
+    it 'returns true if the repository is an excluded repository' do
       request.repository.stubs(:slug).returns 'josh/rails'
-      approval.send(:blacklisted_repository?).should be_true
+      approval.send(:excluded_repository?).should be_true
     end
 
-    it 'returns false if the repository is not whitelisted' do
+    it 'returns false if the repository is not excluded' do
       request.repository.stubs(:slug).returns 'josh/completeness-fu'
-      approval.send(:blacklisted_repository?).should be_false
+      approval.send(:excluded_repository?).should be_false
     end
   end
 end

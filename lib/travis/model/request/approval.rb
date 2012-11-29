@@ -11,7 +11,7 @@ class Request
     def accepted?
       commit.present? &&
         !repository.private? &&
-        (!blacklisted_repository? || whitelisted_repository?) &&
+        (!excluded_repository? || included_repository?) &&
         !skipped? &&
         !github_pages?
     end
@@ -27,8 +27,8 @@ class Request
     def message
       if !commit.present?
         'missing commit'
-      elsif blacklisted_repository?
-        'blacklisted repository'
+      elsif excluded_repository?
+        'excluded repository'
       elsif skipped?
         'skipped through commit message'
       elsif github_pages?
@@ -52,12 +52,12 @@ class Request
         commit.ref =~ /gh[-_]pages/i
       end
 
-      def whitelisted_repository?
-        Travis.config.repository_filter.whitelist.any? { |rule| repository.slug =~ rule }
+      def excluded_repository?
+        Travis.config.repository_filter.exclude.any? { |rule| repository.slug =~ rule }
       end
 
-      def blacklisted_repository?
-        Travis.config.repository_filter.blacklist.any? { |rule| repository.slug =~ rule }
+      def included_repository?
+        Travis.config.repository_filter.include.any? { |rule| repository.slug =~ rule }
       end
 
       def branch_approved?

@@ -106,7 +106,7 @@ module Travis
             :ssl           => {},
             :sponsors      => { :platinum => [], :gold => [], :workers => {} },
             :redis         => { :url => ENV['REDISTOGO_URL'] || 'redis://localhost:6379' },
-            :repository_filter => { :whitelist => [/^rails\/rails/], :blacklist => [/\/rails$/] }
+            :repository_filter => { :include => [/^rails\/rails/], :exclude => [/\/rails$/] }
 
     default :_access => [:key]
 
