@@ -7,56 +7,55 @@ module Travis
         register :requeue_request
 
         def run
-          requeue if request && accept?
+          requeue if target && accept?
         end
         instrument :run
 
         def accept?
-          push_permission? && requeueable?
+          permission? && target.requeueable?
         end
 
         def messages
           messages = []
-          messages << { :notice => 'The build was successfully requeued.' } if accept?
+          messages << { :notice => "The #{type} was successfully requeued." } if accept?
           messages << { :error  => 'You do not seem to have push permissions.' } unless push_permission?
-          messages << { :error  => 'This build currently can not be requeued.' } unless requeueable?
+          messages << { :error  => "This #{type} currently can not be requeued." } unless requeueable?
           messages
+        end
+
+        def type
+          @type ||= params[:build_id] ? :build : :job
+        end
+
+        def id
+          @id ||= params[:"#{type}_id"]
         end
 
         private
 
           def requeue
-            request.start!
+            target.requeue
             true
           end
 
-          def push_permission?
-            args = [:repository_id => request.repository_id]
-            args.unshift([Travis.config.roles.requeue_request]) if Travis.config.roles.requeue_request
-            current_user.permission?(*args)
+          def permission?
+            current_user.permission?(required_role, :repository_id => target.repository_id)
           end
 
-          def requeueable?
-            defined?(@requeueable) ? @requeueable : @requeueable = request.requeueable?
+          def required_role
+            Travis.config.roles.requeue_request
           end
 
-          def data
-            { :event_type => request.event_type, :payload => request.payload, :token => params[:token] }
-          end
-
-          def request
-            build && build.request
-          end
-
-          def build
-            @build ||= service(:find_build, :id => params[:build_id]).run
+          def target
+            @target ||= service(:"find_#{type}", :id => id).run
           end
 
           class Instrument < Notification::Instrument
             def run_completed
               publish(
-                :msg => "build_id=#{target.params[:build_id]} #{result ? 'accepted' : 'not accepted'}",
-                :build_id => target.params[:build_id],
+                :msg => "build_id=#{target.id} #{result ? 'accepted' : 'not accepted'}",
+                :type => target.type,
+                :id => target.id,
                 :accept? => target.accept?
               )
             end

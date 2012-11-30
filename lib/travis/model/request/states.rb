@@ -40,11 +40,6 @@ class Request
       Travis.logger.info("[request:finish] Request finished. result=#{result.inspect} message=#{message.inspect} commit=#{commit.try(:commit).inspect}")
     end
 
-    def requeueable?
-      # finished? && !!builds.all { |build| build.finished? }
-      !!builds.all { |build| build.finished? }
-    end
-
     protected
 
       delegate :accepted?, :approved?, :to => :approval

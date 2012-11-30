@@ -37,6 +37,15 @@ class Build
       self.finished_at = data[:finished_at]
     end
 
+    def requeueable?
+      finished?
+    end
+
+    def requeue
+      update_attributes(state: :created, result: nil, duration: nil, finished_at: nil)
+      matrix.each(&:requeue)
+    end
+
     def pending?
       !finished?
     end

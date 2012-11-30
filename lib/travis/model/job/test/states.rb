@@ -35,6 +35,15 @@ class Job
         notify(:queue)
       end
 
+      def requeueable?
+        finished?
+      end
+
+      def requeue
+        update_attributes(state: :created, result: nil, queued_at: nil, duration: nil, finished_at: nil)
+        log.update_attributes!(:content => '')
+      end
+
       def start(data = {})
         log.update_attributes!(:content => '')
         self.started_at = data[:started_at]
