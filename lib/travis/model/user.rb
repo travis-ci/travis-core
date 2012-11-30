@@ -31,7 +31,10 @@ class User < ActiveRecord::Base
   end
 
   def permission?(roles, options = {})
-    !!permissions.by_roles(roles).where(options).first
+    roles, options = nil, roles if roles.is_a?(Hash)
+    scope = permissions.where(options)
+    scope = scope.by_roles(roles) if roles
+    scope.any?
   end
 
   def first_sync?
