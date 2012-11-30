@@ -340,5 +340,30 @@ describe Build do
       build = Factory(:build,  :request => Factory(:request, :event_type => 'push'))
       build.event_type.should == 'push'
     end
+
+    describe 'requeue' do
+      let(:build) { Factory(:build, :state => 'finished') }
+
+      before :each do
+        build.matrix.each { |job| job.stubs(:requeue) }
+      end
+
+      it 'sets the state to :created' do
+        build.requeue
+        build.state.should == :created
+      end
+
+      it 'resets related attributes' do
+        build.requeue
+        build.result.should be_nil
+        build.duration.should be_nil
+        build.finished_at.should be_nil
+      end
+
+      it 'requeues each job' do
+        build.matrix.each { |job| job.expects(:requeue) }
+        build.requeue
+      end
+    end
   end
 end

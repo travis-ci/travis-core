@@ -1,6 +1,7 @@
 require 'active_support/concern'
 require 'active_support/core_ext/object/blank'
 require 'active_support/core_ext/hash/except'
+require 'core_ext/hash/compact'
 
 class Job
 
@@ -15,7 +16,7 @@ class Job
     extend ActiveSupport::Concern
 
     included do
-      after_commit :on => :create do
+      after_commit on: :create do
         notify(:create)
       end
     end
@@ -27,7 +28,7 @@ class Job
 
     def update_attributes(attributes)
       if content = attributes.delete(:log)
-        log.update_attributes(:content => content)
+        log.update_attributes(content: content) # TODO is this still used?
       end
       update_states(attributes.deep_symbolize_keys)
       super
@@ -67,7 +68,7 @@ class Job
 
       def extract!(hash, *keys)
         # arrrgh. is there no ruby or activesupport hash method that does this?
-        hash.slice(*keys).tap { |result| hash.except!(*keys) }
+        hash.slice(*keys).compact.tap { |result| hash.except!(*keys) }
       rescue KeyError
         {}
       end

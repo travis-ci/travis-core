@@ -199,6 +199,15 @@ class Build < ActiveRecord::Base
     previous_result == 0
   end
 
+  def requeueable?
+    finished?
+  end
+
+  def requeue
+    update_attributes(state: :created, result: nil, duration: nil, finished_at: nil)
+    matrix.each(&:requeue)
+  end
+
   private
 
     def normalize_env_values(values)

@@ -19,48 +19,48 @@ class Job < ActiveRecord::Base
   class << self
     # what we return from the json api
     def queued(queue = nil)
-      scope = where(:state => [:created, :queued]).order('jobs.id')
-      scope = scope.where(:queue => queue) if queue
+      scope = where(state: [:created, :queued]).order('jobs.id')
+      scope = scope.where(queue: queue) if queue
       scope
     end
 
     # what needs to be queued up
     def queueable(queue = nil)
-      scope = where(:state => :created).order('jobs.id')
-      scope = scope.where(:queue => queue) if queue
+      scope = where(state: :created).order('jobs.id')
+      scope = scope.where(queue: queue) if queue
       scope
     end
 
     # what already is queued or started
     def running(queue = nil)
-      scope = where(:state => [:queued, :started]).order('jobs.id')
-      scope = scope.where(:queue => queue) if queue
+      scope = where(state: [:queued, :started]).order('jobs.id')
+      scope = scope.where(queue: queue) if queue
       scope
     end
 
     def owned_by(owner)
-      where(:owner_id => owner.id, :owner_type => owner.class.to_s)
+      where(owner_id: owner.id, owner_type: owner.class.to_s)
     end
   end
 
   include Cleanup, Compat
   include Travis::Model::EnvHelpers
 
-  has_one    :log, :class_name => 'Artifact::Log', :conditions => { :type => 'Artifact::Log' }, :dependent => :destroy
+  has_one    :log, class_name: 'Artifact::Log', conditions: { type: 'Artifact::Log' }, dependent: :destroy
   has_many   :artifacts
-  has_many   :events, :as => :source
+  has_many   :events, as: :source
 
   belongs_to :repository
   belongs_to :commit
-  belongs_to :source, :polymorphic => true, :autosave => true
-  belongs_to :owner, :polymorphic => true
+  belongs_to :source, polymorphic: true, autosave: true
+  belongs_to :owner, polymorphic: true
 
-  validates :repository_id, :commit_id, :source_id, :source_type, :owner_id, :owner_type, :presence => true
+  validates :repository_id, :commit_id, :source_id, :source_type, :owner_id, :owner_type, presence: true
 
   serialize :config
 
-  delegate :request_id, :to => :source # TODO denormalize
-  delegate :pull_request?, :to => :commit
+  delegate :request_id, to: :source # TODO denormalize
+  delegate :pull_request?, to: :commit
 
   after_initialize do
     self.config = {} if config.nil? rescue nil
@@ -100,6 +100,15 @@ class Job < ActiveRecord::Base
     Build.matrix_keys_for(config).map do |key|
       self.config[key.to_sym] == config[key] || commit.branch == config[key]
     end.inject(:&)
+  end
+
+  def requeueable?
+    finished?
+  end
+
+  def requeue
+    update_attributes(state: :created, result: nil, queued_at: nil, finished_at: nil)
+    log.update_attributes!(content: '')
   end
 
   private
