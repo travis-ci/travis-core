@@ -36,31 +36,25 @@ describe Travis::Requests::Services::Requeue do
     request.expects(:start!).never
     service.run
   end
-end
 
-describe Travis::Requests::Services::Requeue::Instrument do
-  include Support::ActiveRecord
+  describe 'Instrument' do
+    let(:publisher) { Travis::Notification::Publisher::Memory.new }
+    let(:event)     { publisher.events.last }
 
-  # let(:payload)   { JSON.parse(GITHUB_PAYLOADS['gem-release']) }
-  # let(:service)   { Travis::Services::RequeueRequest.new(nil, build_id: 'push', payload: payload, token: 'token') }
-  # let(:publisher) { Travis::Notification::Publisher::Memory.new }
-  # let(:event)     { publisher.events.last }
+    before :each do
+      Travis::Notification.publishers.replace([publisher])
+    end
 
-  # before :each do
-  #   Travis::Notification.publishers.replace([publisher])
-  #   service.run
-  # end
-
-  # it 'publishes a event' do
-  #   event.should publish_instrumentation_event(
-  #     event: 'travis.services.requests.requeue.run:completed',
-  #     message: 'Travis::Services::Requests::Requeue#run:completed type="push"',
-  #     data: {
-  #       type: 'push',
-  #       token: 'token',
-  #       accept?: true,
-  #       payload: payload
-  #     }
-  #   )
-  # end
+    it 'publishes a event' do
+      service.run
+      event.should publish_instrumentation_event(
+        event: 'travis.requests.services.requeue.run:completed',
+        message: "Travis::Requests::Services::Requeue#run:completed build_id=#{build.id} not accepted",
+        data: {
+          build_id: build.id,
+          accept?: false
+        }
+      )
+    end
+  end
 end
