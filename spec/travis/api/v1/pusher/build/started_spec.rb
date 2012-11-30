@@ -5,7 +5,6 @@ describe Travis::Api::V1::Pusher::Build::Started do
 
   let(:repo)  { stub_repo(last_build_state: :started, last_build_duration: nil, last_build_finished_at: nil) }
   let(:build) { stub_build(repository: repo, state: :started, finished_at: nil) }
-
   let(:data)  { Travis::Api::V1::Pusher::Build::Started.new(build).data }
 
   it 'build' do
