@@ -102,6 +102,7 @@ module Travis
             :queue         => { :limit => { :default => 5, :by_owner => {} }, :interval => 3 },
             :logs          => { :shards => 1 },
             :email         => {},
+            :roles         => {},
             :archive       => {},
             :ssl           => {},
             :sponsors      => { :platinum => [], :gold => [], :workers => {} },

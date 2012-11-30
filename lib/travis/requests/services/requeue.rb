@@ -31,7 +31,9 @@ module Travis
           end
 
           def push_permission?
-            current_user.permission?(:push, :repository_id => request.repository_id)
+            args = [:repository_id => request.repository_id]
+            args.unshift([Travis.config.roles.requeue_request]) if Travis.config.roles.requeue_request
+            current_user.permission?(*args)
           end
 
           def requeueable?
