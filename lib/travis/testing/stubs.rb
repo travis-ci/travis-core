@@ -10,8 +10,8 @@ module Travis
 
         def included(base)
           base.send(:instance_eval) do
-            let(:repository) { stub_repository }
-            let(:repo)       { stub_repository }
+            let(:repository) { stub_repo }
+            let(:repo)       { stub_repo }
             let(:request)    { stub_request }
             let(:commit)     { stub_commit }
             let(:build)      { stub_build }
@@ -27,7 +27,7 @@ module Travis
         end
       end
 
-      def stub_repository(attributes = {})
+      def stub_repo(attributes = {})
         Stubs.stub 'repository', attributes.reverse_merge(
           :id => 1,
           :owner_type => 'User',
@@ -54,6 +54,7 @@ module Travis
           :last_build_duration => 60
         )
       end
+      alias stub_repository stub_repo
 
       def stub_key(attributes = {})
         Stubs.stub 'key', attributes.reverse_merge(

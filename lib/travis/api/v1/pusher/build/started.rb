@@ -18,6 +18,8 @@ module Travis
                 'config' => build.obfuscated_config.stringify_keys,
                 'result' => nil,
                 'started_at' => format_date(build.started_at),
+                'finished_at' => format_date(build.finished_at),
+                'duration' => nil,
                 'commit' => commit.commit,
                 'commit_id' => commit.id,
                 'branch' => commit.branch,

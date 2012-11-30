@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Build, 'denormalization' do
   include Support::ActiveRecord
 
-  let(:build) { Factory(:build, :duration => 30) }
+  let(:build) { Factory(:build, duration: 30) }
 
   describe 'on build:started' do
     before :each do
@@ -34,7 +34,7 @@ describe Build, 'denormalization' do
 
   describe 'on build:finished' do
     before :each do
-      build.denormalize(:finish, :result => 0)
+      build.denormalize(:finish, result: 0)
       build.reload
     end
 

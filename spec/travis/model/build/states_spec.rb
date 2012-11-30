@@ -57,7 +57,7 @@ describe Build::States do
 
       describe 'when the matrix is not finished' do
         before(:each) do
-          build.stubs(:matrix_finished? => false)
+          build.stubs(matrix_finished?: false)
         end
 
         it 'does not change the state' do
@@ -78,7 +78,7 @@ describe Build::States do
 
       describe 'when the matrix is finished' do
         before(:each) do
-          build.stubs(:matrix_finished? => true, :matrix_result => 0, :matrix_duration => 30)
+          build.stubs(matrix_finished?: true, matrix_result: 0, matrix_duration: 30)
         end
 
         it 'sets the state to :finished' do
