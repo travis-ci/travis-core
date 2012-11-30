@@ -1,3 +1,5 @@
+require 'travis/support/instrumentation'
+
 module Travis
   module Addons
     module Pusher
@@ -39,7 +41,9 @@ module Travis
           def trigger(channel, payload)
             prefix = version == 'v1' ? nil : version
             event = [prefix, client_event].compact.join(':')
+
             parts(payload).each do |part|
+              Travis::Instrumentation.meter('travis.addons.pusher.task.messages', { event_type: client_event })
               Travis.pusher[channel].trigger(event, part)
             end
           end
