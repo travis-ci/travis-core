@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Travis::Api::V1::Pusher::Job::Started do
   include Travis::Testing::Stubs, Support::Formats
 
-  let(:test) { stub_test(state: :started, finished_at: nil) }
+  let(:test) { stub_test(state: :started, finished_at: nil, result: nil) }
   let(:data) { Travis::Api::V1::Pusher::Job::Started.new(test).data }
 
   before :each do
@@ -24,7 +24,8 @@ describe Travis::Api::V1::Pusher::Job::Started do
       'finished_at' => nil,
       'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4',
       'sponsor' => { 'name' => 'Railslove', 'url' => 'http://railslove.de' },
-      'state' => 'started'
+      'state' => 'started',
+      'result' => nil
     }
   end
 end

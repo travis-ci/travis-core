@@ -25,12 +25,15 @@ module Travis
                   'branch' => commit.branch,
                   'message' => commit.message,
                   'compare_url' => commit.compare_url,
+                  'started_at' => format_date(job.started_at),
+                  'finished_at' => format_date(job.finished_at),
                   'committed_at' => format_date(commit.committed_at),
                   'author_name' => commit.author_name,
                   'author_email' => commit.author_email,
                   'committer_name' => commit.committer_name,
                   'committer_email' => commit.committer_email,
-                  'allow_failure' => job.allow_failure
+                  'allow_failure' => job.allow_failure,
+                  'result' => job.result
                 }
               end
             end

@@ -4,7 +4,8 @@ describe Travis::Api::V1::Pusher::Build::Started do
   include Travis::Testing::Stubs, Support::Formats
 
   let(:repo)  { stub_repo(last_build_state: :started, last_build_duration: nil, last_build_finished_at: nil) }
-  let(:build) { stub_build(repository: repo, state: :started, finished_at: nil) }
+  let(:job)   { stub_test(state: :started, finished_at: nil, result: nil) }
+  let(:build) { stub_build(repository: repo, state: :started, finished_at: nil, matrix: [job]) }
   let(:data)  { Travis::Api::V1::Pusher::Build::Started.new(build).data }
 
   it 'build' do
@@ -20,7 +21,7 @@ describe Travis::Api::V1::Pusher::Build::Started do
       'commit' => '62aae5f70ceee39123ef',
       'commit_id' => 1,
       'branch' => 'master',
-      'job_ids' => [1, 2],
+      'job_ids' => [1],
       'message' => 'the commit message',
       'author_name' => 'Sven Fuchs',
       'author_email' => 'svenfuchs@artweb-design.de',
@@ -37,6 +38,8 @@ describe Travis::Api::V1::Pusher::Build::Started do
     data['build']['matrix'].first.should == {
       'id' => test.id,
       'repository_id' => build.repository_id,
+      'started_at' => json_format_time(Time.now.utc - 1.minute),
+      'finished_at' => nil,
       'parent_id' => test.source_id,
       'number' => '2.1',
       'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
@@ -49,7 +52,8 @@ describe Travis::Api::V1::Pusher::Build::Started do
       'committer_email' => 'svenfuchs@artweb-design.de',
       'committed_at' => json_format_time(Time.now.utc - 1.hour),
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
-      'allow_failure' => false
+      'allow_failure' => false,
+      'result' => nil
     }
   end
 
