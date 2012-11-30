@@ -43,7 +43,9 @@ module Travis
             event = [prefix, client_event].compact.join(':')
 
             parts(payload).each do |part|
-              Travis::Instrumentation.meter('travis.addons.pusher.task.messages', { event_type: client_event })
+              # TODO: the second argument in meter can be removed when we're sure that apps
+              #       using this have newest travis-support version
+              Travis::Instrumentation.meter('travis.addons.pusher.task.messages', {})
               Travis.pusher[channel].trigger(event, part)
             end
           end
