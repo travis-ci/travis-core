@@ -109,6 +109,7 @@ class Job < ActiveRecord::Base
   def requeue
     update_attributes(state: :created, result: nil, queued_at: nil, finished_at: nil)
     log.update_attributes!(content: '')
+    notify(:create)
   end
 
   private
