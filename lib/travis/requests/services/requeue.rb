@@ -12,14 +12,14 @@ module Travis
         instrument :run
 
         def accept?
-          permission? && target.requeueable?
+          permission? && requeueable?
         end
 
         def messages
           messages = []
-          messages << { :notice => "The #{type} was successfully requeued." } if accept?
-          messages << { :error  => 'You do not seem to have push permissions.' } unless push_permission?
-          messages << { :error  => "This #{type} currently can not be requeued." } unless requeueable?
+          messages << { notice: "The #{type} was successfully requeued." } if accept?
+          messages << { error:  'You do not seem to have sufficient permissions.' } unless permission?
+          messages << { error:  "This #{type} currently can not be requeued." } unless requeueable?
           messages
         end
 
@@ -39,7 +39,11 @@ module Travis
           end
 
           def permission?
-            current_user.permission?(required_role, :repository_id => target.repository_id)
+            current_user.permission?(required_role, repository_id: target.repository_id)
+          end
+
+          def requeueable?
+            defined?(@requeueable) ? @requeueable : @requeueable = target.requeueable?
           end
 
           def required_role
@@ -47,16 +51,16 @@ module Travis
           end
 
           def target
-            @target ||= service(:"find_#{type}", :id => id).run
+            @target ||= service(:"find_#{type}", id: id).run
           end
 
           class Instrument < Notification::Instrument
             def run_completed
               publish(
-                :msg => "build_id=#{target.id} #{result ? 'accepted' : 'not accepted'}",
-                :type => target.type,
-                :id => target.id,
-                :accept? => target.accept?
+                msg: "build_id=#{target.id} #{result ? 'accepted' : 'not accepted'}",
+                type: target.type,
+                id: target.id,
+                accept?: target.accept?
               )
             end
           end

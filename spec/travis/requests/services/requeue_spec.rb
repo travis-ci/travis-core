@@ -22,6 +22,21 @@ describe Travis::Requests::Services::Requeue do
       job.expects(:requeue)
       service.run
     end
+
+    it 'has message: all cool' do
+      user.permissions.create!(repository_id: job.repository_id, pull: true)
+      service.run
+      service.messages.should == [{ notice: 'The job was successfully requeued.' }]
+    end
+
+    it 'has message: missing permissions and can not be enqueued' do
+      job.stubs(:requeueable?).returns(false)
+      service.run
+      service.messages.should == [
+        { error: 'You do not seem to have sufficient permissions.' },
+        { error: 'This job currently can not be requeued.' }
+      ]
+    end
   end
 
   describe 'given a build_id' do
