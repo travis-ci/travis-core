@@ -16,10 +16,7 @@ describe Travis::Api::V1::Pusher::Job::Created do
       'queue' => 'builds.common',
       'state' => 'finished',
       'log_id' => 1,
-      'allow_failure' => false,
-      'result' => nil,
-      'started_at' => nil,
-      'finished_at' => nil
+      'allow_failure' => false
     }
   end
 end

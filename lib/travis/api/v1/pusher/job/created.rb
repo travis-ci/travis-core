@@ -14,10 +14,7 @@ module Travis
                 'queue' => job.queue,
                 'state' => job.state.to_s,
                 'log_id' => job.log.id,
-                'allow_failure' => job.allow_failure,
-                'result' => job.result,
-                'started_at' => format_date(job.started_at),
-                'finished_at' => format_date(job.finished_at)
+                'allow_failure' => job.allow_failure
               }
             end
           end
