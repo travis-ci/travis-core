@@ -14,8 +14,16 @@ describe Travis::Addons::Pusher::Task do
   def run(event, object, options = {})
     version = options[:version] || 'v1'
     type = event =~ /^worker:/ ? 'worker' : event.sub('test:', '').sub(':', '/')
-    payload = Travis::Api.data(object, for: 'pusher', type: type, version: version)
+    payload = Travis::Api.data(object, for: 'pusher', type: type, version: version, params: options[:params])
     subject.new(payload, event: event, version: version).run
+  end
+
+  it 'splits log messages into chunks, to not exceed the limit' do
+    subject.stubs(:chunk_size => 3)
+    run('job:test:log', test, params: { _log: "01\n2345" })
+
+    channel.messages.length.should == 3
+    channel.messages.map { |message| message[1][:_log] }.join('').should == "01\n2345"
   end
 
   describe 'run' do
