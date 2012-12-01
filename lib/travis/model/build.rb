@@ -205,7 +205,6 @@ class Build < ActiveRecord::Base
 
   def requeue
     update_attributes(state: :created, result: nil, duration: nil, finished_at: nil)
-    notify(:create)
     matrix.each(&:requeue)
   end
 

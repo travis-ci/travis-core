@@ -8,7 +8,9 @@ module Travis
       end
 
       def final?
-        result.try(:finished?)
+        # TODO builds can be requeued, so finished builds are no more final
+        # result.try(:finished?)
+        false
       end
 
       def updated_at
