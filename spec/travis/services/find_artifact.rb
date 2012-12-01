@@ -19,15 +19,17 @@ describe Travis::Services::FindArtifact do
     end
   end
 
-  describe 'final?' do
-    it 'returns true if the job is finished' do
-      log.job.update_attributes!(:state => :finished)
-      service.final?.should be_true
-    end
+  # TODO jobs can be requeued, so finished jobs are no more final
+  #
+  # describe 'final?' do
+  #   it 'returns true if the job is finished' do
+  #     log.job.update_attributes!(:state => :finished)
+  #     service.final?.should be_true
+  #   end
 
-    it 'returns false if the job is not finished' do
-      log.job.update_attributes!(:state => :started)
-      service.final?.should be_false
-    end
-  end
+  #   it 'returns false if the job is not finished' do
+  #     log.job.update_attributes!(:state => :started)
+  #     service.final?.should be_false
+  #   end
+  # end
 end

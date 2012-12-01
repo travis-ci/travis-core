@@ -8,8 +8,14 @@ module Travis
       end
 
       def final?
-        # TODO keep the state on the artifact
-        result && result.job && result.job.finished?
+        # TODO jobs can be requeued, so finished jobs are no more final
+        # # TODO keep the state on the artifact
+        # result && result.job && result.job.finished?
+        false
+      end
+
+      def updated_at
+        result.updated_at
       end
 
       private
