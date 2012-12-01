@@ -33,7 +33,7 @@ module Travis
             if event =~ /^worker:/
               'worker'
             else
-              event.sub('test:', '').sub(':', '/').sub('requeued', 'started')
+              event.sub('test:', '').sub(':', '/').sub('requeued', 'created')
             end
           end
 
