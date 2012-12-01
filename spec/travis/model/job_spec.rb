@@ -210,6 +210,11 @@ describe Job do
       job.queued_at.should be_nil
       job.finished_at.should be_nil
     end
+
+    it 'triggers a :created event' do
+      job.expects(:notify).with(:requeue)
+      job.requeue
+    end
   end
 
   describe 'decrypted config' do
