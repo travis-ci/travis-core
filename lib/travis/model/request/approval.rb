@@ -11,7 +11,7 @@ class Request
     def accepted?
       commit.present? &&
         !repository.private? &&
-        !rails_fork? &&
+        (!excluded_repository? || included_repository?) &&
         !skipped? &&
         !github_pages?
     end
@@ -27,8 +27,8 @@ class Request
     def message
       if !commit.present?
         'missing commit'
-      elsif rails_fork?
-        'rails fork'
+      elsif excluded_repository?
+        'excluded repository'
       elsif skipped?
         'skipped through commit message'
       elsif github_pages?
@@ -52,8 +52,12 @@ class Request
         commit.ref =~ /gh[-_]pages/i
       end
 
-      def rails_fork?
-        repository.slug != 'rails/rails' && repository.slug =~ %r(/rails$)
+      def excluded_repository?
+        Travis.config.repository_filter.exclude.any? { |rule| repository.slug =~ rule }
+      end
+
+      def included_repository?
+        Travis.config.repository_filter.include.any? { |rule| repository.slug =~ rule }
       end
 
       def branch_approved?
