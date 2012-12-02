@@ -14,9 +14,9 @@ module Travis
         false
       end
 
-      def updated_at
-        result.updated_at
-      end
+      # def updated_at
+      #   result.updated_at
+      # end
 
       private
 
