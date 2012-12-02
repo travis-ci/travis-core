@@ -4,7 +4,7 @@ module Travis
       register :find_repo_key
 
       def run(options = {})
-        result
+        result.data
       end
 
       def updated_at
