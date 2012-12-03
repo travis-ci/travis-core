@@ -21,6 +21,7 @@ module Travis
     autoload :FindWorker,          'travis/services/find_worker'
     autoload :FindWorkers,         'travis/services/find_workers'
     autoload :Helpers,             'travis/services/helpers'
+    autoload :RegenerateRepoKey,   'travis/services/regenerate_repo_key'
     autoload :SyncUser,            'travis/services/sync_user_'     # TODO wtf, y u no load this file if named properly
     autoload :UpdateHook,          'travis/services/update_hook'
     autoload :UpdateJob,           'travis/services/update_job'

@@ -3,6 +3,16 @@ require 'spec_helper'
 describe Repository do
   include Support::ActiveRecord
 
+  describe '#regenerate_key!' do
+    it 'regenerates key' do
+      repository = Factory(:repository)
+
+      expect {
+        repository.regenerate_key!
+      }.to change { repository.key.private_key }
+    end
+  end
+
   describe 'validates' do
     it 'uniqueness of :owner_name/:name' do
       existing = Factory(:repository)
