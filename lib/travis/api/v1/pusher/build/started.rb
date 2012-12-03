@@ -16,7 +16,7 @@ module Travis
                 'repository_id' => build.repository_id,
                 'number' => build.number,
                 'config' => build.obfuscated_config.stringify_keys,
-                'result' => nil,
+                'state' => build.finished? ? 'finished' : build.state.to_s,
                 'started_at' => format_date(build.started_at),
                 'finished_at' => format_date(build.finished_at),
                 'duration' => nil,
@@ -32,8 +32,7 @@ module Travis
                 'committer_email' => commit.committer_email,
                 'event_type' => request.event_type,
                 'matrix' => build.matrix.map { |job| Job.new(job).data },
-                'job_ids' => build.matrix.map(&:id),
-                'state' => build.finished? ? 'finished' : build.state.to_s
+                'job_ids' => build.matrix.map(&:id)
               }
             end
 

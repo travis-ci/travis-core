@@ -21,6 +21,7 @@ module Travis
                   'parent_id' => job.source_id,
                   'number' => job.number,
                   'config' => job.obfuscated_config,
+                  'state' => job.finished? ? 'finished' : job.state.to_s,
                   'commit' => commit.commit,
                   'branch' => commit.branch,
                   'message' => commit.message,
@@ -32,8 +33,7 @@ module Travis
                   'author_email' => commit.author_email,
                   'committer_name' => commit.committer_name,
                   'committer_email' => commit.committer_email,
-                  'allow_failure' => job.allow_failure,
-                  'result' => job.result
+                  'allow_failure' => job.allow_failure
                 }
               end
             end

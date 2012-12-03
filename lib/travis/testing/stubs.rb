@@ -128,7 +128,7 @@ module Travis
       end
 
       def stub_test(attributes = {})
-        Stubs.stub 'test', attributes.reverse_merge(
+        test = Stubs.stub 'test', attributes.reverse_merge(
           id: 1,
           owner: stub_user,
           repository_id: 1,
@@ -155,9 +155,9 @@ module Travis
           tags: 'tag-a,tag-b'
         )
 
-        source = stub_build(:matrix => [result])
-        result.define_singleton_method(:source) { source }
-        result
+        source = stub_build(:matrix => [test])
+        test.define_singleton_method(:source) { source }
+        test
       end
 
       def stub_log(attributes = {})

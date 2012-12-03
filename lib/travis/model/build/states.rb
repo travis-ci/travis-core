@@ -42,7 +42,7 @@ class Build
     end
 
     def finished?
-      passed? || failed? || errored? || canceled?
+      passed? || failed? || errored? || canceled? || state.try(:to_s) == 'finished' # TODO remove once we've migrated
     end
 
     def color

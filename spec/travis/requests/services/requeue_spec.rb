@@ -41,7 +41,7 @@ describe Travis::Requests::Services::Requeue do
 
   describe 'given a build_id' do
     let(:service) { described_class.new(user, build_id: build.id, token: 'token') }
-    let(:build)   { Factory(:build, state: :finished) }
+    let(:build)   { Factory(:build, state: 'passed') }
 
     before :each do
       service.stubs(:service).with(:find_build, id: build.id).returns(stub(run: build))

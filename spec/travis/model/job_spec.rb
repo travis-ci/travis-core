@@ -197,7 +197,7 @@ describe Job do
   end
 
   describe 'requeue' do
-    let(:job) { Factory(:test, state: 'finished', result: 1, queued_at: Time.now, finished_at: Time.now) }
+    let(:job) { Factory(:test, state: 'finished', queued_at: Time.now, finished_at: Time.now) }
 
     it 'sets the state to :created' do
       job.requeue
@@ -206,7 +206,6 @@ describe Job do
 
     it 'resets related attributes' do
       job.requeue
-      job.result.should be_nil
       job.queued_at.should be_nil
       job.finished_at.should be_nil
     end

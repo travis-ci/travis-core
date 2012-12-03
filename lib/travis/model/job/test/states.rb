@@ -19,7 +19,7 @@ class Job
 
       # TODO remove :finished once we've updated the state column
       FINISHED_STATES      = [:finished, :passed, :failed, :errored, :canceled]
-      FINISHING_ATTRIBUTES = [:result, :state, :finished_at]
+      FINISHING_ATTRIBUTES = [:result, :state, :finished_at] # TODO remove this, have a service instead
 
       included do
         include SimpleStates, Job::States, Travis::Event

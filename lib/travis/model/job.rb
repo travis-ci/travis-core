@@ -116,7 +116,10 @@ class Job < ActiveRecord::Base
   end
 
   def requeue
-    update_attributes(state: :created, result: nil, queued_at: nil, finished_at: nil)
+    self.state = :created
+    self.queued_at = nil
+    self.finished_at = nil
+    save! # TODO remove the update_attributes triggers state events bullshit
     log.update_attributes!(content: '')
     notify(:requeue)
   end

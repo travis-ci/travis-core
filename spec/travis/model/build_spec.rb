@@ -355,7 +355,6 @@ describe Build do
 
       it 'resets related attributes' do
         build.requeue
-        build.result.should be_nil
         build.duration.should be_nil
         build.finished_at.should be_nil
       end
