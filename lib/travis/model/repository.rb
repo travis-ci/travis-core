@@ -144,4 +144,12 @@ class Repository < ActiveRecord::Base
       LIMIT  25
     )
   end
+
+  def regenerate_key!
+    ActiveRecord::Base.transaction do
+      key.destroy
+      build_key
+      save!
+    end
+  end
 end
