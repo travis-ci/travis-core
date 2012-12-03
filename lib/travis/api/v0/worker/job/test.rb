@@ -32,7 +32,7 @@ module Travis
                 'id' => job.id,
                 'number' => job.number,
                 'commit' => commit.commit,
-                # 'commit_range' => commit.range,
+                'commit_range' => commit.range,
                 'branch' => commit.branch,
                 'ref' => commit.pull_request? ? commit.ref : nil,
                 'state' => job.state.to_s
