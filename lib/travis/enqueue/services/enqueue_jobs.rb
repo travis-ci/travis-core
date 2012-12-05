@@ -61,6 +61,25 @@ module Travis
           def publisher(queue)
             Travis::Amqp::Publisher.builds(queue)
           end
+
+          class Instrument < Notification::Instrument
+            def run_completed
+              publish(msg: format(target.reports), reports: target.reports)
+            end
+
+            def format(reports)
+              reports = Array(reports)
+              if reports.any?
+                reports = reports.map do |repo, report|
+                  "  #{repo}: #{report.map { |key, value| "#{key}: #{value}" }.join(', ')}"
+                end
+                "enqueued:\n#{reports.join("\n")}"
+              else
+                'nothing to enqueue.'
+              end
+            end
+          end
+          Instrument.attach_to(self)
       end
     end
   end
