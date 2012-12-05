@@ -29,40 +29,42 @@ describe Build, 'matrix' do
   end
 
   describe :matrix_state do
-    context 'if any job has failed' do
-      it 'returns :failed' do
-        build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'] })
-        build.matrix[0].update_attributes!(state: :passed)
-        build.matrix[1].update_attributes!(state: :failed)
-        build.matrix_state.should == :failed
-      end
+    let(:build) { Factory(:build, config: { rvm: ['1.8.7', '1.9.2'] }) }
+
+    it 'returns :passed if all jobs have passed' do
+      build.matrix[0].update_attributes!(state: :passed)
+      build.matrix[1].update_attributes!(state: :passed)
+      build.matrix_state.should == :passed
     end
 
-    context 'if all jobs have passed' do
-      it 'returns :passed' do
-        build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'] })
-        build.matrix[0].update_attributes!(state: :passed)
-        build.matrix[1].update_attributes!(state: :passed)
-        build.matrix_state.should == :passed
-      end
+    it 'returns :failed if one job has failed' do
+      build.matrix[0].update_attributes!(state: :passed)
+      build.matrix[1].update_attributes!(state: :failed)
+      build.matrix_state.should == :failed
     end
 
-    context 'if a failed job is allowed to fail' do
-      it 'returns :passed' do
-        build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'] })
-        build.matrix[0].update_attributes!(state: :passed)
-        build.matrix[1].update_attributes!(state: :failed, allow_failure: true)
-        build.matrix_state.should == :passed
-      end
+    it 'returns :failed if one job has failed and one job has errored' do
+      build.matrix[0].update_attributes!(state: :errored)
+      build.matrix[1].update_attributes!(state: :failed)
+      build.matrix_state.should == :errored
     end
 
-    context 'if all jobs have failed and only one is allowed to fail' do
-      it 'returns :failed' do
-        build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'] })
-        build.matrix[0].update_attributes!(state: :failed)
-        build.matrix[1].update_attributes!(state: :failed, allow_failure: true)
-        build.matrix_state.should == :failed
-      end
+    it 'returns :errored if one job has errored' do
+      build.matrix[0].update_attributes!(state: :passed)
+      build.matrix[1].update_attributes!(state: :errored)
+      build.matrix_state.should == :errored
+    end
+
+    it 'returns :passed if a failed job is allowed to fail' do
+      build.matrix[0].update_attributes!(state: :passed)
+      build.matrix[1].update_attributes!(state: :failed, allow_failure: true)
+      build.matrix_state.should == :passed
+    end
+
+    it 'returns :failed if all jobs have failed and only one is allowed to fail' do
+      build.matrix[0].update_attributes!(state: :failed)
+      build.matrix[1].update_attributes!(state: :failed, allow_failure: true)
+      build.matrix_state.should == :failed
     end
   end
 
