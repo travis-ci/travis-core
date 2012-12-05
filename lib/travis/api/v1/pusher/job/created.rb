@@ -12,7 +12,7 @@ module Travis
                 'repository_slug' => job.repository.slug,
                 'number' => job.number,
                 'queue' => job.queue,
-                'state' => job.finished? ? 'finished' : job.state.to_s,
+                'state' => job.state.to_s,
                 'log_id' => job.log.id,
                 'allow_failure' => job.allow_failure
               }

@@ -11,10 +11,9 @@ module Travis
             def build_data
               {
                 'id' => build.id,
-                'result' => build.result,
+                'state' => build.state.to_s,
                 'finished_at' => format_date(build.finished_at),
-                'duration' => build.duration,
-                'state' => build.finished? ? 'finished' : build.state.to_s
+                'duration' => build.duration
               }
             end
 
@@ -27,7 +26,7 @@ module Travis
                 'last_build_started_at' => format_date(repository.last_build_started_at),
                 'last_build_finished_at' => format_date(repository.last_build_finished_at),
                 'last_build_duration' => repository.last_build_duration,
-                'last_build_result' => repository.last_build_result,
+                'last_build_state' => repository.last_build_state.to_s
               }
             end
           end

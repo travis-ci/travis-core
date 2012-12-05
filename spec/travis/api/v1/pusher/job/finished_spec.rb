@@ -10,9 +10,8 @@ describe Travis::Api::V1::Pusher::Job::Finished do
       'id' => test.id,
       'build_id' => test.source_id,
       'repository_id' => test.repository_id,
-      'finished_at' => json_format_time(Time.now.utc),
-      'result' => 0,
-      'state' => 'finished'
+      'state' => 'passed',
+      'finished_at' => json_format_time(Time.now.utc)
     }
   end
 end

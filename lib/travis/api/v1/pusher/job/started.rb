@@ -9,11 +9,11 @@ module Travis
                 'id' => job.id,
                 'build_id' => job.source_id,
                 'repository_id' => job.repository_id,
+                'state' => job.state.to_s,
                 'started_at' => format_date(job.started_at),
                 'finished_at' => format_date(job.finished_at),
                 'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4',
-                'sponsor' => { 'name' => 'Railslove', 'url' => 'http://railslove.de' },
-                'state' => job.finished? ? 'finished' : job.state.to_s
+                'sponsor' => { 'name' => 'Railslove', 'url' => 'http://railslove.de' }
               }
             end
           end

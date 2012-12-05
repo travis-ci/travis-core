@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Travis::Api::V1::Pusher::Job::Created do
   include Travis::Testing::Stubs
 
-  let(:test) { stub_test(result: nil, started_at: nil, finished_at: nil) }
+  let(:test) { stub_test(state: :created, started_at: nil, finished_at: nil) }
   let(:data) { Travis::Api::V1::Pusher::Job::Created.new(test).data }
 
   it 'data' do
@@ -13,8 +13,8 @@ describe Travis::Api::V1::Pusher::Job::Created do
       'repository_id' => test.repository_id,
       'repository_slug' => 'svenfuchs/minimal',
       'number' => '2.1',
+      'state' => 'created',
       'queue' => 'builds.common',
-      'state' => 'finished',
       'log_id' => 1,
       'allow_failure' => false
     }

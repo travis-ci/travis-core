@@ -14,9 +14,10 @@ module Travis
               {
                 'id' => build.id,
                 'repository_id' => build.repository_id,
+                'job_ids' => build.matrix.map(&:id),
                 'number' => build.number,
                 'config' => build.obfuscated_config.stringify_keys,
-                'state' => build.finished? ? 'finished' : build.state.to_s,
+                'state' => build.state.to_s,
                 'started_at' => format_date(build.started_at),
                 'finished_at' => format_date(build.finished_at),
                 'duration' => nil,
@@ -32,7 +33,6 @@ module Travis
                 'committer_email' => commit.committer_email,
                 'event_type' => request.event_type,
                 'matrix' => build.matrix.map { |job| Job.new(job).data },
-                'job_ids' => build.matrix.map(&:id)
               }
             end
 
@@ -46,8 +46,7 @@ module Travis
                 'last_build_started_at' => format_date(repository.last_build_started_at),
                 'last_build_finished_at' => format_date(repository.last_build_finished_at),
                 'last_build_duration' => repository.last_build_duration,
-                'last_build_status' => repository.last_build_result,
-                'last_build_result' => repository.last_build_result,
+                'last_build_state' => repository.last_build_state.try(:to_s),
                 'last_build_language' => repository.last_build_language
               }
             end

@@ -9,9 +9,8 @@ module Travis
                 'id' => job.id,
                 'build_id' => job.source_id,
                 'repository_id' => job.repository_id,
-                'finished_at' => format_date(job.finished_at),
-                'result' => job.result,
-                'state' => job.finished? ? 'finished' : job.state.to_s
+                'state' => job.state.to_s,
+                'finished_at' => format_date(job.finished_at)
               }
             end
           end
