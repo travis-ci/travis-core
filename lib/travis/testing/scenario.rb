@@ -101,7 +101,7 @@ module Scenario
 
       build  = Factory(:build, attributes.merge(:commit => commit))
       build.matrix.each_with_index do |job, ix|
-        job.update_attributes!(jobs[ix])
+        job.update_attributes!(jobs[ix] || {})
       end
 
       if build.finished?

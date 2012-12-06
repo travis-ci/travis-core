@@ -6,13 +6,13 @@ module Travis
       register :update_job
 
       def run
-        job.update_attributes(data.except(:id)) # TODO really should be update_attributes!
+        job.update_attributes!(data.except(:id)) # TODO really should be update_attributes!
       end
 
       private
 
         def job
-          Job::Test.find(data[:id])
+          @job ||= Job::Test.find(data[:id])
         end
 
         def data

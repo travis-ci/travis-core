@@ -3,7 +3,7 @@ require 'spec_helper'
 class TestMock
   include Module.new {
     def append_log!(*); end
-    def update_attributes(*); end
+    def update_attributes!(*); end
   }
 
   class << self
@@ -80,18 +80,18 @@ describe Job::Test::States do
       end
     end
 
-    describe :update_attributes do
+    describe :update_attributes! do
       describe 'given starting attributes' do
         let(:data) { WORKER_PAYLOADS['job:test:started'] }
 
         it 'updates the job with the given attributes' do
-          job.expects(:update_attributes).with(data)
-          job.update_attributes(data)
+          job.expects(:update_attributes!).with(data)
+          job.update_attributes!(data)
         end
 
         it 'starts the job' do
           job.expects(:start).with(:started_at => data['started_at'])
-          job.update_attributes(data)
+          job.update_attributes!(data)
         end
       end
 
@@ -99,12 +99,12 @@ describe Job::Test::States do
         let(:data) { WORKER_PAYLOADS['job:test:finished'] }
 
         it 'updates the job with the given attributes' do
-          job.expects(:update_attributes).with(data)
-          job.update_attributes(data)
+          job.expects(:update_attributes!).with(data)
+          job.update_attributes!(data)
         end
 
         it 'finishes the job' do
-          job.update_attributes(data)
+          job.update_attributes!(data)
           job.state.should == 'passed'
         end
       end

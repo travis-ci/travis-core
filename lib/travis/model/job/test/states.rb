@@ -28,7 +28,7 @@ class Job
 
         event :start,  to: :started
         event :finish, to: :finished, after: :add_tags
-        event :all, after: [:notify, :propagate]
+        event :all, after: [:propagate, :notify]
       end
 
       def enqueue # TODO rename to queue and make it an event, simple_states should support that now

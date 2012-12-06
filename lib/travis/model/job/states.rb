@@ -26,7 +26,7 @@ class Job
       true
     end
 
-    def update_attributes(attributes)
+    def update_attributes!(attributes)
       if content = attributes.delete(:log)
         log.update_attributes(content: content)
       end
