@@ -19,7 +19,7 @@ class Job
 
       # TODO remove :finished once we've updated the state column
       FINISHED_STATES      = [:finished, :passed, :failed, :errored, :canceled]
-      FINISHING_ATTRIBUTES = [:result, :state, :finished_at] # TODO remove this, have a service instead
+      FINISHING_ATTRIBUTES = [:result, :finished_at] # TODO remove this, have a service instead
 
       included do
         include SimpleStates, Job::States, Travis::Event
@@ -43,7 +43,7 @@ class Job
       end
 
       def finish(data = {})
-        data = data.symbolize_keys.slice(*FINISHING_ATTRIBUTES)
+        data = data.symbolize_keys.slice(:state, *FINISHING_ATTRIBUTES)
         data.delete(:state) if data.key?(:result) # TODO legacy payload, remove once workers set :state
         data.each { |key, value| send(:"#{key}=", value) }
       end
@@ -64,7 +64,7 @@ class Job
       protected
 
         def extract_finishing_attributes(attributes)
-          extract!(attributes, *FINISHING_ATTRIBUTES)
+          extract!(attributes, :state, *FINISHING_ATTRIBUTES)
         end
 
         LEGACY_RESULTS = { 0 => 'passed', 1 => 'failed' }
