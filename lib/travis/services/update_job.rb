@@ -31,7 +31,7 @@ module Travis
       end
 
       def raise_unknown_event
-        raise ArgumentError, "Unknown event: #{event}, data: #{data}"
+        raise ArgumentError, "Unknown event: #{params[:event]}, data: #{data}"
       end
 
       class Instrument < Notification::Instrument
