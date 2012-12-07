@@ -23,7 +23,12 @@ module Travis
       end
 
       def data
-        @data ||= params[:data].symbolize_keys
+        @data ||= begin
+          data = params[:data].symbolize_keys
+          # TODO remove once workers send the state
+          data[:state] = { 0 => :passed, 1 => :failed }[data.delete(:result)] if data.key?(:result)
+          data
+        end
       end
 
       def event

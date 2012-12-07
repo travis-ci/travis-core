@@ -97,4 +97,20 @@ describe Travis::Services::UpdateJob do
       job.reload.repository.last_build_finished_at.to_s.should == '2011-01-01 00:03:00 UTC'
     end
   end
+
+  describe 'compat' do
+    let(:event) { :finish }
+
+    it 'swaps :result for :state (passed) if present' do
+      payload.delete(:state)
+      payload.merge!(result: 0)
+      service.data[:state].should == :passed
+    end
+
+    it 'swaps :result for :state (failed) if present' do
+      payload.delete(:state)
+      payload.merge!(result: 1)
+      service.data[:state].should == :failed
+    end
+  end
 end
