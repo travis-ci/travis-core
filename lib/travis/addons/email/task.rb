@@ -21,7 +21,7 @@ module Travis
         private
 
           def process
-            Travis::Mailer::Build.send(type, payload, recipients, broadcasts).deliver if recipients.any?
+            Mailer::Build.send(type, payload, recipients, broadcasts).deliver if recipients.any?
           rescue Postmark::InvalidMessageError => e
             # TODO notify the repo
             error("Could not send email to: #{recipients}\n#{e.message}")

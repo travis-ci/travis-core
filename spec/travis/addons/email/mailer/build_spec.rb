@@ -1,16 +1,16 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe Travis::Mailer::Build do
+describe Travis::Addons::Email::Mailer::Build do
   include Travis::Testing::Stubs
 
   let(:data)       { Travis::Api.data(build, for: 'event', version: 'v0') }
   let(:recipients) { ['owner@example.com', 'committer@example.com', 'author@example.com'] }
   let(:broadcasts) { [{ message: 'message' }] }
-  let(:email)      { Travis::Mailer::Build.finished_email(data, recipients, broadcasts) }
+  let(:email)      { described_class.finished_email(data, recipients, broadcasts) }
 
   before :each do
-    Travis::Mailer.setup
+    Travis::Addons::Email.setup
     I18n.reload!
     ActionMailer::Base.delivery_method = :test
     build.commit.stubs(:author_name).returns('まつもとゆきひろ a.k.a. Matz')

@@ -4,7 +4,7 @@ describe Travis::Addons::Email::Task do
   include Travis::Testing::Stubs
 
   let(:subject)    { Travis::Addons::Email::Task }
-  let(:mailer)     { Travis::Mailer::Build }
+  let(:mailer)     { Travis::Addons::Email::Mailer::Build }
   let(:payload)    { Travis::Api.data(build, for: 'event', version: 'v0').deep_symbolize_keys }
   let(:email)      { stub('email', deliver: true) }
   let(:handler)    { subject.new(payload, recipients: recipients, broadcasts: broadcasts) }

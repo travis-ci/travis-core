@@ -14,8 +14,10 @@ module Travis
       def register
         constants(false).each do |name|
           key = name.to_s.underscore
-          const = const_get(name).const_get(:EventHandler) rescue nil
-          Travis::Event::Subscription.register(key, const) if const
+          const = const_get(name)
+          handler = const.const_get(:EventHandler) rescue nil
+          Travis::Event::Subscription.register(key, handler) if handler
+          const.setup if const.respond_to?(:setup)
         end
       end
     end
