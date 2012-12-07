@@ -11,7 +11,7 @@ describe Job::Test do
 
   describe 'events' do
     describe 'starting the job' do
-      let(:data) { WORKER_PAYLOADS['job:test:started'] }
+      let(:data) { WORKER_PAYLOADS['job:test:start'] }
 
       it 'sets the state to :started' do
         job.start(data)
@@ -40,7 +40,7 @@ describe Job::Test do
     end
 
     describe 'finishing the job' do
-      let(:data) { WORKER_PAYLOADS['job:test:finished'] }
+      let(:data) { WORKER_PAYLOADS['job:test:finish'] }
 
       it 'sets the state to the given result state (legacy: passing result=[0|1])' do
         job.finish(data.merge('result' => 0, 'state' => 'finished'))

@@ -7,10 +7,10 @@ module Travis
 
       register :update_job
 
-      STATES = [:start, :finish]
+      EVENT = [:start, :finish]
 
       def run
-        job.send(:"#{state}!", data.except(:id))
+        job.send(:"#{event}!", data.except(:id))
       end
       instrument :run
 
@@ -26,8 +26,8 @@ module Travis
         @data ||= params[:data].symbolize_keys
       end
 
-      def state
-        @state ||= STATES.detect { |state| event =~ /:#{state}ed$/ } || raise_unknown_event
+      def event
+        @event ||= EVENT.detect { |event| event == params[:event].try(:to_sym) } || raise_unknown_event
       end
 
       def raise_unknown_event

@@ -4,7 +4,7 @@ describe Travis::Services::UpdateJob do
   include Support::ActiveRecord
 
   let(:service) { described_class.new(event: event, data: payload) }
-  let(:payload) { WORKER_PAYLOADS[event].merge('id' => job.id) }
+  let(:payload) { WORKER_PAYLOADS["job:test:#{event}"].merge('id' => job.id) }
   let(:build)   { Factory(:build, state: :created, started_at: nil, finished_at: nil) }
   let(:job)     { Factory(:test, source: build, state: :started, started_at: nil, finished_at: nil) }
 
@@ -13,7 +13,7 @@ describe Travis::Services::UpdateJob do
   end
 
   describe 'job:test:started' do
-    let(:event) { 'job:test:started' }
+    let(:event) { :start }
 
     before :each do
       job.repository.update_attributes(last_build_state: :passed)
@@ -61,7 +61,7 @@ describe Travis::Services::UpdateJob do
   end
 
   describe 'job:test:finished' do
-    let(:event) { 'job:test:finished' }
+    let(:event) { :finish }
 
     before :each do
       job.repository.update_attributes(last_build_state: :started)

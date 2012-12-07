@@ -12,7 +12,7 @@ describe Build::States do
 
   describe 'events' do
     describe 'starting the build' do
-      let(:data) { WORKER_PAYLOADS['job:test:started'] }
+      let(:data) { WORKER_PAYLOADS['job:test:start'] }
 
       describe 'when the build is not already started' do
         it 'sets the state to :started' do
@@ -33,7 +33,7 @@ describe Build::States do
     end
 
     describe 'finishing the build' do
-      let(:data) { WORKER_PAYLOADS['job:test:finished'] }
+      let(:data) { WORKER_PAYLOADS['job:test:finish'] }
 
       describe 'when the matrix is not finished' do
         before(:each) do
