@@ -17,21 +17,6 @@ describe Job do
     end
   end
 
-  describe :append_log! do
-    let!(:job) { Factory(:test) }
-
-    it "appends chars to the log artifact" do
-      line = "$ bundle install --pa"
-      Artifact::Log.expects(:append).with(job.id, line)
-      job.append_log!(line)
-    end
-
-    it 'notifies observers' do
-      Travis::Event.expects(:dispatch).with('job:test:log', job, _log: 'chars')
-      job.append_log!('chars')
-    end
-  end
-
   describe 'before_create' do
     let(:job) { Job::Test.create!(owner: Factory(:user), repository: Factory(:repository), commit: Factory(:commit), source: Factory(:build)) }
 
@@ -74,15 +59,13 @@ describe Job do
 
     before :each do
       Job::Tagging.stubs(:rules).returns [
-        { 'tag' => 'rake_not_bundled',   'pattern' => 'rake is not part of the bundle.' }
+        { 'tag' => 'rake_not_bundled', 'pattern' => 'rake is not part of the bundle.' }
       ]
     end
 
     it 'should tag a job its log contains a particular string' do
-      job.start!
-      job.reload.append_log!('rake is not part of the bundle')
+      job.log.update_attributes!(content: 'rake is not part of the bundle')
       job.finish!
-
       job.reload.tags.should == "rake_not_bundled"
     end
   end

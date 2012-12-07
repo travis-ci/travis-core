@@ -1,39 +1,69 @@
 require 'spec_helper'
 
 describe Travis::Services::UpdateJob do
-  include Travis::Testing::Stubs
-
-  let(:service) { described_class.new('data' => { 'id' => 1, 'result' => 0 }) }
-
-  before :each do
-    Job::Test.stubs(:find).returns(test)
-    test.stubs(:update_attributes!)
-  end
-
-  it 'finds the job' do
-    Job::Test.expects(:find).with(1).returns(test)
-    service.run
-  end
-
-  it 'updates the job attributes' do
-    test.expects(:update_attributes!).with(result: 0)
-    service.run
-  end
-end
-
-describe Travis::Services::UpdateJob do
   include Support::ActiveRecord
 
-  let(:service) { described_class.new(data: payload) }
+  let(:service) { described_class.new(event: event, data: payload) }
+  let(:payload) { WORKER_PAYLOADS[event].merge('id' => job.id) }
+  let(:build)   { Factory(:build, state: :created, started_at: nil, finished_at: nil) }
+  let(:job)     { Factory(:test, source: build, state: :started, started_at: nil, finished_at: nil) }
 
-  describe 'job:finished' do
-    let(:event)   { 'job:test:started' } # TODO should be passed by the handler
-    let(:payload) { WORKER_PAYLOADS['job:test:finished'].merge('id' => job.id) }
-    let(:build)   { Factory(:build, state: :started) }
-    let(:job)     { Factory(:test, source: build, state: :started) }
+  before :each do
+    build.matrix.delete_all
+  end
+
+  describe 'job:test:started' do
+    let(:event) { 'job:test:started' }
 
     before :each do
-      build.matrix.delete_all
+      job.repository.update_attributes(last_build_state: :passed)
+    end
+
+    it 'sets the job state to started' do
+      service.run
+      job.reload.state.should == 'started'
+    end
+
+    it 'sets the job started_at' do
+      service.run
+      job.reload.started_at.to_s.should == '2011-01-01 00:02:00 UTC'
+    end
+
+    it 'sets the job worker name' do
+      service.run
+      job.reload.worker.should == 'ruby3.worker.travis-ci.org:travis-ruby-4'
+    end
+
+    it 'sets the build state to started' do
+      service.run
+      job.reload.source.state.should == 'started'
+    end
+
+    it 'sets the build started_at' do
+      service.run
+      job.reload.source.started_at.to_s.should == '2011-01-01 00:02:00 UTC'
+    end
+
+    it 'sets the build state to started' do
+      service.run
+      job.reload.source.state.should == 'started'
+    end
+
+    it 'sets the repository last_build_state to started' do
+      service.run
+      job.reload.repository.last_build_state.should == 'started'
+    end
+
+    it 'sets the repository last_build_started_at' do
+      service.run
+      job.reload.repository.last_build_started_at.to_s.should == '2011-01-01 00:02:00 UTC'
+    end
+  end
+
+  describe 'job:test:finished' do
+    let(:event) { 'job:test:finished' }
+
+    before :each do
       job.repository.update_attributes(last_build_state: :started)
     end
 
@@ -42,14 +72,29 @@ describe Travis::Services::UpdateJob do
       job.reload.state.should == 'passed'
     end
 
+    it 'sets the job finished_at' do
+      service.run
+      job.reload.finished_at.to_s.should == '2011-01-01 00:03:00 UTC'
+    end
+
     it 'sets the build state to passed' do
       service.run
       job.reload.source.state.should == 'passed'
     end
 
+    it 'sets the build finished_at' do
+      service.run
+      job.reload.source.finished_at.to_s.should == '2011-01-01 00:03:00 UTC'
+    end
+
     it 'sets the repository last_build_state to passed' do
       service.run
       job.reload.repository.last_build_state.should == 'passed'
+    end
+
+    it 'sets the repository last_build_finished_at' do
+      service.run
+      job.reload.repository.last_build_finished_at.to_s.should == '2011-01-01 00:03:00 UTC'
     end
   end
 end

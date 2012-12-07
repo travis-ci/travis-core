@@ -29,26 +29,6 @@ describe Build::States do
           Travis::Event.expects(:dispatch).with('build:started', build, data)
           build.start(data)
         end
-
-        it 'gets skipped if the build is already started' do
-          build.stubs(:started?).returns(true)
-          build.expects(:denormalize).never
-          build.start(data)
-        end
-      end
-
-      describe 'when the build is already started' do
-        it 'does not denormalize attributes' do
-          build.stubs(:started?).returns(true)
-          build.expects(:denormalize).never
-          build.start(data)
-        end
-
-        it 'does not notify observers' do
-          build.stubs(:started?).returns(true)
-          Travis::Event.expects(:dispatch).never
-          build.start(data)
-        end
       end
     end
 

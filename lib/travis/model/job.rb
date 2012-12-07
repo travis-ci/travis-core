@@ -48,7 +48,7 @@ class Job < ActiveRecord::Base
     end
   end
 
-  include Cleanup, Compat
+  include Compat
   include Travis::Model::EnvHelpers
 
   has_one    :log, class_name: 'Artifact::Log', conditions: { type: 'Artifact::Log' }, dependent: :destroy
@@ -75,6 +75,15 @@ class Job < ActiveRecord::Base
     build_log
     self.state = :created if self.state.nil?
     self.queue = Queue.for(self).name
+  end
+
+  after_commit on: :create do
+    notify(:create)
+  end
+
+  def propagate(*args)
+    source.send(*args)
+    true
   end
 
   def duration

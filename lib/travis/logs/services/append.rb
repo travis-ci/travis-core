@@ -5,13 +5,18 @@ module Travis
         register :logs_append
 
         def run
-          job.append_log!(data[:log])
+          Artifact::Log.append(job.id, chars)
+          job.notify(:log, _log: chars)
         end
 
         private
 
           def job
             Job::Test.find(data[:id])
+          end
+
+          def chars
+            data[:log]
           end
 
           def data

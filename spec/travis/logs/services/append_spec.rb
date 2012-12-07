@@ -3,11 +3,12 @@ require 'spec_helper'
 describe Travis::Logs::Services::Append do
   include Travis::Testing::Stubs
 
-  let(:service) { described_class.new('data' => { 'id' => 1, 'log' => 'foo' }) }
+  let(:service) { described_class.new('data' => { 'id' => 1, 'log' => 'log' }) }
 
   before :each do
     Job::Test.stubs(:find).returns(test)
-    test.stubs(:append_log!)
+    Artifact::Log.stubs(:append)
+    test.stubs(:notify)
   end
 
   it 'finds the job' do
@@ -16,8 +17,12 @@ describe Travis::Logs::Services::Append do
   end
 
   it 'appends the log' do
-    test.expects(:append_log!).with('foo')
+    Artifact::Log.stubs(:append).with('log')
+    service.run
+  end
+
+  it 'notifies observers' do
+    test.expects(:notify).with(:log, _log: 'log')
     service.run
   end
 end
-

@@ -32,7 +32,7 @@ describe Job::Tagging do
 
   describe :add_tags do
     it 'tags the job according to the rules' do
-      job.append_log!(log)
+      job.log.update_attributes!(content: log)
       job.reload.add_tags
       job.tags.should == 'rake_not_bundled,database_missing'
     end

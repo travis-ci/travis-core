@@ -1,3 +1,6 @@
+require 'active_support/core_ext/hash/slice'
+require 'simple_states'
+
 class Job
 
   # Executes a test job (i.e. runs a test suite) remotely and keeps tabs about
@@ -11,13 +14,66 @@ class Job
   # appends log updates efficiently and notifies the event handlers (see
   # `Job::Test::States.append_log!`)
   class Test < Job
-    autoload :States, 'travis/model/job/test/states'
+    include Sponsors, Tagging
 
-    include Test::States, Sponsors, Tagging
+    # TODO remove :finished once we've updated the state column
+    FINISHED_STATES = [:finished, :passed, :failed, :errored, :canceled]
 
-    def append_log!(chars)
-      Artifact::Log.append(id, chars)
-      super
+    include SimpleStates, Travis::Event
+
+    states :created, :queued, :started, :passed, :failed, :errored, :canceled
+
+    event :start,  to: :started
+    event :finish, to: :finished, after: :add_tags
+    event :all, after: [:propagate, :notify]
+
+    def enqueue # TODO rename to queue and make it an event, simple_states should support that now
+      update_attributes!(state: :queued, queued_at: Time.now.utc)
+      notify(:queue)
     end
+
+    def start(data = {})
+      log.update_attributes!(content: '') # TODO this should be in a restart method, right?
+      data = data.symbolize_keys.slice(:started_at, :worker)
+      data.each { |key, value| send(:"#{key}=", value) }
+    end
+
+    def finish(data = {})
+      data = data.symbolize_keys.slice(:state, :finished_at, :result)
+      data.delete(:state) if data.key?(:result) # TODO legacy payload, remove once workers set :state
+      data.each { |key, value| send(:"#{key}=", value) }
+    end
+
+    def finished?
+      FINISHED_STATES.include?(state.to_sym)
+    end
+
+    def passed?
+      state == :passed || result == 0 # TODO remove as soon we're using state everywhere
+    end
+
+    def failed?
+      state == :failed || result == 1 # TODO remove as soon we're using state everywhere
+    end
+
+    def passed_or_allowed_failure?
+      passed? || allow_failure
+    end
+
+    def unknown?
+      !passed? && !failed? && result == nil
+    end
+
+    protected
+
+      def extract_finishing_attributes(attributes)
+        extract!(attributes, :state, *FINISHING_ATTRIBUTES)
+      end
+
+      LEGACY_RESULTS = { 0 => 'passed', 1 => 'failed' }
+
+      def map_legacy_result(result)
+        LEGACY_RESULTS[result.to_i] if result.to_s =~ /^[\d]+$/
+      end
   end
 end
