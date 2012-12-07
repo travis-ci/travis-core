@@ -42,7 +42,7 @@ module Travis
       class Instrument < Notification::Instrument
         def run_completed
           publish(
-            msg: "event: #{target.event} for <Job id=#{target.data[:id]} data=#{target.data.inspect}",
+            msg: "event: #{target.event} for <Job id=#{target.data[:id]}> data=#{target.data.inspect}",
             job_id: target.data[:id],
             event: target.event,
             data: target.data

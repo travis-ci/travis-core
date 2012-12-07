@@ -78,8 +78,8 @@ module Travis
     end
 
     HOSTS = {
-      :production  => 'travis-assets.herokuapp.com',
-      :staging     => 'travis-assets-staging.herokuapp.com',
+      :production  => 'travis-ci.org',
+      :staging     => 'staging.travis-ci.org',
       :development => 'localhost:3000'
     }
 
@@ -140,12 +140,12 @@ module Travis
         version = fetch
         if version && assets.version != version
           self.assets.version = version
-          puts "[asset-version] Updated asset version from http://#{Travis.config.assets.host}/current to #{assets.version}"
+          puts "[asset-version] Updated asset version from https://#{Travis.config.assets.host}/current to #{assets.version}"
         end
       end
 
       def fetch
-        response = http_client.get("http://#{Travis.config.assets.host}/current")
+        response = http_client.get("https://#{Travis.config.assets.host}/version")
         if response.success?
           response.body
         else

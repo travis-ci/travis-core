@@ -9,6 +9,7 @@ gem 'newrelic_rpm',       '~> 3.4.2'
 gem 'hubble',             github: 'roidrage/hubble'
 gem 'addressable'
 
+# TODO need to release the gem as soon i'm certain this change makes sense
 gem 'simple_states', github: 'svenfuchs/simple_states', branch: 'sf-set-state-early'
 
 platform :mri do
