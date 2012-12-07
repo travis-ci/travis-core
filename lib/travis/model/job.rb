@@ -9,7 +9,6 @@ require 'active_record'
 #    configuration.
 class Job < ActiveRecord::Base
   autoload :Compat,    'travis/model/job/compat'
-  autoload :Cleanup,   'travis/model/job/cleanup'
   autoload :Queue,     'travis/model/job/queue'
   autoload :States,    'travis/model/job/states'
   autoload :Sponsors,  'travis/model/job/sponsors'
