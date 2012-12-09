@@ -23,9 +23,7 @@ class Repository < ActiveRecord::Base
   has_many :permissions
   has_many :users, through: :permissions
 
-  has_one :last_build,   class_name: 'Build', order: 'id DESC', conditions: { state: ['started', 'finished']  }
-  has_one :last_success, class_name: 'Build', order: 'id DESC', conditions: { result: 0 }
-  has_one :last_failure, class_name: 'Build', order: 'id DESC', conditions: { result: 1 }
+  has_one :last_build, class_name: 'Build', order: 'id DESC'
   has_one :key, class_name: 'SslKey'
   belongs_to :owner, polymorphic: true
 
