@@ -16,11 +16,8 @@ class Artifact::Log < Artifact
 
       # TODO should be done by Travis::LogSubscriber::ActiveRecordMetrics but i can't get it
       # to be picked up outside of rails
-      def meter
-        started = Time.now
-        yield
-        duration = Time.now - started
-        Metriks.timer('active_record.log_updates').update(Time.now - started)
+      def meter(&block)
+        Metriks.timer('active_record.log_updates').time(&block)
       end
   end
 
