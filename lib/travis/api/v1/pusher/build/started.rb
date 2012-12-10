@@ -32,7 +32,8 @@ module Travis
                 'committer_name' => commit.committer_name,
                 'committer_email' => commit.committer_email,
                 'event_type' => request.event_type,
-                'matrix' => build.matrix.map { |job| Job.new(job).data },
+                'job_ids' => build.matrix.map(&:id),
+                'state' => build.state.to_s
               }
             end
 

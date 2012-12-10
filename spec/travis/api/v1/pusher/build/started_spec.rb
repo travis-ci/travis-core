@@ -33,29 +33,6 @@ describe Travis::Api::V1::Pusher::Build::Started do
     }
   end
 
-  it 'matrix' do
-    data['build']['matrix'].first.should == {
-      'id' => test.id,
-      'repository_id' => build.repository_id,
-      'started_at' => json_format_time(Time.now.utc - 1.minute),
-      'finished_at' => nil,
-      'parent_id' => test.source_id,
-      'number' => '2.1',
-      'state' => 'started',
-      'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
-      'commit' => '62aae5f70ceee39123ef',
-      'branch' => 'master',
-      'message' => 'the commit message',
-      'author_name' => 'Sven Fuchs',
-      'author_email' => 'svenfuchs@artweb-design.de',
-      'committer_name' => 'Sven Fuchs',
-      'committer_email' => 'svenfuchs@artweb-design.de',
-      'committed_at' => json_format_time(Time.now.utc - 1.hour),
-      'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
-      'allow_failure' => false
-    }
-  end
-
   it 'repository' do
     data['repository'].should == {
       'id' => build.repository_id,
