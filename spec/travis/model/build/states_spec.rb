@@ -30,6 +30,22 @@ describe Build::States do
           build.start(data)
         end
       end
+
+      describe 'when the build is already started' do
+        before :each do
+          build.state = :started
+        end
+
+        it 'does not denormalize attributes' do
+          build.expects(:denormalize).never
+          build.start(data)
+        end
+
+        it 'does not notify observers' do
+          Travis::Event.expects(:dispatch).never
+          build.start(data)
+        end
+      end
     end
 
     describe 'finishing the build' do
@@ -58,7 +74,7 @@ describe Build::States do
 
       describe 'when the matrix is finished' do
         before(:each) do
-          build.stubs(:matrix_finished? => true, :matrix_state => :passed, :matrix_duration => 30)
+          build.stubs(matrix_finished?: true, matrix_state: :passed, matrix_duration: 30)
         end
 
         it 'sets the state to the matrix state' do

@@ -22,9 +22,9 @@ class Build
 
       states :created, :started, :passed, :failed, :errored, :canceled
 
-      event :start,  :to => :started
-      event :finish, :to => :finished, :if => :matrix_finished?
-      event :all, :after => [:denormalize, :notify]
+      event :start,  to: :started,  unless: :started?
+      event :finish, to: :finished, if: :matrix_finished?
+      event :all, after: [:denormalize, :notify]
     end
 
     def start(data = {})
