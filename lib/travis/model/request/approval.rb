@@ -13,7 +13,7 @@ class Request
         !repository.private? &&
         (!excluded_repository? || included_repository?) &&
         !skipped? &&
-        !github_pages?
+        (github_pages_explicitly_enabled? || !github_pages?)
     end
 
     def approved?
@@ -46,6 +46,13 @@ class Request
 
       def skipped?
         commit.message.to_s =~ /\[ci(?: |:)([\w ]*)\]/i && $1.downcase == 'skip'
+      end
+
+      def github_pages_explicitly_enabled?
+        request.config &&
+          request.config['branches'] &&
+          request.config['branches']['only'] &&
+          request.config['branches']['only'].grep(/gh[-_]pages/i)
       end
 
       def github_pages?
