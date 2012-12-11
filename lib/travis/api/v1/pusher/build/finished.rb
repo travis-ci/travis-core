@@ -4,6 +4,8 @@ module Travis
       module Pusher
         class Build
           class Finished < Build
+            include Helpers::Legacy
+
             def data
               { 'build' => build_data, 'repository' => repository_data }
             end
@@ -12,6 +14,7 @@ module Travis
               {
                 'id' => build.id,
                 'state' => build.state.to_s,
+                'result' => legacy_build_result(build),
                 'finished_at' => format_date(build.finished_at),
                 'duration' => build.duration
               }
@@ -26,7 +29,8 @@ module Travis
                 'last_build_started_at' => format_date(repository.last_build_started_at),
                 'last_build_finished_at' => format_date(repository.last_build_finished_at),
                 'last_build_duration' => repository.last_build_duration,
-                'last_build_state' => repository.last_build_state.to_s
+                'last_build_state' => repository.last_build_state.to_s,
+                'last_build_result' => legacy_repository_last_build_result(repository)
               }
             end
           end

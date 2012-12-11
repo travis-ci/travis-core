@@ -15,6 +15,7 @@ describe Travis::Api::V1::Pusher::Build::Started do
       'number' => 2,
       'config' => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
       'state' => 'started',
+      'result' => nil,
       'started_at' => json_format_time(Time.now.utc - 1.minute),
       'finished_at' => nil,
       'duration' => nil,
@@ -44,6 +45,7 @@ describe Travis::Api::V1::Pusher::Build::Started do
       'last_build_finished_at' => nil,
       'last_build_duration' => nil,
       'last_build_state' => 'started',
+      'last_build_result' => nil,
       'last_build_language' => 'ruby'
     }
   end

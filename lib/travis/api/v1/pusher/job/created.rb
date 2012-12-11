@@ -4,6 +4,8 @@ module Travis
       module Pusher
         class Job
           class Created < Job
+            include Helpers::Legacy
+
             def data
               {
                 'id' => job.id,
@@ -13,6 +15,7 @@ module Travis
                 'number' => job.number,
                 'queue' => job.queue,
                 'state' => job.state.to_s,
+                'result' => legacy_job_result(job),
                 'log_id' => job.log.id,
                 'allow_failure' => job.allow_failure
               }

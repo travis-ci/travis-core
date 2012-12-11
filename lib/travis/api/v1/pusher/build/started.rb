@@ -6,6 +6,8 @@ module Travis
           class Started < Build
             autoload :Job, 'travis/api/v1/pusher/build/started/job'
 
+            include Helpers::Legacy
+
             def data
               { 'build' => build_data, 'repository' => repository_data }
             end
@@ -18,6 +20,7 @@ module Travis
                 'number' => build.number,
                 'config' => build.obfuscated_config.stringify_keys,
                 'state' => build.state.to_s,
+                'result' => legacy_build_result(build),
                 'started_at' => format_date(build.started_at),
                 'finished_at' => format_date(build.finished_at),
                 'duration' => nil,
@@ -48,6 +51,7 @@ module Travis
                 'last_build_finished_at' => format_date(repository.last_build_finished_at),
                 'last_build_duration' => repository.last_build_duration,
                 'last_build_state' => repository.last_build_state.try(:to_s),
+                'last_build_result' => legacy_repository_last_build_result(repository),
                 'last_build_language' => repository.last_build_language
               }
             end

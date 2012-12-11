@@ -3,8 +3,13 @@ module Travis
     module V1
       module Helpers
         module Legacy
+          RESULTS = {
+            passed: 0,
+            failed: 1
+          }
+
           def legacy_repository_last_build_result(repository)
-            repository.last_build_state.try(:to_sym) == :passed ? 0 : 1
+            RESULTS[repository.last_build_state.try(:to_sym)]
           end
 
           def legacy_build_state(build)
@@ -12,7 +17,7 @@ module Travis
           end
 
           def legacy_build_result(build)
-            build.state.try(:to_sym) == :passed ? 0 : 1
+            RESULTS[build.state.try(:to_sym)]
           end
 
           def legacy_job_state(job)
@@ -20,7 +25,7 @@ module Travis
           end
 
           def legacy_job_result(job)
-            job.state.try(:to_sym) == :passed ? 0 : 1
+            RESULTS[job.state.try(:to_sym)]
           end
         end
       end

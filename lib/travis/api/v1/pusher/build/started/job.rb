@@ -5,7 +5,7 @@ module Travis
         class Build
           class Started < Build
             class Job
-              include Formats
+              include Formats, Helpers::Legacy
 
               attr_reader :job, :commit
 
@@ -21,6 +21,7 @@ module Travis
                   'parent_id' => job.source_id,
                   'number' => job.number,
                   'state' => job.state.to_s,
+                  'result' => legacy_job_result(job),
                   'config' => job.obfuscated_config,
                   'commit' => commit.commit,
                   'branch' => commit.branch,
