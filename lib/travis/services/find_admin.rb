@@ -55,6 +55,7 @@ module Travis
           end
         end
 
+        # TODO should this not be memoized?
         def repository_data
           data = GH["repos/#{repository.slug}"]
           info "[github-admin] could not retrieve data for #{repository.slug}" unless data

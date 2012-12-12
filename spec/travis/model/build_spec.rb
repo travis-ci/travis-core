@@ -138,15 +138,15 @@ describe Build do
       end
     end
 
-    it 'sets previous_build_result to nil if no last build exists on the same branch' do
+    it 'sets previous_state to nil if no last build exists on the same branch' do
       build = Factory(:build, commit: Factory(:commit, branch: 'master'))
-      build.previous_state.should == nil
+      build.reload.previous_state.should == nil
     end
 
-    it 'sets previous_build_result to the result of the last build on the same branch if exists' do
+    it 'sets previous_state to the result of the last build on the same branch if exists' do
       build = Factory(:build, state: :canceled, commit: Factory(:commit, branch: 'master'))
       build = Factory(:build, commit: Factory(:commit, branch: 'master'))
-      build.previous_state.should == :canceled
+      build.reload.previous_state.should == 'canceled'
     end
 
     describe 'config' do
