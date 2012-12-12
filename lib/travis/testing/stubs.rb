@@ -10,19 +10,20 @@ module Travis
 
         def included(base)
           base.send(:instance_eval) do
-            let(:repository) { stub_repo }
-            let(:repo)       { stub_repo }
-            let(:request)    { stub_request }
-            let(:commit)     { stub_commit }
-            let(:build)      { stub_build }
-            let(:test)       { stub_test }
-            let(:log)        { stub_log }
-            let(:event)      { stub_event }
-            let(:worker)     { stub_worker }
-            let(:user)       { stub_user }
-            let(:org)        { stub_org }
-            let(:url)        { stub_url }
-            let(:broadcast)  { stub_broadcast }
+            let(:repository)    { stub_repo         }
+            let(:repo)          { stub_repo         }
+            let(:request)       { stub_request      }
+            let(:commit)        { stub_commit       }
+            let(:build)         { stub_build        }
+            let(:test)          { stub_test         }
+            let(:log)           { stub_log          }
+            let(:event)         { stub_event        }
+            let(:worker)        { stub_worker       }
+            let(:user)          { stub_user         }
+            let(:org)           { stub_org          }
+            let(:url)           { stub_url          }
+            let(:broadcast)     { stub_broadcast    }
+            let(:travis_token)  { stub_travis_token }
           end
         end
       end
@@ -232,6 +233,14 @@ module Travis
         Stubs.stub 'broadcast', attributes.reverse_merge(
           id: 1,
           message: 'message'
+        )
+      end
+
+      def stub_travis_token(attributes = {})
+        Stubs.stub 'travis_token', attributes.reverse_merge(
+          id: 1,
+          user: stub_user,
+          token: 'super secret'
         )
       end
     end
