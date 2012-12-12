@@ -14,7 +14,7 @@ module Travis
   module Addons
     module Irc
       class Client
-        attr_accessor :channel, :socket, :ping_thread
+        attr_accessor :channel, :socket, :ping_thread, :numeric_received
 
         def self.wrap_ssl(socket)
           ssl_context = OpenSSL::SSL::SSLContext.new
@@ -31,11 +31,19 @@ module Travis
           @socket = TCPSocket.open(server, options[:port] || 6667)
           @socket = self.class.wrap_ssl(@socket) if options[:ssl]
           @ping_thread = start_ping_thread
+          @numeric_received = false
 
           socket.puts "PASS #{options[:password]}" if options[:password]
           socket.puts "NICK #{nick}"
           socket.puts "PRIVMSG NickServ :IDENTIFY #{options[:nickserv_password]}" if options[:nickserv_password]
           socket.puts "USER #{nick} #{nick} #{nick} :#{nick}"
+        end
+
+        def wait_for_numeric
+          # Loop until we get a numeric (second word is a 3-digit number).
+          loop do
+            break if @numeric_received
+          end
         end
 
         def join(channel, key = nil)
@@ -67,7 +75,14 @@ module Travis
           def start_ping_thread
             Thread.new(socket) do |s|
               loop do
-                s.puts "PONG #{$1}" if s.gets =~ /^PING (.*)/
+                case s.gets
+                when /^PING (.*)/
+                  # PING received
+                  s.puts "PONG #{$1}"
+                when /^:\S+ \d{3} .*$/
+                  # Numeric received (second word is a 3-digit number).
+                  @numeric_received = true
+                end
                 sleep 0.2
               end
             end

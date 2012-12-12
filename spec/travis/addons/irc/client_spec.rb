@@ -9,6 +9,10 @@ describe Travis::Addons::Irc::Client do
   let(:password) { 'secret' }
   let(:ping)     { 'testping' }
 
+  before do
+    subject.stubs(:wait_for_numeric).returns(nil)
+  end
+
   describe 'on initialization' do
     describe 'with no port specified' do
       it 'should open a socket on the server for port 6667' do
@@ -89,6 +93,40 @@ describe Travis::Addons::Irc::Client do
         end
       end
 
+    end
+
+    describe 'should define @numeric_received' do
+      before do
+        @socket = mock
+        TCPSocket.stubs(:open).returns(@socket)
+      end
+
+      def expect_standard_sequence
+        @socket.expects(:puts).with("NICK #{nick}")
+        @socket.expects(:puts).with("USER #{nick} #{nick} #{nick} :#{nick}")
+      end
+
+      def expect_numeric_sequence
+        expect_standard_sequence
+        @socket.stubs(:gets).returns(":fake-server 001 fake-nick :fake-message").then.returns("")
+      end
+
+      describe 'to a non-true value' do
+        it 'before receiving a numeric' do
+          expect_standard_sequence
+          client = subject.new(server, nick)
+          client.numeric_received.should_not be_true
+        end
+      end
+
+      describe 'to true' do
+        it 'after receiving a numeric' do
+          expect_numeric_sequence
+          client = subject.new(server, nick)
+          sleep 0.5
+          client.numeric_received.should be_true
+        end
+      end
     end
   end
 

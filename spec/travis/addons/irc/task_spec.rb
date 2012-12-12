@@ -11,6 +11,7 @@ describe Travis::Addons::Irc::Task do
 
   before do
     Travis.config.notifications = [:irc]
+    Travis::Addons::Irc::Client.any_instance.stubs(:wait_for_numeric)
   end
 
   def expect_irc(host, port, channel, messages)
