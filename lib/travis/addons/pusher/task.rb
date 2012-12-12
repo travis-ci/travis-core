@@ -55,7 +55,7 @@ module Travis
               # split payload into 9kB chunks, the limit is 10 for entire request
               # body, 1kB should be enough for headers
               log = payload[:_log]
-              log.scan(/.{1,#{chunk_size}}/m).map { |part| payload.dup.merge(:_log => part) }
+              Chunkifier.new(log, chunk_size).map { |part| payload.dup.merge(:_log => part) }
             else
               [payload]
             end

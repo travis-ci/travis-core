@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'spec_helper'
 
 describe Travis::Addons::Pusher::Task do
@@ -20,10 +21,10 @@ describe Travis::Addons::Pusher::Task do
 
   it 'splits log messages into chunks, to not exceed the limit' do
     subject.stubs(:chunk_size => 3)
-    run('job:test:log', test, params: { _log: "01\n2345" })
+    run('job:test:log', test, params: { _log: "01\ną345" })
 
     channel.messages.length.should == 3
-    channel.messages.map { |message| message[1][:_log] }.join('').should == "01\n2345"
+    channel.messages.map { |message| message[1][:_log] }.join('').should == "01\ną345"
   end
 
   describe 'run' do
