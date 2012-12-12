@@ -52,7 +52,7 @@ class Request
         request.config &&
           request.config['branches'] &&
           request.config['branches']['only'] &&
-          request.config['branches']['only'].grep(/gh[-_]pages/i)
+          Array(request.config['branches']['only']).grep(/gh[-_]pages/i)
       end
 
       def github_pages?

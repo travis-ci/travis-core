@@ -35,9 +35,15 @@ describe Request::Approval do
       approval.should_not be_accepted
     end
 
-    it 'accepts a request that belongs to the github_pages branch and is explicitly set to build that branch' do
+    it 'accepts a request that belongs to the github_pages branch and is explicitly set to build that branch (String)' do
       request.commit.stubs(:ref).returns('gh_pages')
-      request.stubs(:config).returns({'branches' => {'only' => ['gh_pages']}})
+      request.stubs(:config).returns('branches' => { 'only' => 'gh_pages' })
+      approval.should be_accepted
+    end
+
+    it 'accepts a request that belongs to the github_pages branch and is explicitly set to build that branch (Array)' do
+      request.commit.stubs(:ref).returns('gh_pages')
+      request.stubs(:config).returns('branches' => { 'only' => ['gh_pages'] })
       approval.should be_accepted
     end
   end
