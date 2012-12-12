@@ -139,7 +139,7 @@ class Build < ActiveRecord::Base
   # set the build number and expand the matrix
   before_create do
     self.number = repository.builds.next_number
-    self.previous_state ||= last_state_on_branch
+    self.previous_state = last_state_on_branch
     self.event_type = request.event_type
     expand_matrix
   end
