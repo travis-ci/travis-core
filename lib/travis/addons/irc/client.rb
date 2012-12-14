@@ -31,7 +31,6 @@ module Travis
           @socket = TCPSocket.open(server, options[:port] || 6667)
           @socket = self.class.wrap_ssl(@socket) if options[:ssl]
           @ping_thread = start_ping_thread
-          @numeric_received = false
 
           socket.puts "PASS #{options[:password]}" if options[:password]
           socket.puts "NICK #{nick}"
