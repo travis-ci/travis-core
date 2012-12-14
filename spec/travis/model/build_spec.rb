@@ -131,6 +131,27 @@ describe Build do
     end
   end
 
+  describe 'creation' do
+    describe 'previous_state' do
+      it 'is set to the last finished build state on the same branch' do
+        Factory(:build, state: 'failed')
+        Factory(:build).reload.previous_state.should == 'failed'
+      end
+
+      it 'is set to the last finished build state on the same branch (disregards non-finished builds)' do
+        Factory(:build, state: 'failed')
+        Factory(:build, state: 'started')
+        Factory(:build).reload.previous_state.should == 'failed'
+      end
+
+      it 'is set to the last finished build state on the same branch (disregards other branches)' do
+        Factory(:build, state: 'failed')
+        Factory(:build, state: 'passed', commit: Factory(:commit, branch: 'something'))
+        Factory(:build).reload.previous_state.should == 'failed'
+      end
+    end
+  end
+
   describe 'instance methods' do
     it 'sets its number to the next build number on creation' do
       1.upto(3) do |number|
