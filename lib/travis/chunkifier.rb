@@ -1,9 +1,19 @@
 require 'coder/cleaner/simple/encodings'
 
 module Travis
-  class Chunkifier < Struct.new(:content, :chunk_size)
+  class Chunkifier < Struct.new(:content, :chunk_size, :options)
     include Enumerable
     include Coder::Cleaner::Simple::Encodings::UTF_8
+
+    def initialize(*)
+      super
+
+      self.options ||= {}
+    end
+
+    def json?
+      options[:json]
+    end
 
     def each(&block)
       parts.each(&block)
@@ -14,47 +24,32 @@ module Travis
     end
 
     def split
+      parts = content.scan(/.{1,#{chunk_split_size}}/m)
       chunks = []
-      carry  = []
-      content.bytes.each_slice(chunk_size) do |bytes|
-        if carry.length > 0
-          bytes.unshift *carry
-          carry = []
-        end
+      current_chunk = ''
 
-        if bytes.length > chunk_size
-          carry = bytes.pop bytes.length - chunk_size
+      parts.each do |part|
+        if too_big?(current_chunk + part)
+          chunks << current_chunk
+          current_chunk = part
+        else
+          current_chunk << part
         end
-
-        unless proper_end?(bytes)
-          carry.unshift *last_char(bytes)
-        end
-
-        chunks << to_utf8_string(bytes)
       end
 
-      chunks << to_utf8_string(carry) if carry.length > 0
+      chunks << current_chunk if current_chunk.length > 0
 
       chunks
     end
 
-    def to_utf8_string bytes
-      bytes.pack('C*').force_encoding('utf-8')
+    def chunk_split_size
+      size = chunk_size / 10
+      size == 0 ? 1 : size
     end
 
-    def proper_end?(bytes)
-      single_byte?(bytes.last, nil) || begin
-        i = bytes.length - 1
-        i-=1 while !multibyte_start?(bytes[i], nil)
-        first = bytes[i]
-        multibyte_size(first, nil) == bytes.length - i
-      end
-    end
-
-    def last_char(bytes)
-      last = []
-      last.unshift bytes.pop while bytes.length > 0 && !single_byte?(bytes.last, nil)
-      last
+    def too_big?(current_chunk)
+      current_chunk = current_chunk.to_json if json?
+      current_chunk.bytesize > chunk_size
     end
   end
 end

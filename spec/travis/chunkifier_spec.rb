@@ -3,41 +3,34 @@ require 'spec_helper'
 
 module Travis
   describe Chunkifier do
-    let(:chunk_size) { 3 }
-    let(:subject) { Chunkifier.new(content, chunk_size) }
+    let(:chunk_size) { 15 }
+    let(:chunk_split_size) { 5 }
+    let(:subject) { Chunkifier.new(content, chunk_size, :json => true) }
 
     context 'with newlines' do
-      let(:content) { "01\n2345" }
+      let(:content) { "01\n234501\n234501\n2345" }
 
-      its(:parts) { should == ["01\n", "234", "5"] }
+      its(:parts) { should == ["01\n234501\n2", "34501\n2345"] }
     end
 
-    context 'with multibyte characters in the middle of the chunk' do
-      let(:content) { "ab𤭢" }
-      let(:chunk_size) { 4 }
+    context 'with UTF-8 chars' do
+      let(:chunk_split_size) { 1 }
+      let(:content) { "𤭢abcą" }
 
-      its(:parts) { should == ["ab", "𤭢"] }
+      its(:parts) { should == ["𤭢abc", "ą"] }
+
+      it 'should keep parts under chunk_size taking into account conversion to json and bytes' do
+        subject.parts.map { |p| p.to_json.bytesize }.should == [11, 8]
+      end
     end
 
-    context 'with a start byte as a first character of a chunk' do
-      let(:content) { "abcd𤭢" }
-      let(:chunk_size) { 4 }
+    context 'with bigger chunk_size' do
+      let(:chunk_size) { 100 }
+      let(:content) { "01\nąąąą" * 1000 }
 
-      its(:parts) { should == ["abcd", "𤭢"] }
-    end
-
-    context 'with a lot of carrying' do
-      let(:content) { "ab𤭢𤭢𤭢𤭢" }
-      let(:chunk_size) { 4 }
-
-      its(:parts) { should == ["ab", "𤭢", "𤭢", "𤭢", "𤭢" ] }
-    end
-
-    context 'with mixed size chars' do
-      let(:content) { "ab𤭢ąćó" }
-      let(:chunk_size) { 4 }
-
-      its(:parts) { should == ["ab", "𤭢", "ąć", "ó" ] }
+      it 'should keep parts under chunk_size taking into account conversion to json and bytes' do
+        subject.parts.all? { |p| p.to_json.bytesize <= 100 }.should be_true
+      end
     end
   end
 end
