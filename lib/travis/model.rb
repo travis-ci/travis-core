@@ -2,6 +2,8 @@
 #   https://github.com/travis-ci/travis-support/blob/master/lib/core_ext/module/load_constants.rb
 # which is used in
 #   https://github.com/travis-ci/travis-hub/blob/master/lib/travis/hub/cli.rb#L15
+require 'core_ext/active_record/base'
+
 module Travis
   module Model
     autoload :Artifact,    'travis/model/artifact'
