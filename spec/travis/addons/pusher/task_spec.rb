@@ -19,6 +19,16 @@ describe Travis::Addons::Pusher::Task do
     subject.new(payload, event: event, version: version).run
   end
 
+  it 'logs Pusher errors and reraises' do
+    channel.expects(:trigger).raises(Pusher::Error.new('message'))
+    payload = Travis::Api.data(test, for: 'pusher', type: 'job/started', version: 'v1').deep_symbolize_keys
+    Travis.logger.expects(:error).with("[addons:pusher] Could not send event due to Pusher::Error: message, event=job:started, payload: #{payload.inspect}")
+
+    expect {
+      run('job:test:started', test)
+    }.to raise_error(Pusher::Error)
+  end
+
   it 'splits log messages into chunks, to not exceed the limit in bytes' do
     subject.stubs(:chunk_size => 5)
     run('job:test:log', test, params: { _log: "0000\ną" })
