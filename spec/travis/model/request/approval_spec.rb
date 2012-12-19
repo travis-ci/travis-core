@@ -5,6 +5,19 @@ describe Request::Approval do
 
   let(:approval) { Request::Approval.new(request) }
 
+  describe 'branch_accepted?' do
+    it 'does not accept a request that belongs to the github_pages branch' do
+      request.commit.stubs(:ref).returns('gh_pages')
+      approval.branch_accepted?.should be_false
+    end
+
+    it 'accepts a request that belongs to the gh-pages branch if it\'s specified in branches:only' do
+      request.commit.stubs(:ref).returns('gh_pages')
+      request.config['branches'] = { 'only' => ['gh-pages'] }
+      approval.branch_accepted?.should be_true
+    end
+  end
+
   describe 'accepted?' do
     it 'accepts a request that has a commit, belongs to a public repository, is not skipped and does not belong to the github_pages branch and it is not a rails fork' do
       approval.should be_accepted
@@ -27,11 +40,6 @@ describe Request::Approval do
 
     it 'does not accept a request that is skipped (using the commit message)' do
       request.commit.stubs(:message).returns('update README [ci:skip]')
-      approval.should_not be_accepted
-    end
-
-    it 'does not accept a request that belongs to the github_pages branch' do
-      request.commit.stubs(:ref).returns('gh_pages')
       approval.should_not be_accepted
     end
 
