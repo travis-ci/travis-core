@@ -46,7 +46,13 @@ module Travis
               # TODO: the second argument in meter can be removed when we're sure that apps
               #       using this have newest travis-support version
               Travis::Instrumentation.meter('travis.addons.pusher.task.messages', {})
-              Travis.pusher[channel].trigger(event, part)
+
+              begin
+                Travis.pusher[channel].trigger(event, part)
+              rescue ::Pusher::Error => e
+                Travis.logger.error("[addons:pusher] Could not send event due to Pusher::Error: #{e.message}, event=#{event}, payload: #{part.inspect}")
+                raise
+              end
             end
           end
 
