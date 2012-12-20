@@ -7,6 +7,13 @@ describe Artifact::Log do
     let(:job)   { Factory.create(:test, :log => Factory.create(:log, :content => '')) }
     let(:lines) { ["line 1\n", "line 2\n", 'line 3'] }
 
+    describe '#to_json' do
+      it 'returns JSON representation of the record' do
+        json = JSON.parse(job.log.to_json)
+        json['log']['id'].should == job.log.id
+      end
+    end
+
     describe 'append' do
       it 'appends streamed build log chunks' do
         0.upto(2) { |ix| Artifact::Log.append(job.id, lines[ix]) }

@@ -12,8 +12,11 @@ class Request
       commit.present? &&
         !repository.private? &&
         (!excluded_repository? || included_repository?) &&
-        !skipped? &&
-        (github_pages_explicitly_enabled? || !github_pages?)
+        !skipped?
+    end
+
+    def branch_accepted?
+      github_pages_explicitly_enabled? || !github_pages?
     end
 
     def approved?
@@ -35,7 +38,7 @@ class Request
         'github pages branch'
       elsif request.config.blank?
         'missing config'
-      elsif !branch_approved?
+      elsif !branch_approved? || !branch_accepted?
         'branch not included or excluded'
       elsif repository.private?
         'private repository'

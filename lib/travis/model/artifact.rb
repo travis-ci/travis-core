@@ -13,4 +13,9 @@ class Artifact < ActiveRecord::Base
   autoload :Log, 'travis/model/artifact/log'
 
   belongs_to :job
+
+  def to_json
+    keys = %w/id content created_at job_id updated_at/
+    { 'log' => attributes.slice(*keys) }.to_json
+  end
 end

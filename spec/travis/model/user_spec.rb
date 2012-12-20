@@ -21,6 +21,13 @@ describe User do
     end
   end
 
+  describe '#to_json' do
+    it 'returns JSON representation of user' do
+      json = JSON.parse(user.to_json)
+      json['user']['login'].should == 'svenfuchs'
+    end
+  end
+
   describe 'permission?' do
     let!(:repo) { Factory(:org, :login => 'travis') }
 

@@ -21,7 +21,13 @@ class Request
         Travis.logger.warn("[request:configure] Request not configured: config not blank, config=#{config.inspect} commit=#{commit.try(:commit).inspect}")
       else
         self.config = fetch_config
-        Travis.logger.info("[request:configure] Request successfully configured commit=#{commit.commit.inspect}")
+
+        if branch_accepted?
+          Travis.logger.info("[request:configure] Request successfully configured commit=#{commit.commit.inspect}")
+        else
+          self.config = nil
+          Travis.logger.warn("[request:configure] Request not accepted: event_type=#{event_type.inspect} commit=#{commit.try(:commit).inspect} message=#{approval.message.inspect}")
+        end
       end
       save!
     end
@@ -42,7 +48,7 @@ class Request
 
     protected
 
-      delegate :accepted?, :approved?, :to => :approval
+      delegate :accepted?, :approved?, :branch_accepted?, :to => :approval
 
       def approval
         @approval ||= Approval.new(self)
