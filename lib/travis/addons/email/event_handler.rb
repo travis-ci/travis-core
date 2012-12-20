@@ -9,7 +9,7 @@ module Travis
         EVENTS = 'build:finished'
 
         def handle?
-          config.enabled?(:email) && config.send_on_finished_for?(:email) && recipients.present?
+          !pull_request? && config.enabled?(:email) && config.send_on_finished_for?(:email) && recipients.present?
         end
 
         def handle
@@ -26,6 +26,10 @@ module Travis
         end
 
         private
+
+          def pull_request?
+            build['pull_request']
+          end
 
           def broadcasts
             Broadcast.by_repo(object.repository).map do |broadcast|

@@ -46,9 +46,9 @@ describe Travis::Addons::Email::EventHandler do
       notify
     end
 
-    it 'triggers a task if the build is a pul request' do
+    it 'does not trigger a task if the build is a pull request' do
       build.stubs(:pull_request?).returns(true)
-      task.expects(:run).with(:email, payload, params)
+      task.expects(:run).never
       notify
     end
 
