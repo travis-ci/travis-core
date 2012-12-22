@@ -37,6 +37,9 @@ module Travis
       private
 
         def config
+          # TODO: we should decrypt things in tasks, not in event handler,
+          #       secure_key should be passed to the task and then it should
+          #       decrypt the values, which task needs
           @config ||= Config.new(payload, secure_key)
         end
 
