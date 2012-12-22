@@ -38,6 +38,15 @@ describe Travis::Addons::Campfire::EventHandler do
       subject.notify(event, build)
     end
 
+    it 'passes ssl key from repository to config' do
+      config = stub('config', :notification_values => {})
+
+      Travis::Event::Config.expects(:new).with(payload, build.repository.key).
+        returns(config)
+
+      notify
+    end
+
     it 'triggers a task if the build is a push request' do
       build.stubs(:pull_request?).returns(false)
       task.expects(:run).with(:campfire, payload, targets: ['room'])

@@ -7,13 +7,13 @@ module Travis
         failure: { email: :always, webhooks: :always, campfire: :always, hipchat: :always, irc: :always, flowdock: :always }
       }
 
-      attr_reader :payload, :build, :repository, :config
+      attr_reader :payload, :build, :secure_key, :config
 
-      def initialize(payload)
+      def initialize(payload, secure_key = nil)
         @payload = payload
         @build = payload['build']
         @config = build['config']
-        @repository = payload['repository']
+        @secure_key = secure_key
       end
 
       def enabled?(key)
@@ -94,7 +94,7 @@ module Travis
       end
 
       def notifications
-        Travis::Event::SecureConfig.decrypt(config.fetch(:notifications, {}), repository['key'])
+        Travis::Event::SecureConfig.decrypt(config.fetch(:notifications, {}), secure_key)
       end
 
       def normalize_array(values)

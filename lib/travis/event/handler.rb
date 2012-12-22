@@ -37,7 +37,7 @@ module Travis
       private
 
         def config
-          @config ||= Config.new(payload)
+          @config ||= Config.new(payload, secure_key)
         end
 
         def repository
@@ -58,6 +58,10 @@ module Travis
 
         def commit
           @commit ||= payload['commit']
+        end
+
+        def secure_key
+          object.respond_to?(:repository) ? object.repository.key : nil
         end
 
         def pull_request?
