@@ -7,7 +7,10 @@ class Artifact::Part < ActiveRecord::Base
   )
 
   AGGREGATE_UPDATE_SQL = %(
-    UPDATE artifacts SET aggregated_at = ?, content = (#{AGGREGATE_SELECT_SQL}) WHERE artifacts.id = ?
+    UPDATE artifacts
+       SET aggregated_at = ?,
+           content = (COALESCE(content, '') || (#{AGGREGATE_SELECT_SQL}))
+     WHERE artifacts.id = ?
   )
 
   self.table_name = 'artifact_parts'

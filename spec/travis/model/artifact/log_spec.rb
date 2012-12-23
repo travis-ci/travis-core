@@ -81,6 +81,12 @@ describe Artifact::Log do
           log.content.should == lines.join
         end
 
+        it 'while not aggregated it appends to an existing log' do
+          job.log.update_attributes(content: 'foo')
+          Artifact::Log.append(job.id, 'bar')
+          log.content.should == 'foobar'
+        end
+
         it 'if aggregated returns the aggregated parts' do
           log.update_attributes!(:content => 'content', :aggregated_at => Time.now)
           log.content.should == 'content'
@@ -102,6 +108,12 @@ describe Artifact::Log do
         it 'aggregates the content parts' do
           aggregate!
           log.content.should == lines.join
+        end
+
+        it 'appends to an existing log' do
+          log.update_attributes(content: 'foo')
+          aggregate!
+          log.content.should == 'foo' + lines.join
         end
 
         it 'sets aggregated_at' do

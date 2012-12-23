@@ -27,7 +27,7 @@ class Artifact::Log < Artifact
 
     def aggregated_content(id)
       meter('active_record.log_aggregated_read') do
-        connection.select_value(sanitize_sql([Artifact::Part::AGGREGATE_SELECT_SQL, id]))
+        connection.select_value(sanitize_sql([Artifact::Part::AGGREGATE_SELECT_SQL, id])) || ''
       end
     end
 
@@ -54,7 +54,9 @@ class Artifact::Log < Artifact
 
   def content
     if Travis::Features.feature_active?(:log_aggregation)
-      aggregated? ? read_attribute(:content) : self.class.aggregated_content(id)
+      content = read_attribute(:content) || ''
+      content = [content, self.class.aggregated_content(id)].join unless aggregated?
+      content
     else
       read_attribute(:content)
     end
