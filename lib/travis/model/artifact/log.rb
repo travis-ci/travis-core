@@ -6,27 +6,31 @@ class Artifact::Log < Artifact
 
   class << self
     def append(job_id, chars, number = nil, final = false)
-      meter('active_record.log_updates')do
-        if Travis::Features.feature_active?(:log_aggregation)
-          id = Artifact::Log.where(job_id: job_id).select(:id).first.id
+      if Travis::Features.feature_active?(:log_aggregation)
+        id = Artifact::Log.where(job_id: job_id).select(:id).first.id
+        meter('logs.update') do
           Artifact::Part.create!(artifact_id: id, content: filter(chars), number: number, final: final || final?(chars))
-        else
+        end
+      else
+        meter('logs.update') do
           update_all(["content = COALESCE(content, '') || ?", filter(chars)], ["job_id = ?", job_id])
         end
       end
     end
 
     def aggregate(id)
-      meter('active_record.log_vacuum') do
-        ActiveRecord::Base.transaction do
+      ActiveRecord::Base.transaction do
+        meter('logs.aggregate') do
           Artifact::Part.aggregate(id)
+        end
+        meter('logs.vacuum') do
           Artifact::Part.delete_all(artifact_id: id)
         end
       end
     end
 
     def aggregated_content(id)
-      meter('active_record.log_aggregated_read') do
+      meter('logs.read_aggregated') do
         connection.select_value(sanitize_sql([Artifact::Part::AGGREGATE_SELECT_SQL, id])) || ''
       end
     end
