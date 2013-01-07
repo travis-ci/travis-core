@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe Travis::Features do
+  before do
+    Travis.instance_variable_set(:@config, nil)
+  end
+
   describe "connecting" do
     before do
       Travis::Features.redis = nil
