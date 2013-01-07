@@ -145,4 +145,27 @@ describe User do
       user.service_hooks.should_not include(other_repo)
     end
   end
+
+  describe 'track_github_scopes' do
+    before { user.save }
+
+    it "does not resolve github scopes if the token didn't change" do
+      Travis::Github.expects(:scopes_for).never
+      user.save
+    end
+
+    it "it resolves github scopes if the token did change" do
+      Travis::Github.expects(:scopes_for).with(user).returns(['foo', 'bar'])
+      user.github_oauth_token = 'new_token'
+      user.save
+      user.github_scopes.should be == ['foo', 'bar']
+    end
+
+    it "it resolves github scopes if they haven't been resolved already" do
+      Travis::Github.expects(:scopes_for).with(user).returns(['foo', 'bar'])
+      user.github_scopes = nil
+      user.save
+      user.github_scopes.should be == ['foo', 'bar']
+    end
+  end
 end

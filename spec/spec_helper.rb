@@ -37,6 +37,9 @@ RSpec.configure do |c|
     Travis::Event.instance_variable_set(:@queues, nil)
     Travis::Event.instance_variable_set(:@subscriptions, nil)
     Travis::Event.stubs(:subscribers).returns []
+    Travis.config.oauth2 ||= {}
+    Travis.config.oauth2.scopes = 'public_repo,user'
+    Travis::Github.stubs(:scopes_for).returns(['public_repo', 'user'])
     GH.reset
   end
 end
