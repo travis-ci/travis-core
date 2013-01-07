@@ -147,25 +147,41 @@ describe User do
   end
 
   describe 'track_github_scopes' do
-    before { user.save }
+    before { user.save! }
 
     it "does not resolve github scopes if the token didn't change" do
       Travis::Github.expects(:scopes_for).never
-      user.save
+      user.save!
     end
 
     it "it resolves github scopes if the token did change" do
       Travis::Github.expects(:scopes_for).with(user).returns(['foo', 'bar'])
       user.github_oauth_token = 'new_token'
-      user.save
+      user.save!
       user.github_scopes.should be == ['foo', 'bar']
     end
 
     it "it resolves github scopes if they haven't been resolved already" do
       Travis::Github.expects(:scopes_for).with(user).returns(['foo', 'bar'])
       user.github_scopes = nil
-      user.save
+      user.save!
       user.github_scopes.should be == ['foo', 'bar']
+    end
+  end
+
+  describe 'correct_scopes?' do
+    it "accepts correct scopes" do
+      user.should be_correct_scopes
+    end
+
+    it "complains about missing scopes" do
+      user.github_scopes.pop
+      user.should_not be_correct_scopes
+    end
+
+    it "accepts additional scopes" do
+      user.github_scopes << "foo"
+      user.should be_correct_scopes
     end
   end
 end

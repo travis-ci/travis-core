@@ -95,6 +95,11 @@ class User < ActiveRecord::Base
     read_attribute(:github_scopes) || []
   end
 
+  def correct_scopes?
+    missing = Oauth.wanted_scopes - github_scopes
+    missing.empty?
+  end
+
   protected
 
     def track_github_scopes

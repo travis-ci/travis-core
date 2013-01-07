@@ -13,7 +13,7 @@ module Travis
         token  = token.github_oauth_token if token.respond_to? :github_oauth_token
         scopes = GH.with(token: token.to_s) { GH.head('user') }.headers['x-oauth-scopes'] if token.present?
         scopes &&= scopes.gsub(/\s/,'').split(',')
-        Array(scopes)
+        Array(scopes).sort
       rescue GH::Error
         []
       end
