@@ -2,7 +2,7 @@ class User
   module Oauth
     class << self
       def wanted_scopes
-        @wanted_scopes ||= Travis.config.oauth2.scopes.split(',').sort
+        @wanted_scopes ||= Travis.config.oauth2.scope.split(',').sort
       end
 
       def find_or_create_by(payload)
