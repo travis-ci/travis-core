@@ -29,7 +29,8 @@ module Travis
                 'gravatar_id' => user.gravatar_id,
                 'locale' => user.locale,
                 'is_syncing' => user.syncing?,
-                'synced_at' => format_date(user.synced_at)
+                'synced_at' => format_date(user.synced_at),
+                'correct_scopes' => user.correct_scopes?
               }
             end
         end

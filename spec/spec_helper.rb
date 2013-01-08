@@ -33,10 +33,12 @@ RSpec.configure do |c|
   c.include Travis::Support::Testing::Webmock
 
   c.before :each do
-    Travis.instance_variable_set(:@config, nil)
     Travis::Event.instance_variable_set(:@queues, nil)
     Travis::Event.instance_variable_set(:@subscriptions, nil)
     Travis::Event.stubs(:subscribers).returns []
+    Travis.config.oauth2 ||= {}
+    Travis.config.oauth2.scope = 'public_repo,user'
+    Travis::Github.stubs(:scopes_for).returns(['public_repo', 'user'])
     GH.reset
   end
 end

@@ -14,7 +14,8 @@ describe Travis::Api::V2::Http::User do
       'gravatar_id' => '402602a60e500e85f2f5dc1ff3648ecb',
       'locale' => 'de',
       'is_syncing' => false,
-      'synced_at' => json_format_time(Time.now.utc - 1.hour)
+      'synced_at' => json_format_time(Time.now.utc - 1.hour),
+      'correct_scopes' => true
     }
   end
 end

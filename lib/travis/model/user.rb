@@ -15,6 +15,9 @@ class User < ActiveRecord::Base
   before_create :set_as_recent
   after_create :create_a_token
 
+  serialize :github_scopes
+  before_save :track_github_scopes
+
   class << self
     def with_permissions(permissions)
       where(:permissions => permissions).includes(:permissions)
@@ -88,7 +91,20 @@ class User < ActiveRecord::Base
     gravatar_id.presence || (email? && Digest::MD5.hexdigest(email)) || '0' * 32
   end
 
+  def github_scopes
+    read_attribute(:github_scopes) || []
+  end
+
+  def correct_scopes?
+    missing = Oauth.wanted_scopes - github_scopes
+    missing.empty?
+  end
+
   protected
+
+    def track_github_scopes
+      self.github_scopes = Travis::Github.scopes_for(self) if github_oauth_token_changed? or github_scopes.blank?
+    end
 
     def set_as_recent
       @recently_signed_up = true
