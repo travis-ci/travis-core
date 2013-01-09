@@ -2,6 +2,7 @@ class User
   module Oauth
     class << self
       def wanted_scopes
+        return [] unless Travis.config.oauth2.try(:scope)
         @wanted_scopes ||= Travis.config.oauth2.scope.split(',').sort
       end
 
