@@ -5,7 +5,7 @@ module Travis
         register :logs_append
 
         def run
-          Artifact::Log.append(job.id, chars)
+          Artifact::Log.append(job.id, chars, number, final)
           job.notify(:log, _log: chars)
         end
 
@@ -17,6 +17,14 @@ module Travis
 
           def chars
             data[:log]
+          end
+
+          def number
+            data[:number]
+          end
+
+          def final
+            !!data[:final]
           end
 
           def data
