@@ -10,7 +10,8 @@ require 'active_record'
 # it easier to prevent from accidentally loading it to memory which happens
 # quite easily with # ActiveRecord.
 class Artifact < ActiveRecord::Base
-  autoload :Log, 'travis/model/artifact/log'
+  autoload :Log,  'travis/model/artifact/log'
+  autoload :Part, 'travis/model/artifact/part'
 
   belongs_to :job
 

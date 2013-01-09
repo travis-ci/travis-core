@@ -1,11 +1,40 @@
+require 'metriks'
+
 class Artifact::Log < Artifact
+  # TODO remove this once we know aggregation works fine and the worker passes a :final flag
+  FINAL = 'Done. Build script exited with:'
+
   class << self
-    # use job_id to avoid loading a log artifact into memory
-    def append(id, chars)
-      meter do
-        update_all(["content = COALESCE(content, '') || ?", filter(chars)], ["job_id = ?", id])
+    def append(job_id, chars, number = nil, final = false)
+      if Travis::Features.feature_active?(:log_aggregation)
+        id = Artifact::Log.where(job_id: job_id).select(:id).first.id
+        meter('logs.update') do
+          Artifact::Part.create!(artifact_id: id, content: filter(chars), number: number, final: final || final?(chars))
+        end
+      else
+        meter('logs.update') do
+          update_all(["content = COALESCE(content, '') || ?", filter(chars)], ["job_id = ?", job_id])
+        end
       end
     end
+
+    def aggregate(id)
+      ActiveRecord::Base.transaction do
+        meter('logs.aggregate') do
+          Artifact::Part.aggregate(id)
+        end
+        meter('logs.vacuum') do
+          Artifact::Part.delete_all(artifact_id: id)
+        end
+      end
+    end
+
+    def aggregated_content(id)
+      meter('logs.read_aggregated') do
+        connection.select_value(sanitize_sql([Artifact::Part::AGGREGATE_SELECT_SQL, id])) || ''
+      end
+    end
+
 
     private
 
@@ -14,15 +43,30 @@ class Artifact::Log < Artifact
         chars.gsub("\0", '')
       end
 
+      def final?(chars)
+        chars.include?(FINAL)
+      end
+
       # TODO should be done by Travis::LogSubscriber::ActiveRecordMetrics but i can't get it
       # to be picked up outside of rails
-      def meter(&block)
-        Metriks.timer('active_record.log_updates').time(&block)
+      def meter(name, &block)
+        Metriks.timer(name).time(&block)
       end
   end
 
-  # def append_message(severity, message)
-  #   self.class.append(id, "\\n\\n#{colorize(severity == :warn ? :yellow : :green, message)}")
-  # end
-end
+  has_many :parts, :class_name => 'Artifact::Part', :foreign_key => :artifact_id
 
+  def content
+    if Travis::Features.feature_active?(:log_aggregation)
+      content = read_attribute(:content) || ''
+      content = [content, self.class.aggregated_content(id)].join unless aggregated?
+      content
+    else
+      read_attribute(:content)
+    end
+  end
+
+  def aggregated?
+    !!aggregated_at
+  end
+end

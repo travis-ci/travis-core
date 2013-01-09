@@ -124,11 +124,9 @@ class Job < ActiveRecord::Base
   end
 
   def requeue
-    self.state = :created
-    self.queued_at = nil
-    self.finished_at = nil
-    save! # TODO remove the update_attributes triggers state events bullshit
-    log.update_attributes!(content: '')
+    update_attributes!(state: :created, queued_at: nil, finished_at: nil)
+    log.update_attributes!(content: '', aggregated_at: nil)
+    log.update_column(:aggregated_at, nil) # TODO why in the world does update_attributes not set aggregated_at to nil?
     notify(:requeue)
   end
 

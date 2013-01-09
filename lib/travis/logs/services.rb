@@ -1,7 +1,8 @@
 module Travis
   module Logs
     module Services
-      autoload :Append, 'travis/logs/services/append'
+      autoload :Append,    'travis/logs/services/append'
+      autoload :Aggregate, 'travis/logs/services/aggregate'
 
       class << self
         def register

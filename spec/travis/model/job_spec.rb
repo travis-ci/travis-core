@@ -63,7 +63,7 @@ describe Job do
       ]
     end
 
-    it 'should tag a job its log contains a particular string' do
+    xit 'should tag a job its log contains a particular string' do
       job.log.update_attributes!(content: 'rake is not part of the bundle')
       job.finish!
       job.reload.tags.should == "rake_not_bundled"
@@ -187,10 +187,17 @@ describe Job do
       job.state.should == :created
     end
 
-    it 'resets related attributes' do
+    it 'resets job attributes' do
       job.requeue
       job.queued_at.should be_nil
       job.finished_at.should be_nil
+    end
+
+    it 'resets log attributes' do
+      job.log.update_attributes!(content: 'foo', aggregated_at: Time.now)
+      job.requeue
+      job.log.aggregated_at.should be_nil
+      job.log.content.should be_blank
     end
 
     it 'triggers a :created event' do
