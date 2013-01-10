@@ -93,6 +93,18 @@ describe Artifact::Log do
         end
       end
 
+      describe '#clear!' do
+        it 'clears log parts' do
+          Artifact::Log.append(job.id, 'bar')
+
+          log.parts.length.should == 1
+
+          expect {
+            log.clear!
+          }.to change { log.parts.length }.by(-1)
+        end
+      end
+
       describe 'aggregate' do
         before :each do
           lines.each_with_index { |line, ix| Artifact::Log.append(job.id, line, ix) }

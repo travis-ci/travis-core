@@ -4,6 +4,8 @@ class Artifact::Log < Artifact
   # TODO remove this once we know aggregation works fine and the worker passes a :final flag
   FINAL = 'Done. Build script exited with:'
 
+  has_many :parts, :class_name => 'Artifact::Part', :foreign_key => 'artifact_id'
+
   class << self
     def append(job_id, chars, number = nil, final = false)
       if Travis::Features.feature_active?(:log_aggregation)
@@ -68,5 +70,11 @@ class Artifact::Log < Artifact
 
   def aggregated?
     !!aggregated_at
+  end
+
+  def clear!
+    update_attributes!(content: '', aggregated_at: nil)
+    update_column(:aggregated_at, nil) # TODO why in the world does update_attributes not set aggregated_at to nil?
+    parts.destroy_all
   end
 end

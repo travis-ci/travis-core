@@ -125,9 +125,12 @@ class Job < ActiveRecord::Base
 
   def requeue
     update_attributes!(state: :created, queued_at: nil, finished_at: nil)
-    log.update_attributes!(content: '', aggregated_at: nil)
-    log.update_column(:aggregated_at, nil) # TODO why in the world does update_attributes not set aggregated_at to nil?
+    clear_logs
     notify(:requeue)
+  end
+
+  def clear_logs
+    log.clear!
   end
 
   private
