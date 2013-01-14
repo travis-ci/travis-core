@@ -5,6 +5,8 @@ module Travis
         class Worker
           attr_reader :worker
 
+          include Formats
+
           def initialize(worker, options = {})
             @worker = worker
           end
@@ -16,7 +18,8 @@ module Travis
               'name' => worker.name,
               'state' => worker.state,
               'payload' => worker.payload,
-              'last_error' => worker.last_error
+              'last_error' => worker.last_error,
+              'last_seen_at' => format_date(worker.last_seen_at)
             }
           end
         end
