@@ -49,7 +49,8 @@ module Travis
                 'author_email' => commit.author_email,
                 'committer_name' => commit.committer_name,
                 'committer_email' => commit.committer_email,
-                'compare_url' => commit.compare_url
+                'compare_url' => commit.compare_url,
+                'pull_request_number' => commit.pull_request_number
               }
             end
         end
