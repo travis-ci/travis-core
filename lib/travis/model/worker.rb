@@ -23,8 +23,8 @@ class Worker < ActiveRecord::Base
     self.last_seen_at = Time.now.utc
   end
 
-  def full_name
-    [host, name].join(':')
+  before_save do
+    self.full_name = [host, name].join(':')
   end
 
   def queue

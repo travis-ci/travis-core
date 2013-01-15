@@ -5,10 +5,10 @@ describe Worker do
 
   let(:worker)    { Factory(:worker, :payload => QUEUE_PAYLOADS['job:test:1']) }
 
-  describe 'full_name' do
-    it 'returns a name consisting of host and name' do
-      worker.full_name.should == 'ruby-1.worker.travis-ci.org:ruby-1'
-    end
+  it 'saves full_name on save' do
+    worker.name = 'ruby-44'
+    worker.save
+    worker.full_name.should == 'ruby-1.worker.travis-ci.org:ruby-44'
   end
 
   describe 'serialization' do
