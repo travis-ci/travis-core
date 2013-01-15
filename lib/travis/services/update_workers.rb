@@ -40,7 +40,7 @@ module Travis
         end
 
         def records
-          @records ||= ::Worker.where("(host || ':' || name) IN (?)", full_names)
+          @records ||= ::Worker.where("full_name IN (?)", full_names)
         end
 
         def full_names
