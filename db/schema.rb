@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130107165057) do
+ActiveRecord::Schema.define(:version => 20130115125836) do
 
   create_table "artifact_parts", :force => true do |t|
     t.integer  "artifact_id"
@@ -262,6 +262,7 @@ ActiveRecord::Schema.define(:version => 20130107165057) do
     t.string   "queue"
   end
 
+  add_index "workers", ["last_seen_at"], :name => "index_workers_on_last_seen_at"
   add_index "workers", ["name", "host"], :name => "index_workers_on_name_and_host"
 
 end
