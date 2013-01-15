@@ -11,7 +11,7 @@ module Travis
 
         def run
           syncing do
-            SyncUser.new(user).run
+            UserInfo.new(user).run
             Organizations.new(user).run
             Repositories.new(user).run
           end
