@@ -5,11 +5,13 @@ module Travis
         autoload :Organizations, 'travis/github/services/sync_user/organizations'
         autoload :Repositories,  'travis/github/services/sync_user/repositories'
         autoload :Repository,    'travis/github/services/sync_user/repository'
+        autoload :UserInfo,      'travis/github/services/sync_user/user_info'
 
         register :github_sync_user
 
         def run
           syncing do
+            UserInfo.new(user).run
             Organizations.new(user).run
             Repositories.new(user).run
           end
