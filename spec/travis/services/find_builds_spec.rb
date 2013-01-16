@@ -20,6 +20,18 @@ describe Travis::Services::FindBuilds do
       service.run.should == [build]
     end
 
+    it 'finds builds with a given number, scoped by repository' do
+      @params = { :repository_id => repo.id, :number => 1 }
+      Factory(:build, :repository => Factory(:repository), :state => :finished, :number => 1)
+      Factory(:build, :repository => repo, :state => :finished, :number => 2)
+      service.run.should == [build]
+    end
+
+    it 'does not find by number if repository_id is missing' do
+      @params = { :number => 1 }
+      service.run.should == Build.none
+    end
+
     it 'scopes to the given repository_id' do
       @params = { :repository_id => repo.id }
       Factory(:build, :repository => Factory(:repository), :state => :finished)
