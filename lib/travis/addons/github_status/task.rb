@@ -11,14 +11,15 @@ module Travis
           'started'  => 'pending',
           'passed'   => 'success',
           'failed'   => 'failure',
-          'errored'  => 'failure', # TODO can we use custom states and descriptions?
-          'canceled' => 'failure'  # TODO can we use custom states and descriptions?
+          'errored'  => 'error',
+          'canceled' => 'error',
         }
 
         DESCRIPTIONS = {
           'pending' => 'The Travis build is in progress',
           'success' => 'The Travis build passed',
-          'failure' => 'The Travis build failed'
+          'failure' => 'The Travis build failed',
+          'error'   => 'The Travis build errored',
         }
 
         def url
