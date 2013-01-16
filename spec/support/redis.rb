@@ -3,7 +3,7 @@ module Support
     extend ActiveSupport::Concern
 
     included do
-      let(:redis)  { ::Redis.new(url: Travis.config.redis.url) }
+      let(:redis)  { Travis.redis }
       after(:each) { redis.flushall }
     end
   end

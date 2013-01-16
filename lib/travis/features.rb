@@ -20,20 +20,21 @@ module Travis
   # to the rollout library, where features can be enabled for users,
   # groups and based on percentages.
   module Features
-    mattr_accessor :redis, :rollout
-
     class << self
       methods = (Rollout.public_instance_methods(false) - [:active?, "active?"]) << {:to => :rollout}
       delegate(*methods)
     end
 
     def start
-      self.redis ||= ::Redis.connect(:url => Travis.config.redis.url)
-      self.rollout ||= ::Rollout.new(redis)
+      # TODO deprecate
     end
 
-    def stop
-      self.redis = self.rollout = nil
+    def redis
+      Travis.redis
+    end
+
+    def rollout
+      @rollout ||= ::Rollout.new(redis)
     end
 
     def active?(feature, repository)

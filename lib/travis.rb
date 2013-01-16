@@ -1,6 +1,7 @@
 require 'travis/support'
 require 'gh'
 require 'pusher'
+require 'redis'
 
 autoload :Account,      'travis/model/account'
 autoload :Artifact,     'travis/model/artifact'
@@ -79,6 +80,12 @@ module Travis
       Requests::Services.register
     end
 
+    attr_accessor :redis
+
+    def start
+      @redis = Redis.new(url: config.redis.url) # should probably be in travis-support?
+    end
+
     def config
       @config ||= Config.new
     end
@@ -102,4 +109,5 @@ module Travis
   end
 
   setup
+  start
 end

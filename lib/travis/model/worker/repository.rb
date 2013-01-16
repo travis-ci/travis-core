@@ -1,7 +1,7 @@
 class Worker
   module Repository
     def redis
-      @redis ||= Redis.new(url: Travis.config.redis.url)
+      Travis.redis
     end
 
     def create(attrs = {})
