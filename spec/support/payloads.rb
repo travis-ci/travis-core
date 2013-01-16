@@ -573,7 +573,8 @@ WORKER_PAYLOADS = {
   'job:test:log:1'  => { 'id' => 1, 'log' => 'the '  },
   'job:test:log:2'  => { 'id' => 1, 'log' => 'full ' },
   'job:test:log:3'  => { 'id' => 1, 'log' => 'log'   },
-  'job:test:finish' => { 'id' => 1, 'state' => 'passed', 'finished_at' => '2011-01-01 00:03:00 +0200', 'log' => 'the full log' }
+  'job:test:finish' => { 'id' => 1, 'state' => 'passed', 'finished_at' => '2011-01-01 00:03:00 +0200', 'log' => 'the full log' },
+  'job:test:reset'  => { 'id' => 1 }
 }
 
 WORKER_LEGACY_PAYLOADS = {

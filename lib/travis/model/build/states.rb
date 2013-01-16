@@ -16,15 +16,21 @@ class Build
   #    attributes to its repository and notify event listeners.
   module States
     extend ActiveSupport::Concern
+    include Denormalize, Travis::Event
 
     included do
-      include SimpleStates, Denormalize, Travis::Event
+      include SimpleStates
 
       states :created, :started, :passed, :failed, :errored, :canceled
 
       event :start,  to: :started,  unless: :started?
       event :finish, to: :finished, if: :matrix_finished?
+      event :reset,  to: :created
       event :all, after: [:denormalize, :notify]
+
+      # after_create do
+      #   notify(:create)
+      # end
     end
 
     def start(data = {})
@@ -35,6 +41,16 @@ class Build
       self.state = matrix_state
       self.duration = matrix_duration
       self.finished_at = data[:finished_at]
+    end
+
+    def reset(options = {})
+      self.state = :created
+      %w(duration started_at finished_at).each { |attr| write_attribute(attr, nil) }
+      matrix.each(&:reset!) if options[:reset_matrix]
+    end
+
+    def resetable?
+      finished?
     end
 
     def pending?
@@ -48,5 +64,12 @@ class Build
     def color
       pending? ? 'yellow' : passed? ? 'green' : 'red'
     end
+
+    private
+
+      def notify(event, *args)
+        event = :create if event == :reset
+        super
+      end
   end
 end

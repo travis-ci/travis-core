@@ -10,7 +10,7 @@ describe Job::Test do
   end
 
   describe 'events' do
-    describe 'starting the job' do
+    describe 'start' do
       let(:data) { WORKER_PAYLOADS['job:test:start'] }
 
       it 'sets the state to :started' do
@@ -39,7 +39,7 @@ describe Job::Test do
       end
     end
 
-    describe 'finishing the job' do
+    describe 'finish' do
       let(:data) { WORKER_PAYLOADS['job:test:finish'] }
 
       it 'sets the state to the given result state (legacy: passing result=[0|1])' do
@@ -60,6 +60,36 @@ describe Job::Test do
       it 'propagates the event to the source' do
         job.source.expects(:finish).with(data)
         job.finish(data)
+      end
+    end
+
+    describe 'reset' do
+      let(:job) { Factory(:test, state: 'finished', queued_at: Time.now, finished_at: Time.now) }
+
+      it 'sets the state to :created' do
+        job.reset!
+        job.reload.state.should == 'created'
+      end
+
+      it 'resets job attributes' do
+        job.reset!
+        job.reload.queued_at.should be_nil
+        job.reload.finished_at.should be_nil
+      end
+
+      it 'resets log attributes' do
+        job.log.update_attributes!(content: 'foo', aggregated_at: Time.now)
+        job.reset!
+        job.reload.log.aggregated_at.should be_nil
+        job.reload.log.content.should be_blank
+      end
+
+      xit 'clears log parts' do
+      end
+
+      it 'triggers a :created event' do
+        job.expects(:notify).with(:reset)
+        job.reset
       end
     end
   end

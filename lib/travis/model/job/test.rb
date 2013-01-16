@@ -8,11 +8,6 @@ class Job
   #
   # Job::Test belongs to a Build as part of the build matrix and will be
   # created with the Build.
-  #
-  # As test logs are streamed from the worker to both the application (db) and
-  # browsers this class also implements a public `append_log!` method that both
-  # appends log updates efficiently and notifies the event handlers (see
-  # `Job::Test::States.append_log!`)
   class Test < Job
     include Sponsors, Tagging
 
@@ -23,8 +18,9 @@ class Job
 
     states :created, :queued, :started, :passed, :failed, :errored, :canceled
 
-    event :start,  to: :started
-    event :finish, to: :finished, after: :add_tags
+    event :start,   to: :started
+    event :finish,  to: :finished, after: :add_tags
+    event :reset,   to: :created, unless: :created?
     event :all, after: [:propagate, :notify]
 
     def enqueue # TODO rename to queue and make it an event, simple_states should support that now
@@ -42,6 +38,21 @@ class Job
       data = data.symbolize_keys.slice(:state, :finished_at, :result)
       data.delete(:state) if data.key?(:result) # TODO legacy payload, remove once workers set :state
       data.each { |key, value| send(:"#{key}=", value) }
+    end
+
+    def reset(*)
+      self.state = :created
+      attrs = %w(started_at queued_at finished_at worker)
+      attrs.each { |attr| write_attribute(attr, nil) }
+      log.clear!
+    end
+
+    def cancelable?
+      created?
+    end
+
+    def resetable?
+      finished?
     end
 
     def finished?
@@ -66,8 +77,9 @@ class Job
 
     protected
 
-      def extract_finishing_attributes(attributes)
-        extract!(attributes, :state, *FINISHING_ATTRIBUTES)
+      def notify(event, *args)
+        event = :create if event == :reset
+        super
       end
 
       LEGACY_RESULTS = { 0 => 'passed', 1 => 'failed' }

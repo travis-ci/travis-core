@@ -12,7 +12,7 @@ describe Travis::Services::UpdateJob do
     build.matrix.delete_all
   end
 
-  describe 'job:test:started' do
+  describe 'event: start' do
     let(:event) { :start }
 
     before :each do
@@ -60,7 +60,7 @@ describe Travis::Services::UpdateJob do
     end
   end
 
-  describe 'job:test:finished' do
+  describe 'event: finish' do
     let(:event) { :finish }
 
     before :each do
@@ -111,6 +111,54 @@ describe Travis::Services::UpdateJob do
       payload.delete(:state)
       payload.merge!(result: 1)
       service.data[:state].should == :failed
+    end
+  end
+
+  describe 'event: reset' do
+    let(:event) { :reset }
+
+    before :each do
+      job.repository.update_attributes(last_build_state: :passed)
+    end
+
+    it 'sets the job state to created' do
+      service.run
+      job.reload.state.should == 'created'
+    end
+
+    it 'resets the job started_at' do
+      service.run
+      job.reload.started_at.should be_nil
+    end
+
+    it 'resets the job worker name' do
+      service.run
+      job.reload.worker.should == ''
+    end
+
+    it 'resets the build state to started' do
+      service.run
+      job.reload.source.state.should == 'created'
+    end
+
+    it 'resets the build started_at' do
+      service.run
+      job.reload.source.started_at.should be_nil
+    end
+
+    it 'resets the build state to started' do
+      service.run
+      job.reload.source.state.should == 'created'
+    end
+
+    it 'resets the repository last_build_state to started' do
+      service.run
+      job.reload.repository.last_build_state.should == 'created'
+    end
+
+    it 'resets the repository last_build_started_at' do
+      service.run
+      job.reload.repository.last_build_started_at.should be_nil
     end
   end
 end

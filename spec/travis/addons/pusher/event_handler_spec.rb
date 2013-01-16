@@ -31,6 +31,11 @@ describe Travis::Addons::Pusher::EventHandler do
       Travis::Event.dispatch('job:test:finished', test)
     end
 
+    it 'build:created' do
+      subject.expects(:notify)
+      Travis::Event.dispatch('build:created', build)
+    end
+
     it 'build:started' do
       subject.expects(:notify)
       Travis::Event.dispatch('build:started', build)

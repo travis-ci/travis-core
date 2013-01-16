@@ -8,10 +8,19 @@ class BuildMock
 end
 
 describe Build::States do
+  include Support::ActiveRecord
+
   let(:build) { BuildMock.new }
 
   describe 'events' do
-    describe 'starting the build' do
+    describe 'create' do
+      xit 'notifies observers' do
+        Travis::Event.expects(:dispatch).with { |event| event == 'build:created' }
+        Factory(:build)
+      end
+    end
+
+    describe 'start' do
       let(:data) { WORKER_PAYLOADS['job:test:start'] }
 
       describe 'when the build is not already started' do
@@ -48,7 +57,7 @@ describe Build::States do
       end
     end
 
-    describe 'finishing the build' do
+    describe 'finish' do
       let(:data) { WORKER_PAYLOADS['job:test:finish'] }
 
       describe 'when the matrix is not finished' do

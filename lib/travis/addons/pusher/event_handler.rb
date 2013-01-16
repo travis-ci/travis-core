@@ -7,8 +7,8 @@ module Travis
         API_VERSION = 'v1'
 
         EVENTS = [
-          /^build:(started|finished)/,
-          /^job:test:(created|started|requeued|log|finished)/,
+          /^build:(created|started|finished)/,
+          /^job:test:(created|started|log|finished)/,
           /^worker:(added|updated|removed)/
         ]
 
@@ -33,7 +33,7 @@ module Travis
             if event =~ /^worker:/
               'worker'
             else
-              event.sub('test:', '').sub(':', '/').sub('requeued', 'created')
+              event.sub('test:', '').sub(':', '/')
             end
           end
 

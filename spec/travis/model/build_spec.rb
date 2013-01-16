@@ -362,27 +362,37 @@ describe Build do
       build.event_type.should == 'push'
     end
 
-    describe 'requeue' do
+    describe 'reset' do
       let(:build) { Factory(:build, state: 'finished') }
 
       before :each do
-        build.matrix.each { |job| job.stubs(:requeue) }
+        build.matrix.each { |job| job.stubs(:reset) }
       end
 
       it 'sets the state to :created' do
-        build.requeue
+        build.reset
         build.state.should == :created
       end
 
       it 'resets related attributes' do
-        build.requeue
+        build.reset
         build.duration.should be_nil
         build.finished_at.should be_nil
       end
 
-      it 'requeues each job' do
-        build.matrix.each { |job| job.expects(:requeue) }
-        build.requeue
+      it 'resets each job if :reset_matrix is given' do
+        build.matrix.each { |job| job.expects(:reset) }
+        build.reset(reset_matrix: true)
+      end
+
+      it 'does not reset jobs if :reset_matrix is not given' do
+        build.matrix.each { |job| job.expects(:reset).never }
+        build.reset
+      end
+
+      it 'notifies obsevers' do
+        Travis::Event.expects(:dispatch).with('build:created', build)
+        build.reset
       end
     end
   end

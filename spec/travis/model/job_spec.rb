@@ -179,33 +179,6 @@ describe Job do
     end
   end
 
-  describe 'requeue' do
-    let(:job) { Factory(:test, state: 'finished', queued_at: Time.now, finished_at: Time.now) }
-
-    it 'sets the state to :created' do
-      job.requeue
-      job.state.should == :created
-    end
-
-    it 'resets job attributes' do
-      job.requeue
-      job.queued_at.should be_nil
-      job.finished_at.should be_nil
-    end
-
-    it 'resets log attributes' do
-      job.log.update_attributes!(content: 'foo', aggregated_at: Time.now)
-      job.requeue
-      job.log.aggregated_at.should be_nil
-      job.log.content.should be_blank
-    end
-
-    it 'triggers a :created event' do
-      job.expects(:notify).with(:requeue)
-      job.requeue
-    end
-  end
-
   describe 'decrypted config' do
     it 'handles nil env' do
       job = Job.new(repository: Factory(:repository))

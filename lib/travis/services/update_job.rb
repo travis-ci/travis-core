@@ -7,7 +7,7 @@ module Travis
 
       register :update_job
 
-      EVENT = [:start, :finish]
+      EVENT = [:start, :finish, :reset]
 
       def run
         job.send(:"#{event}!", data.except(:id))

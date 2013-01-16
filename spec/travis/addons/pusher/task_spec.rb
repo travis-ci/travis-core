@@ -58,6 +58,11 @@ describe Travis::Addons::Pusher::Task do
       channel.should have_message('job:finished', test)
     end
 
+    it 'build:created' do
+      run('build:created', build)
+      channel.should have_message('build:created', build)
+    end
+
     it 'build:started' do
       run('build:started', build)
       channel.should have_message('build:started', build)

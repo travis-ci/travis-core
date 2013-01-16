@@ -3,6 +3,7 @@ module Travis
     module V1
       module Pusher
         class Build
+          autoload :Created,  'travis/api/v1/pusher/build/created'
           autoload :Started,  'travis/api/v1/pusher/build/started'
           autoload :Finished, 'travis/api/v1/pusher/build/finished'
 

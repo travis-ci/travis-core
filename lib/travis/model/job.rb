@@ -10,7 +10,6 @@ require 'active_record'
 class Job < ActiveRecord::Base
   autoload :Compat,    'travis/model/job/compat'
   autoload :Queue,     'travis/model/job/queue'
-  autoload :States,    'travis/model/job/states'
   autoload :Sponsors,  'travis/model/job/sponsors'
   autoload :Tagging,   'travis/model/job/tagging'
   autoload :Test,      'travis/model/job/test'
@@ -93,10 +92,6 @@ class Job < ActiveRecord::Base
     super(config ? config.deep_symbolize_keys : {})
   end
 
-  def cancelable?
-    created?
-  end
-
   def obfuscated_config
     config.dup.tap do |config|
       next unless config[:env]
@@ -117,20 +112,6 @@ class Job < ActiveRecord::Base
     Build.matrix_keys_for(config).map do |key|
       self.config[key.to_sym] == config[key] || commit.branch == config[key]
     end.inject(:&)
-  end
-
-  def requeueable?
-    finished?
-  end
-
-  def requeue
-    update_attributes!(state: :created, queued_at: nil, finished_at: nil)
-    clear_logs
-    notify(:requeue)
-  end
-
-  def clear_logs
-    log.clear!
   end
 
   private
