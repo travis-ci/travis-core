@@ -22,8 +22,7 @@ module Travis
                 'host' => worker.host,
                 'name' => worker.name,
                 'state' => worker.state.to_s,
-                'payload' => worker.payload,
-                'last_error' => worker.last_error
+                'payload' => worker.payload
               }
             end
         end

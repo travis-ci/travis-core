@@ -97,7 +97,7 @@ module Travis
             :async         => {},
             :notifications => [], # TODO rename to event.handlers
             :queues        => [],
-            :workers       => { :prune => { :after => 60, :interval => 5 } },
+            :workers       => { :ttl => 60 },
             :jobs          => { :retry => { :after => 60 * 60 * 2, :max_attempts => 1, :interval => 60 * 5 } },
             :queue         => { :limit => { :default => 5, :by_owner => {} }, :interval => 3 },
             :logs          => { :shards => 1, :intervals => { :vacuum => 10, :regular => 180, :force => 3 * 60 * 60 } },

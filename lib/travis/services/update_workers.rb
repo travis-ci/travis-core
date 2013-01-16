@@ -8,7 +8,6 @@ module Travis
           record = record_for(report)
           record ? update(record, report) : create(report)
         end
-        touch_all
       end
 
       private
@@ -18,13 +17,16 @@ module Travis
         end
 
         def create(report)
-          Worker.create!(report)
+          Worker.create(report)
         end
 
         def update(record, report)
-          return unless change?(record, report)
-          report[:payload].delete('config') if report[:payload]
-          record.update_attributes!(report)
+          change?(record, report) ? change(record, report) : record.touch
+        end
+
+        def change(record, report)
+          report = normalize(report)
+          record.update_attributes(report)
           record.notify(:update)
         end
 
@@ -32,16 +34,12 @@ module Travis
           job_changed?(record, report) || state_changed?(record, report)
         end
 
-        def touch_all
-          records.update_all(:last_seen_at => Time.now.utc)
-        end
-
         def record_for(report)
           records.detect { |record| record.full_name == full_name(report) }
         end
 
         def records
-          @records ||= ::Worker.where("full_name IN (?)", full_names)
+          @records ||= ::Worker.all
         end
 
         def full_names
@@ -49,7 +47,7 @@ module Travis
         end
 
         def full_name(report)
-          report.values_at(:host, :name).join(':')
+          report[:full_name] || report.values_at(:host, :name).join(':')
         end
 
         def state_changed?(record, report)
@@ -58,10 +56,18 @@ module Travis
 
         def job_changed?(record, report)
           if payloads?(record, report)
-            record.payload['job']['id'] != report[:payload]['job']['id']
+            record.payload[:job][:id] != report[:payload]['job']['id']
           else
             false
           end
+        end
+
+        def normalize(report)
+          return unless payload = report[:payload]
+          job  = payload[:job] || {}
+          repo = payload[:repo] || payload[:repository] || {}
+          report[:payload] = { job: { id: job[:id] }, repo: { id: repo[:slug], id: repo[:slug] } }
+          report
         end
 
         def payloads?(record, report)

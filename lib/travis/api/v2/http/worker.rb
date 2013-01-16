@@ -26,9 +26,7 @@ module Travis
                 'name' => worker.name,
                 'host' => worker.host,
                 'state' => worker.state.to_s,
-                'last_seen_at' => format_date(worker.last_seen_at),
-                'payload' => worker.payload,
-                'last_error' => worker.last_error
+                'payload' => worker.payload
               }
             end
         end

@@ -11,9 +11,7 @@ describe Travis::Api::V1::Pusher::Worker do
       'host' => 'ruby-1.worker.travis-ci.org',
       'name' => 'ruby-1',
       'state' => 'created',
-      'last_error' => nil,
-      'payload' => nil,
-      'last_seen_at' => json_format_time(Time.now.utc)
+      'payload' => nil
     }
   end
 end

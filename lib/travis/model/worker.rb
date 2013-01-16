@@ -1,34 +1,59 @@
-require 'active_record'
+require 'active_support/core_ext/hash/slice'
+require 'active_support/core_ext/module/delegation'
+require 'core_ext/hash/deep_symbolize_keys'
+require 'redis'
+require 'multi_json'
+require 'securerandom'
 
-# Models a worker so they can be exposed to clients through the JSON API.
-#
-# Workers have a simple heartbeat mechanism that pings every 10 seconds (unless
-# configured otherwise) while travis-hub will purge records that are older than
-# 15 seconds at an interval of 5 seconds (unless configured otherwise).
-class Worker < ActiveRecord::Base
-  autoload :States, 'travis/model/worker/states'
+class Worker
+  autoload :Repository, 'travis/model/worker/repository'
 
-  include States
+  include Travis::Event # SimpleStates
+  extend Repository
 
-  class << self
-    def prune
-      workers = where(['last_seen_at < ?', Time.now.utc - Travis.config.workers.prune.after]).destroy_all
-      workers.each { |worker| worker.notify(:remove) }
-    end
+  # states :created, :starting, :ready, :working, :stopping, :stopped, :errored
+
+  attr_reader :id, :attrs
+
+  def initialize(id, attrs)
+    @id = id
+    @attrs = attrs
   end
 
-  serialize :payload
-
-  before_create do
-    self.last_seen_at = Time.now.utc
+  def update_attributes(attrs)
+    self.class.update(id, attrs)
   end
 
-  before_save do
-    self.full_name = [host, name].join(':')
+  def touch
+    self.class.touch(id)
   end
 
-  def queue
-    read_attribute(:queue) || guess_queue
+  [:full_name, :state, :payload].each do |name|
+    define_method(name) { attrs[name] }
+  end
+
+  def host
+    full_name.split(':').first
+  end
+
+  def name
+    full_name.split(':').last
+  end
+
+  def job
+    payload[:job] || {}
+  end
+
+  def repo
+    payload[:repo] || {}
+  end
+
+  def ==(other)
+    self.id == other.id
+  end
+
+  def <=>(other)
+    full_name <=> other.full_name
   end
 
   def guess_queue

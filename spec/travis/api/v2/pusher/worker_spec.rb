@@ -12,7 +12,6 @@ describe Travis::Api::V2::Pusher::Worker do
         'host' => 'ruby-1.worker.travis-ci.org',
         'name' => 'ruby-1',
         'state' => 'created',
-        'last_error' => nil,
         'payload' => nil
       }
     }
