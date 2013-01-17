@@ -15,7 +15,7 @@ describe Travis::Services::UpdateWorkers do
 
   before :each do
     Worker.create!(:name => 'ruby-1', :host => 'ruby.workers.travis-ci.org', :state => :ready, :last_seen_at => Time.now - 10, :payload => { 'job' => { 'id' => 123 })
-    Worker.create!(:name => 'ruby-2', :host => 'ruby.workers.travis-ci.org', :state => :ready, :last_seen_at => Time.now - 10, :payload => { 'job' => { 'id' => 123 })
+    Worker.create!(:name => 'ruby-2', :host => 'ruby.workers.travis-ci.org', :state => :ready, :last_seen_at => Time.now - 10, :payload => { 'job' => { 'id' => 124 })
     Worker.any_instance.stubs(:notify)
   end
 
