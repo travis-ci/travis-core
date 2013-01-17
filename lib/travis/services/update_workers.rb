@@ -23,6 +23,7 @@ module Travis
 
         def update(record, report)
           return unless change?(record, report)
+          report.delete('config')
           record.update_attributes!(report)
           record.notify(:update)
         end
