@@ -23,7 +23,7 @@ module Travis
 
         def update(record, report)
           return unless change?(record, report)
-          report['payload'].delete('config') if report['payload']
+          report[:payload].delete('config') if report[:payload]
           record.update_attributes!(report)
           record.notify(:update)
         end

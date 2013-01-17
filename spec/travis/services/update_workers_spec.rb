@@ -54,5 +54,11 @@ describe Travis::Services::UpdateWorkers do
     Worker.any_instance.expects(:notify).with(:update).never
     service.run
   end
+
+  it 'does not save config along with payload' do
+    reports.first['payload'].merge!('config' => { 'bar' => 'baz' })
+    service.run
+    Worker.find_by_name('ruby-1').payload['config'].should be_blank
+  end
 end
 
