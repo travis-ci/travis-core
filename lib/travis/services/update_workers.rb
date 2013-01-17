@@ -51,19 +51,19 @@ module Travis
         def full_name(report)
           report.values_at(:host, :name).join(':')
         end
-        
+
         def state_changed?(record, report)
-          record.state.to_s == report[:state].to_s
+          record.state.to_s != report[:state].to_s
         end
-        
+
         def job_changed?(record, report)
           if payloads?(record, report)
-            record.payload['job']['id'] == report[:payload]['job']['id']
+            record.payload['job']['id'] != report[:payload]['job']['id']
           else
             false
           end
         end
-        
+
         def payloads?(record, report)
           !(record.payload.nil? || report[:payload].nil?)
         end
