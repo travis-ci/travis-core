@@ -29,7 +29,8 @@ module Travis
         end
 
         def change?(record, report)
-          record.state.to_s != report[:state].to_s
+          record.payload['job']['id'] != report['payload']['job']['id'] ||
+            record.state.to_s != report[:state].to_s
         end
 
         def touch_all

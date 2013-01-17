@@ -5,17 +5,17 @@ describe Travis::Services::UpdateWorkers do
 
   let(:reports) do
     [
-      { 'name' => 'ruby-1', 'host' => 'ruby.workers.travis-ci.org', 'state' => 'working', 'payload' => { 'foo' => 'bar' } },
-      { 'name' => 'ruby-2', 'host' => 'ruby.workers.travis-ci.org', 'state' => 'ready' },
-      { 'name' => 'ruby-3', 'host' => 'ruby.workers.travis-ci.org', 'state' => 'ready' }
+      { 'name' => 'ruby-1', 'host' => 'ruby.workers.travis-ci.org', 'state' => 'working', 'payload' => { 'job' => { 'id' => 123 } } },
+      { 'name' => 'ruby-2', 'host' => 'ruby.workers.travis-ci.org', 'state' => 'ready',   'payload' => { 'job' => { 'id' => 124 } } },
+      { 'name' => 'ruby-3', 'host' => 'ruby.workers.travis-ci.org', 'state' => 'ready',   'payload' => { 'job' => { 'id' => 125 } } }
     ]
   end
 
   let(:service) { described_class.new(reports: reports) }
 
   before :each do
-    Worker.create!(:name => 'ruby-1', :host => 'ruby.workers.travis-ci.org', :state => :ready, :last_seen_at => Time.now - 10)
-    Worker.create!(:name => 'ruby-2', :host => 'ruby.workers.travis-ci.org', :state => :ready, :last_seen_at => Time.now - 10)
+    Worker.create!(:name => 'ruby-1', :host => 'ruby.workers.travis-ci.org', :state => :ready, :last_seen_at => Time.now - 10, :payload => { 'job' => { 'id' => 123 })
+    Worker.create!(:name => 'ruby-2', :host => 'ruby.workers.travis-ci.org', :state => :ready, :last_seen_at => Time.now - 10, :payload => { 'job' => { 'id' => 123 })
     Worker.any_instance.stubs(:notify)
   end
 
@@ -46,6 +46,12 @@ describe Travis::Services::UpdateWorkers do
   it "does not update if the state does not change" do
     reports.first.merge!('state' => 'ready')
     Worker.any_instance.expects(:update_attributes!).never
+    service.run
+  end
+
+  it "updates if the job changes, even if the state does not change" do
+    reports.first.merge!('payload' => { 'job' => { 'id' => 1234 } })
+    Worker.any_instance.expects(:update_attributes!).once
     service.run
   end
 
