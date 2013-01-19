@@ -23,12 +23,13 @@ module Travis
 
         def update(record, report)
           return unless change?(record, report)
+          report[:payload].delete('config') if report[:payload]
           record.update_attributes!(report)
           record.notify(:update)
         end
 
         def change?(record, report)
-          record.state.to_s != report[:state].to_s
+          job_changed?(record, report) || state_changed?(record, report)
         end
 
         def touch_all
@@ -49,6 +50,22 @@ module Travis
 
         def full_name(report)
           report.values_at(:host, :name).join(':')
+        end
+
+        def state_changed?(record, report)
+          record.state.to_s != report[:state].to_s
+        end
+
+        def job_changed?(record, report)
+          if payloads?(record, report)
+            record.payload['job']['id'] != report[:payload]['job']['id']
+          else
+            false
+          end
+        end
+
+        def payloads?(record, report)
+          !(record.payload.nil? || report[:payload].nil?)
         end
     end
   end
