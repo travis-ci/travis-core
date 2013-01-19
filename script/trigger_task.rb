@@ -5,11 +5,15 @@ id, type = ARGV
 data = {} # ?
 
 Travis::Database.connect
+Travis::Features.start
 Travis::Task.run_local = true
+
 Travis.config.notifications = [type]
-
 Travis::Event::SUBSCRIBERS.clear
-Travis::Event.subscribers
 
-handler = Travis::Addons.const_get(type.camelize)::EventHandler
-handler.notify('finished', Build.find(id), data)
+begin
+  handler = Travis::Addons.const_get(type.camelize)::EventHandler
+  handler.notify('build:finished', Build.find(id), data)
+rescue Exception => e
+  puts e.message, e.backtrace
+end

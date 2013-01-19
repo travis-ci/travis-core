@@ -2,16 +2,17 @@ require 'faraday'
 require 'core_ext/hash/compact'
 require 'core_ext/hash/deep_symbolize_keys'
 require 'active_support/core_ext/string'
+require 'active_support/core_ext/class/attribute'
 
 module Travis
   class Task
     include Logging
     extend  Instrumentation, NewRelic, Exceptions::Handling, Async
 
+    class_attribute :run_local
+
     class << self
       extend Exceptions::Handling
-
-      attr_accessor :run_local
 
       def run(type, *args)
         Travis::Async.run(self, :perform, { :queue => type, :use => run_local? ? :threaded : :sidekiq }, *args)
