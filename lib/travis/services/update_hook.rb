@@ -8,6 +8,7 @@ module Travis
       def run
         run_service(:github_set_hook, id: repo.id, active: active?)
         repo.update_column(:active, active?)
+        true
       end
       instrument :run
 
