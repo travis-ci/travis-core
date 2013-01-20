@@ -75,12 +75,12 @@ class Job
       !passed? && !failed? && result == nil
     end
 
-    protected
+    def notify(event, *args)
+      event = :create if event == :reset
+      super
+    end
 
-      def notify(event, *args)
-        event = :create if event == :reset
-        super
-      end
+    protected
 
       LEGACY_RESULTS = { 0 => 'passed', 1 => 'failed' }
 
