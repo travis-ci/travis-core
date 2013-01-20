@@ -37,13 +37,13 @@ describe Travis::Addons::GithubStatus::Task do
 
   it 'posts status info for a errored build' do
     build.stubs(state: :errored)
-    GH.expects(:post).with(url, state: 'error', description: 'The Travis build errored', target_url: target_url)
+    GH.expects(:post).with(url, state: 'error', description: 'The Travis build could not complete due to an error', target_url: target_url)
     run
   end
 
   it 'posts status info for a canceled build' do
     build.stubs(state: :canceled)
-    GH.expects(:post).with(url, state: 'error', description: 'The Travis build errored', target_url: target_url)
+    GH.expects(:post).with(url, state: 'error', description: 'The Travis build could not complete due to an error', target_url: target_url)
     run
   end
 
