@@ -19,7 +19,7 @@ module Travis
           'pending' => 'The Travis build is in progress',
           'success' => 'The Travis build passed',
           'failure' => 'The Travis build failed',
-          'error'   => 'The Travis build errored',
+          'error'   => 'The Travis build could not complete due to an error',
         }
 
         def url
