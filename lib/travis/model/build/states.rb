@@ -65,11 +65,9 @@ class Build
       pending? ? 'yellow' : passed? ? 'green' : 'red'
     end
 
-    private
-
-      def notify(event, *args)
-        event = :create if event == :reset
-        super
-      end
+    def notify(event, *args)
+      event = :create if event == :reset
+      super
+    end
   end
 end
