@@ -12,7 +12,7 @@ class Worker
     end
 
     def all
-      redis.smembers('workers').map { |id| find(id) }.compact.sort
+      redis.smembers('workers').map { |key| find(key) }.compact.sort
     end
 
     def count

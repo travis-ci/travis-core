@@ -8,10 +8,8 @@ require 'securerandom'
 class Worker
   autoload :Repository, 'travis/model/worker/repository'
 
-  include Travis::Event # SimpleStates
+  include Travis::Event
   extend Repository
-
-  # states :created, :starting, :ready, :working, :stopping, :stopped, :errored
 
   attr_reader :id, :attrs
 
