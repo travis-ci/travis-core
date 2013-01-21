@@ -13,7 +13,7 @@ class Worker
 
   attr_reader :id, :attrs
 
-  def initialize(id, attrs)
+  def initialize(id, attrs = {})
     @id = id
     @attrs = attrs
   end
@@ -26,8 +26,12 @@ class Worker
     self.class.touch(id)
   end
 
-  [:full_name, :state, :payload].each do |name|
-    define_method(name) { attrs[name] }
+  def full_name
+    attrs[:full_name] || ''
+  end
+
+  def state
+    attrs[:state] || ''
   end
 
   def host
@@ -36,6 +40,10 @@ class Worker
 
   def name
     full_name.split(':').last
+  end
+
+  def payload
+    attrs[:payload] || {}
   end
 
   def job

@@ -32,14 +32,19 @@ class Worker
       end
     end
 
-    def touch(id)
-      redis.expire(key(id), Travis.config.workers.ttl)
-    end
-
     def store(worker)
       redis.set(key(worker.id), MultiJson.dump(worker.attrs))
       touch(worker.id)
       redis.sadd('workers', worker.id)
+    end
+
+    def touch(id)
+      redis.expire(key(id), Travis.config.workers.ttl)
+    end
+
+    def prune
+      keys = redis.smembers('workers').select { |key| redis.exists(key) }
+      keys.each { |key| Worker.new(key.split(':').last).notify(:remove) }
     end
 
     def ttl(id)
@@ -49,7 +54,7 @@ class Worker
     private
 
       def key(id)
-        "worker-#{id}"
+        "worker:#{id}"
       end
 
       def normalize(attrs)

@@ -7,14 +7,15 @@ describe Worker::Repository do
   let(:full_name) { 'worker-1.travis-ci.org:ruby-1' }
   let(:worker)    { create_worker }
   let(:workers)   { [create_worker(full_name: 'one'), create_worker(full_name: 'two')] }
+  let(:subject)   { described_class }
 
   def create_worker(attrs = {})
-    Worker::Repository.create({ full_name: full_name, state: 'started', payload: payload }.merge(attrs))
+    subject.create({ full_name: full_name, state: 'started', payload: payload }.merge(attrs))
   end
 
   describe 'create' do
     it 'stores the record to redis' do
-      data = redis.get("worker-#{worker.id}")
+      data = redis.get("worker:#{worker.id}")
       MultiJson.load(data)['full_name'].should == full_name
     end
 
@@ -35,32 +36,40 @@ describe Worker::Repository do
   describe 'all' do
     it 'returns worker instances' do
       workers
-      Worker::Repository.all.should == workers
+      subject.all.should == workers
     end
   end
 
   describe 'count' do
     it 'returns the number of workers' do
       workers
-      Worker::Repository.count.should == 2
+      subject.count.should == 2
     end
   end
 
   describe 'find' do
     it 'finds a record by the given id' do
       worker = self.worker
-      Worker::Repository.find(worker.id).should == worker
+      subject.find(worker.id).should == worker
     end
 
     it 'returns nil if the record can not be found' do
-      Worker::Repository.find(1).should be_nil
+      subject.find(1).should be_nil
     end
   end
 
   describe 'update' do
     it 'updates the record with the given attributes' do
-      Worker::Repository.update(worker.id, state: 'waiting')
-      Worker::Repository.find(worker.id).state.should == 'waiting'
+      subject.update(worker.id, state: 'waiting')
+      subject.find(worker.id).state.should == 'waiting'
+    end
+  end
+
+  describe 'prune' do
+    it 'notifies about removed workers' do
+      workers
+      subject.redis.set('abcd', MultiJson.dump({}))
+      subject.prune
     end
   end
 end

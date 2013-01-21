@@ -11,7 +11,9 @@ module Travis
           end
 
           def data(extra = {})
-            { 'worker' => worker_data(worker) }
+            {
+              'worker' => worker_data(worker)
+            }
           end
 
           private
