@@ -34,6 +34,16 @@ describe Worker do
     end
   end
 
+  describe 'queue' do
+    it 'returns the queue if given' do
+      Worker.new(nil, queue: 'builds.nodejs').queue.should == 'builds.nodejs'
+    end
+
+    it 'guesses the queue if not given' do
+      Worker.new(nil, full_name: 'something.with.ruby').queue.should == 'builds.common'
+    end
+  end
+
   describe 'guess_queue' do
     it 'guesses the queue name "builds.common" (ruby)' do
       Worker.new(nil, full_name: 'something.with.ruby').guess_queue.should == 'builds.common'

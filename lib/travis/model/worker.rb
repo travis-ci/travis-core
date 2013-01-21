@@ -46,6 +46,10 @@ class Worker
     payload[:repo] || {}
   end
 
+  def queue
+    attrs[:queue] || guess_queue
+  end
+
   def ==(other)
     self.id == other.id
   end
