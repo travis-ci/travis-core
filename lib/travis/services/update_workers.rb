@@ -27,7 +27,6 @@ module Travis
         def change(record, report)
           report = normalize(report)
           record.update_attributes(report)
-          record.notify(:update)
         end
 
         def change?(record, report)

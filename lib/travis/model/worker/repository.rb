@@ -28,6 +28,7 @@ class Worker
       if worker = find(id)
         worker.attrs.merge!(attrs)
         store(worker)
+        worker.notify(:update)
       end
     end
 
