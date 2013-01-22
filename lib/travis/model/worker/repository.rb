@@ -4,8 +4,8 @@ class Worker
       Travis.redis
     end
 
-    def create(attrs = {})
-      worker = Worker.new(random_id, normalize(attrs))
+    def create(attrs = nil)
+      worker = Worker.new(random_id, normalize(attrs || {}))
       store(worker)
       worker.notify(:add)
       worker
