@@ -66,9 +66,19 @@ describe Worker::Repository do
   end
 
   describe 'prune' do
-    it 'notifies about removed workers' do
+    before :each do
       workers
-      subject.redis.set('abcd', MultiJson.dump({}))
+    end
+
+    it 'removes workers from the workers set' do
+      subject.redis.sadd('workers', 'abcd')
+      subject.prune
+      subject.redis.smembers('workers').should_not include('abcd')
+    end
+
+    it 'notifies about removed workers' do
+      subject.redis.sadd('workers', 'abcd')
+      Travis::Event.expects(:dispatch).with { |event, worker| event == 'worker:removed' && worker.id == 'abcd' }
       subject.prune
     end
   end

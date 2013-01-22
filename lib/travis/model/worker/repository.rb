@@ -43,8 +43,10 @@ class Worker
     end
 
     def prune
-      keys = redis.smembers('workers').select { |key| redis.exists(key) }
-      keys.each { |key| Worker.new(key.split(':').last).notify(:remove) }
+      expired_ids.each do |id|
+        redis.srem('workers', id)
+        Worker.new(id).notify(:remove)
+      end
     end
 
     def ttl(id)
@@ -62,6 +64,10 @@ class Worker
         host, name = attrs.values_at(:host, :name)
         attrs[:full_name] ||= [host, name].join(':')
         attrs.slice(:full_name, :state, :payload)
+      end
+
+      def expired_ids
+        redis.smembers('workers').reject { |id| redis.exists(key(id)) }
       end
 
       def random_id
