@@ -22,7 +22,7 @@ module Travis
         end
 
         def by_params
-          scope(:job).queued(params[:queue])
+          scope(:job).queued(params[:queue]).limit(250)
         end
 
         def preload(jobs)
