@@ -1,3 +1,5 @@
+require 'core_ext/hash/deep_symbolize_keys'
+
 module Travis
   module Services
     class UpdateWorkers < Base
@@ -13,7 +15,7 @@ module Travis
       private
 
         def reports
-          @reports ||= params[:reports].map(&:symbolize_keys)
+          @reports ||= params[:reports].map(&:deep_symbolize_keys)
         end
 
         def create(report)
@@ -55,7 +57,7 @@ module Travis
 
         def job_changed?(record, report)
           if payloads?(record, report)
-            record.payload[:job][:id] != report[:payload]['job']['id']
+            record.job[:id] != report[:payload][:job][:id]
           else
             false
           end
