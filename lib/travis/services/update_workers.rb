@@ -63,7 +63,7 @@ module Travis
           return report unless payload = report[:payload]
           job  = payload[:job] || {}
           repo = payload[:repo] || payload[:repository] || {}
-          report.merge(payload: { job: { id: job[:id] }, repo: { id: repo[:id], slug: repo[:slug] } })
+          report.merge(payload: { job: { id: job[:id], number: job[:number] }, repo: { id: repo[:id], slug: repo[:slug] } })
         end
 
         def payloads?(worker, report)
