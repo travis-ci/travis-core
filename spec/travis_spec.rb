@@ -15,7 +15,7 @@ describe Travis do
 
     describe "with Travis.config" do
       before do
-        Travis.config.redis = { url: 'redis://172.0.0.1:6379' }
+        Travis.config.redis = { url: 'redis://127.0.0.1:6379' }
       end
 
       after do
