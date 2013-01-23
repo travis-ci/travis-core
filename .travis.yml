@@ -1,6 +1,6 @@
 language: ruby
-services:
-  - redis-server
+# services:
+#   - redis-server
 rvm:
   - jruby-19mode
 jdk:
