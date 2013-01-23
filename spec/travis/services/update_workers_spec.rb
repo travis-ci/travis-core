@@ -72,5 +72,24 @@ describe Travis::Services::UpdateWorkers do
     service.run
     Worker.all.each { |worker| worker.payload['config'].should be_blank }
   end
-end
 
+  describe Travis::Services::UpdateWorkers::Instrument do
+    let(:publisher) { Travis::Notification::Publisher::Memory.new }
+    let(:event)     { publisher.events[1] }
+
+    before :each do
+      Travis::Notification.publishers.replace([publisher])
+    end
+
+    it 'publishes a payload' do
+      service.run
+      event.should publish_instrumentation_event(
+        event: 'travis.services.update_workers.run:completed',
+        message: 'Travis::Services::UpdateWorkers#run:completed processed heartbeats for: ruby.workers.travis-ci.org:ruby-1, ruby.workers.travis-ci.org:ruby-2, ruby.workers.travis-ci.org:ruby-3',
+        data: {
+          reports: reports.map(&:deep_symbolize_keys)
+        }
+      )
+    end
+  end
+end

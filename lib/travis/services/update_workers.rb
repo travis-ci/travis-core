@@ -3,6 +3,8 @@ require 'core_ext/hash/deep_symbolize_keys'
 module Travis
   module Services
     class UpdateWorkers < Base
+      extend Instrumentation
+
       register :update_workers
 
       def run
@@ -12,12 +14,17 @@ module Travis
           worker ? update(worker, report) : create(report)
         end
       end
+      instrument :run
+
+      def reports
+        @reports ||= params[:reports].map(&:deep_symbolize_keys)
+      end
+
+      def full_names
+        @full_names ||= reports.map { |report| full_name(report) }
+      end
 
       private
-
-        def reports
-          @reports ||= params[:reports].map(&:deep_symbolize_keys)
-        end
 
         def create(report)
           Worker.create(report)
@@ -33,10 +40,6 @@ module Travis
 
         def workers
           @workers ||= ::Worker.all
-        end
-
-        def full_names
-          @full_names ||= reports.map { |report| full_name(report) }
         end
 
         def full_name(report)
@@ -69,6 +72,13 @@ module Travis
         def payloads?(worker, report)
           !(worker.payload.nil? || report[:payload].nil?)
         end
+
+        class Instrument < Notification::Instrument
+          def run_completed
+            publish(msg: "processed heartbeats for: #{target.full_names.join(', ')}", reports: target.reports)
+          end
+        end
+        Instrument.attach_to(self)
     end
   end
 end
