@@ -21,7 +21,11 @@ module Travis
       private
 
         def result
-          @result ||= scope(:artifact).find_by_id(params[:id])
+          @result ||= if params[:id]
+            scope(:artifact).find_by_id(params[:id])
+          elsif params[:job_id]
+            scope(:artifact).find_by_job_id(params[:job_id])
+          end
         end
     end
   end
