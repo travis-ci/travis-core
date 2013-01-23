@@ -15,9 +15,7 @@ describe Travis::Api::V1::Http::Workers do
       'name' => 'ruby-1',
       'host' => 'ruby-1.worker.travis-ci.org',
       'state' => 'created',
-      'last_seen_at' => json_format_time(Time.now.utc),
-      'payload' => nil,
-      'last_error' => nil
+      'payload' => nil
     }
   end
 end

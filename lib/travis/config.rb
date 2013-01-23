@@ -97,7 +97,7 @@ module Travis
             :async         => {},
             :notifications => [], # TODO rename to event.handlers
             :queues        => [],
-            :workers       => { :prune => { :after => 60, :interval => 5 } },
+            :workers       => { :ttl => 60, :prune => { :interval => 5 } },
             :jobs          => { :retry => { :after => 60 * 60 * 2, :max_attempts => 1, :interval => 60 * 5 } },
             :queue         => { :limit => { :default => 5, :by_owner => {} }, :interval => 3 },
             :logs          => { :shards => 1, :intervals => { :vacuum => 10, :regular => 180, :force => 3 * 60 * 60 } },
@@ -106,7 +106,7 @@ module Travis
             :archive       => {},
             :ssl           => {},
             :sponsors      => { :platinum => [], :gold => [], :workers => {} },
-            :redis         => { :url => ENV['REDISTOGO_URL'] || 'redis://localhost:6379' },
+            :redis         => { :url => 'redis://localhost:6379' },
             :repository_filter => { :include => [/^rails\/rails/], :exclude => [/\/rails$/] }
 
     default :_access => [:key]

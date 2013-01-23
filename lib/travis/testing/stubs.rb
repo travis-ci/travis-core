@@ -193,7 +193,6 @@ module Travis
           state: 'created',
           last_seen_at: Time.now.utc,
           payload: nil,
-          last_error: nil
         )
       end
 

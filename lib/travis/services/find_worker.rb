@@ -4,7 +4,7 @@ module Travis
       register :find_worker
 
       def run
-        scope(:worker).find_by_id(params[:id])
+        Worker.find(params[:id])
       end
     end
   end

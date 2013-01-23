@@ -91,13 +91,6 @@ FactoryGirl.define do
     name 'travis-ci'
   end
 
-  factory :worker do
-    host 'ruby-1.worker.travis-ci.org'
-    name 'ruby-1'
-    state :created
-    last_seen_at { Time.now.utc }
-  end
-
   factory :running_build, :parent => :build do
     repository { Factory(:repository, :name => 'running_build') }
     state :started

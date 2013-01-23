@@ -4,7 +4,9 @@ module Travis
       register :find_workers
 
       def run
-        scope(:worker).order(:host, :name)
+        workers = Worker.all
+        workers = workers.select { |worker| params[:ids].include?(worker.id) } if params[:ids]
+        workers
       end
     end
   end

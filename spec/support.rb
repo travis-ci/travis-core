@@ -6,5 +6,6 @@ module Support
   autoload :Formats,        'support/formats'
   autoload :Mocks,          'support/mocks'
   autoload :Notifications,  'support/notifications'
+  autoload :Redis,          'support/redis'
 end
 
