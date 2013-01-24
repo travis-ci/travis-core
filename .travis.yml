@@ -22,6 +22,8 @@ matrix:
     - rvm: jruby-head
       jdk: oraclejdk7
 before_script:
+  - sudo service mysql stop
+  - redis-cli config set save ""
   - 'RAILS_ENV=test rake db:create db:schema:load --trace'
 script:
   - './build.sh'
