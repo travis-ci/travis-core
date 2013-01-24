@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.rubyforge_project = '[none]'
 
-  s.add_dependency 'rake',              '~> 0.9.2.2'
+  s.add_dependency 'rake'
   s.add_dependency 'thor',              '~> 0.14.6'
   s.add_dependency 'activerecord',      '~> 3.2.11'
   s.add_dependency 'actionmailer',      '~> 3.2.11'
