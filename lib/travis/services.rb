@@ -24,6 +24,7 @@ module Travis
     autoload :RegenerateRepoKey,   'travis/services/regenerate_repo_key'
     autoload :ResetModel,          'travis/services/reset_model'
     autoload :SyncUser,            'travis/services/sync_user_'     # TODO wtf, y u no load this file if named properly
+    autoload :UpdateArtifact,      'travis/services/update_artifact'
     autoload :UpdateHook,          'travis/services/update_hook'
     autoload :UpdateJob,           'travis/services/update_job'
     autoload :UpdateUser,          'travis/services/update_user'

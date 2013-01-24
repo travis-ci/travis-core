@@ -23,12 +23,17 @@ module Travis
         register :archive_log
 
         def run
-          s3.store(target_host, target_path, log)
+          store
+          report
         end
         instrument :run
 
         def source_url
           "https://#{hostname('api')}/artifacts/#{params[:id]}.txt"
+        end
+
+        def report_url
+          "https://#{hostname('api')}/artifacts/#{params[:id]}"
         end
 
         def target_host
@@ -41,10 +46,23 @@ module Travis
 
         private
 
+          def store
+            s3.store(target_host, target_path, log)
+          end
+
+          def report
+            request(:put, report_url, archived_at: Time.now.utc) # TODO authenticate
+          end
+
           def log
-            http.get(source_url).body.to_s
+            request(:get, source_url).body.to_s
+          end
+
+          def request(method, url, data = nil)
+            data = MultiJson.encode(data) if data
+            http.send(*[method, url, data].compact)
           rescue Faraday::Error => e
-            puts "Exception while trying to fetch #{source_url}:"
+            puts "Exception while trying to #{method.inspect}: #{source_url}:"
             puts e.message, e.backtrace
             raise e
           end
