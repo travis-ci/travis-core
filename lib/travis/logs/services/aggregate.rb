@@ -1,15 +1,17 @@
+require 'active_support/core_ext/string/filters'
+
 module Travis
   module Logs
     module Services
       class Aggregate < Travis::Services::Base
         register :logs_aggregate
 
-        QUERY = %(
+        SQL = <<-sql.squish
           SELECT DISTINCT artifact_id
             FROM artifact_parts
            WHERE created_at <= NOW() - interval '? seconds' AND final = ?
               OR created_at <= NOW() - interval '? seconds'
-        )
+        sql
 
         def run
           return unless active?
@@ -29,7 +31,7 @@ module Travis
           end
 
           def query
-            Artifact::Part.send(:sanitize_sql, [QUERY, intervals[:regular], true, intervals[:force]])
+            Artifact::Part.send(:sanitize_sql, [SQL, intervals[:regular], true, intervals[:force]])
           end
 
           def intervals
