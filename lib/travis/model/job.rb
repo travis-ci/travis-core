@@ -31,7 +31,7 @@ class Job < ActiveRecord::Base
 
     # what already is queued or started
     def running(queue = nil)
-      scope = where(state: [:queued, :started]).order('jobs.id')
+      scope = where(state: [:queued, :started])
       scope = scope.where(queue: queue) if queue
       scope
     end
