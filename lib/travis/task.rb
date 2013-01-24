@@ -14,8 +14,8 @@ module Travis
     class << self
       extend Exceptions::Handling
 
-      def run(type, *args)
-        Travis::Async.run(self, :perform, { :queue => type, :use => run_local? ? :threaded : :sidekiq }, *args)
+      def run(queue, *args)
+        Travis::Async.run(self, :perform, { queue: queue, use: run_local? ? :threaded : :sidekiq }, *args)
       end
 
       def run_local?
@@ -25,12 +25,12 @@ module Travis
       def perform(*args)
         new(*args).run
       end
-      rescues :perform, :from => Exception
+      rescues :perform, from: Exception
     end
 
     attr_reader :payload, :params
 
-    def initialize(payload, params)
+    def initialize(payload, params = {})
       @payload = payload.deep_symbolize_keys
       @params  = params.deep_symbolize_keys
     end
@@ -38,9 +38,9 @@ module Travis
     def run
       process
     end
-    rescues    :run, :from => Exception
+    rescues    :run, from: Exception
     instrument :run
-    new_relic  :run, :category => :task
+    new_relic  :run, category: :task
 
     private
 
@@ -76,7 +76,7 @@ module Travis
       end
 
       def http_options
-        { :ssl => Travis.config.ssl.compact }
+        { ssl: Travis.config.ssl.compact }
       end
   end
 end

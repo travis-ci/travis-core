@@ -5,7 +5,7 @@ describe Artifact::Log do
 
   describe 'class methods' do
     let!(:log)  { job.log }
-    let(:job)   { Factory.create(:test, :log => Factory.create(:log, :content => '')) }
+    let(:job)   { Factory.create(:test, log: Factory.create(:log, content: '')) }
     let(:lines) { ["line 1\n", "line 2\n", 'line 3'] }
 
     before :each do
@@ -88,7 +88,7 @@ describe Artifact::Log do
         end
 
         it 'if aggregated returns the aggregated parts' do
-          log.update_attributes!(:content => 'content', :aggregated_at => Time.now)
+          log.update_attributes!(content: 'content', aggregated_at: Time.now)
           log.content.should == 'content'
         end
       end
@@ -136,6 +136,11 @@ describe Artifact::Log do
         it 'deletes the content parts from the parts table' do
           aggregate!
           log.parts.should be_empty
+        end
+
+        it 'triggers a log:aggregated event' do
+          Travis::Event.expects(:dispatch).with('log:aggregated', log)
+          aggregate!
         end
 
         shared_examples_for :rolled_back_log_aggregation do

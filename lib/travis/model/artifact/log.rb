@@ -1,10 +1,10 @@
 require 'metriks'
 
 class Artifact::Log < Artifact
+  include Travis::Event
+
   # TODO remove this once we know aggregation works fine and the worker passes a :final flag
   FINAL = 'Done. Build script exited with:'
-
-  has_many :parts, :class_name => 'Artifact::Part', :foreign_key => 'artifact_id'
 
   class << self
     def append(job_id, chars, number = nil, final = false)
@@ -28,6 +28,7 @@ class Artifact::Log < Artifact
         meter('logs.vacuum') do
           Artifact::Part.delete_all(artifact_id: id)
         end
+        find(id).notify('aggregated')
       end
     end
 
@@ -36,7 +37,6 @@ class Artifact::Log < Artifact
         connection.select_value(sanitize_sql([Artifact::Part::AGGREGATE_SELECT_SQL, id])) || ''
       end
     end
-
 
     private
 
@@ -56,7 +56,7 @@ class Artifact::Log < Artifact
       end
   end
 
-  has_many :parts, :class_name => 'Artifact::Part', :foreign_key => :artifact_id
+  has_many :parts, class_name: 'Artifact::Part', foreign_key: :artifact_id
 
   def content
     if Travis::Features.feature_active?(:log_aggregation)

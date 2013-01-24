@@ -90,6 +90,7 @@ module Travis
             :assets        => { :host => HOSTS[Travis.env.to_sym], :version => defined?(Travis::Assets) ? Travis::Assets.version : 'asset-id', :interval => 15 },
             :amqp          => { :username => 'guest', :password => 'guest', :host => 'localhost', :prefetch => 1 },
             :database      => { :adapter => 'postgresql', :database => "travis_#{Travis.env}", :encoding => 'unicode', :min_messages => 'warning' },
+            :s3            => { :access_key_id => '', :secret_access_key => '' },
             :pusher        => { :app_id => 'app-id', :key => 'key', :secret => 'secret' },
             :sidekiq       => { :namespace => 'sidekiq', :pool_size => 1 },
             :smtp          => { :user_name => 'postmark-api_key' },
