@@ -17,7 +17,7 @@ class Job < ActiveRecord::Base
   class << self
     # what we return from the json api
     def queued(queue = nil)
-      scope = where(state: [:created, :queued]).order('jobs.id')
+      scope = where(state: [:created, :queued])
       scope = scope.where(queue: queue) if queue
       scope
     end
@@ -31,7 +31,7 @@ class Job < ActiveRecord::Base
 
     # what already is queued or started
     def running(queue = nil)
-      scope = where(state: [:queued, :started])
+      scope = where(state: [:queued, :started]).order('jobs.id')
       scope = scope.where(queue: queue) if queue
       scope
     end
