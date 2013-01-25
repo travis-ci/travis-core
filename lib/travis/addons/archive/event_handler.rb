@@ -7,7 +7,7 @@ module Travis
         EVENTS = /log:aggregated/
 
         def handle?
-          true
+          Travis::Features.feature_active?(:log_archiving)
         end
 
         def handle

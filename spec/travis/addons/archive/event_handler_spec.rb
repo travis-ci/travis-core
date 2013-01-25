@@ -7,6 +7,7 @@ describe Travis::Addons::Archive::EventHandler do
 
   before :each do
     Travis::Addons::Archive::Task.stubs(:run)
+    Travis::Features.stubs(:feature_active?).with(:log_archiving).returns(true)
   end
 
   describe 'subscription' do
