@@ -1,5 +1,3 @@
-require 'active_support/core_ext/hash/except'
-
 module Travis
   module Services
     class UpdateArtifact < Base
@@ -9,7 +7,7 @@ module Travis
 
       def run
         artifact = run_service(:find_artifact, id: params[:id])
-        artifact.update_attributes(params.slice(:archived_at)) if artifact
+        artifact.update_attributes(archived_at: params[:archived_at]) if artifact
       end
       instrument :run
 
