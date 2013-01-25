@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130125002600) do
+ActiveRecord::Schema.define(:version => 20130125171100) do
 
   create_table "artifact_parts", :force => true do |t|
     t.integer  "artifact_id"
@@ -31,9 +31,13 @@ ActiveRecord::Schema.define(:version => 20130125002600) do
     t.datetime "updated_at"
     t.datetime "aggregated_at"
     t.datetime "archived_at"
+    t.boolean  "archiving"
+    t.boolean  "archive_verified"
   end
 
+  add_index "artifacts", ["archive_verified"], :name => "index_artifacts_on_archive_verified"
   add_index "artifacts", ["archived_at"], :name => "index_artifacts_on_archived_at"
+  add_index "artifacts", ["archiving"], :name => "index_artifacts_on_archiving"
   add_index "artifacts", ["type", "job_id"], :name => "index_artifacts_on_type_and_job_id"
 
   create_table "broadcasts", :force => true do |t|
