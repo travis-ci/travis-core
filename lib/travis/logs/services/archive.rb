@@ -3,6 +3,7 @@ begin
 rescue LoadError => e
 end
 require 'active_support/core_ext/hash/slice'
+require 'uri'
 
 module Travis
   class S3
@@ -10,21 +11,37 @@ module Travis
       AWS::S3::Base.establish_connection!(config)
     end
 
-    def store(bucket, path, data)
-      AWS::S3::S3Object.store(path, data, bucket, content_type: 'text/plain', access: :public_read)
+    def store(url, data)
+      AWS::S3::S3Object.store(path(url), data, bucket(url), content_type: 'text/plain', access: :public_read)
+    end
+
+    def path(url)
+      URI.parse(url).path[1..-1]
+    end
+
+    def bucket(url)
+      URI.parse(url).host
     end
   end
 
   module Logs
     module Services
       class Archive < Travis::Services::Base
+        class VerificationFailed < StandardError
+          def initialize(source_url, target_url, expected, actual)
+            super("Expected #{target_url} (from: #{source_url}) to have the content length #{expected.inspect}, but had #{actual.inspect}")
+          end
+        end
+
         extend Travis::Instrumentation
 
         register :archive_log
 
         def run
-          store
-          report
+          archiving do
+            store
+            verify
+          end
         end
         instrument :run
 
@@ -36,26 +53,36 @@ module Travis
           "https://#{hostname('api')}/artifacts/#{params[:id]}"
         end
 
-        def target_host
-          hostname('archive')
-        end
-
-        def target_path
-          "v2/jobs/#{params[:job_id]}/log.txt" # CRAP. needs to be the job_id
+        def target_url
+          "http://#{hostname('archive')}/v2/jobs/#{params[:job_id]}/log.txt"
         end
 
         private
 
-          def store
-            s3.store(target_host, target_path, log)
+          def archiving
+            result = yield
+            report(archived_at: Time.now)
+            result
           end
 
-          def report
-            request(:put, report_url, archived_at: Time.now.utc) # TODO authenticate
+          def store
+            s3.store(target_url, log)
+          end
+
+          def verify
+            retrying(:verify, 3) do
+              expected = log.bytesize
+              actual = request(:head, target_url).headers['content-length'].try(:to_i)
+              raise VerificationFailed.new(target_url, source_url, expected, actual) unless expected == actual
+            end
+          end
+
+          def report(data)
+            request(:put, report_url, data) # TODO authenticate
           end
 
           def log
-            request(:get, source_url).body.to_s
+            @log ||= request(:get, source_url).body.to_s
           end
 
           def request(method, url, data = nil)
@@ -81,13 +108,25 @@ module Travis
             "#{name}#{'-staging' if Travis.env == 'staging'}.#{Travis.config.host.split('.')[-2, 2].join('.')}"
           end
 
+          def retrying(header, times = 5)
+            yield
+          rescue => e
+            count ||= 0
+            if !params[:no_retries] && times >= count += 1
+              puts "[#{header}] retry #{count} because: #{e.message}"
+              sleep 3
+              retry
+            else
+              raise
+            end
+          end
+
           class Instrument < Notification::Instrument
             def run_completed
               publish(
-                msg: "for <Log id=#{target.params[:id]}> (#{target.target_path})",
+                msg: "for <Log id=#{target.params[:id]}> (to: #{target.target_url})",
                 source_url: target.source_url,
-                target_path: target.target_path,
-                target_host: target.target_host,
+                target_url: target.target_url,
                 object_type: 'Log',
                 object_id: target.params[:id]
               )
