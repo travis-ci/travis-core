@@ -10,6 +10,16 @@ describe Travis::Services::FindBuilds do
   attr_reader :params
 
   describe 'run' do
+    it 'finds last builds from each branch with branches param present' do
+      @params = { :repository_id => repo.id, :branches => true }
+
+      last_on_master = Factory(:build, :repository => repo, :finished_at => Time.now + 1.second)
+      commit = Factory(:commit, :branch => 'development')
+      development = Factory(:build, :repository => repo, :commit => commit)
+
+      service.run.sort_by(&:id).should == [last_on_master, development]
+    end
+
     it 'finds recent builds when empty params given' do
       @params = { :repository_id => repo.id }
       service.run.should == [build]
