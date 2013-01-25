@@ -59,7 +59,6 @@ module Travis
           end
 
           def request(method, url, data = nil)
-            data = MultiJson.encode(data) if data
             http.send(*[method, url, data].compact)
           rescue Faraday::Error => e
             puts "Exception while trying to #{method.inspect}: #{source_url}:"
@@ -68,7 +67,10 @@ module Travis
           end
 
           def http
-            Faraday.new(ssl: Travis.config.ssl.compact)
+            Faraday.new(ssl: Travis.config.ssl.compact) do |f|
+              f.request :url_encoded
+              f.adapter :net_http
+            end
           end
 
           def s3

@@ -28,8 +28,7 @@ describe Travis::Logs::Services::Archive do
     end
 
     it 'reports to the api' do
-      data = MultiJson.encode(archived_at: Time.now)
-      http.expects(:put).with('https://api.travis-ci.org/artifacts/1', data).returns(body)
+      http.expects(:put).with('https://api.travis-ci.org/artifacts/1', archived_at: Time.now).returns(body)
       service.run
     end
   end
@@ -50,8 +49,7 @@ describe Travis::Logs::Services::Archive do
     end
 
     it 'reports to the api' do
-      data = MultiJson.encode(archived_at: Time.now)
-      http.expects(:put).with('https://api-staging.travis-ci.org/artifacts/1', data).returns(body)
+      http.expects(:put).with('https://api-staging.travis-ci.org/artifacts/1', archived_at: Time.now).returns(body)
       service.run
     end
   end
