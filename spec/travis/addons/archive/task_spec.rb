@@ -10,11 +10,11 @@ describe Travis::Addons::Archive::Task do
   end
 
   def run
-    subject.new({ type: 'log', id: 1 }, {}).run
+    subject.new({ type: 'log', id: 1, job_id: 2 }, {}).run
   end
 
   it 'runs the :archive_log service' do
-    Travis.expects(:run_service).with(:archive_log, id: 1)
+    Travis.expects(:run_service).with(:archive_log, id: 1, job_id: 2)
     run
   end
 

@@ -41,7 +41,7 @@ module Travis
         end
 
         def target_path
-          "v2/jobs/#{params[:id]}/log.txt"
+          "v2/jobs/#{params[:job_id]}/log.txt" # CRAP. needs to be the job_id
         end
 
         private

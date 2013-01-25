@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Logs::Services::Archive do
-  let(:params)  { { type: 'log', id: 1 } }
+  let(:params)  { { type: 'log', id: 1, job_id: 2 } }
   let(:service) { described_class.new(params) }
   let(:body)    { stub(body: 'the log') }
   let(:http)    { stub('http', get: body, put: body) }
@@ -23,7 +23,7 @@ describe Travis::Logs::Services::Archive do
     end
 
     it 'stores the log to s3' do
-      s3.expects(:store).with('archive.travis-ci.org', 'v2/jobs/1/log.txt', 'the log')
+      s3.expects(:store).with('archive.travis-ci.org', 'v2/jobs/2/log.txt', 'the log')
       service.run
     end
 
@@ -44,7 +44,7 @@ describe Travis::Logs::Services::Archive do
     end
 
     it 'stores the log to s3' do
-      s3.expects(:store).with('archive-staging.travis-ci.org', 'v2/jobs/1/log.txt', 'the log')
+      s3.expects(:store).with('archive-staging.travis-ci.org', 'v2/jobs/2/log.txt', 'the log')
       service.run
     end
 

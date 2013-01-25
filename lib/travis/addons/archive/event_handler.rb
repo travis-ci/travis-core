@@ -15,7 +15,7 @@ module Travis
         end
 
         def payload
-          @payload ||= { type: type, id: object.id }
+          @payload ||= { type: type, id: object.id, job_id: object.job_id }
         end
 
         def type

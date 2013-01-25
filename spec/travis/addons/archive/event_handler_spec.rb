@@ -33,7 +33,7 @@ describe Travis::Addons::Archive::EventHandler do
     let(:task) { Travis::Addons::Archive::Task }
 
     it 'runs the archive task' do
-      task.expects(:run).with(:archive, type: 'log', id: log.id)
+      task.expects(:run).with(:archive, type: 'log', id: log.id, job_id: log.job_id)
       subject.notify('log:aggregated', log)
     end
   end

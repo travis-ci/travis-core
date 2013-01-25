@@ -3,7 +3,7 @@ module Travis
     module Archive
       class Task < Travis::Task
         def process
-          Travis.run_service(:"archive_#{payload[:type]}", id: payload[:id])
+          Travis.run_service(:"archive_#{payload[:type]}", id: payload[:id], job_id: payload[:job_id])
         end
 
         class Instrument < Notification::Instrument::Task
