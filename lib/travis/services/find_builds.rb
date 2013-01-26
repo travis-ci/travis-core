@@ -28,12 +28,7 @@ module Travis
         def by_params
           if repo
             # TODO :after_number seems like a bizarre api why not just pass an id? pagination style?
-            builds = if params[:branches]
-              repo.last_finished_builds_by_branches
-            else
-              builds = repo.builds
-            end
-
+            builds = repo.builds
             builds = builds.by_event_type(params[:event_type]) if params[:event_type]
             if params[:number]
               builds.where(:number => params[:number].to_s)
