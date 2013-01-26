@@ -21,8 +21,7 @@ describe Travis::Logs::Services::Archive do
     end
 
     it 'stores the log to s3' do
-      url = "http://archive#{"-#{env}" if env}.travis-ci.org/v2/jobs/2/log.txt"
-      s3.expects(:store).with(url, log)
+      s3.expects(:store).with(log)
       service.run
     end
 

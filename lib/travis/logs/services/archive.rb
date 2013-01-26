@@ -7,20 +7,29 @@ require 'uri'
 
 module Travis
   class S3
-    def initialize(config)
-      AWS::S3::Base.establish_connection!(config)
+    class << self
+      def setup
+        AWS.config(Travis.config.s3.to_hash.slice(:access_key_id, :secret_access_key))
+      end
     end
 
-    def store(url, data)
-      AWS::S3::S3Object.store(path(url), data, bucket(url), content_type: 'text/plain', access: :public_read)
+    attr_reader :s3, :url
+
+    def initialize(url)
+      @s3 = AWS::S3.new
+      @url = url
     end
 
-    def path(url)
-      URI.parse(url).path[1..-1]
+    def store(data)
+      object.write(data, content_type: 'text/plain', acl: :public_read)
     end
 
-    def bucket(url)
-      URI.parse(url).host
+    def object
+      @object ||= bucket.objects[URI.parse(url).path[1..-1]]
+    end
+
+    def bucket
+      @bucket ||= s3.buckets[URI.parse(url).host]
     end
   end
 
@@ -66,7 +75,8 @@ module Travis
           end
 
           def store
-            s3.store(target_url, log)
+            S3.setup
+            s3.store(log)
           end
 
           def verify
@@ -101,7 +111,7 @@ module Travis
           end
 
           def s3
-            S3.new(Travis.config.s3.to_hash.slice(:access_key_id, :secret_access_key))
+            S3.new(target_url)
           end
 
           def hostname(name)
