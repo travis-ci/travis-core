@@ -2,8 +2,6 @@ module Travis
   module Addons
     module Archive
       class EventHandler < Event::Handler
-        API_VERSION = 'v2'
-
         EVENTS = /log:aggregated/
 
         def handle?

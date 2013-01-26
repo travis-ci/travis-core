@@ -26,7 +26,7 @@ describe Travis::Logs::Services::Archive do
     end
 
     it 'verifies the log size' do
-      url = "http://archive#{"-#{env}" if env}.travis-ci.org/v2/jobs/2/log.txt"
+      url = "http://archive#{"-#{env}" if env}.travis-ci.org/jobs/2/log.txt"
       http.expects(:head).with(url).returns(response)
       service.run
     end
