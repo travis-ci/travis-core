@@ -6,7 +6,7 @@ module Travis
 
         def run
           Artifact::Log.append(job.id, chars, number, final)
-          job.notify(:log, _log: chars)
+          job.notify(:log, _log: chars, number: number, final: final)
         end
 
         private
