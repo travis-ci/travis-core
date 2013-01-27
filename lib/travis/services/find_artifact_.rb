@@ -24,7 +24,7 @@ module Travis
           @result ||= if params[:id]
             scope(:artifact).find_by_id(params[:id])
           elsif params[:job_id]
-            scope(:artifact).find_by_job_id(params[:job_id])
+            scope(:artifact).where(type: 'Artifact::Log', job_id: params[:job_id]).first
           end
         end
     end
