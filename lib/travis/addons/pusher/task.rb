@@ -61,9 +61,11 @@ module Travis
               # split payload into 9kB chunks, the limit is 10 for entire request
               # body, 1kB should be enough for headers
               log = payload[:_log]
-              Chunkifier.new(log, chunk_size, :json => true).each_with_index.map do |part, i|
+              chunkifier = Chunkifier.new(log, chunk_size, :json => true)
+              chunkifier.each_with_index.map do |part, i|
                 new_payload = payload.dup.merge(:_log => part)
                 new_payload[:number] = "#{new_payload[:number]}.#{i}"
+                new_payload[:final] = new_payload[:final] && chunkifier.length - 1 == i
                 new_payload
               end
             else

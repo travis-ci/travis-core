@@ -15,6 +15,10 @@ module Travis
       options[:json]
     end
 
+    def length
+      parts.length
+    end
+
     def each(&block)
       parts.each(&block)
     end
