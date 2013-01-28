@@ -13,6 +13,13 @@ describe Artifact::Log do
       Travis::Features.disable_for_all(:log_aggregation)
     end
 
+    it 'is archived only when archive is verified' do
+      log.archived_at = Time.now
+      log.should_not be_archived
+      log.archive_verified = true
+      log.should be_archived
+    end
+
     describe '#to_json' do
       it 'returns JSON representation of the record' do
         json = JSON.parse(job.log.to_json)
