@@ -70,7 +70,7 @@ module Travis
 
           def archiving
             result = yield
-            report(archived_at: Time.now)
+            report(archived_at: Time.now, archive_verified: true)
             result
           end
 

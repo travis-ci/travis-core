@@ -39,7 +39,7 @@ describe Travis::Logs::Services::Archive do
 
     it 'reports to the api' do
       url = "https://api#{"-#{env}" if env}.travis-ci.org/artifacts/1"
-      http.expects(:put).with(url, archived_at: Time.now).returns(response)
+      http.expects(:put).with(url, archived_at: Time.now, archive_verified: true).returns(response)
       service.run
     end
   end
