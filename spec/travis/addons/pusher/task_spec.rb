@@ -37,6 +37,23 @@ describe Travis::Addons::Pusher::Task do
     channel.messages.map { |message| message[1][:_log] }.should == ["000", "0\n", "ą"]
   end
 
+  it 'sets separate numbers for each chunk' do
+    subject.stubs(:chunk_size => 5)
+    run('job:test:log', test, params: { _log: "0000\ną", number: 3 })
+
+    channel.messages.length.should == 3
+    channel.messages.map { |message| message[1][:number] }.should == ['3.0', '3.1', '3.2']
+    channel.messages.map { |message| message[1][:final] }.should == [nil, nil, nil]
+  end
+
+  it 'sets final only for the last of the chunks' do
+    subject.stubs(:chunk_size => 5)
+    run('job:test:log', test, params: { _log: "0000\ną", final: true })
+
+    channel.messages.length.should == 3
+    channel.messages.map { |message| message[1][:final] }.should == [false, false, true]
+  end
+
   describe 'run' do
     it 'job:test:created' do
       run('job:test:created', test)

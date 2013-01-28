@@ -77,4 +77,8 @@ class Artifact::Log < Artifact
     update_column(:aggregated_at, nil) # TODO why in the world does update_attributes not set aggregated_at to nil?
     parts.destroy_all
   end
+
+  def archived?
+    archived_at && archive_verified?
+  end
 end

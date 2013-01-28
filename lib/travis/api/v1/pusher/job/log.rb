@@ -9,7 +9,9 @@ module Travis
                 'id' => job.id,
                 'build_id' => job.source_id,
                 'repository_id' => job.repository_id,
-                '_log' => options[:_log]
+                '_log' => options[:_log],
+                'number' => options[:number],
+                'final' => options[:final]
               }
             end
           end

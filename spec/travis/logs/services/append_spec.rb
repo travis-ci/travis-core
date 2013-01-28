@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Travis::Logs::Services::Append do
   include Travis::Testing::Stubs
 
-  let(:service) { described_class.new('data' => { 'id' => 1, 'log' => 'log' }) }
+  let(:service) { described_class.new('data' => { 'id' => 1, 'log' => 'log', 'number' => 1, 'final' => false }) }
 
   before :each do
     Job::Test.stubs(:find).returns(test)
@@ -22,7 +22,7 @@ describe Travis::Logs::Services::Append do
   end
 
   it 'notifies observers' do
-    test.expects(:notify).with(:log, _log: 'log')
+    test.expects(:notify).with(:log, _log: 'log', number: 1, final: false)
     service.run
   end
 end
