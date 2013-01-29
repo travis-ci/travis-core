@@ -14,7 +14,7 @@ describe Travis::Github::Services::SyncUser::UserInfo do
     { "verified" => false, "primary" => false, "email" => "konstantin@Konstantins-MacBook-Air.local"    },
     { "verified" => false, "primary" => false, "email" => "Konstantin.Haase@student.hpi.uni-potsdam.de" },
     { "verified" => false, "primary" => false, "email" => "rkh@7926756e-e54e-46e6-9721-ed318f58905e"    },
-    { "verified" => true,  "primary" => false,  "email" => "konstantin.mailinglists@gmail.com"          },
+    { "verified" => true,  "primary" => false, "email" => "konstantin.mailinglists@gmail.com"           },
     { "verified" => true,  "primary" => true,  "email" => "konstantin.mailinglists@googlemail.com"      }
   ]}
 
@@ -23,10 +23,14 @@ describe Travis::Github::Services::SyncUser::UserInfo do
   let(:user) { stub('user', old_user_info) }
   subject { described_class.new(user, gh) }
 
-  its(:name)        { should == 'Konstantin Haase' }
-  its(:gravatar_id) { should == '5c2b452f6eea4a6d84c105ebd971d2a4' }
-  its(:login)       { should == 'rkh' }
-  its(:email)       { should == 'konstantin.haase@gmail.com' }
+  its(:name)            { should == 'Konstantin Haase' }
+  its(:gravatar_id)     { should == '5c2b452f6eea4a6d84c105ebd971d2a4' }
+  its(:login)           { should == 'rkh' }
+  its(:email)           { should == 'konstantin.haase@gmail.com' }
+  its(:verified_emails) { should == [
+    "konstantin.mailinglists@gmail.com",
+    "konstantin.mailinglists@googlemail.com"
+  ]}
 
   describe 'no public email' do
     before { user_info.delete 'email' }
@@ -63,9 +67,14 @@ describe Travis::Github::Services::SyncUser::UserInfo do
     its(:name) { should == 'RKH' }
   end
 
-  it 'calls update_attributes!' do
-    args = user_info.slice('login', 'name', 'email', 'gravatar_id').symbolize_keys
+  it 'calls update_attributes! and emails.find_or_create_by_email!' do
+    args   = user_info.slice('login', 'name', 'email', 'gravatar_id').symbolize_keys
+    emails = stub("email")
+    user.stubs(:emails).returns(emails)
     user.expects(:update_attributes!).with(args).once
+    emails.expects(:find_or_create_by_email!).with("konstantin.mailinglists@gmail.com").once
+    emails.expects(:find_or_create_by_email!).with("konstantin.mailinglists@googlemail.com").once
+    emails.expects(:find_or_create_by_email!).with("konstantin.haase@gmail.com").once
     subject.run
   end
 end

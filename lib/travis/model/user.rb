@@ -9,6 +9,7 @@ class User < ActiveRecord::Base
   has_many :organizations, :through => :memberships
   has_many :permissions
   has_many :repositories, :through => :permissions
+  has_many :emails
 
   attr_accessible :name, :login, :email, :github_id, :github_oauth_token, :gravatar_id, :locale
 
