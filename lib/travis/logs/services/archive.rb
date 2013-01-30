@@ -36,6 +36,12 @@ module Travis
   module Logs
     module Services
       class Archive < Travis::Services::Base
+        class FetchFailed < StandardError
+          def initialize(source_url, status, message)
+            super("Could not retrieve #{source_url}. Response status: #{status}, message: #{message}")
+          end
+        end
+
         class VerificationFailed < StandardError
           def initialize(source_url, target_url, expected, actual)
             super("Expected #{target_url} (from: #{source_url}) to have the content length #{expected.inspect}, but had #{actual.inspect}")
@@ -46,7 +52,10 @@ module Travis
 
         register :archive_log
 
+        attr_reader :log
+
         def run
+          fetch
           store
           verify
           report
@@ -67,6 +76,17 @@ module Travis
 
         private
 
+          def fetch
+            retrying(:fetch) do
+              response = request(:get, source_url)
+              if response.status == 200
+                @log = response.body.to_s
+              else
+                raise(FetchFailed.new(source_url, response.status, response.body.to_s))
+              end
+            end
+          end
+
           def store
             retrying(:store) do
               S3.setup
@@ -86,10 +106,6 @@ module Travis
             retrying(:report) do
               request(:put, report_url, { archived_at: Time.now, archive_verified: true }, token: Travis.config.tokens.internal)
             end
-          end
-
-          def log
-            @log ||= request(:get, source_url).body.to_s
           end
 
           def request(method, url, params = nil, headers = nil, &block)

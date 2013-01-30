@@ -5,7 +5,7 @@ describe Travis::Logs::Services::Archive do
 
   let(:log)      { 'the log' }
   let(:params)   { { type: 'log', id: 1, job_id: 2, no_sleep: true } }
-  let(:response) { stub('response', body: log, headers: { 'content-length' => log.length }) }
+  let(:response) { stub('response', status: 200, body: log, headers: { 'content-length' => log.length }) }
   let(:http)     { stub('http', head: response, get: response, put: response) }
   let(:s3)       { stub('s3', store: nil) }
   let(:service)  { described_class.new(params) }
@@ -21,6 +21,18 @@ describe Travis::Logs::Services::Archive do
       url = "https://api#{"-#{env}" if env}.travis-ci.org/artifacts/1.txt"
       http.expects(:get).with(url).returns(response)
       service.run
+    end
+
+    it 'retries and finally raises if fetch fails' do
+      http.expects(:get).raises(described_class::FetchFailed.new('url', 503, 'message')).times(5)
+      Travis::Instrumentation.expects(:meter).with('travis.logs.services.archive.retries.fetch').times(4)
+      -> { silence { service.run } }.should raise_error(described_class::FetchFailed)
+    end
+
+    it 'retries and finally raises if fetch can not find the log' do
+      response.stubs(status: 404, body: 'not found')
+      Travis::Instrumentation.expects(:meter).with('travis.logs.services.archive.retries.fetch').times(4)
+      -> { silence { service.run } }.should raise_error(described_class::FetchFailed)
     end
 
     it 'stores the log to s3' do
