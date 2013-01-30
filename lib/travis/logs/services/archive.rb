@@ -88,15 +88,15 @@ module Travis
           end
 
           def report(data)
-            request(:put, report_url, data) # TODO authenticate
+            request(:put, report_url, data, token: Travis.config.tokens.internal)
           end
 
           def log
             @log ||= request(:get, source_url).body.to_s
           end
 
-          def request(method, url, data = nil)
-            http.send(*[method, url, data].compact)
+          def request(method, url, params = nil, headers = nil, &block)
+            http.send(*[method, url, params, headers].compact, &block)
           rescue Faraday::Error => e
             puts "Exception while trying to #{method.inspect}: #{source_url}:"
             puts e.message, e.backtrace
