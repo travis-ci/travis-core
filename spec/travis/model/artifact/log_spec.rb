@@ -103,12 +103,31 @@ describe Artifact::Log do
       describe '#clear!' do
         it 'clears log parts' do
           Artifact::Log.append(job.id, 'bar')
+          -> { log.clear! }.should change { log.parts.length }.by(-1)
+        end
 
-          log.parts.length.should == 1
+        it 'resets content' do
+          log.update_attributes!(content: 'foo')
+          log.clear!
+          log.reload.content.should == ''
+        end
 
-          expect {
-            log.clear!
-          }.to change { log.parts.length }.by(-1)
+        it 'resets aggregated_at' do
+          log.update_attributes!(aggregated_at: Time.now)
+          log.clear!
+          log.reload.aggregated_at.should be_nil
+        end
+
+        it 'resets archived_at' do
+          log.update_attributes!(archived_at: Time.now)
+          log.clear!
+          log.reload.archived_at.should be_nil
+        end
+
+        it 'resets archive_verified' do
+          log.update_attributes!(archive_verified: true)
+          log.clear!
+          log.reload.archive_verified.should be_nil
         end
       end
 
