@@ -80,7 +80,7 @@ module Travis
           end
 
           def verify
-            retrying(:verify, 3) do
+            retrying(:verify) do
               expected = log.bytesize
               actual = request(:head, target_url).headers['content-length'].try(:to_i)
               raise VerificationFailed.new(target_url, source_url, expected, actual) unless expected == actual
@@ -88,7 +88,9 @@ module Travis
           end
 
           def report(data)
-            request(:put, report_url, data, token: Travis.config.tokens.internal)
+            retrying(:report) do
+              request(:put, report_url, data, token: Travis.config.tokens.internal)
+            end
           end
 
           def log
@@ -122,9 +124,9 @@ module Travis
             yield
           rescue => e
             count ||= 0
-            if !params[:no_retries] && times >= count += 1
+            if !params[:no_retries] && times > (count += 1)
               puts "[#{header}] retry #{count} because: #{e.message}"
-              sleep 3
+              sleep count * 3
               retry
             else
               raise
