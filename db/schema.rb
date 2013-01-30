@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130125171100) do
+ActiveRecord::Schema.define(:version => 20130129142703) do
 
   create_table "artifact_parts", :force => true do |t|
     t.integer  "artifact_id"
@@ -97,6 +97,16 @@ ActiveRecord::Schema.define(:version => 20130125171100) do
   add_index "commits", ["branch"], :name => "index_commits_on_branch"
   add_index "commits", ["commit"], :name => "index_commits_on_commit"
 
+  create_table "emails", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "email"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "emails", ["email"], :name => "index_emails_on_email"
+  add_index "emails", ["user_id"], :name => "index_emails_on_user_id"
+
   create_table "events", :force => true do |t|
     t.integer  "source_id"
     t.string   "source_type"
@@ -180,9 +190,9 @@ ActiveRecord::Schema.define(:version => 20130125171100) do
     t.text     "description"
     t.string   "last_build_language"
     t.integer  "last_build_duration"
+    t.boolean  "private",                :default => false
     t.integer  "owner_id"
     t.string   "owner_type"
-    t.boolean  "private",                :default => false
     t.integer  "last_build_result"
     t.string   "last_build_state"
   end
@@ -202,12 +212,12 @@ ActiveRecord::Schema.define(:version => 20130125171100) do
     t.datetime "finished_at"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
+    t.integer  "owner_id"
+    t.string   "owner_type"
     t.string   "event_type"
     t.string   "comments_url"
     t.string   "base_commit"
     t.string   "head_commit"
-    t.integer  "owner_id"
-    t.string   "owner_type"
     t.string   "result"
     t.string   "message"
   end
