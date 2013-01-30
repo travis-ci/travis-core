@@ -271,5 +271,6 @@ ActiveRecord::Schema.define(:version => 20130125171100) do
 
   add_index "workers", ["full_name"], :name => "index_workers_on_full_name"
   add_index "workers", ["last_seen_at"], :name => "index_workers_on_last_seen_at"
+  add_index "workers", ["name", "host"], :name => "index_workers_on_name_and_host"
 
 end
