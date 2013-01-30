@@ -47,10 +47,9 @@ module Travis
         register :archive_log
 
         def run
-          archiving do
-            store
-            verify
-          end
+          store
+          verify
+          report
         end
         instrument :run
 
@@ -68,15 +67,11 @@ module Travis
 
         private
 
-          def archiving
-            result = yield
-            report(archived_at: Time.now, archive_verified: true)
-            result
-          end
-
           def store
-            S3.setup
-            s3.store(log)
+            retrying(:store) do
+              S3.setup
+              s3.store(log)
+            end
           end
 
           def verify
@@ -87,9 +82,9 @@ module Travis
             end
           end
 
-          def report(data)
+          def report
             retrying(:report) do
-              request(:put, report_url, data, token: Travis.config.tokens.internal)
+              request(:put, report_url, { archived_at: Time.now, archive_verified: true }, token: Travis.config.tokens.internal)
             end
           end
 
@@ -124,9 +119,10 @@ module Travis
             yield
           rescue => e
             count ||= 0
-            if !params[:no_retries] && times > (count += 1)
+            if times > (count += 1)
               puts "[#{header}] retry #{count} because: #{e.message}"
-              sleep count * 3
+              Travis::Instrumentation.meter("#{self.class.name.underscore.gsub("/", ".")}.retries.#{header}")
+              sleep count * 3 unless params[:no_sleep]
               retry
             else
               raise
