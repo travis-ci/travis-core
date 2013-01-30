@@ -7,7 +7,7 @@ module Travis
 
       def run
         artifact = run_service(:find_artifact, id: params[:id])
-        artifact.update_attributes(archived_at: params[:archived_at]) if artifact
+        artifact.update_attributes(archived_at: params[:archived_at], archive_verified: params[:archive_verified]) if artifact
       end
       instrument :run
 

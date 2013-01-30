@@ -4,7 +4,7 @@ describe Travis::Services::UpdateArtifact do
   include Travis::Testing::Stubs
 
   let(:service) { described_class.new(user, params) }
-  let(:params)  { { id: log.id, archived_at: Time.now } }
+  let(:params)  { { id: log.id, archived_at: Time.now, archive_verified: true } }
 
   before :each do
     log.stubs(:update_attributes).returns(true)
@@ -12,7 +12,7 @@ describe Travis::Services::UpdateArtifact do
   end
 
   it 'updates the artifact' do
-    log.expects(:update_attributes).with(archived_at: params[:archived_at])
+    log.expects(:update_attributes).with(archived_at: params[:archived_at], archive_verified: true)
     service.run
   end
 
