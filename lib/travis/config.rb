@@ -109,7 +109,8 @@ module Travis
             :ssl           => {},
             :sponsors      => { :platinum => [], :gold => [], :workers => {} },
             :redis         => { :url => 'redis://localhost:6379' },
-            :repository_filter => { :include => [/^rails\/rails/], :exclude => [/\/rails$/] }
+            :repository_filter => { :include => [/^rails\/rails/], :exclude => [/\/rails$/] },
+            :encryption    => {}
 
     default :_access => [:key]
 

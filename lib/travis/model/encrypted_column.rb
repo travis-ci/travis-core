@@ -15,7 +15,7 @@ module Travis::Model
     end
 
     def key
-      ENV['DB_ENCRYPTION_KEY']
+      config.key
     end
 
     def iv
@@ -73,6 +73,10 @@ module Travis::Model
       aes.iv  = iv
 
       aes
+    end
+
+    def config
+      Travis.config.encryption
     end
   end
 end
