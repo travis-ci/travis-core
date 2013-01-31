@@ -12,6 +12,8 @@ class Request < ActiveRecord::Base
 
   include States
 
+  serialize :token, Travis::Model::EncryptedColumn.new
+
   class << self
     def last_by_head_commit(head_commit)
       where(head_commit: head_commit).order(:id).last

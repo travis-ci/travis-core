@@ -19,6 +19,8 @@ class User < ActiveRecord::Base
   serialize :github_scopes
   before_save :track_github_scopes
 
+  serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
+
   class << self
     def with_permissions(permissions)
       where(:permissions => permissions).includes(:permissions)

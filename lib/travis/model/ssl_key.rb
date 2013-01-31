@@ -13,6 +13,8 @@ class SslKey < ActiveRecord::Base
 
   before_validation :generate_keys, :on => :create
 
+  serialize :private_key, Travis::Model::EncryptedColumn.new
+
   def encode(string)
     Base64.encode64(encrypt(string)).strip
   end
