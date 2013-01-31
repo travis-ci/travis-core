@@ -10,8 +10,9 @@ class Artifact::Log < Artifact
     def append(job_id, chars, number = nil, final = false)
       if Travis::Features.feature_active?(:log_aggregation)
         id = Artifact::Log.where(job_id: job_id).select(:id).first.id
+        puts "[warn] artifact is is nil for job_id: #{job_id}, number: #{number}, ignoring the log part!"
         meter('logs.update') do
-          Artifact::Part.create!(artifact_id: id, content: filter(chars), number: number, final: final || final?(chars))
+          Artifact::Part.create!(artifact_id: id, content: filter(chars), number: number, final: final || final?(chars)) if id
         end
       else
         meter('logs.update') do
