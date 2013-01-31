@@ -62,7 +62,7 @@ module Travis::Model
     end
 
     def use_prefix?
-      Travis::Features.feature_active?(:db_encryption_prefix)
+      Travis::Features.feature_inactive?(:db_encryption_prefix)
     end
 
     def create_aes(mode = :encrypt, key, iv)
