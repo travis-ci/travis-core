@@ -110,7 +110,7 @@ module Travis
             :sponsors      => { :platinum => [], :gold => [], :workers => {} },
             :redis         => { :url => 'redis://localhost:6379' },
             :repository_filter => { :include => [/^rails\/rails/], :exclude => [/\/rails$/] },
-            :encryption    => {}
+            :encryption    => (Travis.env == 'development' ? { key: 'secret'*10 } : {})
 
     default :_access => [:key]
 
