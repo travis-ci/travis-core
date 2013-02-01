@@ -14,5 +14,10 @@ require 'travis'
 
 module Travis::Core
   class Application < Rails::Application
+
+    console do
+      Travis::Database.connect
+      Travis::Features.start
+    end
   end
 end
