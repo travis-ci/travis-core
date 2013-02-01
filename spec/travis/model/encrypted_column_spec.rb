@@ -2,6 +2,10 @@ require 'spec_helper'
 
 module Travis::Model
   describe EncryptedColumn do
+    def encode str
+      Base64.strict_encode64 str
+    end
+
     let(:column) { EncryptedColumn.new }
     let(:iv)     { 'a' * 16 }
     let(:aes)    { stub('aes', :final => '') }
@@ -22,7 +26,7 @@ module Travis::Model
 
       describe '#load' do
         it 'decrypts data even with no prefix' do
-          data = "to-decrypt#{iv}"
+          data = encode "to-decrypt#{iv}"
 
           column.expects(:create_aes).with(:decrypt, 'secret-key', iv).returns(aes)
           aes.expects(:update).with('to-decrypt').returns('decrypted')
@@ -31,7 +35,8 @@ module Travis::Model
         end
 
         it 'removes prefix if prefix is still used' do
-          data = "#{column.prefix}to-decrypt#{iv}"
+          data = encode "to-decrypt#{iv}"
+          data = "#{column.prefix}#{data}"
 
           column.expects(:create_aes).with(:decrypt, 'secret-key', iv).returns(aes)
           aes.expects(:update).with('to-decrypt').returns('decrypted')
@@ -46,7 +51,7 @@ module Travis::Model
           column.expects(:create_aes).with(:encrypt, 'secret-key', iv).returns(aes)
           aes.expects(:update).with('to-encrypt').returns('encrypted')
 
-          column.dump('to-encrypt').should == "encrypted#{iv}"
+          column.dump('to-encrypt').should == encode("encrypted#{iv}")
         end
       end
     end
@@ -62,7 +67,8 @@ module Travis::Model
         end
 
         it 'decrypts data if prefix is used' do
-          data = "#{column.prefix}to-decrypt#{iv}"
+          data = encode "to-decrypt#{iv}"
+          data = "#{column.prefix}#{data}"
 
           column.expects(:create_aes).with(:decrypt, 'secret-key', iv).returns(aes)
           aes.expects(:update).with('to-decrypt').returns('decrypted')
@@ -77,7 +83,8 @@ module Travis::Model
           column.expects(:create_aes).with(:encrypt, 'secret-key', iv).returns(aes)
           aes.expects(:update).with('to-encrypt').returns('encrypted')
 
-          column.dump('to-encrypt').should == "#{column.prefix}encrypted#{iv}"
+          result = encode "encrypted#{iv}"
+          column.dump('to-encrypt').should == "#{column.prefix}#{result}"
         end
       end
     end

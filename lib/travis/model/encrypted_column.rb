@@ -1,4 +1,5 @@
 require 'securerandom'
+require 'base64'
 
 module Travis::Model
   class EncryptedColumn
@@ -41,12 +42,14 @@ module Travis::Model
     def decrypt(data)
       data = data[8..-1] if prefix_used?(data)
 
+      data = decode data
+
       iv   = data[-16..-1]
       data = data[0..-17]
 
       aes = create_aes :decrypt, key, iv
 
-      aes.update(data) + aes.final
+      result = aes.update(data) + aes.final
     end
 
     def encrypt(data)
@@ -57,6 +60,7 @@ module Travis::Model
       encrypted = aes.update(data) + aes.final
 
       encrypted = "#{encrypted}#{iv}"
+      encrypted = encode encrypted
       encrypted = "#{prefix}#{encrypted}" if use_prefix?
       encrypted
     end
@@ -77,6 +81,14 @@ module Travis::Model
 
     def config
       Travis.config.encryption
+    end
+
+    def decode(str)
+      Base64.strict_decode64 str
+    end
+
+    def encode(str)
+      Base64.strict_encode64 str
     end
   end
 end
