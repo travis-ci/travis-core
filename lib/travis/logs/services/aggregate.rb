@@ -15,8 +15,12 @@ module Travis
 
         def run
           return unless active?
-          aggregateable_log_ids.each do |id|
-            Artifact::Log.aggregate(id)
+          aggregateable_ids.each do |id|
+            transaction do
+              aggregate(id)
+              vacuum(id)
+              notify(id)
+            end
           end
         end
 
@@ -26,7 +30,23 @@ module Travis
             Travis::Features.feature_active?(:log_aggregation)
           end
 
-          def aggregateable_log_ids
+          def aggregate(id)
+            meter('logs.aggregate') do
+              Artifact::Part.aggregate(id)
+            end
+          end
+
+          def vacuum(id)
+            meter('logs.vacuum') do
+              Artifact::Part.delete_all(artifact_id: id)
+            end
+          end
+
+          def notify(id)
+            Artifact::Log.find(id).notify('aggregated')
+          end
+
+          def aggregateable_ids
             Artifact::Part.connection.select_values(query).map(&:to_i)
           end
 
@@ -36,6 +56,17 @@ module Travis
 
           def intervals
             Travis.config.logs.intervals
+          end
+
+          def transaction(&block)
+            ActiveRecord::Base.transaction(&block)
+          rescue ActiveRecord::ActiveRecordError => e
+            # puts e.message, e.backtrace
+            Travis::Exceptions.handle(e)
+          end
+
+          def meter(name, &block)
+            Metriks.timer(name).time(&block)
           end
       end
     end
