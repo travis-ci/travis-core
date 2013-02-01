@@ -84,6 +84,13 @@ describe Job::Test do
         job.reload.log.content.should be_blank
       end
 
+      it 'recreates log if it\'s removed' do
+        job.log.destroy
+        job.reload
+        job.reset!
+        job.reload.log.should_not be_nil
+      end
+
       xit 'clears log parts' do
       end
 

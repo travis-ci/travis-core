@@ -44,7 +44,11 @@ class Job
       self.state = :created
       attrs = %w(started_at queued_at finished_at worker)
       attrs.each { |attr| write_attribute(attr, nil) }
-      log.clear!
+      if log
+        log.clear!
+      else
+        build_log
+      end
     end
 
     def cancelable?
