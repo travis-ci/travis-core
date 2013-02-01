@@ -20,4 +20,12 @@ describe Travis::Api::V1::Pusher::Job::Created do
       'allow_failure' => false
     }
   end
+
+  context 'without log' do
+    before { test.stubs(log_id: nil) }
+
+    it 'returns null log_id' do
+      data['log_id'].should be_nil
+    end
+  end
 end

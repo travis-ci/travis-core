@@ -140,6 +140,7 @@ module Travis
           commit_id: commit.id,
           commit: commit,
           log: log,
+          log_id: log.id,
           number: '2.1',
           config: { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
           decrypted_config: { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },

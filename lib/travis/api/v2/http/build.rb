@@ -61,7 +61,7 @@ module Travis
                 'repository_id' => job.repository_id,
                 'build_id' => job.source_id,
                 'commit_id' => job.commit_id,
-                'log_id' => job.log.id,
+                'log_id' => job.log_id,
                 'state' => job.state.to_s,
                 'number' => job.number,
                 'config' => job.obfuscated_config.stringify_keys,

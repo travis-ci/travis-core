@@ -80,6 +80,10 @@ class Job
       super
     end
 
+    def log_id
+      log.id if log
+    end
+
     protected
 
       LEGACY_RESULTS = { 0 => 'passed', 1 => 'failed' }

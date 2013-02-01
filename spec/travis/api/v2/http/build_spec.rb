@@ -46,6 +46,14 @@ describe Travis::Api::V2::Http::Build do
       data['build']['config']['env'].should == 'FOO=[secure]'
     end
   end
+
+  context 'without logs' do
+    before { build.matrix.first.stub(log: nil) }
+
+    it 'returns null log_id' do
+      data['log_id'].should be_nil
+    end
+  end
 end
 
 describe 'Travis::Api::V2::Http::Build using Travis::Services::Builds::FindOne' do
