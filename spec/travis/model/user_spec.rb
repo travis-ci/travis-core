@@ -124,6 +124,18 @@ describe User do
         User.authenticate_by('login' => user.login, 'token' => 'some-other-token').should be_nil
       end
     end
+
+    describe 'with encrypted token' do
+      it 'authenticates the user' do
+        user.tokens.first.update_column :token, 'encrypted-token'
+
+        Travis::Model::EncryptedColumn.any_instance.stubs(:encrypt? => true)
+        Travis::Model::EncryptedColumn.any_instance.stubs(:key => 'abcd')
+        Travis::Model::EncryptedColumn.any_instance.expects(:dump).with('a-token').returns('encrypted-token')
+
+        User.authenticate_by('login' => user.login, 'token' => 'a-token').should == user
+      end
+    end
   end
 
   describe 'service_hooks' do
