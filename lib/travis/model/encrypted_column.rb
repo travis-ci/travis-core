@@ -12,7 +12,7 @@ module Travis::Model
     end
 
     def dump(data)
-      encrypt? ? encrypt(data.to_s) : data
+      encrypt?(data) ? encrypt(data.to_s) : data
     end
 
     def key
@@ -28,11 +28,11 @@ module Travis::Model
     end
 
     def decrypt?(data)
-      !use_prefix? || prefix_used?(data)
+      data.present? && (!use_prefix? || prefix_used?(data))
     end
 
-    def encrypt?
-      Travis::Features.feature_active?(:db_encryption)
+    def encrypt?(data)
+      data.present? && Travis::Features.feature_active?(:db_encryption)
     end
 
     def prefix_used?(data)
