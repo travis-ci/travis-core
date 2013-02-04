@@ -14,6 +14,8 @@ class Token < ActiveRecord::Base
 
   attr_accessible # nothing is changable
 
+  serialize :token, Travis::Model::EncryptedColumn.new
+
   protected
 
     def generate_token
