@@ -1,7 +1,14 @@
 require 'redis'
 require 'rollout'
+require 'connection_pool'
 require 'active_support/deprecation'
 require 'active_support/core_ext/module'
+
+class ::Rollout
+  def redis
+    @redis
+  end
+end
 
 module Travis
   # Wraps feature flips for Travis.
@@ -20,47 +27,78 @@ module Travis
   # to the rollout library, where features can be enabled for users,
   # groups and based on percentages.
   module Features
-    class << self
-      methods = (Rollout.public_instance_methods(false) - [:active?, "active?"]) << {:to => :rollout}
-      delegate(*methods)
+    def with_redis(&blk)
+      if @connection_pool
+        @connection_pool.with do |rollout|
+          blk.call(rollout.redis)
+        end
+      else
+        blk.call(redis)
+      end
+    end
+
+    def with_rollout(&blk)
+      @connection_pool.with(&blk)
     end
 
     def start
-      # TODO deprecate
+      @connection_pool ||= ConnectionPool.new(size: 10) {
+        ::Rollout.new(Redis.new(url: Travis.config.redis.url, timeout: 10))
+      } 
     end
 
     def redis
       Travis.redis
     end
 
-    def rollout
-      @rollout ||= ::Rollout.new(redis)
-    end
-
     def active?(feature, repository)
-      feature_active?(feature) or
-        (rollout.active?(feature, repository.owner) or
-          repository_active?(feature, repository))
+      with_rollout do |rollout|
+        feature_active?(feature) or
+          (rollout.active?(feature, repository.owner) or
+            repository_active?(feature, repository))
+      end
     end
 
     def activate_repository(feature, repository)
-      redis.sadd(repository_key(feature), repository.id)
+      with_redis do |redis|
+        redis.sadd(repository_key(feature), repository.id)
+      end
     end
 
     def deactivate_repository(feature, repository)
-      redis.srem(repository_key(feature), repository.id)
+      with_redis do |redis|
+        redis.srem(repository_key(feature), repository.id)
+      end
+    end
+
+    def activate_user(feature, user)
+      with_rollout do |rollout|
+        rollout.activate_user(feature, user)
+      end
+    end
+
+    def deactivate_user(feature, user)
+      with_rollout do |rollout|
+        rollout.deactivate_user(feature, user)
+      end
     end
 
     def repository_active?(feature, repository)
-      redis.sismember(repository_key(feature), repository.id)
+      with_redis do |redis|
+        redis.sismember(repository_key(feature), repository.id)
+      end
     end
 
     def user_active?(feature, user)
-      rollout.active?(feature, user)
+      with_rollout do |rollout|
+        rollout.active?(feature, user)
+      end
     end
 
     def activate_all(feature)
-      redis.del(disabled_key(feature))
+      with_redis do |redis|
+        redis.del(disabled_key(feature))
+      end
     end
 
     def feature_active?(feature)
@@ -68,27 +106,39 @@ module Travis
     end
 
     def feature_inactive?(feature)
-      redis.get(disabled_key(feature)) != "1"
+      with_redis do |redis|
+        redis.get(disabled_key(feature)) != "1"
+      end
     end
 
     def feature_deactivated?(feature)
-      redis.get(disabled_key(feature)) == '0'
+      with_redis do |redis|
+        redis.get(disabled_key(feature)) == '0'
+      end
     end
 
     def deactivate_all(feature)
-      redis.set(disabled_key(feature), 0)
+      with_redis do |redis|
+        redis.set(disabled_key(feature), 0)
+      end
     end
 
     def enabled_for_all?(feature)
-      redis.get(enabled_for_all_key(feature)) == '1'
+      with_redis do |redis|
+        redis.get(enabled_for_all_key(feature)) == '1'
+      end
     end
 
     def enable_for_all(feature)
-      redis.set(enabled_for_all_key(feature), 1)
+      with_redis do |redis|
+        redis.set(enabled_for_all_key(feature), 1)
+      end
     end
 
     def disable_for_all(feature)
-      redis.set(enabled_for_all_key(feature), 0)
+      with_redis do |redis|
+        redis.set(enabled_for_all_key(feature), 0)
+      end
     end
 
     extend self
