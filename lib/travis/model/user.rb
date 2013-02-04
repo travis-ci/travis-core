@@ -19,6 +19,8 @@ class User < ActiveRecord::Base
   serialize :github_scopes
   before_save :track_github_scopes
 
+  serialize :github_oauth_token, Travis::Model::EncryptedColumn.new
+
   class << self
     def with_permissions(permissions)
       where(:permissions => permissions).includes(:permissions)
@@ -26,7 +28,11 @@ class User < ActiveRecord::Base
 
     def authenticate_by(options)
       options = options.symbolize_keys
-      includes(:tokens).where(:login => options[:login], 'tokens.token' => options[:token]).first
+      encrypted_column = Travis::Model::EncryptedColumn.new
+      possible_tokens = [options[:token]]
+      possible_tokens << encrypted_column.dump(options[:token]) if encrypted_column.encrypt?(options[:token])
+
+      includes(:tokens).where(:login => options[:login], 'tokens.token' => possible_tokens).first
     end
 
     def find_or_create_for_oauth(payload)
