@@ -7,7 +7,7 @@ require 'active_support/core_ext/class/attribute'
 module Travis
   class Task
     include Logging
-    extend  Instrumentation, NewRelic, Exceptions::Handling, Async
+    extend  Instrumentation
 
     class_attribute :run_local
 
@@ -25,7 +25,6 @@ module Travis
       def perform(*args)
         new(*args).run
       end
-      rescues :perform, from: Exception
     end
 
     attr_reader :payload, :params
@@ -36,7 +35,9 @@ module Travis
     end
 
     def run
-      process
+      timeout after: params[:timeout] || 60 do
+        process
+      end
     end
     instrument :run
 
@@ -75,6 +76,10 @@ module Travis
 
       def http_options
         { ssl: Travis.config.ssl.compact }
+      end
+
+      def timeout(options = { after: 60 }, &block)
+        Timeout::timeout(options[:after], &block)
       end
   end
 end
