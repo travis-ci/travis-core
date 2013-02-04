@@ -38,9 +38,7 @@ module Travis
     def run
       process
     end
-    rescues    :run, from: Exception
     instrument :run
-    new_relic  :run, category: :task
 
     private
 
