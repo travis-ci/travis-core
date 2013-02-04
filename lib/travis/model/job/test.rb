@@ -71,10 +71,6 @@ class Job
       state == :failed || result == 1 # TODO remove as soon we're using state everywhere
     end
 
-    def passed_or_allowed_failure?
-      passed? || allow_failure
-    end
-
     def unknown?
       !passed? && !failed? && result == nil
     end

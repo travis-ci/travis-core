@@ -52,20 +52,18 @@ class Build
       matrix.all?(&:finished?)
     end
 
-    def matrix_state(config = {})
-      tests = matrix_for(config)
+    def matrix_state
+      tests = matrix.reject { |test| test.allow_failure? }
       if tests.blank?
         nil
-      elsif tests.all?(&:passed_or_allowed_failure?)
-        :passed
       elsif tests.any?(&:errored?)
         :errored
       elsif tests.any?(&:canceled?)
         :canceled
       elsif tests.any?(&:failed?)
         :failed
-      else
-        nil
+      elsif tests.all?(&:passed?)
+        :passed
       end
     end
 
