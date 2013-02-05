@@ -3,10 +3,16 @@ require 'metriks'
 class Artifact::Log < Artifact
   include Travis::Event
 
+  AGGREGATE_PARTS_SELECT_SQL = <<-sql.squish
+    SELECT array_to_string(array_agg(artifact_parts.content ORDER BY number, id), '')
+      FROM artifact_parts
+     WHERE artifact_id = ?
+  sql
+
   class << self
     def aggregated_content(id)
       Metriks.timer('logs.read_aggregated').time do
-        connection.select_value(sanitize_sql([Artifact::Part::AGGREGATE_SELECT_SQL, id])) || ''
+        connection.select_value(sanitize_sql([AGGREGATE_PARTS_SELECT_SQL, id])) || ''
       end
     end
   end

@@ -6,7 +6,14 @@ module Travis
       class Aggregate < Travis::Services::Base
         register :logs_aggregate
 
-        SQL = <<-sql.squish
+        AGGREGATE_UPDATE_SQL = <<-sql.squish
+          UPDATE artifacts
+             SET aggregated_at = ?,
+                 content = (COALESCE(content, '') || (#{Artifact::Log::AGGREGATE_PARTS_SELECT_SQL}))
+           WHERE artifacts.id = ?
+        sql
+
+        AGGREGATEABLE_SELECT_SQL = <<-sql.squish
           SELECT DISTINCT artifact_id
             FROM artifact_parts
            WHERE created_at <= NOW() - interval '? seconds' AND final = ?
@@ -32,7 +39,7 @@ module Travis
 
           def aggregate(id)
             meter('logs.aggregate') do
-              Artifact::Part.aggregate(id)
+              connection.execute(sanitize_sql([AGGREGATE_UPDATE_SQL, Time.now, id, id]))
             end
           end
 
@@ -53,7 +60,7 @@ module Travis
           end
 
           def query
-            Artifact::Part.send(:sanitize_sql, [SQL, intervals[:regular], true, intervals[:force]])
+            Artifact::Part.send(:sanitize_sql, [AGGREGATEABLE_SELECT_SQL, intervals[:regular], true, intervals[:force]])
           end
 
           def intervals
@@ -69,6 +76,14 @@ module Travis
 
           def meter(name, &block)
             Metriks.timer(name).time(&block)
+          end
+
+          def connection
+            Artifact::Part.connection
+          end
+
+          def sanitize_sql(*args)
+            Artifact::Part.send(:sanitize_sql, *args)
           end
       end
     end
