@@ -16,11 +16,7 @@ module Travis
 
           def create_part
             meter('logs.update') do
-              if artifact
-                Artifact::Part.create!(artifact_id: artifact.id, content: chars, number: number, final: final?)
-              else
-                puts "[warn] could not find an artifact for job_id: #{job_id}, number: #{number}, ignoring the log part!"
-              end
+              Artifact::Part.create!(artifact_id: artifact.id, content: chars, number: number, final: final?)
             end
           end
 
@@ -29,7 +25,12 @@ module Travis
           end
 
           def artifact
-            @artifact ||= Artifact::Log.where(job_id: job.id).select(:id).first
+            @artifact ||= Artifact::Log.where(job_id: job.id).select(:id).first || create_artifact
+          end
+
+          def create_artifact
+            puts "[warn] had to create an artifact for job_id: #{job.id}!"
+            job.create_log
           end
 
           def job
