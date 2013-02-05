@@ -70,7 +70,7 @@ module Travis::Model
     end
 
     def create_aes(mode = :encrypt, key, iv)
-      aes = OpenSSL::Cipher.new("AES-256-CBC")
+      aes = OpenSSL::Cipher::AES.new(256, :CBC)
 
       aes.send(mode)
       aes.key = key
