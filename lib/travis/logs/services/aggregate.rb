@@ -44,6 +44,8 @@ module Travis
 
           def notify(id)
             Artifact::Log.find(id).notify('aggregated')
+          rescue ActiveRecord::RecordNotFound
+            puts "[warn] could not find a log with the id #{id}"
           end
 
           def aggregateable_ids

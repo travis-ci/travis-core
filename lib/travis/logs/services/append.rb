@@ -16,6 +16,7 @@ module Travis
 
           def create_part
             meter('logs.update') do
+              puts "[warn] artifact.id is nil in :logs_append! #{self.inspect}" if artifact.id.nil?
               Artifact::Part.create!(artifact_id: artifact.id, content: chars, number: number, final: final?)
             end
           end
@@ -30,7 +31,7 @@ module Travis
 
           def create_artifact
             puts "[warn] had to create an artifact for job_id: #{job.id}!"
-            job.create_log
+            job.create_log!
           end
 
           def job
