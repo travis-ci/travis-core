@@ -56,7 +56,7 @@ module Travis
           end
 
           def aggregateable_ids
-            Artifact::Part.connection.select_values(query).map(&:to_i)
+            Artifact::Part.connection.select_values(query)
           end
 
           def query
