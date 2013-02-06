@@ -38,5 +38,4 @@ group :test do
   gem 'webmock',          '~> 1.8.0'
   gem 'guard'
   gem 'guard-rspec'
-  gem 'rb-fsevent'
 end
