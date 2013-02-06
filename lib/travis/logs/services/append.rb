@@ -16,9 +16,12 @@ module Travis
 
           def create_part
             meter('logs.update') do
-              puts "[warn] artifact.id is nil in :logs_append! #{self.inspect}" if artifact.id.nil?
+              puts "[warn] artifact.id is #{artifact.id.inspect} in :logs_append! #{self.inspect}" if artifact.id.to_i == 0
               Artifact::Part.create!(artifact_id: artifact.id, content: chars, number: number, final: final?)
             end
+          rescue ActiveRecord::ActiveRecordError => e
+            puts "[warn] could not save artifact in :logs_append #{self.inspect}"
+            puts e.message, e.backtrace
           end
 
           def notify
