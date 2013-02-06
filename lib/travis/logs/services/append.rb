@@ -1,3 +1,5 @@
+require 'coder'
+
 module Travis
   module Logs
     module Services
@@ -58,7 +60,7 @@ module Travis
           end
 
           def filter(chars)
-            chars.to_s.gsub("\0", '') # postgres seems to have issues with null chars
+            Coder.clean!(chars.to_s.gsub("\0", '')) # postgres seems to have issues with null chars
           end
 
           def meter(name, &block)
