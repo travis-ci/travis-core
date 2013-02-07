@@ -11,7 +11,34 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130208215252) do
+ActiveRecord::Schema.define(:version => 20130129142703) do
+
+  create_table "artifact_parts", :force => true do |t|
+    t.integer  "artifact_id"
+    t.text     "content"
+    t.integer  "number"
+    t.boolean  "final"
+    t.datetime "created_at"
+  end
+
+  add_index "artifact_parts", ["artifact_id", "number"], :name => "index_artifact_parts_on_artifact_id_and_number"
+
+  create_table "artifacts", :force => true do |t|
+    t.text     "content"
+    t.integer  "job_id"
+    t.string   "type"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
+    t.datetime "aggregated_at"
+    t.datetime "archived_at"
+    t.boolean  "archiving"
+    t.boolean  "archive_verified"
+  end
+
+  add_index "artifacts", ["archive_verified"], :name => "index_artifacts_on_archive_verified"
+  add_index "artifacts", ["archived_at"], :name => "index_artifacts_on_archived_at"
+  add_index "artifacts", ["archiving"], :name => "index_artifacts_on_archiving"
+  add_index "artifacts", ["type", "job_id"], :name => "index_artifacts_on_type_and_job_id"
 
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
@@ -123,7 +150,7 @@ ActiveRecord::Schema.define(:version => 20130208215252) do
   add_index "jobs", ["type", "source_id", "source_type"], :name => "index_jobs_on_type_and_owner_id_and_owner_type"
 
   create_table "log_parts", :force => true do |t|
-    t.integer  "log_id",     :null => false
+    t.integer  "log_id"
     t.text     "content"
     t.integer  "number"
     t.boolean  "final"
@@ -188,9 +215,9 @@ ActiveRecord::Schema.define(:version => 20130208215252) do
     t.text     "description"
     t.string   "last_build_language"
     t.integer  "last_build_duration"
-    t.boolean  "private",                :default => false
     t.integer  "owner_id"
     t.string   "owner_type"
+    t.boolean  "private",                :default => false
     t.integer  "last_build_result"
     t.string   "last_build_state"
   end
@@ -208,14 +235,16 @@ ActiveRecord::Schema.define(:version => 20130208215252) do
     t.text     "config"
     t.datetime "started_at"
     t.datetime "finished_at"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
     t.integer  "owner_id"
     t.string   "owner_type"
     t.string   "event_type"
     t.string   "comments_url"
     t.string   "base_commit"
     t.string   "head_commit"
+    t.integer  "owner_id"
+    t.string   "owner_type"
     t.string   "result"
     t.string   "message"
   end
