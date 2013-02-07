@@ -23,8 +23,8 @@ describe Travis::Enqueue::Services::EnqueueJobs::Limit do
     limit.queueable.should == jobs[0, 8]
   end
 
-  it 'allows all jobs for orgs that have a custom queue' do
-    org.stubs(login: 'rails')
+  it 'allows all jobs if the limit is set to -1' do
+    Travis.config.queue.limit.stubs(by_owner: { org.login => -1 })
     limit.stubs(running: 10)
     limit.queueable.should == jobs
   end
