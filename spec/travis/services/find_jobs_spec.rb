@@ -24,6 +24,19 @@ describe Travis::Services::FindJobs do
       @params = { :ids => [job.id] }
       service.run.should == [job]
     end
+
+    it 'finds jobs by state' do
+      build = Factory(:build)
+
+      Job::Test.destroy_all
+
+      started = Factory(:test, :state => :started, :source => build)
+      passed  = Factory(:test, :state => :passed,  :source => build)
+      created = Factory(:test, :state => :created, :source => build)
+
+      @params = { :state => ['created', 'passed'] }
+      service.run.sort_by(&:id).should == [created, passed].sort_by(&:id)
+    end
   end
 
   describe 'updated_at' do

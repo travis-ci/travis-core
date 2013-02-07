@@ -18,7 +18,13 @@ module Travis
         end
 
         def by_params
-          scope(:job).queued(params[:queue])
+          jobs = scope(:job)
+          if params[:state]
+            jobs = jobs.where(state: params[:state])
+          else
+            jobs = jobs.queued(params[:queue])
+          end
+          jobs.limit(250)
         end
 
         def preload(jobs)
