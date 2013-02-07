@@ -13,6 +13,8 @@ class Artifact < ActiveRecord::Base
   autoload :Log,  'travis/model/artifact/log'
   autoload :Part, 'travis/model/artifact/part'
 
+  self.table_name = 'logs'
+
   belongs_to :job
 
   def to_json

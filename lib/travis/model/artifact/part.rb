@@ -1,5 +1,5 @@
 class Artifact::Part < ActiveRecord::Base
-  self.table_name = 'artifact_parts'
+  self.table_name = 'log_parts'
 
-  validates :artifact_id, presence: true, numericality: { greater_than: 0 }
+  validates :log_id, presence: true, numericality: { greater_than: 0 }
 end

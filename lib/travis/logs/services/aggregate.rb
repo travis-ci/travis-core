@@ -7,15 +7,15 @@ module Travis
         register :logs_aggregate
 
         AGGREGATE_UPDATE_SQL = <<-sql.squish
-          UPDATE artifacts
+          UPDATE logs
              SET aggregated_at = ?,
                  content = (COALESCE(content, '') || (#{Artifact::Log::AGGREGATE_PARTS_SELECT_SQL}))
-           WHERE artifacts.id = ?
+           WHERE logs.id = ?
         sql
 
         AGGREGATEABLE_SELECT_SQL = <<-sql.squish
-          SELECT DISTINCT artifact_id
-            FROM artifact_parts
+          SELECT DISTINCT log_id
+            FROM log_parts
            WHERE created_at <= NOW() - interval '? seconds' AND final = ?
               OR created_at <= NOW() - interval '? seconds'
         sql
@@ -45,7 +45,7 @@ module Travis
 
           def vacuum(id)
             meter('logs.vacuum') do
-              Artifact::Part.delete_all(artifact_id: id)
+              Artifact::Part.delete_all(log_id: id)
             end
           end
 
