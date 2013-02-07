@@ -24,8 +24,8 @@ describe Job do
       Job::Test.any_instance.stubs(:enqueueable?).returns(false) # prevent jobs to enqueue themselves on create
     end
 
-    it 'instantiates the log artifact' do
-      job.reload.log.should be_instance_of(Artifact::Log)
+    it 'instantiates the log' do
+      job.reload.log.should be_instance_of(Log)
     end
 
     it 'sets the state attribute' do

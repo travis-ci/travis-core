@@ -51,7 +51,7 @@ module Travis
 
       def client_event(event, object)
         event = "#{event}ed".gsub(/eded$|eed$/, 'ed') unless [:log, :ready].include?(event)
-        namespace = object.class.name.underscore.gsub('/', ':').gsub(/travis:model:|artifact:/, '')
+        namespace = object.class.name.underscore.gsub('/', ':').gsub(/travis:model:/, '')
         [namespace, event].join(':')
       end
   end

@@ -13,8 +13,8 @@ describe Travis::Logs::Services::Aggregate do
 
   def create_parts(id, interval, final)
     lines.each_with_index do |content, ix|
-      Artifact::Part.create!(log_id: id, content: content, number: ix, final: final && ix == lines.count - 1)
-      Artifact::Part.update_all(created_at: interval.seconds.ago)
+      Log::Part.create!(log_id: id, content: content, number: ix, final: final && ix == lines.count - 1)
+      Log::Part.update_all(created_at: interval.seconds.ago)
     end
   end
 
@@ -24,7 +24,7 @@ describe Travis::Logs::Services::Aggregate do
 
   it 'aggregates logs where no parts have been added for [regular interval] seconds and the final flag is set' do
     create_parts(log.id, interval_regular, true)
-    service.expects(:aggregate).with(log.id.to_s)
+    service.expects(:aggregate).with(log.id)
     service.run
   end
 
@@ -36,13 +36,13 @@ describe Travis::Logs::Services::Aggregate do
 
   it 'aggregates logs where no parts have been added for [force interval] seconds' do
     create_parts(log.id, interval_force, false)
-    service.expects(:aggregate).with(log.id.to_s)
+    service.expects(:aggregate).with(log.id)
     service.run
   end
 
   it 'aggregates parts to log.content' do
     create_parts(log.id, interval_regular, true)
-    -> { service.run }.should change(Artifact::Part, :count).by(-3)
+    -> { service.run }.should change(Log::Part, :count).by(-3)
     log.reload.content.should == lines.join
   end
 
@@ -80,7 +80,7 @@ describe Travis::Logs::Services::Aggregate do
 
   describe 'rollback' do
     before :each do
-      # lines.each_with_index { |line, ix| Artifact::Part.create!(log_id: log.id, content: line, number: ix) }
+      # lines.each_with_index { |line, ix| Log::Part.create!(log_id: log.id, content: line, number: ix) }
       create_parts(log.id, interval_regular, true)
     end
 
@@ -96,7 +96,7 @@ describe Travis::Logs::Services::Aggregate do
       end
 
       it 'does not delete parts' do
-        -> { service.run }.should_not change(Artifact::Part, :count)
+        -> { service.run }.should_not change(Log::Part, :count)
       end
 
       it 'handles the exception' do
@@ -115,7 +115,7 @@ describe Travis::Logs::Services::Aggregate do
 
     describe 'rolls back if parts deletion fails' do
       before :each do
-        Artifact::Part.expects(:delete_all).raises(ActiveRecord::ActiveRecordError)
+        Log::Part.expects(:delete_all).raises(ActiveRecord::ActiveRecordError)
       end
 
       it_behaves_like :rolled_back_log_aggregation

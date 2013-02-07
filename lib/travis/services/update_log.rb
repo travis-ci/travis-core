@@ -1,21 +1,21 @@
 module Travis
   module Services
-    class UpdateArtifact < Base
+    class UpdateLog < Base
       extend Travis::Instrumentation
 
-      register :update_artifact
+      register :update_log
 
       def run
-        artifact = run_service(:find_artifact, id: params[:id])
-        artifact.update_attributes(archived_at: params[:archived_at], archive_verified: params[:archive_verified]) if artifact
+        log = run_service(:find_log, id: params[:id])
+        log.update_attributes(archived_at: params[:archived_at], archive_verified: params[:archive_verified]) if log
       end
       instrument :run
 
       class Instrument < Notification::Instrument
         def run_completed
           publish(
-            msg: "for #<Artifact id=#{target.params[:id]}> params=#{target.params.inspect}",
-            object_type: 'Artifact',
+            msg: "for #<Log id=#{target.params[:id]}> params=#{target.params.inspect}",
+            object_type: 'Log',
             object_id: target.params[:id],
             params: target.params,
             result: result

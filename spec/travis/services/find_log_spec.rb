@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::Services::FindArtifact do
+describe Travis::Services::FindLog do
   include Support::ActiveRecord
 
   let!(:job)    { Factory(:test) }
@@ -10,17 +10,17 @@ describe Travis::Services::FindArtifact do
   attr_reader :params
 
   describe 'run' do
-    it 'finds the artifact with the given id' do
+    it 'finds the log with the given id' do
       @params = { id: log.id }
       service.run.should == log
     end
 
-    it 'finds the artifact with the given job_id' do
+    it 'finds the log with the given job_id' do
       @params = { job_id: job.id }
       service.run.should == log
     end
 
-    it 'does not raise if the artifact could not be found' do
+    it 'does not raise if the log could not be found' do
       @params = { id: log.id + 1 }
       lambda { service.run }.should_not raise_error
     end

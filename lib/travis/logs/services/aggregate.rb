@@ -9,7 +9,7 @@ module Travis
         AGGREGATE_UPDATE_SQL = <<-sql.squish
           UPDATE logs
              SET aggregated_at = ?,
-                 content = (COALESCE(content, '') || (#{Artifact::Log::AGGREGATE_PARTS_SELECT_SQL}))
+                 content = (COALESCE(content, '') || (#{Log::AGGREGATE_PARTS_SELECT_SQL}))
            WHERE logs.id = ?
         sql
 
@@ -45,22 +45,22 @@ module Travis
 
           def vacuum(id)
             meter('logs.vacuum') do
-              Artifact::Part.delete_all(log_id: id)
+              Log::Part.delete_all(log_id: id)
             end
           end
 
           def notify(id)
-            Artifact::Log.find(id).notify('aggregated')
+            Log.find(id).notify('aggregated')
           rescue ActiveRecord::RecordNotFound
             puts "[warn] could not find a log with the id #{id}"
           end
 
           def aggregateable_ids
-            Artifact::Part.connection.select_values(query)
+            Log::Part.connection.select_values(query).map { |id| id.nil? ? id : id.to_i }
           end
 
           def query
-            Artifact::Part.send(:sanitize_sql, [AGGREGATEABLE_SELECT_SQL, intervals[:regular], true, intervals[:force]])
+            Log::Part.send(:sanitize_sql, [AGGREGATEABLE_SELECT_SQL, intervals[:regular], true, intervals[:force]])
           end
 
           def intervals
@@ -79,11 +79,11 @@ module Travis
           end
 
           def connection
-            Artifact::Part.connection
+            Log::Part.connection
           end
 
           def sanitize_sql(*args)
-            Artifact::Part.send(:sanitize_sql, *args)
+            Log::Part.send(:sanitize_sql, *args)
           end
       end
     end

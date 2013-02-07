@@ -7,7 +7,6 @@ require 'core_ext/active_record/base'
 module Travis
   module Model
     autoload :Account,         'travis/model/account'
-    autoload :Artifact,        'travis/model/artifact'
     autoload :Broadcast,       'travis/model/broadcast'
     autoload :Build,           'travis/model/build'
     autoload :Commit,          'travis/model/commit'
@@ -15,6 +14,7 @@ module Travis
     autoload :EncryptedColumn, 'travis/model/encrypted_column'
     autoload :EnvHelpers,      'travis/model/env_helpers'
     autoload :Job,             'travis/model/job'
+    autoload :Log,             'travis/model/log'
     autoload :Membership,      'travis/model/membership'
     autoload :Organization,    'travis/model/organization'
     autoload :Permission,      'travis/model/permission'

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::Logs::Services::Append do
+describe Travis::Logs::Services::Receive do
   include Support::ActiveRecord, Support::Silence
 
   let(:job)     { Factory.create(:test, log: Factory.create(:log, content: '')) }
@@ -42,7 +42,7 @@ describe Travis::Logs::Services::Append do
     service.run
   end
 
-  it 'creates an artifact if missing (should never happen, but does)' do
+  it 'creates a log if missing (should never happen, but does)' do
     log.destroy
     silence { service.run }
     job.reload.log.parts.first.content.should == 'log'

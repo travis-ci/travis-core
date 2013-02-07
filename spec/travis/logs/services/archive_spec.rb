@@ -18,7 +18,7 @@ describe Travis::Logs::Services::Archive do
 
   shared_examples_for 'archive' do |env|
     it 'fetches the log from the api' do
-      url = "https://api#{"-#{env}" if env}.travis-ci.org/artifacts/1.txt"
+      url = "https://api#{"-#{env}" if env}.travis-ci.org/logs/1.txt"
       http.expects(:get).with(url).returns(response)
       service.run
     end
@@ -60,7 +60,7 @@ describe Travis::Logs::Services::Archive do
     end
 
     it 'reports to the api' do
-      url = "https://api#{"-#{env}" if env}.travis-ci.org/artifacts/1"
+      url = "https://api#{"-#{env}" if env}.travis-ci.org/logs/1"
       http.expects(:put).with(url, { archived_at: Time.now, archive_verified: true }, token: 'token').returns(response)
       service.run
     end
