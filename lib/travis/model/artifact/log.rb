@@ -1,12 +1,14 @@
 require 'metriks'
 
 class Artifact::Log < Artifact
+  self.table_name = 'logs'
+
   include Travis::Event
 
   AGGREGATE_PARTS_SELECT_SQL = <<-sql.squish
-    SELECT array_to_string(array_agg(artifact_parts.content ORDER BY number, id), '')
-      FROM artifact_parts
-     WHERE artifact_id = ?
+    SELECT array_to_string(array_agg(log_parts.content ORDER BY number, id), '')
+      FROM log_parts
+     WHERE log_id = ?
   sql
 
   class << self
@@ -17,7 +19,7 @@ class Artifact::Log < Artifact
     end
   end
 
-  has_many :parts, class_name: 'Artifact::Part', foreign_key: :artifact_id
+  has_many :parts, class_name: 'Artifact::Part', foreign_key: :log_id
 
   def content
     content = read_attribute(:content) || ''
