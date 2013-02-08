@@ -19,7 +19,7 @@ class Artifact::Log < Artifact
     end
   end
 
-  has_many :parts, class_name: 'Artifact::Part', foreign_key: :log_id
+  has_many :parts, class_name: 'Artifact::Part', foreign_key: :log_id, :dependent => :destroy
 
   def content
     content = read_attribute(:content) || ''

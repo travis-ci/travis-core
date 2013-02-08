@@ -44,7 +44,11 @@ describe Artifact::Log do
   describe '#clear!' do
     it 'clears log parts' do
       Artifact::Part.create!(log_id: log.id, content: 'bar')
-      -> { log.clear! }.should change { log.parts.length }.by(-1)
+      expect {
+        expect {
+          log.clear!
+        }.to change { log.parts.length }.by(-1)
+      }.to_not change { Artifact::Log.count }
     end
 
     it 'resets content' do
