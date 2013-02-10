@@ -28,11 +28,10 @@ class User < ActiveRecord::Base
 
     def authenticate_by(options)
       options = options.symbolize_keys
-      encrypted_column = Travis::Model::EncryptedColumn.new
-      possible_tokens = [options[:token]]
-      possible_tokens << encrypted_column.dump(options[:token]) if encrypted_column.encrypt?(options[:token])
 
-      includes(:tokens).where(:login => options[:login], 'tokens.token' => possible_tokens).first
+      if user = User.find_by_login(options[:login])
+        user if user.tokens.any? { |t| t.token == options[:token] }
+      end
     end
 
     def find_or_create_for_oauth(payload)
