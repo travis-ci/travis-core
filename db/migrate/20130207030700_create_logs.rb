@@ -15,9 +15,9 @@ class CreateLogs < ActiveRecord::Migration
     add_index :logs, :archive_verified
     add_index :logs, :archived_at
 
-    copy
+    # copy
     install_triggers
-    copy
+    # copy
   end
 
   def down
