@@ -4,6 +4,8 @@ require 'metriks'
  
 module Travis
   class RedisPool
+    attr_reader :pool
+
     def initialize(options = {})
       @options = options.delete(:pool) || {}
       @options[:size] ||= 10
@@ -14,8 +16,7 @@ module Travis
     end
    
     def method_missing(name, *args)
-      timer = Metriks.timer('redis.pool.wait')
-      timer.time
+      timer = Metriks.timer('redis.pool.wait').time
       @pool.with do |redis|
         timer.stop
         if redis.respond_to?(name)
