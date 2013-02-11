@@ -1,17 +1,27 @@
+require 'active_record'
 require 'metriks'
 
-class Artifact::Log < Artifact
-  include Travis::Event
+class Log < ActiveRecord::Base
+  autoload :Part, 'travis/model/log/part'
+
+  AGGREGATE_PARTS_SELECT_SQL = <<-sql.squish
+    SELECT array_to_string(array_agg(log_parts.content ORDER BY number, id), '')
+      FROM log_parts
+     WHERE log_id = ?
+  sql
 
   class << self
     def aggregated_content(id)
       Metriks.timer('logs.read_aggregated').time do
-        connection.select_value(sanitize_sql([Artifact::Part::AGGREGATE_SELECT_SQL, id])) || ''
+        connection.select_value(sanitize_sql([AGGREGATE_PARTS_SELECT_SQL, id])) || ''
       end
     end
   end
 
-  has_many :parts, class_name: 'Artifact::Part', foreign_key: :artifact_id
+  include Travis::Event
+
+  belongs_to :job
+  has_many :parts, class_name: 'Log::Part', foreign_key: :log_id, :dependent => :destroy
 
   def content
     content = read_attribute(:content) || ''
@@ -32,5 +42,9 @@ class Artifact::Log < Artifact
 
   def archived?
     archived_at && archive_verified?
+  end
+
+  def to_json
+    { 'log' => attributes.slice(*%w(id content created_at job_id updated_at)) }.to_json
   end
 end

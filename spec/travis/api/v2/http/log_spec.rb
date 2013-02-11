@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe Travis::Api::V2::Http::Artifact do
+describe Travis::Api::V2::Http::Log do
   include Travis::Testing::Stubs
 
-  let(:data) { Travis::Api::V2::Http::Artifact.new(log).data }
+  let(:data) { described_class.new(log).data }
 
-  it 'artifact' do
-    data['artifact'].should == {
+  it 'log' do
+    data['log'].should == {
       'id' => 1,
       'job_id' => 1,
       'type' => 'Log',

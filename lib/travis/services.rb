@@ -2,7 +2,6 @@ module Travis
   module Services
     autoload :Base,                'travis/services/base'
     autoload :FindAdmin,           'travis/services/find_admin'
-    autoload :FindArtifact,        'travis/services/find_artifact_' # TODO wtf, y u no load this file if named properly
     autoload :FindBranches,        'travis/services/find_branches'
     autoload :FindBuild,           'travis/services/find_build'
     autoload :FindBuilds,          'travis/services/find_builds'
@@ -12,6 +11,7 @@ module Travis
     autoload :FindHooks,           'travis/services/find_hooks'
     autoload :FindJob,             'travis/services/find_job'
     autoload :FindJobs,            'travis/services/find_jobs'
+    autoload :FindLog,             'travis/services/find_log'
     autoload :FindRepo,            'travis/services/find_repo'
     autoload :FindRepos,           'travis/services/find_repos'
     autoload :FindRepoKey,         'travis/services/find_repo_key'
@@ -24,9 +24,9 @@ module Travis
     autoload :RegenerateRepoKey,   'travis/services/regenerate_repo_key'
     autoload :ResetModel,          'travis/services/reset_model'
     autoload :SyncUser,            'travis/services/sync_user_'     # TODO wtf, y u no load this file if named properly
-    autoload :UpdateArtifact,      'travis/services/update_artifact'
     autoload :UpdateHook,          'travis/services/update_hook'
     autoload :UpdateJob,           'travis/services/update_job'
+    autoload :UpdateLog,           'travis/services/update_log'
     autoload :UpdateUser,          'travis/services/update_user'
     autoload :UpdateWorkers,       'travis/services/update_workers'
 

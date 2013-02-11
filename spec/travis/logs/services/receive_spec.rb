@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe Travis::Logs::Services::Append do
-  include Support::ActiveRecord
+describe Travis::Logs::Services::Receive do
+  include Support::ActiveRecord, Support::Silence
 
   let(:job)     { Factory.create(:test, log: Factory.create(:log, content: '')) }
   let!(:log)    { job.log }
@@ -40,5 +40,11 @@ describe Travis::Logs::Services::Append do
     Job::Test.stubs(:find).with(job.id).returns(job)
     job.expects(:notify).with(:log, _log: 'log', number: 1, final: false)
     service.run
+  end
+
+  it 'creates a log if missing (should never happen, but does)' do
+    log.destroy
+    silence { service.run }
+    job.reload.log.parts.first.content.should == 'log'
   end
 end

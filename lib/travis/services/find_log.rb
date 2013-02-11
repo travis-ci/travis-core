@@ -1,7 +1,7 @@
 module Travis
   module Services
-    class FindArtifact < Base
-      register :find_artifact
+    class FindLog < Base
+      register :find_log
 
       def run(options = {})
         result if result
@@ -9,7 +9,6 @@ module Travis
 
       def final?
         # TODO jobs can be requeued, so finished jobs are no more final
-        # # TODO keep the state on the artifact
         # result && result.job && result.job.finished?
         false
       end
@@ -22,9 +21,9 @@ module Travis
 
         def result
           @result ||= if params[:id]
-            scope(:artifact).find_by_id(params[:id])
+            scope(:log).find_by_id(params[:id])
           elsif params[:job_id]
-            scope(:artifact).where(type: 'Artifact::Log', job_id: params[:job_id]).first
+            scope(:log).where(job_id: params[:job_id]).first
           end
         end
     end

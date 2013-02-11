@@ -21,8 +21,8 @@ end
 platform :jruby do
   gem 'jruby-openssl',    '~> 0.7.7'
   gem 'hot_bunnies',      '~> 1.4.0.pre2'
-  gem 'activerecord-jdbcpostgresql-adapter', '1.2.2' # see https://github.com/bmabey/database_cleaner/pull/83
-  gem 'activerecord-jdbc-adapter',           '1.2.2'
+  gem 'activerecord-jdbcpostgresql-adapter', '1.2.2.1' # see https://github.com/bmabey/database_cleaner/pull/83
+  gem 'activerecord-jdbc-adapter',           '1.2.2.1'
 end
 
 group :development, :test do

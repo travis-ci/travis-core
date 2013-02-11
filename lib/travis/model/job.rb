@@ -49,8 +49,7 @@ class Job < ActiveRecord::Base
   include Compat
   include Travis::Model::EnvHelpers
 
-  has_one    :log, class_name: 'Artifact::Log', conditions: { type: 'Artifact::Log' }, dependent: :destroy
-  has_many   :artifacts
+  has_one    :log, dependent: :destroy
   has_many   :events, as: :source
 
   belongs_to :repository

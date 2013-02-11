@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Artifact::Log do
+describe Log do
   include Support::ActiveRecord
 
   let!(:log)  { job.log }
@@ -25,13 +25,13 @@ describe Artifact::Log do
 
   describe 'content' do
     it 'while not aggregated it returns the aggregated parts' do
-      lines.each_with_index { |line, ix| Artifact::Part.create!(artifact_id: log.id, content: line, number: ix) }
+      lines.each_with_index { |line, ix| Log::Part.create!(log_id: log.id, content: line, number: ix) }
       log.content.should == lines.join
     end
 
     it 'while not aggregated it appends to an existing log' do
       job.log.update_attributes(content: 'foo')
-      Artifact::Part.create!(artifact_id: log.id, content: 'bar')
+      Log::Part.create!(log_id: log.id, content: 'bar')
       log.content.should == 'foobar'
     end
 
@@ -43,8 +43,12 @@ describe Artifact::Log do
 
   describe '#clear!' do
     it 'clears log parts' do
-      Artifact::Part.create!(artifact_id: log.id, content: 'bar')
-      -> { log.clear! }.should change { log.parts.length }.by(-1)
+      Log::Part.create!(log_id: log.id, content: 'bar')
+      expect {
+        expect {
+          log.clear!
+        }.to change { log.parts.length }.by(-1)
+      }.to_not change { Log.count }
     end
 
     it 'resets content' do

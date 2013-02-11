@@ -63,11 +63,11 @@ module Travis
         instrument :run
 
         def source_url
-          "https://#{hostname('api')}/artifacts/#{params[:id]}.txt"
+          "https://#{hostname('api')}/logs/#{params[:id]}.txt"
         end
 
         def report_url
-          "https://#{hostname('api')}/artifacts/#{params[:id]}"
+          "https://#{hostname('api')}/logs/#{params[:id]}"
         end
 
         def target_url

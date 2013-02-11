@@ -129,9 +129,8 @@ describe User do
       it 'authenticates the user' do
         user.tokens.first.update_column :token, 'encrypted-token'
 
-        Travis::Model::EncryptedColumn.any_instance.stubs(:encrypt? => true)
-        Travis::Model::EncryptedColumn.any_instance.stubs(:key => 'abcd')
-        Travis::Model::EncryptedColumn.any_instance.expects(:dump).with('a-token').returns('encrypted-token')
+        Travis::Model::EncryptedColumn.any_instance.stubs(:encrypt? => true, :key => 'abcd', :load => '...')
+        Travis::Model::EncryptedColumn.any_instance.expects(:load).with('encrypted-token').returns('a-token')
 
         User.authenticate_by('login' => user.login, 'token' => 'a-token').should == user
       end

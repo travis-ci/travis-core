@@ -35,7 +35,7 @@ FactoryGirl.define do
     tags       ""
   end
 
-  factory :log, :class => 'Artifact::Log' do
+  factory :log do
     content '$ bundle install --pa'
   end
 

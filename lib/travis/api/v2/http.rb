@@ -3,7 +3,6 @@ module Travis
     module V2
       module Http
         autoload :Accounts,     'travis/api/v2/http/accounts'
-        autoload :Artifact,     'travis/api/v2/http/artifact'
         autoload :Broadcasts,   'travis/api/v2/http/broadcasts'
         autoload :Branches,     'travis/api/v2/http/branches'
         autoload :Build,        'travis/api/v2/http/build'
@@ -12,6 +11,7 @@ module Travis
         autoload :Hooks,        'travis/api/v2/http/hooks'
         autoload :Job,          'travis/api/v2/http/job'
         autoload :Jobs,         'travis/api/v2/http/jobs'
+        autoload :Log,          'travis/api/v2/http/log'
         autoload :Permissions,  'travis/api/v2/http/permissions'
         autoload :Repositories, 'travis/api/v2/http/repositories'
         autoload :Repository,   'travis/api/v2/http/repository'

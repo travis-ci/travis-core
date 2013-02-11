@@ -77,7 +77,7 @@ class Build
             :owner => owner,
             :number => "#{number}.#{ix + 1}",
             :config => expand_config(row),
-            :log => Artifact::Log.new
+            :log => Log.new
           )
           matrix.build(attributes)
         end

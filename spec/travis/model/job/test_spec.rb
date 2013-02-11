@@ -23,8 +23,8 @@ describe Job::Test do
         job.worker.should == 'ruby3.worker.travis-ci.org:travis-ruby-4'
       end
 
-      it "resets the log artifact's content" do
-        job.log.expects(:update_attributes!).with(:content => '')
+      it 'resets the log content' do
+        job.log.expects(:update_attributes!).with(content: '')
         job.start(data)
       end
 

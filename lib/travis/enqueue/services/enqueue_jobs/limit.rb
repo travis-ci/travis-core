@@ -39,7 +39,7 @@ module Travis
             end
 
             def unlimited?
-              %w(rails spree).include?(owner.login) # TODO extract to ... where exactly?
+              config.by_owner[owner.login] == -1
             end
         end
       end

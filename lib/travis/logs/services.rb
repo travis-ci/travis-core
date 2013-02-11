@@ -1,7 +1,6 @@
 module Travis
   module Logs
     module Services
-      autoload :Append,    'travis/logs/services/append'
       autoload :Aggregate, 'travis/logs/services/aggregate'
       autoload :Archive,   'travis/logs/services/archive'
       autoload :Receive,   'travis/logs/services/receive'

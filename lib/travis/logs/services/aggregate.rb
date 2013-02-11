@@ -6,9 +6,16 @@ module Travis
       class Aggregate < Travis::Services::Base
         register :logs_aggregate
 
-        SQL = <<-sql.squish
-          SELECT DISTINCT artifact_id
-            FROM artifact_parts
+        AGGREGATE_UPDATE_SQL = <<-sql.squish
+          UPDATE logs
+             SET aggregated_at = ?,
+                 content = (COALESCE(content, '') || (#{Log::AGGREGATE_PARTS_SELECT_SQL}))
+           WHERE logs.id = ?
+        sql
+
+        AGGREGATEABLE_SELECT_SQL = <<-sql.squish
+          SELECT DISTINCT log_id
+            FROM log_parts
            WHERE created_at <= NOW() - interval '? seconds' AND final = ?
               OR created_at <= NOW() - interval '? seconds'
         sql
@@ -32,26 +39,28 @@ module Travis
 
           def aggregate(id)
             meter('logs.aggregate') do
-              Artifact::Part.aggregate(id)
+              connection.execute(sanitize_sql([AGGREGATE_UPDATE_SQL, Time.now, id, id]))
             end
           end
 
           def vacuum(id)
             meter('logs.vacuum') do
-              Artifact::Part.delete_all(artifact_id: id)
+              Log::Part.delete_all(log_id: id)
             end
           end
 
           def notify(id)
-            Artifact::Log.find(id).notify('aggregated')
+            Log.find(id).notify('aggregated')
+          rescue ActiveRecord::RecordNotFound
+            puts "[warn] could not find a log with the id #{id}"
           end
 
           def aggregateable_ids
-            Artifact::Part.connection.select_values(query).map(&:to_i)
+            Log::Part.connection.select_values(query).map { |id| id.nil? ? id : id.to_i }
           end
 
           def query
-            Artifact::Part.send(:sanitize_sql, [SQL, intervals[:regular], true, intervals[:force]])
+            Log::Part.send(:sanitize_sql, [AGGREGATEABLE_SELECT_SQL, intervals[:regular], true, intervals[:force]])
           end
 
           def intervals
@@ -67,6 +76,14 @@ module Travis
 
           def meter(name, &block)
             Metriks.timer(name).time(&block)
+          end
+
+          def connection
+            Log::Part.connection
+          end
+
+          def sanitize_sql(*args)
+            Log::Part.send(:sanitize_sql, *args)
           end
       end
     end
