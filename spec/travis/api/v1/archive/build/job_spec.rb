@@ -6,7 +6,7 @@ describe Travis::Api::V1::Archive::Build do
   context 'without log' do
     let(:data) do
       test = stub_test
-      test.stubs :log => nil
+      test.stubs :log => nil, :log_content => nil
       Travis::Api::V1::Archive::Build::Job.new(test).data
     end
 
