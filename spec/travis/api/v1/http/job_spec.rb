@@ -5,6 +5,18 @@ describe Travis::Api::V1::Http::Job do
 
   let(:data) { Travis::Api::V1::Http::Job.new(test).data }
 
+  context 'without log' do
+    let(:data) do
+      test = stub_test
+      test.stubs :log => nil, :log_content => nil
+      Travis::Api::V1::Http::Job.new(test).data
+    end
+
+    it 'returns null as a log content' do
+      data['log'].should be_nil
+    end
+  end
+
   it 'data' do
     data.should == {
       'id' => test.id,

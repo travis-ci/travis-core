@@ -20,7 +20,7 @@ module Travis
                 'config' => job.obfuscated_config,
                 'started_at' => format_date(job.started_at),
                 'finished_at' => format_date(job.finished_at),
-                'log' => job.log.content
+                'log' => job.log_content
               }
             end
           end
