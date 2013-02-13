@@ -80,7 +80,7 @@ class Job
       super
     end
 
-    delegate :id, :content, :to => :log, :prefix => true
+    delegate :id, :content, :to => :log, :prefix => true, :allow_nil => true
 
     protected
 
