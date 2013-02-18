@@ -12,7 +12,7 @@ module Travis
 
           def data
             {
-              'log' => log_data,
+              'log' => options[:chunked] ? chunked_log_data : log_data,
             }
           end
 
@@ -25,6 +25,26 @@ module Travis
                 'type' => log.class.name.demodulize,
                 'body' => log.content
               }
+            end
+
+            def chunked_log_data
+              {
+                'id' => log.id,
+                'job_id' => log.job_id,
+                'type' => log.class.name.demodulize,
+                'parts' => log_parts
+              }
+            end
+
+            def log_parts
+              log.parts.map do |part|
+                {
+                  'id' => part.id,
+                  'number' => part.number,
+                  'content' => part.content,
+                  'final' => part.final
+                }
+              end
             end
         end
       end

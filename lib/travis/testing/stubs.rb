@@ -174,6 +174,16 @@ module Travis
         )
       end
 
+      def stub_log_part(attributes = {})
+        Stubs.stub 'log_part', attributes.reverse_merge(
+          id: 1,
+          log_id: 1,
+          content: 'the test log',
+          number: 1,
+          final: false
+        )
+      end
+
       def stub_event(attributes = {})
         Stubs.stub 'event', attributes.reverse_merge(
           id: 1,
