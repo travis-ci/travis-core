@@ -116,7 +116,7 @@ class Repository < ActiveRecord::Base
   end
 
   def build_status(branch)
-    builds.pushes.last_state_on(state: [:passed, :failed], branch: branch)
+    builds.pushes.last_state_on(state: [:passed, :failed, :errored], branch: branch)
   end
 
   def last_finished_builds_by_branches
