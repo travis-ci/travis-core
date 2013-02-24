@@ -19,10 +19,10 @@ describe Repository::StatusImage do
       image.result.should == :failing
     end
 
-    it 'returns :errored if the status of the last finished build is errored' do
+    it 'returns :error if the status of the last finished build is errored' do
       build.update_attributes(state: :errored)
       image = described_class.new(repo, nil)
-      image.result.should == :errored
+      image.result.should == :error
     end
 
     it 'returns :unknown if the status of the last finished build is unknown' do
@@ -47,11 +47,11 @@ describe Repository::StatusImage do
       image.result.should == :failing
     end
 
-    it 'returns :failed if the last build on that branch has failed' do
+    it 'returns :error if the last build on that branch has errored' do
       build.update_attributes(state: :errored)
       build.commit.update_attributes(branch: 'develop')
       image = described_class.new(repo, 'develop')
-      image.result.should == :errored
+      image.result.should == :error
     end
   end
 end
