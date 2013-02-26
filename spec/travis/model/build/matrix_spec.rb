@@ -217,6 +217,24 @@ describe Build, 'matrix' do
     yml
     }
 
+    let(:allow_failures_with_global_env) {
+      YAML.load <<-yml
+      rvm:
+        - 1.9.3
+        - 2.0.0
+      env:
+        global:
+          - "GLOBAL=global NEXT_GLOBAL=next"
+        matrix:
+          - "FOO=bar"
+          - "FOO=baz"
+      matrix:
+        allow_failures:
+          - rvm: 1.9.3
+            env: "FOO=bar"
+    yml
+    }
+
     describe :expand_matrix_config do
       def encrypt_config_env(config, repository)
         config['env'] = config.delete('env').map { |env| repository.key.secure.encrypt(env) }
@@ -334,6 +352,11 @@ describe Build, 'matrix' do
       it 'sets the config to the jobs (allow failures config)' do
         build = Factory(:build, config: multiple_tests_config_with_allow_failures)
         build.matrix.map(&:allow_failure).should == [false, false, false, true, false, false]
+      end
+
+      it 'ignores global env config when setting allow failures' do
+        build = Factory(:build, config: allow_failures_with_global_env)
+        build.matrix.map(&:allow_failure).should == [true, false, false, false]
       end
 
       it 'copies build attributes' do

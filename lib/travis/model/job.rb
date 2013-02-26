@@ -109,7 +109,22 @@ class Job < ActiveRecord::Base
     return false unless config.respond_to?(:to_hash)
     config = config.to_hash.symbolize_keys
     Build.matrix_keys_for(config).map do |key|
-      self.config[key.to_sym] == config[key] || commit.branch == config[key]
+
+      # TODO: this is soooo wrong an hacky :)
+      #       The awful piece of code below is here to fix allow_failures
+      #       with global env config. Proper solution will be to send
+      #       matrix env config and global env config separately, but in order
+      #       to do this, we will need to change a way workers fetch config.
+      #       It will take a while to roll out those changes to workers and other
+      #       parts of architecture, so I will leave this nasty thing here and
+      #       clean up as soon as everything is ready.
+      if key.to_sym == :env && self.config[:global_env]
+        job_env    = Array(self.config[key.to_sym])
+        config_env = Array(config[key])
+        (job_env - self.config[:global_env]) == config_env
+      else
+        self.config[key.to_sym] == config[key] || commit.branch == config[key]
+      end
     end.inject(:&)
   end
 

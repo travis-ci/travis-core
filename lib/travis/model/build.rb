@@ -231,18 +231,26 @@ class Build < ActiveRecord::Base
         values
       end
 
-      if result.is_a?(Array)
+      env = if result.is_a?(Array)
         result.map { |env| normalize_env_hashes(env) }
       else
         normalize_env_hashes(result)
       end
+
+      if global
+        global = global.map { |env| normalize_env_hashes(env) }
+      end
+
+      { env: env, global: global }
     end
 
 
     def normalize_config(config)
       config = config.deep_symbolize_keys
       if config[:env]
-        config[:env] = normalize_env_values(config[:env])
+        result = normalize_env_values(config[:env])
+        config[:env] = result[:env]
+        config[:global_env] = result[:global] if result[:global]
       end
       config
     end
