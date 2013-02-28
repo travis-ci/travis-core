@@ -62,9 +62,14 @@ module Travis
               # body, 1kB should be enough for headers
               log = payload[:_log]
               chunkifier = Chunkifier.new(log, chunk_size, :json => true)
+
+              if chunkifier.length > 1
+                Travis.logger.warn("[addons:pusher] The log part from worker was bigger than 9kB, payload: #{payload.inspect}")
+              end
+
               chunkifier.each_with_index.map do |part, i|
                 new_payload = payload.dup.merge(:_log => part)
-                new_payload[:number] = "#{new_payload[:number]}.#{i}"
+                new_payload[:number] = "#{new_payload[:number]}.#{i}" unless i == 0
                 new_payload[:final] = new_payload[:final] && chunkifier.length - 1 == i
                 new_payload
               end
