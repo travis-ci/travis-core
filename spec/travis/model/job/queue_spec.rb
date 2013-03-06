@@ -17,27 +17,27 @@ describe 'Job::Queue' do
 
   describe 'Queue.for' do
     it 'returns the default build queue when neither slug or language match the given configuration hash' do
-      job = stub('job', :config => {}, :repository => stub('repository', :owner_name => 'travis-ci', :slug => 'travis-ci/travis-ci'))
+      job = stub('job', :config => {}, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-ci'))
       Job::Queue.for(job).name.should == 'builds.common'
     end
 
     it 'returns the queue when slug matches the given configuration hash' do
-      job = stub('job', :config => {}, :repository => stub('repository', :owner_name => 'rails', :slug => 'rails/rails'))
+      job = stub('job', :config => {}, :repository => stub('repository', :owner_name => 'rails', :name => 'rails'))
       Job::Queue.for(job).name.should == 'builds.rails'
     end
 
     it 'returns the queue when language matches the given configuration hash' do
-      job = stub('job', :config => { :language => 'clojure' }, :repository => stub('repository', :owner_name => 'travis-ci', :slug => 'travis-ci/travis-ci'))
+      job = stub('job', :config => { :language => 'clojure' }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-ci'))
       Job::Queue.for(job).name.should == 'builds.clojure'
     end
 
     it 'returns the queue when the owner matches the given configuration hash' do
-      job = stub('job', :config => {}, :repository => stub('repository', :owner_name => 'cloudfoundry', :slug => 'cloudfoundry/bosh'))
+      job = stub('job', :config => {}, :repository => stub('repository', :owner_name => 'cloudfoundry', :name => 'bosh'))
       Job::Queue.for(job).name.should == 'builds.cloudfoundry'
     end
 
     it 'handles language being passed as an array gracefully' do
-      job = stub('job', :config => { :language => ['clojure'] }, :repository => stub('repository', :owner_name => 'travis-ci', :slug => 'travis-ci/travis-ci'))
+      job = stub('job', :config => { :language => ['clojure'] }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-ci'))
       Job::Queue.for(job).name.should == 'builds.clojure'
     end
   end
@@ -59,22 +59,22 @@ describe 'Job::Queue' do
 
   describe 'matches?' do
     it "returns false when neither of slug or language match" do
-      queue = queue('builds.common',  nil, nil)
+      queue = queue('builds.common',  nil, nil, nil)
       queue.send(:matches?, 'foo', 'foo/bar', 'COBOL').should be_false
     end
 
     it "returns true when the given owner matches" do
-      queue = queue('builds.rails', 'rails/rails')
-      queue.send(:matches?, 'cloudfoundry', nil, nil).should be_true
+      queue = queue('builds.cloudfoundry', nil, 'cloudfoundry', nil)
+      queue.send(:matches?, 'cloudfoundry', 'bosh', nil).should be_true
     end
 
     it "returns true when the given slug matches" do
-      queue = queue('builds.rails', 'rails/rails')
-      queue.send(:matches?, nil, 'rails/rails', nil).should be_true
+      queue = queue('builds.rails', 'rails/rails', nil, nil)
+      queue.send(:matches?, 'rails', 'rails', nil).should be_true
     end
 
     it "returns true when the given language matches" do
-      queue = queue('builds.common', nil, 'clojure')
+      queue = queue('builds.common', nil, nil, 'clojure')
       queue.send(:matches?, nil, nil, 'clojure').should be_true
     end
   end
