@@ -21,7 +21,7 @@ class Job
 
         def queues
           @queues ||= Array(Travis.config.queues).compact.map do |queue|
-            Queue.new(*queue.values_at(*[:queue, :slug, :language]))
+            Queue.new(*queue.values_at(*[:queue, :slug, :owner, :language]))
           end
         end
 
