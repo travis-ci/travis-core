@@ -66,7 +66,7 @@ module Travis
               if chunkifier.length > 1
                 # This should never happen when we update travis-worker to split log parts
                 # bigger than 9kB.
-                Travis.logger.warn("[addons:pusher] The log part from worker was bigger than 9kB, payload: #{payload.inspect}")
+                Travis.logger.warn("[addons:pusher] The log part from worker was bigger than 9kB (#{log.to_json.length}B), payload: #{payload.inspect}")
               end
 
               chunkifier.each_with_index.map do |part, i|
