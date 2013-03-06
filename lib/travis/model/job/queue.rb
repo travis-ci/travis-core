@@ -11,9 +11,10 @@ class Job
     class << self
       def for(job)
         slug = job.repository.try(:slug)
+        owner = job.repository.try(:owner_name)
         language = job.config[:language]
         language = language.flatten.compact.first if language.is_a?(Array)
-        queues.detect { |queue| queue.send(:matches?, slug, language) } || default
+        queues.detect { |queue| queue.send(:matches?, owner, slug, language) } || default
       end
 
       protected
@@ -29,7 +30,7 @@ class Job
         end
     end
 
-    attr_reader :name, :slug, :language
+    attr_reader :name, :slug, :owner, :language
 
     protected
 
@@ -37,8 +38,8 @@ class Job
         @name, @slug, @language = *args
       end
 
-      def matches?(slug, language)
-        matches_slug?(slug) || matches_language?(language)
+      def matches?(owner, slug, language)
+        matches_slug?(slug) || matches_owner?(owner) || matches_language?(language)
       end
 
       def queue
@@ -47,6 +48,10 @@ class Job
 
       def matches_slug?(slug)
         !!self.slug && (self.slug == slug)
+      end
+
+      def matches_owner?(owner)
+        !!self.owner && (self.owner == owner)
       end
 
       def matches_language?(language)
