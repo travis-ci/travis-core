@@ -6,21 +6,10 @@ rvm:
 jdk:
   - oraclejdk7
   - openjdk6
-env:
-  - JRUBY_OPTS="--server -Xcext.enabled=false -Xcompile.invokedynamic=false"
 matrix:
-  allow_failures:
-    - rvm: jruby-head
-      jdk: openjdk6
-    - rvm: jruby-head
-      jdk: oraclejdk7
   include:
     - rvm: 1.9.3
       jdk:
-    - rvm: jruby-head
-      jdk: openjdk6
-    - rvm: jruby-head
-      jdk: oraclejdk7
 before_script:
   - sudo service mysql stop
   - redis-cli config set save ""
