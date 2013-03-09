@@ -53,20 +53,12 @@ describe Worker do
       Worker.new(nil, full_name: 'something.on.staging').guess_queue.should == 'builds.linux'
     end
 
-    it 'guesses the queue name "builds.php" (ppp)' do
-      Worker.new(nil, full_name: 'something.with.ppp').guess_queue.should == 'builds.php'
+    it 'guesses the queue name "builds.linux" (linux)' do
+      Worker.new(nil, full_name: 'bluebox-linux-1.worker').guess_queue.should == 'builds.linux'
     end
 
-    it 'guesses the queue name "builds.php" (php)' do
-      Worker.new(nil, full_name: 'something.with.php').guess_queue.should == 'builds.php'
-    end
-
-    it 'guesses the queue name "builds.jvmotp"' do
-      Worker.new(nil, full_name: 'something.with.jvm-opt').guess_queue.should == 'builds.jvmotp'
-    end
-
-    it 'guesses the queue name "builds.rails"' do
-      Worker.new(nil, full_name: 'something.with.rails').guess_queue.should == 'builds.rails'
+    it 'guesses the queue name "builds.mac_osx" (mac)' do
+      Worker.new(nil, full_name: 'saucelabs-mac.worker').guess_queue.should == 'builds.mac_osx'
     end
   end
 end
