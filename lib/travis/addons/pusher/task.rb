@@ -8,7 +8,7 @@ module Travis
       class Task < Travis::Task
 
         def self.chunk_size
-          9 * 1024
+          9 * 1024 + 100
         end
 
         def event
