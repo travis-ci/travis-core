@@ -18,7 +18,7 @@ describe 'Job::Queue' do
   describe 'Queue.for' do
     it 'returns the default build queue when neither slug or language match the given configuration hash' do
       job = stub('job', :config => {}, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-ci'))
-      Job::Queue.for(job).name.should == 'builds.common'
+      Job::Queue.for(job).name.should == 'builds.linux'
     end
 
     it 'returns the queue when slug matches the given configuration hash' do
@@ -59,7 +59,7 @@ describe 'Job::Queue' do
 
   describe 'matches?' do
     it "returns false when neither of slug or language match" do
-      queue = queue('builds.common',  nil, nil, nil)
+      queue = queue('builds.linux',  nil, nil, nil)
       queue.send(:matches?, 'foo', 'foo/bar', 'COBOL').should be_false
     end
 
@@ -74,7 +74,7 @@ describe 'Job::Queue' do
     end
 
     it "returns true when the given language matches" do
-      queue = queue('builds.common', nil, nil, 'clojure')
+      queue = queue('builds.linux', nil, nil, 'clojure')
       queue.send(:matches?, nil, nil, 'clojure').should be_true
     end
   end

@@ -15,7 +15,7 @@ describe Travis::Api::V0::Worker::Job::Test do
       data.except('job', 'build', 'repository').should == {
         'type' => 'test',
         'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
-        'queue' => 'builds.common',
+        'queue' => 'builds.linux',
         'uuid' => Travis.uuid,
         'source' => {
           'id' => 1,
@@ -78,7 +78,7 @@ describe Travis::Api::V0::Worker::Job::Test do
       data.except('job', 'build', 'repository').should == {
         'type' => 'test',
         'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
-        'queue' => 'builds.common',
+        'queue' => 'builds.linux',
         'uuid' => Travis.uuid,
         'source' => {
           'id' => 1,

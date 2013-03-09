@@ -6,7 +6,7 @@ class Job
   # Queue names for Job::Test instances are configured in `Travis.config` and
   # are determined based on the repository slug (e.g. 'rails/rails' has its own
   # queue) or the language given in the configuration (`.travis.yml`) and
-  # default to 'builds.common'.
+  # default to 'builds.linux'.
   class Queue
     class << self
       def for(job)
@@ -26,7 +26,7 @@ class Job
         end
 
         def default
-          @default ||= new('builds.common')
+          @default ||= new('builds.linux')
         end
     end
 

@@ -33,7 +33,7 @@ describe Job do
     end
 
     it 'sets the queue attribute' do
-      job.reload.queue.should == 'builds.common'
+      job.reload.queue.should == 'builds.linux'
     end
   end
 

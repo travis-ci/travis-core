@@ -4,14 +4,14 @@ describe Travis::Services::FindJobs do
   include Support::ActiveRecord
 
   let(:repo)    { Factory(:repository) }
-  let!(:job)    { Factory(:test, :repository => repo, :state => :created, :queue => 'builds.common') }
+  let!(:job)    { Factory(:test, :repository => repo, :state => :created, :queue => 'builds.linux') }
   let(:service) { described_class.new(stub('user'), params) }
 
   attr_reader :params
 
   describe 'run' do
     it 'finds jobs on the given queue' do
-      @params = { :queue => 'builds.common' }
+      @params = { :queue => 'builds.linux' }
       service.run.should include(job)
     end
 
@@ -43,7 +43,7 @@ describe Travis::Services::FindJobs do
     it 'returns the latest updated_at time' do
       pending 'rack cache is disabled, so not much need for caching now'
 
-      @params = { :queue => 'builds.common' }
+      @params = { :queue => 'builds.linux' }
       Job.delete_all
       Factory(:test, :repository => repo, :state => :queued, :queue => 'build.common', :updated_at => Time.now - 1.hour)
       Factory(:test, :repository => repo, :state => :queued, :queue => 'build.common', :updated_at => Time.now)

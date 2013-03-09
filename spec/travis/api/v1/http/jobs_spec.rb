@@ -10,7 +10,7 @@ describe Travis::Api::V1::Http::Jobs do
       'id' => test.id,
       'repository_id' => test.repository_id,
       'number' => '2.1',
-      'queue' => 'builds.common',
+      'queue' => 'builds.linux',
       'state' => 'finished',
       'allow_failure' => false
     }

@@ -40,17 +40,17 @@ describe Worker do
     end
 
     it 'guesses the queue if not given' do
-      Worker.new(nil, full_name: 'something.with.ruby').queue.should == 'builds.common'
+      Worker.new(nil, full_name: 'something.with.ruby').queue.should == 'builds.linux'
     end
   end
 
   describe 'guess_queue' do
-    it 'guesses the queue name "builds.common" (ruby)' do
-      Worker.new(nil, full_name: 'something.with.ruby').guess_queue.should == 'builds.common'
+    it 'guesses the queue name "builds.linux" (ruby)' do
+      Worker.new(nil, full_name: 'something.with.ruby').guess_queue.should == 'builds.linux'
     end
 
-    it 'guesses the queue name "builds.common" (staging)' do
-      Worker.new(nil, full_name: 'something.on.staging').guess_queue.should == 'builds.common'
+    it 'guesses the queue name "builds.linux" (staging)' do
+      Worker.new(nil, full_name: 'something.on.staging').guess_queue.should == 'builds.linux'
     end
 
     it 'guesses the queue name "builds.php" (ppp)' do

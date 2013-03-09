@@ -125,7 +125,7 @@ module Travis
           finished_at: Time.now.utc,
           duration: 60,
           pull_request?: false,
-          queue: 'builds.common'
+          queue: 'builds.linux'
         )
       end
 
@@ -150,7 +150,7 @@ module Travis
           result: 0, # see job/compat.rb
           started?: true,
           finished?: true,
-          queue: 'builds.common',
+          queue: 'builds.linux',
           allow_failure: false,
           started_at: Time.now.utc - 60,
           finished_at: Time.now.utc,
@@ -202,7 +202,7 @@ module Travis
           id: 1,
           name: 'ruby-1',
           host: 'ruby-1.worker.travis-ci.org',
-          queue: 'builds.common',
+          queue: 'builds.linux',
           state: 'created',
           last_seen_at: Time.now.utc,
           payload: nil,
