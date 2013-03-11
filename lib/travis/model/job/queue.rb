@@ -26,7 +26,7 @@ class Job
         end
 
         def default
-          @default ||= new('builds.linux')
+          @default ||= new(Travis.config.default_queue)
         end
     end
 

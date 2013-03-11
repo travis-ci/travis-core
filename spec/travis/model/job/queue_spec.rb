@@ -15,6 +15,16 @@ describe 'Job::Queue' do
     Job::Queue.instance_variable_set(:@queues, nil)
   end
 
+  it 'returns builds.linux as the default queue' do
+    Job::Queue.default.name = 'builds.linux'
+  end
+
+  it 'returns builds.common as the default queue if configured to in Travis.config' do
+    Travis.config.default_queue = 'builds.common'
+    Job::Queue.instance_variable_set(:@default, nil)
+    Job::Queue.default.name = 'builds.common'
+  end
+
   describe 'Queue.for' do
     it 'returns the default build queue when neither slug or language match the given configuration hash' do
       job = stub('job', :config => {}, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-ci'))

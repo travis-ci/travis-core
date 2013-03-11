@@ -99,6 +99,7 @@ module Travis
             :async         => {},
             :notifications => [], # TODO rename to event.handlers
             :queues        => [],
+            :default_queue => 'builds.linux',
             :workers       => { :ttl => 60, :prune => { :interval => 5 } },
             :jobs          => { :retry => { :after => 60 * 60 * 2, :max_attempts => 1, :interval => 60 * 5 } },
             :queue         => { :limit => { :default => 5, :by_owner => {} }, :interval => 3 },
