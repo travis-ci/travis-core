@@ -13,16 +13,20 @@ describe 'Job::Queue' do
       { :queue => 'builds.erlang', :language => 'erlang' },
     ]
     Job::Queue.instance_variable_set(:@queues, nil)
+    Job::Queue.instance_variable_set(:@default, nil)
+  end
+  
+  after do
+    Travis.config.default_queue = 'builds.linux'
   end
 
   it 'returns builds.linux as the default queue' do
-    Job::Queue.default.name = 'builds.linux'
+    Job::Queue.default.name.should == 'builds.linux'
   end
 
   it 'returns builds.common as the default queue if configured to in Travis.config' do
     Travis.config.default_queue = 'builds.common'
-    Job::Queue.instance_variable_set(:@default, nil)
-    Job::Queue.default.name = 'builds.common'
+    Job::Queue.default.name.should == 'builds.common'
   end
 
   describe 'Queue.for' do

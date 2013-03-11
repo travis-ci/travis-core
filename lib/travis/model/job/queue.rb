@@ -17,17 +17,15 @@ class Job
         queues.detect { |queue| queue.send(:matches?, owner, repo_name, language) } || default
       end
 
-      protected
-
-        def queues
-          @queues ||= Array(Travis.config.queues).compact.map do |queue|
-            Queue.new(*queue.values_at(*[:queue, :slug, :owner, :language]))
-          end
+      def queues
+        @queues ||= Array(Travis.config.queues).compact.map do |queue|
+          Queue.new(*queue.values_at(*[:queue, :slug, :owner, :language]))
         end
+      end
 
-        def default
-          @default ||= new(Travis.config.default_queue)
-        end
+      def default
+        @default ||= new(Travis.config.default_queue)
+      end
     end
 
     attr_reader :name, :slug, :owner, :language
