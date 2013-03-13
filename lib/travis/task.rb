@@ -15,7 +15,7 @@ module Travis
       extend Exceptions::Handling
 
       def run(queue, *args)
-        Travis::Async.run(self, :perform, { queue: queue, use: run_local? ? :threaded : :sidekiq }, *args)
+        Travis::Async.run(self, :perform, { queue: queue, use: run_local? ? :inline : :sidekiq }, *args)
       end
 
       def run_local?
