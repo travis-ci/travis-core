@@ -20,13 +20,11 @@ describe Travis::Addons::Pusher::Task do
   end
 
   it 'logs Pusher errors and reraises' do
-    channel.expects(:trigger).raises(Pusher::Error.new('message'))
+    channel.expects(:trigger_async).raises(Pusher::Error.new('message'))
     payload = Travis::Api.data(test, for: 'pusher', type: 'job/started', version: 'v1').deep_symbolize_keys
     Travis.logger.expects(:error).with("[addons:pusher] Could not send event due to Pusher::Error: message, event=job:started, payload: #{payload.inspect}")
 
-    expect {
-      run('job:test:started', test)
-    }.to raise_error(Pusher::Error)
+    expect { run('job:test:started', test) }.to raise_error(Pusher::Error)
   end
 
   it 'warns when log needs to be split' do

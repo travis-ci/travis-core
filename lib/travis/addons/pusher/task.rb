@@ -48,7 +48,7 @@ module Travis
               Travis::Instrumentation.meter('travis.addons.pusher.task.messages', {})
 
               begin
-                Travis.pusher[channel].trigger(event, part)
+                Travis.pusher[channel].trigger_async(event, part)
               rescue ::Pusher::Error => e
                 Travis.logger.error("[addons:pusher] Could not send event due to Pusher::Error: #{e.message}, event=#{event}, payload: #{part.inspect}")
                 raise
