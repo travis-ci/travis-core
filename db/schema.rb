@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130208215252) do
+ActiveRecord::Schema.define(:version => 20130311211101) do
 
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
@@ -30,8 +30,8 @@ ActiveRecord::Schema.define(:version => 20130208215252) do
     t.datetime "started_at"
     t.datetime "finished_at"
     t.string   "agent"
-    t.datetime "created_at",      :null => false
-    t.datetime "updated_at",      :null => false
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
     t.text     "config"
     t.integer  "commit_id"
     t.integer  "request_id"
@@ -45,6 +45,7 @@ ActiveRecord::Schema.define(:version => 20130208215252) do
     t.integer  "previous_result"
     t.string   "event_type"
     t.string   "previous_state"
+    t.text     "pull_request_title"
   end
 
   add_index "builds", ["finished_at"], :name => "index_builds_on_finished_at"

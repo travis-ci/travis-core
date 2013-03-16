@@ -361,6 +361,12 @@ describe Build do
       build.event_type.should == 'push'
     end
 
+    it 'saves pull_request_title before crate' do
+      payload = { 'pull_request' => { 'title' => 'A pull request' } }
+      build = Factory(:build,  request: Factory(:request, event_type: 'pull_request', payload: payload))
+      build.pull_request_title.should == 'A pull request'
+    end
+
     describe 'reset' do
       let(:build) { Factory(:build, state: 'finished') }
 

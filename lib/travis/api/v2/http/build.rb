@@ -31,6 +31,7 @@ module Travis
                 'commit_id' => build.commit_id,
                 'number' => build.number,
                 'pull_request' => build.pull_request?,
+                'pull_request_title' => build.pull_request_title,
                 'config' => build.obfuscated_config.stringify_keys,
                 'state' => build.state.to_s,
                 'started_at' => format_date(build.started_at),
