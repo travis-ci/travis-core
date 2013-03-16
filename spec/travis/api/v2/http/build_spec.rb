@@ -13,6 +13,7 @@ describe Travis::Api::V2::Http::Build do
       'job_ids' => [1, 2],
       'number' => 2,
       'pull_request' => false,
+      'pull_request_title' => nil,
       'config' => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
       'state' => 'passed',
       'started_at' => json_format_time(Time.now.utc - 1.minute),
@@ -35,6 +36,20 @@ describe Travis::Api::V2::Http::Build do
       'author_email' => 'svenfuchs@artweb-design.de',
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
     }
+  end
+
+  describe 'pull request' do
+    let(:build) do
+      stub_build pull_request?: true,
+                 pull_request_title: 'A pull request'
+    end
+    let(:data) { Travis::Api::V2::Http::Build.new(build).data }
+
+    it 'returns pull request data' do
+      data['build']['pull_request'].should be_true
+      data['build']['pull_request_title'].should == 'A pull request'
+    end
+
   end
 
   context 'with encrypted env vars' do
