@@ -247,6 +247,22 @@ describe Job do
           env: ['FOO=foo']
         }
       end
+
+      it 'removes addons config' do
+        config = { rvm: '1.8.7',
+                   addons: {
+                     sauce_connect: {
+                       username: 'johndoe',
+                       access_key: job.repository.key.secure.encrypt('foobar')
+                     }
+                   }
+                 }
+        job.config = config
+
+        job.decrypted_config.should == {
+          rvm: '1.8.7'
+        }
+      end
     end
 
     context 'when job is *not* from pull request' do
@@ -277,6 +293,28 @@ describe Job do
         job.decrypted_config.should == {
           rvm: '1.8.7',
           env: ['SECURE BAR=barbaz', 'FOO=foo']
+        }
+      end
+
+      it 'decrypts addons config' do
+        config = { rvm: '1.8.7',
+                   addons: {
+                     sauce_connect: {
+                       username: 'johndoe',
+                       access_key: job.repository.key.secure.encrypt('foobar')
+                     }
+                   }
+                 }
+        job.config = config
+
+        job.decrypted_config.should == {
+          rvm: '1.8.7',
+          addons: {
+            sauce_connect: {
+              username: 'johndoe',
+              access_key: 'foobar'
+            }
+          }
         }
       end
     end
