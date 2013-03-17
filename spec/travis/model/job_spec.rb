@@ -122,6 +122,18 @@ describe Job do
       }
     end
 
+    it 'removes addons config' do
+      job = Job.new(repository: Factory(:repository))
+      config = { rvm: '1.8.7',
+                 addons: { sauce_connect: true },
+               }
+      job.config = config
+
+      job.obfuscated_config.should == {
+        rvm: '1.8.7',
+      }
+    end
+
     context 'when job is from a pull request' do
       let :job do
         job = Job.new(repository: Factory(:repository))
