@@ -12,9 +12,14 @@ describe Travis::Github::Services::SyncUser do
     end
 
     it 'sets is_syncing?' do
+      user.is_syncing = false
       user.should_not be_syncing
       service.send(:syncing) { user.should be_syncing }
       user.should_not be_syncing
+    end
+
+    it 'starts syncing after create' do
+      user.should be_syncing
     end
 
     it 'sets synced_at' do
