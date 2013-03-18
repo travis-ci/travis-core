@@ -93,6 +93,7 @@ class Job < ActiveRecord::Base
 
   def obfuscated_config
     config.dup.tap do |config|
+      config.delete(:addons)
       next unless config[:env]
       obfuscated_env = process_env(config[:env]) { |env| obfuscate_env(env) }
       config[:env] = obfuscated_env ? obfuscated_env.join(' ') : nil
@@ -102,6 +103,13 @@ class Job < ActiveRecord::Base
   def decrypted_config
     self.config.dup.tap do |config|
       config[:env] = process_env(config[:env]) { |env| decrypt_env(env) } if config[:env]
+      if config[:addons]
+        if pull_request?
+          config.delete(:addons)
+        else
+          config[:addons] = decrypt_addons(config[:addons])
+        end
+      end
     end
   end
 
@@ -155,6 +163,10 @@ class Job < ActiveRecord::Base
           line
         end
       end
+    end
+
+    def decrypt_addons(addons)
+      decrypt(addons)
     end
 
     def decrypt_env(env)
