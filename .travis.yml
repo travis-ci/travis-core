@@ -1,6 +1,7 @@
 language: ruby
 services:
   - redis
+  - rabbitmq
 rvm:
   - jruby-19mode
 jdk:
