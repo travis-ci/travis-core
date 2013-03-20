@@ -15,7 +15,7 @@ class User < ActiveRecord::Base
 
   before_create :set_as_recent
   after_create :create_a_token
-  after_create :sync
+  after_commit :sync, on: :create
 
   serialize :github_scopes
   before_save :track_github_scopes
