@@ -5,6 +5,25 @@ module Travis
     module Services
       class SyncUser < Travis::Services::Base
         class Organizations
+          class Filter
+            attr_reader :data, :limit
+            def initialize(data, options = {})
+              @data = data || {}
+              @limit = options[:repositories_limit] || 1000
+            end
+
+            def allow?
+              repositories_count < limit
+            end
+
+            def repositories_count
+              # I was not sure how to handle the case where we don't get the
+              # sufficient amount of data here and this seems the best answer,
+              # that way we will not get orgs siltently ignored
+              data['public_repositories'] || 0
+            end
+          end
+
           class << self
             def cancel_memberships(user, orgs)
               user.memberships.where(:organization_id => orgs.map(&:id)).delete_all
@@ -29,7 +48,10 @@ module Travis
           private
 
             def create_or_update
-              fetch.map do |data|
+              fetch.find_all do |data|
+                options = Travis.config.organization_filter || {}
+                Filter.new(fetch_resource("orgs/#{data['login']}"), options).allow?
+              end.map do |data|
                 org = Organization.find_or_create_by_github_id(data['id'])
                 org.update_attributes!(:name => data['name'], :login => data['login'])
                 user.organizations << org unless user.organizations.include?(org)
@@ -61,6 +83,12 @@ module Travis
                 # end
               end
               result
+            end
+
+            def fetch_resource(resource)
+              GH[resource] # TODO should be: ?type=#{self.class.type} but GitHub doesn't work as documented
+            rescue GH::Error => e
+              log_exception(e)
             end
 
             class Instrument < Notification::Instrument
