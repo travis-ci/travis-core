@@ -49,7 +49,7 @@ module Travis
 
             def create_or_update
               fetch.find_all do |data|
-                options = Travis.config.organization_filter || {}
+                options = Travis.config.sync.organizations || {}
                 Filter.new(fetch_resource("orgs/#{data['login']}"), options).allow?
               end.map do |data|
                 org = Organization.find_or_create_by_github_id(data['id'])

@@ -16,12 +16,12 @@ describe Travis::Github::Services::SyncUser::Organizations do
     describe 'with organization with repos over limit' do
       before do
         GH.expects(:[]).with('orgs/FooBar').returns('public_repositories' => 11)
-        @old_optons = Travis.config.organization_filter
-        Travis.config.organization_filter = { :repositories_limit => 10 }
+        @old_optons = Travis.config.sync.organizations
+        Travis.config.sync.organizations = { :repositories_limit => 10 }
       end
 
       after do
-        Travis.config.organization_filter = @old_options
+        Travis.config.sync.organizations = @old_options
       end
 
       let(:data)    { [{ 'id' => 1, 'login' => 'FooBar' }] }
