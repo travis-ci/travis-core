@@ -10,6 +10,25 @@ describe Travis::Github::Services::SyncUser::Organizations do
 
     before :each do
       GH.stubs(:[]).with('user/orgs').returns(data)
+      GH.stubs(:[]).with('orgs/login').returns({})
+    end
+
+    describe 'with organization with repos over limit' do
+      before do
+        GH.expects(:[]).with('orgs/FooBar').returns('public_repositories' => 11)
+        @old_optons = Travis.config.sync.organizations
+        Travis.config.sync.organizations = { :repositories_limit => 10 }
+      end
+
+      after do
+        Travis.config.sync.organizations = @old_options
+      end
+
+      let(:data)    { [{ 'id' => 1, 'login' => 'FooBar' }] }
+
+      it 'does not create organization matching "exclude" list' do
+        action.should_not change(Organization, :count)
+      end
     end
 
     describe 'creates missing organizations' do
@@ -65,6 +84,8 @@ describe Travis::Github::Services::SyncUser::Organizations::Instrument do
   before :each do
     Travis::Notification.publishers.replace([publisher])
     GH.stubs(:[]).with('user/orgs').returns data
+    GH.stubs(:[]).with('orgs/travis-ci').returns({})
+    GH.stubs(:[]).with('orgs/sinatra').returns({})
     service.run
   end
 
