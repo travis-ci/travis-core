@@ -30,6 +30,10 @@ module Travis
             end
 
             def from
+              "\"Travis CI\" <#{from_email}>"
+            end
+            
+            def from_email
               Travis.config.email.from || "notifications@#{Travis.config.host}"
             end
         end
