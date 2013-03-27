@@ -126,7 +126,8 @@ module Travis
           duration: 60,
           pull_request?: false,
           queue: 'builds.linux',
-          pull_request_title: nil
+          pull_request_title: nil,
+          pull_request_number: nil
         )
       end
 

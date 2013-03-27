@@ -142,6 +142,7 @@ class Build < ActiveRecord::Base
     self.previous_state = last_finished_state_on_branch
     self.event_type = request.event_type
     self.pull_request_title = request.pull_request_title
+    self.pull_request_number = request.pull_request_number
     expand_matrix
   end
 

@@ -29,6 +29,7 @@ describe Travis::Api::V2::Pusher::Build::Finished do
       'number' => 2,
       'pull_request' => false,
       'pull_request_title' => nil,
+      'pull_request_number' => nil,
       'config' => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
       'state' => 'passed',
       'started_at' => json_format_time(Time.now.utc - 1.minute),

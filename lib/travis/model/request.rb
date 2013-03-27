@@ -45,6 +45,12 @@ class Request < ActiveRecord::Base
     end
   end
 
+  def pull_request_number
+    if pull_request? && payload
+      payload['pull_request'] && payload['pull_request']['number']
+    end
+  end
+
   def config_url
     "https://api.github.com/repos/#{repository.slug}/contents/.travis.yml?ref=#{commit.commit}"
   end

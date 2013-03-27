@@ -14,6 +14,7 @@ describe Travis::Api::V2::Http::Build do
       'number' => 2,
       'pull_request' => false,
       'pull_request_title' => nil,
+      'pull_request_number' => nil,
       'config' => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
       'state' => 'passed',
       'started_at' => json_format_time(Time.now.utc - 1.minute),
@@ -41,13 +42,15 @@ describe Travis::Api::V2::Http::Build do
   describe 'pull request' do
     let(:build) do
       stub_build pull_request?: true,
-                 pull_request_title: 'A pull request'
+                 pull_request_title: 'A pull request',
+                 pull_request_number: 44
     end
     let(:data) { Travis::Api::V2::Http::Build.new(build).data }
 
     it 'returns pull request data' do
       data['build']['pull_request'].should be_true
       data['build']['pull_request_title'].should == 'A pull request'
+      data['build']['pull_request_number'].should == 44
     end
 
   end

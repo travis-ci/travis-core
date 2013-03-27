@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130311211101) do
+ActiveRecord::Schema.define(:version => 20130327100801) do
 
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
@@ -30,8 +30,8 @@ ActiveRecord::Schema.define(:version => 20130311211101) do
     t.datetime "started_at"
     t.datetime "finished_at"
     t.string   "agent"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
     t.text     "config"
     t.integer  "commit_id"
     t.integer  "request_id"
@@ -46,6 +46,7 @@ ActiveRecord::Schema.define(:version => 20130311211101) do
     t.string   "event_type"
     t.string   "previous_state"
     t.text     "pull_request_title"
+    t.integer  "pull_request_number"
   end
 
   add_index "builds", ["finished_at"], :name => "index_builds_on_finished_at"
@@ -189,9 +190,9 @@ ActiveRecord::Schema.define(:version => 20130311211101) do
     t.text     "description"
     t.string   "last_build_language"
     t.integer  "last_build_duration"
-    t.boolean  "private",                :default => false
     t.integer  "owner_id"
     t.string   "owner_type"
+    t.boolean  "private",                :default => false
     t.integer  "last_build_result"
     t.string   "last_build_state"
   end
@@ -211,12 +212,12 @@ ActiveRecord::Schema.define(:version => 20130311211101) do
     t.datetime "finished_at"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
-    t.integer  "owner_id"
-    t.string   "owner_type"
     t.string   "event_type"
     t.string   "comments_url"
     t.string   "base_commit"
     t.string   "head_commit"
+    t.integer  "owner_id"
+    t.string   "owner_type"
     t.string   "result"
     t.string   "message"
   end
@@ -280,6 +281,5 @@ ActiveRecord::Schema.define(:version => 20130311211101) do
 
   add_index "workers", ["full_name"], :name => "index_workers_on_full_name"
   add_index "workers", ["last_seen_at"], :name => "index_workers_on_last_seen_at"
-  add_index "workers", ["name", "host"], :name => "index_workers_on_name_and_host"
 
 end
