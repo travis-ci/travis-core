@@ -94,7 +94,7 @@ module Travis
             :s3            => { :access_key_id => '', :secret_access_key => '' },
             :pusher        => { :app_id => 'app-id', :key => 'key', :secret => 'secret' },
             :sidekiq       => { :namespace => 'sidekiq', :pool_size => 1 },
-            :smtp          => { :user_name => 'postmark-api_key' },
+            :smtp          => {},
             :github        => { :token => 'travisbot-token' },
             :async         => {},
             :notifications => [], # TODO rename to event.handlers

@@ -20,6 +20,8 @@ module Travis
             @broadcasts = Array(broadcasts).map { |broadcast| Hashr.new(broadcast) }
             @result_message = ::Build::ResultMessage.new(@build)
 
+            headers['X-MC-Tags'] = Travis.config.env
+
             mail(from: from, to: recipients, subject: subject, template_path: 'build')
           end
 
@@ -30,6 +32,10 @@ module Travis
             end
 
             def from
+              "\"Travis CI\" <#{from_email}>"
+            end
+            
+            def from_email
               Travis.config.email.from || "notifications@#{Travis.config.host}"
             end
         end
