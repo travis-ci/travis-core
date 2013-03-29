@@ -37,7 +37,7 @@ module Travis
             end
 
             def log_parts
-              log.parts.map do |part|
+              log.parts.sort_by(&:number).map do |part|
                 {
                   'id' => part.id,
                   'number' => part.number,
