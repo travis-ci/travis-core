@@ -175,15 +175,24 @@ class Build < ActiveRecord::Base
     end
   end
 
-  def normalize_env_hashes(line)
-    if line.is_a?(Hash)
-      env_hash_to_string(line)
-    elsif line.is_a?(Array)
-      line.map do |line|
+  def normalize_env_hashes(lines)
+    process_line = ->(line) do
+      if line.is_a?(Hash)
         env_hash_to_string(line)
+      elsif line.is_a?(Array)
+        line.map do |line|
+          env_hash_to_string(line)
+        end
+      else
+        line
       end
+    end
+
+
+    if lines.is_a?(Array)
+      lines.map { |env| process_line.(env) }
     else
-      line
+      process_line.(lines)
     end
   end
 
@@ -213,34 +222,22 @@ class Build < ActiveRecord::Base
 
   private
 
-    def normalize_env_values(values)
+    def normalize_env_values(env)
       global = nil
 
-      if values.is_a?(Hash) && (values[:global] || values[:matrix])
-        global = values[:global]
-        values = values[:matrix]
+      if env.is_a?(Hash) && (env[:global] || env[:matrix])
+        global = env[:global]
+        env    = env[:matrix]
       end
 
-      result = if global
-        global = [global] unless global.is_a?(Array)
-
-        values = [values] unless values.is_a?(Array)
-        values.map do |line|
-          line = [line] unless line.is_a?(Array)
-          (line + global).compact
-        end
-      else
-        values
-      end
-
-      env = if result.is_a?(Array)
-        result.map { |env| normalize_env_hashes(env) }
-      else
-        normalize_env_hashes(result)
+      if env
+        env = [env] unless env.is_a?(Array)
+        env = normalize_env_hashes(env)
       end
 
       if global
-        global = global.map { |env| normalize_env_hashes(env) }
+        global = [global] unless global.is_a?(Array)
+        global = normalize_env_hashes(global)
       end
 
       { env: env, global: global }
@@ -249,11 +246,13 @@ class Build < ActiveRecord::Base
 
     def normalize_config(config)
       config = config.deep_symbolize_keys
+
       if config[:env]
         result = normalize_env_values(config[:env])
         config[:env] = result[:env]
         config[:global_env] = result[:global] if result[:global]
       end
+
       config
     end
 
