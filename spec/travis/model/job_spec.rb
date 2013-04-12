@@ -194,11 +194,12 @@ describe Job do
   describe 'decrypted config' do
     it 'handles nil env' do
       job = Job.new(repository: Factory(:repository))
-      job.config = { rvm: '1.8.7', env: nil }
+      job.config = { rvm: '1.8.7', env: nil, global_env: nil }
 
       job.decrypted_config.should == {
         rvm: '1.8.7',
-        env: nil
+        env: nil,
+        global_env: nil
       }
     end
 
@@ -208,24 +209,28 @@ describe Job do
 
       config = { rvm: '1.8.7',
                  env: [{FOO: 'bar', BAR: 'baz'},
-                          job.repository.key.secure.encrypt('BAR=barbaz')]
+                          job.repository.key.secure.encrypt('BAR=barbaz')],
+                 global_env: [{FOO: 'foo', BAR: 'bar'},
+                          job.repository.key.secure.encrypt('BAZ=baz')]
                }
       job.config = config
 
       job.decrypted_config.should == {
         rvm: '1.8.7',
-        env: ["FOO=bar BAR=baz", "SECURE BAR=barbaz"]
+        env: ["FOO=bar BAR=baz", "SECURE BAR=barbaz"],
+        global_env: ["FOO=foo BAR=bar", "SECURE BAZ=baz"]
       }
     end
 
     it 'leaves regular vars untouched' do
       job = Job.new(repository: Factory(:repository))
       job.expects(:pull_request?).returns(false).at_least_once
-      job.config = { rvm: '1.8.7', env: 'FOO=foo' }
+      job.config = { rvm: '1.8.7', env: 'FOO=foo', global_env: 'BAR=bar' }
 
       job.decrypted_config.should == {
         rvm: '1.8.7',
-        env: ['FOO=foo']
+        env: ['FOO=foo'],
+        global_env: ['BAR=bar']
       }
     end
 
@@ -238,13 +243,15 @@ describe Job do
 
       it 'removes secure env vars' do
         config = { rvm: '1.8.7',
-                   env: [job.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo']
+                   env: [job.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo'],
+                   global_env: [job.repository.key.secure.encrypt('BAR=barbaz'), 'BAR=bar']
                  }
         job.config = config
 
         job.decrypted_config.should == {
           rvm: '1.8.7',
-          env: ['FOO=foo']
+          env: ['FOO=foo'],
+          global_env: ['BAR=bar']
         }
       end
 
@@ -286,25 +293,29 @@ describe Job do
 
       it 'decrypts env vars' do
         config = { rvm: '1.8.7',
-                   env: job.repository.key.secure.encrypt('BAR=barbaz')
+                   env: job.repository.key.secure.encrypt('BAR=barbaz'),
+                   global_env: job.repository.key.secure.encrypt('BAR=bazbar')
                  }
         job.config = config
 
         job.decrypted_config.should == {
           rvm: '1.8.7',
-          env: ['SECURE BAR=barbaz']
+          env: ['SECURE BAR=barbaz'],
+          global_env: ['SECURE BAR=bazbar']
         }
       end
 
-      it 'decrypts only secured env vars' do
+      it 'decrypts only secure env vars' do
         config = { rvm: '1.8.7',
-                   env: [job.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo']
+                   env: [job.repository.key.secure.encrypt('BAR=bar'), 'FOO=foo'],
+                   global_env: [job.repository.key.secure.encrypt('BAZ=baz'), 'QUX=qux']
                  }
         job.config = config
 
         job.decrypted_config.should == {
           rvm: '1.8.7',
-          env: ['SECURE BAR=barbaz', 'FOO=foo']
+          env: ['SECURE BAR=bar', 'FOO=foo'],
+          global_env: ['SECURE BAZ=baz', 'QUX=qux']
         }
       end
 
