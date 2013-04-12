@@ -222,6 +222,23 @@ describe Job do
       }
     end
 
+    it 'does not change original config' do
+      job = Job.new(repository: Factory(:repository))
+      job.expects(:pull_request?).at_least_once.returns(false)
+
+      config = {
+                 env: [{secure: 'invalid'}],
+                 global_env: [{secure: 'invalid'}]
+               }
+      job.config = config
+
+      job.decrypted_config
+      job.config.should == {
+        env: [{ secure: 'invalid' }],
+        global_env: [{ secure: 'invalid' }]
+      }
+    end
+
     it 'leaves regular vars untouched' do
       job = Job.new(repository: Factory(:repository))
       job.expects(:pull_request?).returns(false).at_least_once

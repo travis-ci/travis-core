@@ -1,4 +1,5 @@
 require 'active_record'
+require 'active_support/core_ext/hash/deep_dup'
 
 # Job models a unit of work that is run on a remote worker.
 #
@@ -92,7 +93,7 @@ class Job < ActiveRecord::Base
   end
 
   def obfuscated_config
-    config.dup.tap do |config|
+    config.deep_dup.tap do |config|
       config.delete(:addons)
       if config[:env]
         obfuscated_env = process_env(config[:env]) { |env| obfuscate_env(env) }
@@ -106,7 +107,7 @@ class Job < ActiveRecord::Base
   end
 
   def decrypted_config
-    self.config.dup.tap do |config|
+    self.config.deep_dup.tap do |config|
       config[:env] = process_env(config[:env]) { |env| decrypt_env(env) } if config[:env]
       config[:global_env] = process_env(config[:global_env]) { |env| decrypt_env(env) } if config[:global_env]
       if config[:addons]
@@ -171,7 +172,7 @@ class Job < ActiveRecord::Base
     def decrypt_env(env)
       env.map do |var|
         decrypt(var) do |var|
-          var.insert(0, 'SECURE ') unless var.include?('SECURE ')
+          var.dup.insert(0, 'SECURE ') unless var.include?('SECURE ')
         end
       end
     rescue
