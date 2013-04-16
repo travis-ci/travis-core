@@ -55,16 +55,16 @@ module Travis
             "#{Travis.config.http_host}/#{repository[:slug]}/builds/#{build[:id]}"
           end
 
-          def build_passed?
-            build[:state] == 'passed'
-          end
-
           def build_result
-            build_passed? ? 'passed' : 'failed'
+            build[:state]
           end
 
           def build_tag
-            build_passed? ? 'ok' : 'fail'
+            {
+              'passed' => 'ok',
+              'failed' => 'fail',
+              'errored' => 'error'
+            }.fetch(build[:state], 'fail')
           end
 
           def team_inbox_url_for(target)
