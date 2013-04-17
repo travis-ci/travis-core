@@ -73,6 +73,7 @@ module Travis
 
         class Instrument < Notification::Instrument
           def run_completed
+            return unless target.repository
             publish(
               msg: "for #{target.repository.slug}: #{result.login}",
               result: result
