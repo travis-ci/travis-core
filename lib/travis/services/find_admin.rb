@@ -11,6 +11,7 @@ module Travis
       register :find_admin
 
       def run
+        return unless repository
         admin = candidates.detect { |user| validate(user) }
         admin || raise_admin_missing
       end
@@ -72,6 +73,7 @@ module Travis
 
         class Instrument < Notification::Instrument
           def run_completed
+            return unless target.repository
             publish(
               msg: "for #{target.repository.slug}: #{result.login}",
               result: result
