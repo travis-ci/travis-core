@@ -41,6 +41,8 @@ class Build
       self.state = matrix_state
       self.duration = matrix_duration
       self.finished_at = data[:finished_at]
+
+      save!
     end
 
     def reset(options = {})
