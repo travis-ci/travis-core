@@ -11,6 +11,7 @@ module Travis
       register :find_admin
 
       def run
+        return unless repository
         admin = candidates.detect { |user| validate(user) }
         admin || raise_admin_missing
       end

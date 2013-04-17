@@ -53,6 +53,12 @@ describe Travis::Services::FindAdmin do
       end
     end
 
+    describe 'missing repository' do
+      it 'does not raise an exception' do
+        described_class.new.run
+      end
+    end
+
     def ignore_exception(&block)
       block.call
     rescue Travis::AdminMissing
