@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130327100801) do
+ActiveRecord::Schema.define(:version => 20130418103306) do
 
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
@@ -52,6 +52,7 @@ ActiveRecord::Schema.define(:version => 20130327100801) do
   add_index "builds", ["finished_at"], :name => "index_builds_on_finished_at"
   add_index "builds", ["repository_id", "event_type"], :name => "index_builds_on_repository_id_and_event_type"
   add_index "builds", ["repository_id", "state"], :name => "index_builds_on_repository_id_and_state"
+  add_index "builds", ["request_id"], :name => "index_builds_on_request_id"
 
   create_table "commits", :force => true do |t|
     t.integer  "repository_id"
@@ -119,6 +120,7 @@ ActiveRecord::Schema.define(:version => 20130327100801) do
   end
 
   add_index "jobs", ["created_at"], :name => "index_jobs_on_created_at"
+  add_index "jobs", ["owner_id", "owner_type", "state"], :name => "index_jobs_on_owner_id_and_owner_type_and_state"
   add_index "jobs", ["queue", "state"], :name => "index_jobs_on_queue_and_state"
   add_index "jobs", ["repository_id"], :name => "index_jobs_on_repository_id"
   add_index "jobs", ["state", "owner_id", "owner_type"], :name => "index_jobs_on_state_owner_type_owner_id"
