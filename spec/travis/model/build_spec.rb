@@ -187,7 +187,7 @@ describe Build do
 
           build.config.should == {
             env: [["ONE=1 TWO=2", "FOO=bar BAR=baz"]],
-            global_env: ["FOO=bar BAR=baz"]
+            _global_env: ["FOO=bar BAR=baz"]
           }
         end
 
@@ -200,7 +200,7 @@ describe Build do
 
           build.config.should == {
             env: [['FOO=bar']],
-            global_env: ["FOO=bar"]
+            _global_env: ["FOO=bar"]
           }
         end
 
@@ -217,7 +217,7 @@ describe Build do
               ["BAR=baz", "BAZ=qux", "FOO=bar"],
               ["QUX=foo", "FOO=bar"]
             ],
-            global_env: ["FOO=bar"]
+            _global_env: ["FOO=bar"]
           }
         end
       end

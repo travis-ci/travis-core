@@ -297,7 +297,9 @@ class Build < ActiveRecord::Base
       if config[:env]
         result = normalize_env_values(config[:env])
         config[:env] = result[:env]
-        config[:global_env] = result[:global] if result[:global]
+
+        key = Travis::Features.feature_active?(:global_env_in_config) ? :global_env : :_global_env
+        config[key] = result[:global] if result[:global]
       end
       config
     end
