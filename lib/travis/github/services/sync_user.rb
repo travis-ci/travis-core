@@ -25,6 +25,10 @@ module Travis
         private
 
           def syncing
+            unless user.github_oauth_token?
+              logger.warn "user sync for #{user.login} (id:#{user.id}) was cancelled as the user did not have a token"
+              return
+            end
             user.update_column(:is_syncing, true)
             result = yield
             user.update_column(:synced_at, Time.now)
