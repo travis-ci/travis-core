@@ -99,6 +99,7 @@ class User < ActiveRecord::Base
   end
 
   def github_scopes
+    return [] unless github_oauth_token
     read_attribute(:github_scopes) || []
   end
 
