@@ -41,7 +41,7 @@ module Travis
         def accept?
           payload.accept?
         rescue GH::Error(response_status: 404) => e
-          slug = payload.repository.values_at('owner_name', 'name').join('/')
+          slug = payload.repository.values_at(:owner_name, :name).join('/')
           Travis.logger.warn "the following payload for #{slug} could not be accepted as a 404 response code was returned by GitHub: #{payload.inspect}"
           false
         end
