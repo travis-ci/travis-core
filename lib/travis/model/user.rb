@@ -38,6 +38,10 @@ class User < ActiveRecord::Base
     def find_or_create_for_oauth(payload)
       Oauth.find_or_create_by(payload)
     end
+
+    def with_github_token
+      where('github_oauth_token IS NOT NULL')
+    end
   end
 
   def to_json

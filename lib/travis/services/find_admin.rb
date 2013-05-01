@@ -23,7 +23,7 @@ module Travis
       private
 
         def candidates
-          User.with_permissions(:repository_id => repository.id, :admin => true)
+          User.with_github_token.with_permissions(:repository_id => repository.id, :admin => true)
         end
 
         def validate(user)
