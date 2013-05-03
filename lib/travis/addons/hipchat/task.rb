@@ -39,7 +39,7 @@ module Travis
 
           def send_line(url, room_id, line)
             http.post(url) do |r|
-              r.body = { room_id: room_id, message: line, color: color, from: 'Travis CI', message_format: 'text' }
+              r.body = { room_id: room_id, message: line, color: color, from: 'Travis CI', message_format: message_format }
             end
           end
 
@@ -50,6 +50,10 @@ module Travis
 
           def color
             build[:state] == 'passed' ? 'green' : 'red'
+          end
+
+          def message_format
+            config[:format] || 'text'
           end
 
           def config
