@@ -69,12 +69,7 @@ module Travis
       @adapter = options[:adapter] || MemcachedAdapter.new
     end
 
-    def write(id, branch, build)
-      data = {
-        finished_at: build.finished_at.to_s,
-        state: build.state
-      }.stringify_keys
-
+    def write(id, branch, data)
       adapter.write(id, branch, data)
     end
   end

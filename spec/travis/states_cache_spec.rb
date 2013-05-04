@@ -2,19 +2,17 @@ require 'spec_helper'
 
 module Travis
   describe StatesCache do
-    let(:build) { stub('build', finished_at: Time.new(2013, 4, 22, 22, 10, 0, "+02:00"), state: 'passed') }
     let(:adapter) { StatesCache::TestAdapter.new }
     subject { StatesCache.new(adapter: adapter) }
 
-    it 'delegates #write to adapter and gets data from build' do
-      adapter.expects(:write).with(1, 'master', { finished_at: '2013-04-22 22:10:00 +0200', state: 'passed' }.stringify_keys)
-
-      subject.write(1, 'master', build)
+    it 'delegates #write to adapter' do
+      data = { finished_at: '2013-04-22T22:10:00', state: 'passed' }.stringify_keys
+      adapter.expects(:write).with(1, 'master', data)
+      subject.write(1, 'master', data)
     end
 
     it 'delegates #fetch to adapter' do
       adapter.expects(:fetch).with(1, 'master').returns({ foo: 'bar' })
-
       subject.fetch(1, 'master').should == { foo: 'bar' }
     end
 
@@ -31,7 +29,8 @@ module Travis
       end
 
       it 'saves the state for given branch and globally' do
-        subject.write(1, 'master', build)
+        data = { finished_at: '2013-04-22T22:10:00', state: 'passed' }.stringify_keys
+        subject.write(1, 'master', data)
         subject.fetch(1)['state'].should == 'passed'
         subject.fetch(1, 'master')['state'].should == 'passed'
 
@@ -40,20 +39,20 @@ module Travis
       end
 
       it 'updates the state only if the info is newer' do
-        build = stub('build', finished_at: Time.new(2013, 1, 1, 12, 0, 0, "+02:00"), state: 'passed')
-        subject.write(1, 'master', build)
+        data = { finished_at: '2013-01-01T12:00:00', state: 'passed' }.stringify_keys
+        subject.write(1, 'master', data)
 
         subject.fetch(1, 'master')['state'].should == 'passed'
 
-        build = stub('build', finished_at: Time.new(2013, 2, 1, 12, 0, 0, "+02:00"), state: 'failed')
-        subject.write(1, 'development', build)
+        data = { finished_at: '2013-02-01T12:00:00', state: 'failed' }.stringify_keys
+        subject.write(1, 'development', data)
 
         subject.fetch(1, 'master')['state'].should == 'passed'
         subject.fetch(1, 'development')['state'].should == 'failed'
         subject.fetch(1)['state'].should == 'failed'
 
-        build = stub('build', finished_at: Time.new(2013, 1, 15, 12, 0, 0, "+02:00"), state: 'errored')
-        subject.write(1, 'master', build)
+        data = { finished_at: '2013-01-15T12:00:00', state: 'errored' }.stringify_keys
+        subject.write(1, 'master', data)
 
         subject.fetch(1, 'master')['state'].should == 'errored'
         subject.fetch(1, 'development')['state'].should == 'failed'

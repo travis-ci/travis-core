@@ -115,6 +115,10 @@ module Travis
     def services
       @services ||= Travis::Services
     end
+
+    def states_cache
+      @states_cache ||= Travis::StatesCache.new
+    end
   end
 
   setup
