@@ -403,7 +403,7 @@ describe Build do
       end
     end
 
-    it 'saves event_type before crate' do
+    it 'saves event_type before create' do
       build = Factory(:build,  request: Factory(:request, event_type: 'pull_request'))
       build.event_type.should == 'pull_request'
 
@@ -411,10 +411,15 @@ describe Build do
       build.event_type.should == 'push'
     end
 
-    it 'saves pull_request_title before crate' do
+    it 'saves pull_request_title before create' do
       payload = { 'pull_request' => { 'title' => 'A pull request' } }
       build = Factory(:build,  request: Factory(:request, event_type: 'pull_request', payload: payload))
       build.pull_request_title.should == 'A pull request'
+    end
+
+    it 'saves branch before create' do
+      build = Factory(:build,  commit: Factory(:commit, branch: 'development'))
+      build.branch.should == 'development'
     end
 
     describe 'reset' do

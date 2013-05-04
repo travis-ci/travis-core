@@ -143,6 +143,7 @@ class Build < ActiveRecord::Base
     self.event_type = request.event_type
     self.pull_request_title = request.pull_request_title
     self.pull_request_number = request.pull_request_number
+    self.branch = commit.branch
     expand_matrix
   end
 
