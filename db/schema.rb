@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130418103306) do
+ActiveRecord::Schema.define(:version => 20130504230850) do
 
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(:version => 20130418103306) do
     t.string   "previous_state"
     t.text     "pull_request_title"
     t.integer  "pull_request_number"
+    t.string   "branch"
   end
 
   add_index "builds", ["finished_at"], :name => "index_builds_on_finished_at"
