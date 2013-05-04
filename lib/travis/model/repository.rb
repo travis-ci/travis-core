@@ -106,11 +106,11 @@ class Repository < ActiveRecord::Base
 
   def branches
     self.class.connection.select_values %(
-      SELECT DISTINCT ON (branch) branch
+      SELECT DISTINCT ON (commits.branch) commits.branch
       FROM   builds
       JOIN   commits ON builds.commit_id = commits.id
       WHERE  builds.repository_id = #{id}
-      ORDER  BY branch DESC
+      ORDER  BY commits.branch DESC
       LIMIT  25
     )
   end
@@ -125,11 +125,11 @@ class Repository < ActiveRecord::Base
 
   def last_finished_builds_by_branches_ids
     self.class.connection.select_values %(
-      SELECT DISTINCT ON (branch) builds.id
+      SELECT DISTINCT ON (commits.branch) builds.id
       FROM   builds
       JOIN   commits ON builds.commit_id = commits.id
       WHERE  builds.repository_id = #{id}
-      ORDER  BY branch, finished_at DESC
+      ORDER  BY commits.branch, finished_at DESC
       LIMIT  25
     )
   end
