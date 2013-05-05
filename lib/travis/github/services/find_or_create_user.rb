@@ -11,7 +11,11 @@ module Travis
         private
 
           def find
-            ::User.where(:login => params[:login]).first
+            ::User.where(github_id: params[:github_id]).first.tap do |user|
+              if user.login != params[:login]
+                user.update_attribute(:login, params[:login])
+              end
+            end
           end
 
           def create
