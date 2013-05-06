@@ -3,6 +3,20 @@ require 'spec_helper'
 describe Repository do
   include Support::ActiveRecord
 
+  describe '#last_completed_build' do
+    let(:repo) {  Factory(:repository, name: 'foobarbaz', builds: [build1, build2]) }
+    let(:build1) { Factory(:build, branch: 'master', finished_at: 1.hour.ago, state: :passed) }
+    let(:build2) { Factory(:build, branch: 'development', finished_at: Time.now, state: :failed) }
+
+    it 'returns last completed build' do
+      repo.last_completed_build.should == build2
+    end
+
+    it 'returns last completed build for a branch' do
+      repo.last_completed_build('master').should == build1
+    end
+  end
+
   describe '#regenerate_key!' do
     it 'regenerates key' do
       repo = Factory(:repository)
