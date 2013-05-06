@@ -8,6 +8,7 @@ module Travis
     autoload :Hipchat,      'travis/addons/hipchat'
     autoload :Irc,          'travis/addons/irc'
     autoload :Pusher,       'travis/addons/pusher'
+    autoload :StatesCache,  'travis/addons/states_cache'
     autoload :Util,         'travis/addons/util'
     autoload :Webhook,      'travis/addons/webhook'
 

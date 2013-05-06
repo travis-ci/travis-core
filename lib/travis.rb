@@ -60,6 +60,7 @@ module Travis
   autoload :Notification, 'travis/notification'
   autoload :Requests,     'travis/requests'
   autoload :Services,     'travis/services'
+  autoload :StatesCache,  'travis/states_cache'
   autoload :Task,         'travis/task'
   autoload :Testing,      'travis/testing'
 
@@ -113,6 +114,10 @@ module Travis
 
     def services
       @services ||= Travis::Services
+    end
+
+    def states_cache
+      @states_cache ||= Travis::StatesCache.new
     end
   end
 

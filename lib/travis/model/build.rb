@@ -108,11 +108,15 @@ class Build < ActiveRecord::Base
       limit(per_page).offset(per_page * (page - 1))
     end
 
-    def last_state_on(options)
+    def last_build_on(options)
       scope = descending
       scope = scope.on_state(options[:state])   if options[:state]
       scope = scope.on_branch(options[:branch]) if options[:branch]
-      scope.first.try(:state).try(:to_sym)
+      scope.first
+    end
+
+    def last_state_on(options)
+      last_build_on(options).try(:state).try(:to_sym)
     end
 
     def older_than(build = nil)

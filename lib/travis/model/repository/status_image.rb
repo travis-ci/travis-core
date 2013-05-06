@@ -19,8 +19,33 @@ class Repository
 
     private
 
+      def cache_enabled?
+        defined?(@cache_enabled) ? @cache_enabled : @cache_enabled = Travis::Features.feature_active?(:states_cache)
+      end
+
       def last_state
-        @last_state ||= repo && repo.build_status(branch)
+        @last_state ||= (state_from_cache || state_from_database)
+      end
+
+      def state_from_cache
+        return unless repo
+        return unless cache_enabled?
+
+        cache.fetch_state(repo.id, branch)
+      end
+
+      def state_from_database
+        return unless repo
+
+        build = repo.last_completed_build(branch)
+        if build
+          cache.write(repo.id, build.branch, build) if cache_enabled?
+          build.state.to_sym
+        end
+      end
+
+      def cache
+        Travis.states_cache
       end
   end
 end
