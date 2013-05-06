@@ -3,6 +3,32 @@ require 'active_support/core_ext/module/delegation'
 
 module Travis
   class StatesCache
+    include Travis::Api::Formats
+
+    attr_reader :adapter
+
+    delegate :fetch, :to => :adapter
+
+    def initialize(options = {})
+      @adapter = options[:adapter] || MemcachedAdapter.new
+    end
+
+    def write(id, branch, data)
+      if data.respond_to?(:finished_at)
+        data = {
+          'finished_at' => format_date(data.finished_at),
+          'state' => data.state.to_s
+        }
+      end
+
+      adapter.write(id, branch, data)
+    end
+
+    def fetch_state(id, branch)
+      data = fetch(id, branch)
+      data['state'].to_sym if data && data['state']
+    end
+
     class TestAdapter
       attr_reader :calls
       def initialize
@@ -59,18 +85,6 @@ module Travis
         end
         key
       end
-    end
-
-    attr_reader :adapter
-
-    delegate :fetch, :to => :adapter
-
-    def initialize(options = {})
-      @adapter = options[:adapter] || MemcachedAdapter.new
-    end
-
-    def write(id, branch, data)
-      adapter.write(id, branch, data)
     end
   end
 end

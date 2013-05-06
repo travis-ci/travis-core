@@ -2,8 +2,23 @@ require 'spec_helper'
 
 module Travis
   describe StatesCache do
+    include ::Support::ActiveRecord
+
     let(:adapter) { StatesCache::TestAdapter.new }
     subject { StatesCache.new(adapter: adapter) }
+
+    it 'allows to fetch state' do
+      adapter.expects(:fetch).with(1, 'master').returns({'state' => 'passed'})
+      subject.fetch_state(1, 'master').should == :passed
+    end
+
+    it 'gets data from build if it\'s given instead of raw data' do
+      build = Factory(:build, finished_at: Time.new(2013, 1, 1, 10, 0, 0), state: :passed)
+      data = { finished_at: '2013-01-01T10:00:00Z', state: 'passed' }.stringify_keys
+
+      adapter.expects(:write).with(1, 'master', data)
+      subject.write(1, 'master', build)
+    end
 
     it 'delegates #write to adapter' do
       data = { finished_at: '2013-04-22T22:10:00', state: 'passed' }.stringify_keys

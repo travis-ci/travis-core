@@ -5,8 +5,13 @@ describe Repository do
 
   describe '#last_completed_build' do
     let(:repo) {  Factory(:repository, name: 'foobarbaz', builds: [build1, build2]) }
-    let(:build1) { Factory(:build, branch: 'master', finished_at: 1.hour.ago, state: :passed) }
-    let(:build2) { Factory(:build, branch: 'development', finished_at: Time.now, state: :failed) }
+    let(:build1) { Factory(:build, finished_at: 1.hour.ago, state: :passed) }
+    let(:build2) { Factory(:build, finished_at: Time.now, state: :failed) }
+
+    before do
+      build1.update_attributes(branch: 'master')
+      build2.update_attributes(branch: 'development')
+    end
 
     it 'returns last completed build' do
       repo.last_completed_build.should == build2
