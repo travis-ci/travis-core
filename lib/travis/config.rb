@@ -112,7 +112,8 @@ module Travis
             :redis         => { :url => 'redis://localhost:6379' },
             :repository_filter => { :include => [/^rails\/rails/], :exclude => [/\/rails$/] },
             :encryption    => (Travis.env == 'development' ? { key: 'secret'*10 } : {}),
-            :sync          => { :organizations => { :repositories_limit => 1000 } }
+            :sync          => { :organizations => { :repositories_limit => 1000 } },
+            :states_cache  => { :memcached_servers => 'localhost:11211' }
 
     default :_access => [:key]
 
