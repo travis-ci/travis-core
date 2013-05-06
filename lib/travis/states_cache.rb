@@ -52,7 +52,7 @@ module Travis
       attr_reader :client
 
       def initialize(options = {})
-        @client = options[:client] || Dalli::Client.new(Travis.config.states_cache.memcached)
+        @client = options[:client] || Dalli::Client.new(Travis.config.states_cache.memcached_servers, Travis.config.states_cache.memcached_options)
       end
 
       def fetch(id, branch = nil)
