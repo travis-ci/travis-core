@@ -1,4 +1,5 @@
 require 'travis/support'
+require 'travis_core/version'
 require 'gh'
 require 'pusher'
 require 'redis'
@@ -69,11 +70,15 @@ module Travis
   class AdminMissing < StandardError; end
 
   class << self
-    # TODO check with @rkh where this is actually required
-    def setup(config = Travis.config.oauth2)
+    def setup
       Travis.logger.info('Setting up Travis::Core')
 
-      GH.set(:client_id => config[:client_id], :client_secret => config[:client_secret]) if config
+      GH.set(
+        client_id:      Travis.config.oauth2.try(:client_id),
+        client_secret:  Travis.config.oauth2.try(:client_secret),
+        user_agent:     "Travis-CI/#{TravisCore::VERSION} GH/#{GH::VERSION}",
+        origin:         Travis.config.host
+      )
 
       Addons.register
       Services.register
