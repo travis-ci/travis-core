@@ -31,7 +31,8 @@ module Travis
               Travis.logger.info("[request:receive] Request #{request.id} commit=#{request.commit.try(:commit).inspect} created #{request.builds.count} builds")
             end
           else
-            Travis.logger.info("[request:receive] Github event rejected: event_type=#{event_type.inspect} repo=\"#{payload.repository['owner_name']}/#{payload.repository['name']}\" commit=#{payload.commit['commit'].inspect if payload.commit} action=#{payload.action.inspect}")
+            commit = payload.commit['commit'].inspect if payload.commit rescue nil
+            Travis.logger.info("[request:receive] Github event rejected: event_type=#{event_type.inspect} repo=\"#{payload.repository['owner_name']}/#{payload.repository['name']}\" commit=#{commit} action=#{payload.action.inspect}")
           end
           request
         end
@@ -39,6 +40,10 @@ module Travis
 
         def accept?
           payload.accept?
+        rescue GH::Error(response_status: 404) => e
+          slug = payload.repository.values_at(:owner_name, :name).join('/')
+          Travis.logger.warn "the following payload for #{slug} could not be accepted as a 404 response code was returned by GitHub: #{payload.inspect}"
+          false
         end
 
         private

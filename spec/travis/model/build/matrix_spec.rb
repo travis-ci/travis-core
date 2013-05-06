@@ -217,6 +217,24 @@ describe Build, 'matrix' do
     yml
     }
 
+    let(:allow_failures_with_global_env) {
+      YAML.load <<-yml
+      rvm:
+        - 1.9.3
+        - 2.0.0
+      env:
+        global:
+          - "GLOBAL=global NEXT_GLOBAL=next"
+        matrix:
+          - "FOO=bar"
+          - "FOO=baz"
+      matrix:
+        allow_failures:
+          - rvm: 1.9.3
+            env: "FOO=bar"
+    yml
+    }
+
     describe :expand_matrix_config do
       def encrypt_config_env(config, repository)
         config['env'] = config.delete('env').map { |env| repository.key.secure.encrypt(env) }
@@ -285,15 +303,36 @@ describe Build, 'matrix' do
     end
 
     describe :expand_matrix do
-      it 'adds global entries in env to all of the matrix elements' do
+      context 'with global_env_in_config disabled' do
+        before do
+          Travis::Features.disable_for_all(:global_env_in_config)
+        end
+
+        it 'adds global entries in env to all of the matrix elements' do
+          build = Factory(:build, config: env_global_config)
+
+          build.expand_matrix_config(build.matrix_config).should == [
+            [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, ['FOO=bar', 'TOKEN=abcdef']]],
+            [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, ['BAR=baz', 'TOKEN=abcdef']]],
+            [[:rvm, '1.9.3'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, ['FOO=bar', 'TOKEN=abcdef']]],
+            [[:rvm, '1.9.3'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, ['BAR=baz', 'TOKEN=abcdef']]]
+          ]
+        end
+      end
+
+      it 'does not add global entries to a matrix, but leaves them in job config' do
         build = Factory(:build, config: env_global_config)
 
         build.expand_matrix_config(build.matrix_config).should == [
-          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, ['FOO=bar', 'TOKEN=abcdef']]],
-          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, ['BAR=baz', 'TOKEN=abcdef']]],
-          [[:rvm, '1.9.3'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, ['FOO=bar', 'TOKEN=abcdef']]],
-          [[:rvm, '1.9.3'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, ['BAR=baz', 'TOKEN=abcdef']]]
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, 'FOO=bar']],
+          [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, 'BAR=baz']],
+          [[:rvm, '1.9.3'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, 'FOO=bar']],
+          [[:rvm, '1.9.3'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, 'BAR=baz']]
         ]
+
+        build.matrix.map do |job|
+          job.config[:global_env].should == ["TOKEN=abcdef"]
+        end
       end
 
       it 'sets the config to the jobs (no config)' do
@@ -334,6 +373,11 @@ describe Build, 'matrix' do
       it 'sets the config to the jobs (allow failures config)' do
         build = Factory(:build, config: multiple_tests_config_with_allow_failures)
         build.matrix.map(&:allow_failure).should == [false, false, false, true, false, false]
+      end
+
+      it 'ignores global env config when setting allow failures' do
+        build = Factory(:build, config: allow_failures_with_global_env)
+        build.matrix.map(&:allow_failure).should == [true, false, false, false]
       end
 
       it 'copies build attributes' do

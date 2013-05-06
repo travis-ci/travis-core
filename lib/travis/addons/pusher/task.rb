@@ -8,7 +8,7 @@ module Travis
       class Task < Travis::Task
 
         def self.chunk_size
-          9 * 1024
+          9 * 1024 + 100
         end
 
         def event
@@ -62,9 +62,16 @@ module Travis
               # body, 1kB should be enough for headers
               log = payload[:_log]
               chunkifier = Chunkifier.new(log, chunk_size, :json => true)
+
+              if chunkifier.length > 1
+                # This should never happen when we update travis-worker to split log parts
+                # bigger than 9kB.
+                Travis.logger.warn("[addons:pusher] The log part from worker was bigger than 9kB (#{log.to_json.length}B), payload: #{payload.inspect}")
+              end
+
               chunkifier.each_with_index.map do |part, i|
                 new_payload = payload.dup.merge(:_log => part)
-                new_payload[:number] = "#{new_payload[:number]}.#{i}"
+                new_payload[:number] = "#{new_payload[:number]}.#{i}" unless i == 0
                 new_payload[:final] = new_payload[:final] && chunkifier.length - 1 == i
                 new_payload
               end

@@ -15,7 +15,7 @@ describe Travis::Api::V1::Pusher::Job::Created do
       'number' => '2.1',
       'state' => 'created',
       'result' => nil,
-      'queue' => 'builds.common',
+      'queue' => 'builds.linux',
       'log_id' => 1,
       'allow_failure' => false
     }

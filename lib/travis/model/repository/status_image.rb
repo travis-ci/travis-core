@@ -1,8 +1,9 @@
 class Repository
   class StatusImage
     RESULTS = {
-      passed: :passing,
-      failed: :failing,
+      passed:  :passing,
+      failed:  :failing,
+      errored: :error
     }
 
     attr_reader :repo, :branch

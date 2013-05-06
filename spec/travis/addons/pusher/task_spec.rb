@@ -29,6 +29,15 @@ describe Travis::Addons::Pusher::Task do
     }.to raise_error(Pusher::Error)
   end
 
+  it 'warns when log needs to be split' do
+    subject.stubs(:chunk_size => 5)
+    Travis.logger.expects(:warn) { |message| message =~ /\[addons:pusher\] The log part from worker was bigger than 9kB/ }
+
+    run('job:test:log', test, params: { _log: "123456" })
+
+    channel.messages.length.should == 2
+  end
+
   it 'splits log messages into chunks, to not exceed the limit in bytes' do
     subject.stubs(:chunk_size => 5)
     run('job:test:log', test, params: { _log: "0000\ną" })
@@ -42,7 +51,7 @@ describe Travis::Addons::Pusher::Task do
     run('job:test:log', test, params: { _log: "0000\ną", number: 3 })
 
     channel.messages.length.should == 3
-    channel.messages.map { |message| message[1][:number] }.should == ['3.0', '3.1', '3.2']
+    channel.messages.map { |message| message[1][:number] }.should == [3, '3.1', '3.2']
     channel.messages.map { |message| message[1][:final] }.should == [nil, nil, nil]
   end
 

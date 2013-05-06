@@ -51,10 +51,6 @@ class Build
         include_matrix_configs(exclude_matrix_configs(expanded))
       end
 
-      def exclude_matrix_configs(matrix)
-        matrix.reject { |config| exclude_config?(config) }
-      end
-
       def matrix_settings
         config[:matrix] || {}
       end

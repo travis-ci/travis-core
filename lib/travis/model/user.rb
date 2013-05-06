@@ -15,6 +15,7 @@ class User < ActiveRecord::Base
 
   before_create :set_as_recent
   after_create :create_a_token
+  after_commit :sync, on: :create
 
   serialize :github_scopes
   before_save :track_github_scopes
@@ -36,6 +37,10 @@ class User < ActiveRecord::Base
 
     def find_or_create_for_oauth(payload)
       Oauth.find_or_create_by(payload)
+    end
+
+    def with_github_token
+      where('github_oauth_token IS NOT NULL')
     end
   end
 
@@ -98,6 +103,7 @@ class User < ActiveRecord::Base
   end
 
   def github_scopes
+    return [] unless github_oauth_token
     read_attribute(:github_scopes) || []
   end
 

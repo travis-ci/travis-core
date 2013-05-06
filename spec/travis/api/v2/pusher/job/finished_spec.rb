@@ -22,7 +22,7 @@ describe Travis::Api::V2::Pusher::Job::Finished do
       'started_at' => json_format_time(Time.now.utc - 1.minute),
       'finished_at' => json_format_time(Time.now.utc),
       'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
-      'queue' => 'builds.common',
+      'queue' => 'builds.linux',
       'allow_failure' => false,
       'tags' => 'tag-a,tag-b'
     }

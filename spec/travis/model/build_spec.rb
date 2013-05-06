@@ -171,6 +171,58 @@ describe Build do
     end
 
     describe 'config' do
+      context 'with global_env_in_config disabled' do
+        before do
+          Travis::Features.disable_for_all(:global_env_in_config)
+        end
+
+        it 'normalizes env vars global and matrix which are hashes to strings' do
+          env = {
+            'global' => [{FOO: 'bar', BAR: 'baz'}],
+            'matrix' => [{ONE: 1, TWO: '2'}]
+          }
+
+          config = { 'env' => env }
+          build = Factory(:build, config: config)
+
+          build.config.should == {
+            env: [["ONE=1 TWO=2", "FOO=bar BAR=baz"]],
+            _global_env: ["FOO=bar BAR=baz"]
+          }
+        end
+
+        it 'works fine even if matrix part of env is undefined' do
+          env = {
+            'global' => ['FOO=bar']
+          }
+          config = { 'env' => env }
+          build = Factory(:build, config: config)
+
+          build.config.should == {
+            env: [['FOO=bar']],
+            _global_env: ["FOO=bar"]
+          }
+        end
+
+        it 'squashes matrix and global keys to save config as an array, not as a hash' do
+          env = {
+            'global' => ['FOO=bar'],
+            'matrix' => [['BAR=baz', 'BAZ=qux'], 'QUX=foo']
+          }
+          config = { 'env' => env }
+          build = Factory(:build, config: config)
+
+          build.config.should == {
+            env: [
+              ["BAR=baz", "BAZ=qux", "FOO=bar"],
+              ["QUX=foo", "FOO=bar"]
+            ],
+            _global_env: ["FOO=bar"]
+          }
+        end
+      end
+
+
       it 'defaults to an empty hash' do
         Build.new.config.should == {}
       end
@@ -190,9 +242,8 @@ describe Build do
         build = Factory(:build, config: config)
 
         build.config.should == {
-          env: [
-            ["ONE=1 TWO=2", "FOO=bar BAR=baz"]
-          ]
+          env: ["ONE=1 TWO=2"],
+          global_env: ["FOO=bar BAR=baz"]
         }
       end
 
@@ -204,9 +255,8 @@ describe Build do
         build = Factory(:build, config: config)
 
         build.config.should == {
-          env: [
-            ['FOO=bar']
-          ]
+          env: nil,
+          global_env: ["FOO=bar"]
         }
       end
 
@@ -218,9 +268,7 @@ describe Build do
         build = Factory(:build, config: config)
 
         build.config.should == {
-          env: [
-            "FOO=bar"
-          ]
+          env: ["FOO=bar"]
         }
       end
 
@@ -234,9 +282,10 @@ describe Build do
 
         build.config.should == {
           env: [
-            ["BAR=baz", "BAZ=qux", "FOO=bar"],
-            ["QUX=foo", "FOO=bar"]
-          ]
+            ["BAR=baz", "BAZ=qux"],
+            "QUX=foo"
+          ],
+          global_env: ["FOO=bar"]
         }
       end
 
@@ -354,12 +403,23 @@ describe Build do
       end
     end
 
-    it 'saves event_type before crate' do
+    it 'saves event_type before create' do
       build = Factory(:build,  request: Factory(:request, event_type: 'pull_request'))
       build.event_type.should == 'pull_request'
 
       build = Factory(:build,  request: Factory(:request, event_type: 'push'))
       build.event_type.should == 'push'
+    end
+
+    it 'saves pull_request_title before create' do
+      payload = { 'pull_request' => { 'title' => 'A pull request' } }
+      build = Factory(:build,  request: Factory(:request, event_type: 'pull_request', payload: payload))
+      build.pull_request_title.should == 'A pull request'
+    end
+
+    it 'saves branch before create' do
+      build = Factory(:build,  commit: Factory(:commit, branch: 'development'))
+      build.branch.should == 'development'
     end
 
     describe 'reset' do

@@ -76,7 +76,7 @@ class Build < ActiveRecord::Base
     end
 
     def on_branch(branch)
-      pushes.joins(:commit).where(branch.present? ? ['commits.branch IN (?)', normalize_to_array(branch)] : [])
+      pushes.where(branch.present? ? ['branch IN (?)', normalize_to_array(branch)] : [])
     end
 
     def by_event_type(event_type)
@@ -141,6 +141,9 @@ class Build < ActiveRecord::Base
     self.number = repository.builds.next_number
     self.previous_state = last_finished_state_on_branch
     self.event_type = request.event_type
+    self.pull_request_title = request.pull_request_title
+    self.pull_request_number = request.pull_request_number
+    self.branch = commit.branch if Build.column_names.include?('branch')
     expand_matrix
   end
 
@@ -173,15 +176,37 @@ class Build < ActiveRecord::Base
     end
   end
 
-  def normalize_env_hashes(line)
-    if line.is_a?(Hash)
-      env_hash_to_string(line)
-    elsif line.is_a?(Array)
-      line.map do |line|
-        env_hash_to_string(line)
+  def normalize_env_hashes(lines)
+    if Travis::Features.feature_active?(:global_env_in_config)
+      process_line = ->(line) do
+        if line.is_a?(Hash)
+          env_hash_to_string(line)
+        elsif line.is_a?(Array)
+          line.map do |line|
+            env_hash_to_string(line)
+          end
+        else
+          line
+        end
+      end
+
+
+      if lines.is_a?(Array)
+        lines.map { |env| process_line.(env) }
+      else
+        process_line.(lines)
       end
     else
-      line
+      # TODO: remove this branch when all workers are capable of handling global env
+      if lines.is_a?(Hash)
+        env_hash_to_string(lines)
+      elsif lines.is_a?(Array)
+        lines.map do |line|
+          env_hash_to_string(line)
+        end
+      else
+        lines
+      end
     end
   end
 
@@ -212,29 +237,58 @@ class Build < ActiveRecord::Base
   private
 
     def normalize_env_values(values)
-      global = nil
+      if Travis::Features.feature_active?(:global_env_in_config)
+        env = values
+        global = nil
 
-      if values.is_a?(Hash) && (values[:global] || values[:matrix])
-        global = values[:global]
-        values = values[:matrix]
-      end
-
-      result = if global
-        global = [global] unless global.is_a?(Array)
-
-        values = [values] unless values.is_a?(Array)
-        values.map do |line|
-          line = [line] unless line.is_a?(Array)
-          (line + global).compact
+        if env.is_a?(Hash) && (env[:global] || env[:matrix])
+          global = env[:global]
+          env    = env[:matrix]
         end
-      else
-        values
-      end
 
-      if result.is_a?(Array)
-        result.map { |env| normalize_env_hashes(env) }
+        if env
+          env = [env] unless env.is_a?(Array)
+          env = normalize_env_hashes(env)
+        end
+
+        if global
+          global = [global] unless global.is_a?(Array)
+          global = normalize_env_hashes(global)
+        end
+
+        { env: env, global: global }
       else
-        normalize_env_hashes(result)
+        # TODO: remove this branch when all workers are capable of handling global env
+        global = nil
+
+        if values.is_a?(Hash) && (values[:global] || values[:matrix])
+          global = values[:global]
+          values = values[:matrix]
+        end
+
+        result = if global
+          global = [global] unless global.is_a?(Array)
+
+          values = [values] unless values.is_a?(Array)
+          values.map do |line|
+            line = [line] unless line.is_a?(Array)
+            (line + global).compact
+          end
+        else
+          values
+        end
+
+        env = if result.is_a?(Array)
+          result.map { |env| normalize_env_hashes(env) }
+        else
+          normalize_env_hashes(result)
+        end
+
+        if global
+          global = global.map { |env| normalize_env_hashes(env) }
+        end
+
+        { env: env, global: global }
       end
     end
 
@@ -242,7 +296,11 @@ class Build < ActiveRecord::Base
     def normalize_config(config)
       config = config.deep_symbolize_keys
       if config[:env]
-        config[:env] = normalize_env_values(config[:env])
+        result = normalize_env_values(config[:env])
+        config[:env] = result[:env]
+
+        key = Travis::Features.feature_active?(:global_env_in_config) ? :global_env : :_global_env
+        config[key] = result[:global] if result[:global]
       end
       config
     end

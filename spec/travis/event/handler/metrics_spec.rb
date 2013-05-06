@@ -51,8 +51,8 @@ describe Travis::Event::Handler::Metrics do
         notify('job:test:started', test)
       end
 
-      it 'meters on job.queue.builds-common.wait_time' do
-        Travis::Instrumentation.expects(:meter).with('job.queue.wait_time.builds-common', :started_at => created_at, :finished_at => started_at)
+      it 'meters on job.queue.builds-linux.wait_time' do
+        Travis::Instrumentation.expects(:meter).with('job.queue.wait_time.builds-linux', :started_at => created_at, :finished_at => started_at)
         notify('job:test:started', test)
       end
     end
@@ -64,7 +64,7 @@ describe Travis::Event::Handler::Metrics do
       end
 
       it 'meters on job.duration' do
-        Travis::Instrumentation.expects(:meter).with('job.duration.builds-common', :started_at => started_at, :finished_at => finished_at)
+        Travis::Instrumentation.expects(:meter).with('job.duration.builds-linux', :started_at => started_at, :finished_at => finished_at)
         notify('job:test:finished', test)
       end
     end

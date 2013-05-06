@@ -23,7 +23,7 @@ module Travis
       private
 
         def candidates
-          User.with_permissions(:repository_id => repository.id, :admin => true)
+          User.with_github_token.with_permissions(:repository_id => repository.id, :admin => true)
         end
 
         def validate(user)
@@ -41,8 +41,7 @@ module Travis
         end
 
         def handle_error(user, error)
-          error = error.error # TODO fix once GH has some sane public api for this
-          status = error.response.status if error.response.respond_to? :status
+          status = error.info[:response_status]
           case status
           when 401
             error "[github-admin] token for #{user.login} no longer valid"
@@ -51,7 +50,7 @@ module Travis
             info "[github-admin] #{user.login} no longer has any access to #{repository.slug}"
             update(user, {})
           else
-            error "[github-admin] error retrieving repository info for #{repository.slug} for #{user.login}: #{error.inspect}"
+            error "[github-admin] error retrieving repository info for #{repository.slug} for #{user.login}: #{error.message}"
           end
         end
 

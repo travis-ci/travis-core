@@ -178,6 +178,12 @@ describe User do
       user.save!
       user.github_scopes.should be == ['foo', 'bar']
     end
+
+    it 'returns an empty list if the token is missing' do
+      user.github_scopes = ['foo']
+      user.github_oauth_token = nil
+      user.github_scopes.should be_empty
+    end
   end
 
   describe 'correct_scopes?' do

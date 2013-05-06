@@ -84,6 +84,7 @@ describe Build::States do
       describe 'when the matrix is finished' do
         before(:each) do
           build.stubs(matrix_finished?: true, matrix_state: :passed, matrix_duration: 30)
+          build.expects(:save!)
         end
 
         it 'sets the state to the matrix state' do
@@ -102,8 +103,8 @@ describe Build::States do
         end
 
         it 'notifies observers' do
-          Travis::Event.expects(:dispatch).with('build:started', build, data)
-          build.start(data)
+          Travis::Event.expects(:dispatch).with('build:finished', build, data)
+          build.finish(data)
         end
       end
     end

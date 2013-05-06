@@ -33,7 +33,7 @@ describe Job do
     end
 
     it 'sets the queue attribute' do
-      job.reload.queue.should == 'builds.common'
+      job.reload.queue.should == 'builds.linux'
     end
   end
 
@@ -122,6 +122,18 @@ describe Job do
       }
     end
 
+    it 'removes addons config' do
+      job = Job.new(repository: Factory(:repository))
+      config = { rvm: '1.8.7',
+                 addons: { sauce_connect: true },
+               }
+      job.config = config
+
+      job.obfuscated_config.should == {
+        rvm: '1.8.7',
+      }
+    end
+
     context 'when job is from a pull request' do
       let :job do
         job = Job.new(repository: Factory(:repository))
@@ -182,11 +194,12 @@ describe Job do
   describe 'decrypted config' do
     it 'handles nil env' do
       job = Job.new(repository: Factory(:repository))
-      job.config = { rvm: '1.8.7', env: nil }
+      job.config = { rvm: '1.8.7', env: nil, global_env: nil }
 
       job.decrypted_config.should == {
         rvm: '1.8.7',
-        env: nil
+        env: nil,
+        global_env: nil
       }
     end
 
@@ -196,24 +209,45 @@ describe Job do
 
       config = { rvm: '1.8.7',
                  env: [{FOO: 'bar', BAR: 'baz'},
-                          job.repository.key.secure.encrypt('BAR=barbaz')]
+                          job.repository.key.secure.encrypt('BAR=barbaz')],
+                 global_env: [{FOO: 'foo', BAR: 'bar'},
+                          job.repository.key.secure.encrypt('BAZ=baz')]
                }
       job.config = config
 
       job.decrypted_config.should == {
         rvm: '1.8.7',
-        env: ["FOO=bar BAR=baz", "SECURE BAR=barbaz"]
+        env: ["FOO=bar BAR=baz", "SECURE BAR=barbaz"],
+        global_env: ["FOO=foo BAR=bar", "SECURE BAZ=baz"]
+      }
+    end
+
+    it 'does not change original config' do
+      job = Job.new(repository: Factory(:repository))
+      job.expects(:pull_request?).at_least_once.returns(false)
+
+      config = {
+                 env: [{secure: 'invalid'}],
+                 global_env: [{secure: 'invalid'}]
+               }
+      job.config = config
+
+      job.decrypted_config
+      job.config.should == {
+        env: [{ secure: 'invalid' }],
+        global_env: [{ secure: 'invalid' }]
       }
     end
 
     it 'leaves regular vars untouched' do
       job = Job.new(repository: Factory(:repository))
       job.expects(:pull_request?).returns(false).at_least_once
-      job.config = { rvm: '1.8.7', env: 'FOO=foo' }
+      job.config = { rvm: '1.8.7', env: 'FOO=foo', global_env: 'BAR=bar' }
 
       job.decrypted_config.should == {
         rvm: '1.8.7',
-        env: ['FOO=foo']
+        env: ['FOO=foo'],
+        global_env: ['BAR=bar']
       }
     end
 
@@ -226,13 +260,15 @@ describe Job do
 
       it 'removes secure env vars' do
         config = { rvm: '1.8.7',
-                   env: [job.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo']
+                   env: [job.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo'],
+                   global_env: [job.repository.key.secure.encrypt('BAR=barbaz'), 'BAR=bar']
                  }
         job.config = config
 
         job.decrypted_config.should == {
           rvm: '1.8.7',
-          env: ['FOO=foo']
+          env: ['FOO=foo'],
+          global_env: ['BAR=bar']
         }
       end
 
@@ -247,6 +283,22 @@ describe Job do
           env: ['FOO=foo']
         }
       end
+
+      it 'removes addons config' do
+        config = { rvm: '1.8.7',
+                   addons: {
+                     sauce_connect: {
+                       username: 'johndoe',
+                       access_key: job.repository.key.secure.encrypt('foobar')
+                     }
+                   }
+                 }
+        job.config = config
+
+        job.decrypted_config.should == {
+          rvm: '1.8.7'
+        }
+      end
     end
 
     context 'when job is *not* from pull request' do
@@ -258,25 +310,51 @@ describe Job do
 
       it 'decrypts env vars' do
         config = { rvm: '1.8.7',
-                   env: job.repository.key.secure.encrypt('BAR=barbaz')
+                   env: job.repository.key.secure.encrypt('BAR=barbaz'),
+                   global_env: job.repository.key.secure.encrypt('BAR=bazbar')
                  }
         job.config = config
 
         job.decrypted_config.should == {
           rvm: '1.8.7',
-          env: ['SECURE BAR=barbaz']
+          env: ['SECURE BAR=barbaz'],
+          global_env: ['SECURE BAR=bazbar']
         }
       end
 
-      it 'decrypts only secured env vars' do
+      it 'decrypts only secure env vars' do
         config = { rvm: '1.8.7',
-                   env: [job.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo']
+                   env: [job.repository.key.secure.encrypt('BAR=bar'), 'FOO=foo'],
+                   global_env: [job.repository.key.secure.encrypt('BAZ=baz'), 'QUX=qux']
                  }
         job.config = config
 
         job.decrypted_config.should == {
           rvm: '1.8.7',
-          env: ['SECURE BAR=barbaz', 'FOO=foo']
+          env: ['SECURE BAR=bar', 'FOO=foo'],
+          global_env: ['SECURE BAZ=baz', 'QUX=qux']
+        }
+      end
+
+      it 'decrypts addons config' do
+        config = { rvm: '1.8.7',
+                   addons: {
+                     sauce_connect: {
+                       username: 'johndoe',
+                       access_key: job.repository.key.secure.encrypt('foobar')
+                     }
+                   }
+                 }
+        job.config = config
+
+        job.decrypted_config.should == {
+          rvm: '1.8.7',
+          addons: {
+            sauce_connect: {
+              username: 'johndoe',
+              access_key: 'foobar'
+            }
+          }
         }
       end
     end

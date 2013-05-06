@@ -45,9 +45,21 @@ describe Travis::Addons::Hipchat::Task do
     http.verify_stubbed_calls
   end
 
-  def expect_hipchat(room_id, token, lines)
+  it "sends HTML notifications if requested" do
+    targets = ['12345@room_1']
+    template = ['<a href="%{build_url}">Details</a>']
+    messages = ['<a href="http://travis-ci.org/svenfuchs/minimal/builds/1">Details</a>']
+
+    payload['build']['config']['notifications'] = { hipchat: { template: template, format: 'html' } }
+    expect_hipchat('room_1', '12345', messages, 'message_format' => 'html')
+
+    run(targets)
+    http.verify_stubbed_calls
+  end
+
+  def expect_hipchat(room_id, token, lines, extra_body={})
     Array(lines).each do |line|
-      body = { 'room_id' => room_id, 'from' => 'Travis CI', 'message' => line, 'color' => 'green', 'message_format' => 'text' }
+      body = { 'room_id' => room_id, 'from' => 'Travis CI', 'message' => line, 'color' => 'green', 'message_format' => 'text' }.merge(extra_body)
       http.post("v1/rooms/message?format=json&auth_token=#{token}") do |env|
         env[:url].host.should == 'api.hipchat.com'
         Rack::Utils.parse_query(env[:body]).should == body

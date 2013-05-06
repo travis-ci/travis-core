@@ -19,31 +19,31 @@ describe Travis::Addons::GithubStatus::Task do
 
   it 'posts status info for a created build' do
     build.stubs(state: :created)
-    GH.expects(:post).with(url, state: 'pending', description: 'The Travis build is in progress', target_url: target_url)
+    GH.expects(:post).with(url, state: 'pending', description: 'The Travis CI build is in progress', target_url: target_url)
     run
   end
 
   it 'posts status info for a passed build' do
     build.stubs(state: :passed)
-    GH.expects(:post).with(url, state: 'success', description: 'The Travis build passed', target_url: target_url)
+    GH.expects(:post).with(url, state: 'success', description: 'The Travis CI build passed', target_url: target_url)
     run
   end
 
   it 'posts status info for a failed build' do
     build.stubs(state: :failed)
-    GH.expects(:post).with(url, state: 'failure', description: 'The Travis build failed', target_url: target_url)
+    GH.expects(:post).with(url, state: 'failure', description: 'The Travis CI build failed', target_url: target_url)
     run
   end
 
   it 'posts status info for a errored build' do
     build.stubs(state: :errored)
-    GH.expects(:post).with(url, state: 'error', description: 'The Travis build could not complete due to an error', target_url: target_url)
+    GH.expects(:post).with(url, state: 'error', description: 'The Travis CI build could not complete due to an error', target_url: target_url)
     run
   end
 
   it 'posts status info for a canceled build' do
     build.stubs(state: :canceled)
-    GH.expects(:post).with(url, state: 'error', description: 'The Travis build could not complete due to an error', target_url: target_url)
+    GH.expects(:post).with(url, state: 'error', description: 'The Travis CI build could not complete due to an error', target_url: target_url)
     run
   end
 

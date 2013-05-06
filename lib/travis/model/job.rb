@@ -1,4 +1,5 @@
 require 'active_record'
+require 'active_support/core_ext/hash/deep_dup'
 
 # Job models a unit of work that is run on a remote worker.
 #
@@ -92,16 +93,30 @@ class Job < ActiveRecord::Base
   end
 
   def obfuscated_config
-    config.dup.tap do |config|
-      next unless config[:env]
-      obfuscated_env = process_env(config[:env]) { |env| obfuscate_env(env) }
-      config[:env] = obfuscated_env ? obfuscated_env.join(' ') : nil
+    config.deep_dup.tap do |config|
+      config.delete(:addons)
+      if config[:env]
+        obfuscated_env = process_env(config[:env]) { |env| obfuscate_env(env) }
+        config[:env] = obfuscated_env ? obfuscated_env.join(' ') : nil
+      end
+      if config[:global_env]
+        obfuscated_env = process_env(config[:global_env]) { |env| obfuscate_env(env) }
+        config[:global_env] = obfuscated_env ? obfuscated_env.join(' ') : nil
+      end
     end
   end
 
   def decrypted_config
-    self.config.dup.tap do |config|
+    self.config.deep_dup.tap do |config|
       config[:env] = process_env(config[:env]) { |env| decrypt_env(env) } if config[:env]
+      config[:global_env] = process_env(config[:global_env]) { |env| decrypt_env(env) } if config[:global_env]
+      if config[:addons]
+        if pull_request?
+          config.delete(:addons)
+        else
+          config[:addons] = decrypt_addons(config[:addons])
+        end
+      end
     end
   end
 
@@ -109,7 +124,15 @@ class Job < ActiveRecord::Base
     return false unless config.respond_to?(:to_hash)
     config = config.to_hash.symbolize_keys
     Build.matrix_keys_for(config).map do |key|
-      self.config[key.to_sym] == config[key] || commit.branch == config[key]
+      if Travis::Features.feature_inactive?(:global_env_in_config) && key.to_sym == :env && self.config[:_global_env]
+        # TODO: remove this part when we're sure that all workers
+        #       are capable of handling global_env
+        job_env    = Array(self.config[key.to_sym])
+        config_env = Array(config[key])
+        (job_env - self.config[:_global_env]) == config_env
+      else
+        self.config[key.to_sym] == config[key] || commit.branch == config[key]
+      end
     end.inject(:&)
   end
 
@@ -142,10 +165,14 @@ class Job < ActiveRecord::Base
       end
     end
 
+    def decrypt_addons(addons)
+      decrypt(addons)
+    end
+
     def decrypt_env(env)
       env.map do |var|
         decrypt(var) do |var|
-          var.insert(0, 'SECURE ') unless var.include?('SECURE ')
+          var.dup.insert(0, 'SECURE ') unless var.include?('SECURE ')
         end
       end
     rescue

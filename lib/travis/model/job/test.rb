@@ -80,9 +80,7 @@ class Job
       super
     end
 
-    def log_id
-      log.id if log
-    end
+    delegate :id, :content, :to => :log, :prefix => true, :allow_nil => true
 
     protected
 

@@ -94,11 +94,12 @@ module Travis
             :s3            => { :access_key_id => '', :secret_access_key => '' },
             :pusher        => { :app_id => 'app-id', :key => 'key', :secret => 'secret' },
             :sidekiq       => { :namespace => 'sidekiq', :pool_size => 1 },
-            :smtp          => { :user_name => 'postmark-api_key' },
+            :smtp          => {},
             :github        => { :token => 'travisbot-token' },
             :async         => {},
             :notifications => [], # TODO rename to event.handlers
             :queues        => [],
+            :default_queue => 'builds.linux',
             :workers       => { :ttl => 60, :prune => { :interval => 5 } },
             :jobs          => { :retry => { :after => 60 * 60 * 2, :max_attempts => 1, :interval => 60 * 5 } },
             :queue         => { :limit => { :default => 5, :by_owner => {} }, :interval => 3 },
@@ -110,7 +111,8 @@ module Travis
             :sponsors      => { :platinum => [], :gold => [], :workers => {} },
             :redis         => { :url => 'redis://localhost:6379' },
             :repository_filter => { :include => [/^rails\/rails/], :exclude => [/\/rails$/] },
-            :encryption    => (Travis.env == 'development' ? { key: 'secret'*10 } : {})
+            :encryption    => (Travis.env == 'development' ? { key: 'secret'*10 } : {}),
+            :sync          => { :organizations => { :repositories_limit => 1000 } }
 
     default :_access => [:key]
 

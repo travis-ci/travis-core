@@ -69,15 +69,11 @@ class Worker
   def guess_queue
     case full_name
     when /ruby/, /staging/
-      'builds.common'
-    when /jvm/
-      'builds.jvmotp'
-    when /ppp/, /php/
-      'builds.php'
-    when /rails/
-      'builds.rails'
-    when /spree/
-      'builds.spree'
+      'builds.linux'
+    when /linux/
+      'builds.linux'
+    when /mac/
+      'builds.mac_osx'
     else
       raise "No idea what queue #{full_name} might use."
     end

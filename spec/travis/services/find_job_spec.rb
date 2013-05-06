@@ -4,7 +4,7 @@ describe Travis::Services::FindJob do
   include Support::ActiveRecord
 
   let(:repo)    { Factory(:repository) }
-  let!(:job)    { Factory(:test, repository: repo, state: :created, queue: 'builds.common') }
+  let!(:job)    { Factory(:test, repository: repo, state: :created, queue: 'builds.linux') }
   let(:params)  { { id: job.id } }
   let(:service) { described_class.new(stub('user'), params) }
 

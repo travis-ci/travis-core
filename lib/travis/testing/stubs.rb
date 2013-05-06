@@ -125,11 +125,14 @@ module Travis
           finished_at: Time.now.utc,
           duration: 60,
           pull_request?: false,
-          queue: 'builds.common'
+          queue: 'builds.linux',
+          pull_request_title: nil,
+          pull_request_number: nil
         )
       end
 
       def stub_test(attributes = {})
+        log = self.log
         test = Stubs.stub 'test', attributes.reverse_merge(
           id: 1,
           owner: stub_user,
@@ -149,13 +152,14 @@ module Travis
           result: 0, # see job/compat.rb
           started?: true,
           finished?: true,
-          queue: 'builds.common',
+          queue: 'builds.linux',
           allow_failure: false,
           started_at: Time.now.utc - 60,
           finished_at: Time.now.utc,
           sponsor: { 'name' => 'Railslove', 'url' => 'http://railslove.de' },
           worker: 'ruby3.worker.travis-ci.org:travis-ruby-4',
-          tags: 'tag-a,tag-b'
+          tags: 'tag-a,tag-b',
+          log_content: log.content
         )
 
         source = stub_build(:matrix => [test])
@@ -169,6 +173,16 @@ module Travis
           id: 1,
           job_id: 1,
           content: 'the test log'
+        )
+      end
+
+      def stub_log_part(attributes = {})
+        Stubs.stub 'log_part', attributes.reverse_merge(
+          id: 1,
+          log_id: 1,
+          content: 'the test log',
+          number: 1,
+          final: false
         )
       end
 
@@ -190,7 +204,7 @@ module Travis
           id: 1,
           name: 'ruby-1',
           host: 'ruby-1.worker.travis-ci.org',
-          queue: 'builds.common',
+          queue: 'builds.linux',
           state: 'created',
           last_seen_at: Time.now.utc,
           payload: nil,
