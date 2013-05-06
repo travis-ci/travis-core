@@ -10,6 +10,7 @@ describe Repository::StatusImage do
 
   before do
     described_class.any_instance.stubs(cache: cache)
+    described_class.any_instance.stubs(:cache_enabled? => true)
   end
 
   describe('with cache') do

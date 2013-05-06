@@ -5,7 +5,7 @@ module Travis
         EVENTS = /build:finished/
 
         def handle?
-          !pull_request?
+          !pull_request? && Travis::Features.feature_active?(:states_cache)
         end
 
         def handle
