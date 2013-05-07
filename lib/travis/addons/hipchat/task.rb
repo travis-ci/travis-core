@@ -53,7 +53,7 @@ module Travis
           end
 
           def message_format
-            config[:format] || 'text'
+            (config[:format] rescue nil) || 'text'
           end
 
           def config
