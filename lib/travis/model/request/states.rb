@@ -69,13 +69,7 @@ class Request
           build = add_build
           job = build.matrix.first
           job.start(:started_at => Time.now.utc)
-          job.create_log!
-          Log::Part.create!(
-            :log_id => job.log.id,
-            :content => "\033[31;1mERROR\033[0m: An error occured while trying to parse your .travis.yml file.\n  Please make sure that the file is valid YAML.\n\n",
-            :final => true,
-            :number => 0
-          )
+          job.log_content = "\033[31;1mERROR\033[0m: An error occured while trying to parse your .travis.yml file.\n  Please make sure that the file is valid YAML.\n\n"
           job.finish(:state => 'errored', :finished_at => Time.now.utc)
         end
       end

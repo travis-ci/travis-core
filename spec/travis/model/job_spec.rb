@@ -359,4 +359,19 @@ describe Job do
       end
     end
   end
+
+  describe 'log_content=' do
+    let(:job) { Job::Test.create!(owner: Factory(:user), repository: Factory(:repository), commit: Factory(:commit), source: Factory(:build), log: Factory(:log)) }
+
+    it 'sets the log content' do
+      job.log_content = 'Hello, world'
+      job.log.content.should == 'Hello, world'
+    end
+
+    it 'blanks out any old log content' do
+      job.log_content = 'foo'
+      job.log_content = 'bar'
+      job.log.content.should == 'bar'
+    end
+  end
 end

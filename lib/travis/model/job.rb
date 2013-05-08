@@ -136,6 +136,11 @@ class Job < ActiveRecord::Base
     end.inject(:&)
   end
 
+  def log_content=(content)
+    create_log! unless log
+    log.update_attributes(:content => content)
+  end
+
   private
 
     def process_env(env)
