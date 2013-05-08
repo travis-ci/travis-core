@@ -142,6 +142,26 @@ describe Request::States do
         request.should be_finished
       end
     end
+
+    describe 'with a config parse error' do
+      let(:job) { stub(:start => nil, :finish => nil, :log_content= => nil) }
+      let(:build) { stub(:matrix => [job]) }
+
+      before :each do
+        request.stubs(:add_build).returns(build)
+        request.stubs(:config).returns(:'.result' => 'parse_error')
+      end
+
+      it 'builds the build' do
+        request.expects(:add_build).returns(build)
+        request.finish
+      end
+
+      it 'prints an error to the log' do
+        job.expects(:log_content=)
+        request.finish
+      end
+    end
   end
 
   describe 'start!' do
