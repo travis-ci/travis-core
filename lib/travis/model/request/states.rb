@@ -37,6 +37,8 @@ class Request
         Travis.logger.warn("[request:finish] Request not creating a build: config is blank, config=#{config.inspect} commit=#{commit.try(:commit).inspect}")
       elsif !approved?
         Travis.logger.warn("[request:finish] Request not creating a build: not approved commit=#{commit.try(:commit).inspect} message=#{approval.message.inspect}")
+      elsif config[:".result"] == "parse_error"
+        add_parse_error_build
       else
         add_build
         Travis.logger.info("[request:finish] Request created a build. commit=#{commit.try(:commit).inspect}")
@@ -60,6 +62,22 @@ class Request
 
       def add_build
         builds.create!(:repository => repository, :commit => commit, :config => config, :owner => owner)
+      end
+
+      def add_parse_error_build
+        builds.transaction do
+          build = add_build
+          job = build.matrix.first
+          job.start(:started_at => Time.now.utc)
+          job.create_log!
+          Log::Part.create!(
+            :log_id => job.log.id,
+            :content => "\033[31;1mERROR\033[0m: An error occured while trying to parse your .travis.yml file.\n  Please make sure that the file is valid YAML.\n\n",
+            :final => true,
+            :number => 0
+          )
+          job.finish(:state => 'errored', :finished_at => Time.now.utc)
+        end
       end
   end
 end
