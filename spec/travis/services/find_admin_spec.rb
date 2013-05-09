@@ -54,8 +54,8 @@ describe Travis::Services::FindAdmin do
     end
 
     describe 'missing repository' do
-      it 'raises Travis::AdminMissing' do
-        expect { described_class.new.run }.to raise_error(Travis::AdminMissing)
+      it 'raises Travis::RepositoryMissing' do
+        expect { described_class.new.run }.to raise_error(Travis::RepositoryMissing)
       end
     end
 

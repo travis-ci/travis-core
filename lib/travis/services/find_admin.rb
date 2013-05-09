@@ -16,7 +16,7 @@ module Travis
           admin || raise_admin_missing
         else
           error "[github-admin] repository is nil: #{params.inspect}"
-          raise Travis::AdminMissing, "no repository given"
+          raise Travis::RepositoryMissing, "no repository given"
         end
       end
       instrument :run
