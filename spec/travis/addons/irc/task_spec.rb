@@ -209,6 +209,23 @@ describe Travis::Addons::Irc::Task do
     run
   end
 
+  it 'allows setting a channel key' do
+    payload['build']['config']['notifications'] = { irc: { use_notice: true, key: 'pass' } }
+
+    expect_irc 'irc.freenode.net', 1234, 'travis', [
+      'NICK travis-ci',
+      'USER travis-ci travis-ci travis-ci :travis-ci',
+      'JOIN #travis pass',
+      'NOTICE #travis :[travis-ci] svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): The build passed.',
+      'NOTICE #travis :[travis-ci] Change view : https://github.com/svenfuchs/minimal/compare/master...develop',
+      'NOTICE #travis :[travis-ci] Build details : http://travis-ci.org/svenfuchs/minimal/builds/1',
+      'PART #travis',
+      'QUIT'
+    ]
+    run
+  end
+
+
   it 'wrap socket with ssl (in client private) when configured to IRC+SSL server' do
     Travis::Addons::Irc::Client.expects(:wrap_ssl).with(tcp).returns(tcp)
     expect_irc 'irc.freenode.net', 1234, 'travis', simple_irc_notfication_messages
