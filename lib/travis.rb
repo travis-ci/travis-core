@@ -67,8 +67,9 @@ module Travis
   extend Services::Helpers
 
   class UnknownRepository < StandardError; end
-  class GithubApiError < StandardError; end
-  class AdminMissing < StandardError; end
+  class GithubApiError    < StandardError; end
+  class AdminMissing      < StandardError; end
+  class RepositoryMissing < StandardError; end
 
   class << self
     def setup
