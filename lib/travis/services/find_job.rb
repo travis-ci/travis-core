@@ -21,6 +21,9 @@ module Travis
 
         def result
           @result ||= scope(:job).find_by_id(params[:id])
+        rescue ActiveRecord::SubclassNotFound => e
+          Travis.logger.warn "[services:find-job] #{e.message}"
+          raise ActiveRecord::RecordNotFound
         end
 
         def preload(job)
