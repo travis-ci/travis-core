@@ -77,12 +77,24 @@ describe Repository do
 
     describe 'timeline' do
       it 'sorts the most repository with the most recent build to the top' do
-        one = Factory(:repository, name: 'one', last_build_started_at: '2011-11-11')
-        two = Factory(:repository, name: 'two', last_build_started_at: '2011-11-12')
+        one   = Factory(:repository, name: 'one',   last_build_started_at: '2011-11-11')
+        two   = Factory(:repository, name: 'two',   last_build_started_at: '2011-11-12')
 
         repositories = Repository.timeline.all
         repositories.first.id.should == two.id
         repositories.last.id.should  == one.id
+      end
+    end
+
+
+    describe 'with_builds' do
+      it 'gets only projects with existing builds' do
+        one   = Factory(:repository, name: 'one',   last_build_started_at: '2011-11-11', last_build_id: nil)
+        two   = Factory(:repository, name: 'two',   last_build_started_at: '2011-11-12', last_build_id: 101)
+        three = Factory(:repository, name: 'three', last_build_started_at: nil, last_build_id: 100)
+
+        repositories = Repository.with_builds.all
+        repositories.map(&:id).sort.should == [two, three].map(&:id).sort
       end
     end
 

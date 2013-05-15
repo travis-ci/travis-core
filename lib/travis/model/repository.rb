@@ -41,6 +41,10 @@ class Repository < ActiveRecord::Base
       where(arel_table[:last_build_started_at].not_eq(nil)).order(arel_table[:last_build_started_at].desc)
     end
 
+    def with_builds
+      where(arel_table[:last_build_id].not_eq(nil))
+    end
+
     def administratable
       includes(:permissions).where('permissions.admin = ?', true)
     end
