@@ -35,6 +35,8 @@ module Travis
             else
               params[:after_number] ? builds.older_than(params[:after_number]) : builds.recent
             end
+          elsif params.nil? || params == {}
+            scope(:build).recent
           else
             scope(:build).none
           end
