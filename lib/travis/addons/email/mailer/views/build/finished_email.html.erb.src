@@ -107,31 +107,6 @@
         </table>
       </div>
 
-      <div id="sponsors">
-        <table border="0">
-          <tr>
-            <% sponsors.each do |sponsor| %>
-              <td>
-                <div class="section">
-                  <table border="0" <%= (sponsor.package == :platinum ? 'style="width: 717px"' : 'style="width: 339px"').html_safe %>>
-                    <tr>
-                      <td>
-                        <a href="<%= sponsor.url %>">
-                          <img src="https://love.travis-ci.org/images/sponsors/<%= sponsor.name %>-100x60.png">
-                        </a>
-                      </td>
-                      <td>
-                        <%= sponsor.text.html_safe %>
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-              </td>
-            <% end %>
-          </tr>
-        </table>
-      </div>
-
       <p class="footnote">
         <a href="http://love.travis-ci.org/sponsors">See all of our sponsors &rarr;</a>
       <p>
