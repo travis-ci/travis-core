@@ -9,7 +9,6 @@ require 'active_support/core_ext/hash/deep_dup'
 #    build matrix) and executes a test suite with parameters defined in the
 #    configuration.
 class Job < ActiveRecord::Base
-  autoload :Compat,    'travis/model/job/compat'
   autoload :Queue,     'travis/model/job/queue'
   autoload :Sponsors,  'travis/model/job/sponsors'
   autoload :Tagging,   'travis/model/job/tagging'
@@ -47,7 +46,6 @@ class Job < ActiveRecord::Base
     end
   end
 
-  include Compat
   include Travis::Model::EnvHelpers
 
   has_one    :log, dependent: :destroy
