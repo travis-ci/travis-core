@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130505023259) do
+ActiveRecord::Schema.define(:version => 20130521115725) do
 
   create_table "artifact_parts", :force => true do |t|
     t.integer "artifact_id"
@@ -74,6 +74,7 @@ ActiveRecord::Schema.define(:version => 20130505023259) do
   add_index "builds", ["repository_id", "event_type"], :name => "index_builds_on_repository_id_and_event_type"
   add_index "builds", ["repository_id", "state"], :name => "index_builds_on_repository_id_and_state"
   add_index "builds", ["request_id"], :name => "index_builds_on_request_id"
+  add_index "builds", ["state"], :name => "index_builds_on_state"
 
   create_table "commits", :force => true do |t|
     t.integer  "repository_id"
