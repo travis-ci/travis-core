@@ -7,12 +7,12 @@ describe Build do
 
   describe 'class methods' do
     describe 'recent' do
-      it 'returns recent builds ordered by creation time descending' do
-        Factory(:build, state: 'passed')
-        Factory(:build, state: 'started')
-        Factory(:build, state: 'created')
+      it 'returns recent builds ordered by started time descending' do
+        Factory(:build, state: 'passed', started_at: 2.second.ago)
+        Factory(:build, state: 'started', started_at: 1.second.ago)
+        Factory(:build, state: 'created', started_at: nil)
 
-        Build.recent.all.map(&:state).should == ['created', 'started', 'passed']
+        Build.recent.all.map(&:state).should == ['started', 'passed']
       end
     end
 

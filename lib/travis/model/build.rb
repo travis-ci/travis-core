@@ -60,7 +60,7 @@ class Build < ActiveRecord::Base
 
   class << self
     def recent(options = {})
-      descending.paged(options)
+      where('started_at IS NOT NULL').order(arel_table[:started_at].desc).paged(options)
     end
 
     def was_started
@@ -120,7 +120,7 @@ class Build < ActiveRecord::Base
     end
 
     def older_than(build = nil)
-      scope = recent # TODO in which case we'd call older_than without an argument?
+      scope = descending.paged({}) # TODO in which case we'd call older_than without an argument?
       scope = scope.where('number::integer < ?', (build.is_a?(Build) ? build.number : build).to_i) if build
       scope
     end
