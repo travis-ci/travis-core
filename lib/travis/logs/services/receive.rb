@@ -17,17 +17,20 @@ module Travis
         private
 
           def create_part
-            meter('logs.update') do
-              puts "[warn] log.id is #{log.id.inspect} in :logs_append! job_id: #{data[:id]}" if log.id.to_i == 0
+            measure('logs.update') do
+              Travis.logger.warn "[warn] log.id is #{log.id.inspect} in :logs_append! job_id: #{data[:id]}" if log.id.to_i == 0
               Log::Part.create!(log_id: log.id, content: chars, number: number, final: final?)
             end
           rescue ActiveRecord::ActiveRecordError => e
-            puts "[warn] could not save log in :logs_append job_id: #{data[:id]}"
-            puts e.message, e.backtrace
+            Travis.logger.warn "[warn] could not save log in :logs_append job_id: #{data[:id]}: #{e.message}"
+            Travis.logger.warn e.backtrace
           end
 
           def notify
             job.notify(:log, _log: chars, number: number, final: final?)
+          rescue => e
+            Metriks.meter('travis.logs.update.notify.errors').mark
+            Travis.logger.error("Error notifying of log update: #{e.message} (from #{e.backtrace.first})")
           end
 
           def log
@@ -35,7 +38,7 @@ module Travis
           end
 
           def create_log
-            puts "[warn] had to create an log for job_id: #{job.id}!"
+            Travis.logger.warn "[warn] Had to create a log for job_id: #{job.id}!"
             job.create_log!
           end
 
@@ -63,7 +66,7 @@ module Travis
             Coder.clean!(chars.to_s.gsub("\0", '')) # postgres seems to have issues with null chars
           end
 
-          def meter(name, &block)
+          def measure(name, &block)
             Metriks.timer(name).time(&block)
           end
       end
