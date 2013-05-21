@@ -60,7 +60,7 @@ class Build < ActiveRecord::Base
 
   class << self
     def recent(options = {})
-      where('started_at IS NOT NULL').order(arel_table[:started_at].desc).paged(options)
+      where('state IN (?)', state_names - [:created, :queued]).order(arel_table[:started_at].desc).paged(options)
     end
 
     def was_started
