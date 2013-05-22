@@ -11,8 +11,13 @@ module Travis
       register :find_admin
 
       def run
-        admin = candidates.detect { |user| validate(user) }
-        admin || raise_admin_missing
+        if repository
+          admin = candidates.detect { |user| validate(user) }
+          admin || raise_admin_missing
+        else
+          error "[github-admin] repository is nil: #{params.inspect}"
+          raise Travis::RepositoryMissing, "no repository given"
+        end
       end
       instrument :run
 

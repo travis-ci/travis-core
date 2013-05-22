@@ -33,8 +33,10 @@ module Travis
             if params[:number]
               builds.where(:number => params[:number].to_s)
             else
-              params[:after_number] ? builds.older_than(params[:after_number]) : builds.recent
+              builds.older_than(params[:after_number])
             end
+          elsif params.nil? || params == {}
+            scope(:build).recent
           else
             scope(:build).none
           end

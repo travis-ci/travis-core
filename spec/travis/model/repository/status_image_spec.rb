@@ -3,9 +3,40 @@ require 'spec_helper'
 describe Repository::StatusImage do
   include Support::ActiveRecord
 
+  let(:cache)    { stub('states cache', fetch: nil, write: nil, fetch_state: nil) }
   let!(:request) { Factory(:request, event_type: 'push', repository: repo) }
   let!(:build)   { Factory(:build, repository: repo, request: request, state: :passed) }
   let(:repo)     { Factory(:repository) }
+
+  before do
+    described_class.any_instance.stubs(cache: cache)
+    described_class.any_instance.stubs(:cache_enabled? => true)
+  end
+
+  describe('with cache') do
+    it 'tries to get state from cache first' do
+      image = described_class.new(repo, 'foobar')
+      cache.expects(:fetch_state).with(repo.id, 'foobar').returns(:passed)
+
+      image.result.should == :passing
+    end
+
+    it 'saves state to the cache if it needs to be fetched from the db' do
+      image = described_class.new(repo, 'master')
+      cache.expects(:fetch_state).with(repo.id, 'master').returns(nil)
+      cache.expects(:write).with(repo.id, 'master', build)
+
+      image.result.should == :passing
+    end
+
+    it 'saves state of the build to the cache with its branch even if brianch is not given' do
+      image = described_class.new(repo, nil)
+      cache.expects(:fetch_state).with(repo.id, nil).returns(nil)
+      cache.expects(:write).with(repo.id, 'master', build)
+
+      image.result.should == :passing
+    end
+  end
 
   describe 'given no branch' do
     it 'returns the status of the last finished build' do

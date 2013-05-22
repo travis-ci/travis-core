@@ -22,9 +22,10 @@ module Travis
 
           def process
             Mailer::Build.send(type, payload, recipients, broadcasts).deliver if recipients.any?
-          rescue Postmark::InvalidMessageError => e
+          rescue StandardError => e
             # TODO notify the repo
             error("Could not send email to: #{recipients}\n#{e.message}")
+            raise
           end
 
           def valid?(email)

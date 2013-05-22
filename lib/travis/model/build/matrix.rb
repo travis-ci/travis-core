@@ -64,6 +64,8 @@ class Build
         :failed
       elsif tests.all?(&:passed?)
         :passed
+      else
+        raise StandardError, "Invalid job state (#{tests.map(&:state)})"
       end
     end
 

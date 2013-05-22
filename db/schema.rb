@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130504230850) do
+ActiveRecord::Schema.define(:version => 20130521141357) do
 
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
@@ -26,23 +26,17 @@ ActiveRecord::Schema.define(:version => 20130504230850) do
   create_table "builds", :force => true do |t|
     t.integer  "repository_id"
     t.string   "number"
-    t.integer  "status"
     t.datetime "started_at"
     t.datetime "finished_at"
-    t.string   "agent"
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
     t.text     "config"
     t.integer  "commit_id"
     t.integer  "request_id"
     t.string   "state"
-    t.string   "language"
-    t.datetime "archived_at"
     t.integer  "duration"
     t.integer  "owner_id"
     t.string   "owner_type"
-    t.integer  "result"
-    t.integer  "previous_result"
     t.string   "event_type"
     t.string   "previous_state"
     t.text     "pull_request_title"
@@ -51,9 +45,11 @@ ActiveRecord::Schema.define(:version => 20130504230850) do
   end
 
   add_index "builds", ["finished_at"], :name => "index_builds_on_finished_at"
+  add_index "builds", ["repository_id", "event_type", "state", "branch"], :name => "index_builds_on_repository_id_and_event_type_and_state_and_bran"
   add_index "builds", ["repository_id", "event_type"], :name => "index_builds_on_repository_id_and_event_type"
   add_index "builds", ["repository_id", "state"], :name => "index_builds_on_repository_id_and_state"
   add_index "builds", ["request_id"], :name => "index_builds_on_request_id"
+  add_index "builds", ["state"], :name => "index_builds_on_state"
 
   create_table "commits", :force => true do |t|
     t.integer  "repository_id"
@@ -104,15 +100,12 @@ ActiveRecord::Schema.define(:version => 20130504230850) do
     t.string   "state"
     t.string   "number"
     t.text     "config"
-    t.integer  "status"
-    t.string   "job_id"
     t.string   "worker"
     t.datetime "started_at"
     t.datetime "finished_at"
     t.datetime "created_at",                       :null => false
     t.datetime "updated_at",                       :null => false
     t.text     "tags"
-    t.integer  "retries",       :default => 0
     t.boolean  "allow_failure", :default => false
     t.integer  "owner_id"
     t.string   "owner_type"
@@ -284,5 +277,6 @@ ActiveRecord::Schema.define(:version => 20130504230850) do
 
   add_index "workers", ["full_name"], :name => "index_workers_on_full_name"
   add_index "workers", ["last_seen_at"], :name => "index_workers_on_last_seen_at"
+  add_index "workers", ["name", "host"], :name => "index_workers_on_name_and_host"
 
 end

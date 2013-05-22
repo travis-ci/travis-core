@@ -41,6 +41,10 @@ class Repository < ActiveRecord::Base
       where(arel_table[:last_build_started_at].not_eq(nil)).order(arel_table[:last_build_started_at].desc)
     end
 
+    def with_builds
+      where(arel_table[:last_build_id].not_eq(nil))
+    end
+
     def administratable
       includes(:permissions).where('permissions.admin = ?', true)
     end
@@ -123,6 +127,10 @@ class Repository < ActiveRecord::Base
         LIMIT  25
       )
     end
+  end
+
+  def last_completed_build(branch = nil)
+    builds.pushes.last_build_on(state: [:passed, :failed, :errored], branch: branch)
   end
 
   def build_status(branch)

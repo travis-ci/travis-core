@@ -84,54 +84,6 @@
         </table>
       </div>
 
-      <div id="please-donate" class="section" style="margin-bottom: 16px; width: 720px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 16px; border: 1px solid #ccc;">
-        <table border="0">
-          <tr>
-            <td style="font-size: 14px;">
-              <img src="https://<%= Travis.config.assets.host %>/images/mailer/please-donate.png" style="margin-right: 16px; width: 214px; height: 146px;" />
-            </td>
-            <td style="font-size: 14px;">
-              <h2 style="margin-top: 0; font-size: 24px;">We need your help!</h2>
-              <p>
-                Travis CI has run more than 1.6 million tests for more than 48,000 OSS projects to date,
-                including Ruby, Rails, Rubinius, Rubygems, Bundler, Node.js, Leiningen, Symfony ...
-              </p>
-              <p>
-                If you use any of these then you benefit from Travis CI.
-              </p>
-              <p class="last-child" style="margin-bottom: 0;">
-                <a href="http://love.travis-ci.org" style="font-size: 14px; font-weight: bold; color: #118000;">Please donate so we can make Travis CI even better!</a>
-              </p>
-            </td>
-          </tr>
-        </table>
-      </div>
-
-      <div id="sponsors" style="width: 756px; margin-bottom: 16px; position: relative;">
-        <table border="0">
-          <tr>
-            <% sponsors.each do |sponsor| %>
-              <td style="margin-top: 0; font-size: 14px;">
-                <div class="section" style="margin-bottom: 0; width: auto; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 16px; border: 1px solid #ccc;">
-                  <table border="0" <%= (sponsor.package == :platinum ? 'style="width: 717px"' : 'style="width: 339px"').html_safe %>>
-                    <tr>
-                      <td style="margin-top: 0; font-size: 14px;">
-                        <a href="<%= sponsor.url %>">
-                          <img src="https://love.travis-ci.org/images/sponsors/<%= sponsor.name %>-100x60.png" style="margin-right: 16px; width: 100px; height: 60px; margin-top: -5px; border: 0;" />
-                        </a>
-                      </td>
-                      <td style="margin-top: 0; font-size: 14px;">
-                        <%= sponsor.text.html_safe %>
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-              </td>
-            <% end %>
-          </tr>
-        </table>
-      </div>
-
       <p class="footnote" style="font-size: 14px; margin: 0 0 0 4px;">
         <a href="http://love.travis-ci.org/sponsors" style="font-size: 13px; color: #aaa;">See all of our sponsors &rarr;</a>
       <p>
