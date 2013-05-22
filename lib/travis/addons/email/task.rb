@@ -25,6 +25,7 @@ module Travis
           rescue StandardError => e
             # TODO notify the repo
             error("Could not send email to: #{recipients}\n#{e.message}")
+            raise
           end
 
           def valid?(email)
