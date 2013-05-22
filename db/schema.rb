@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130521115725) do
+ActiveRecord::Schema.define(:version => 20130521141357) do
 
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
@@ -26,23 +26,17 @@ ActiveRecord::Schema.define(:version => 20130521115725) do
   create_table "builds", :force => true do |t|
     t.integer  "repository_id"
     t.string   "number"
-    t.integer  "status"
     t.datetime "started_at"
     t.datetime "finished_at"
-    t.string   "agent"
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
     t.text     "config"
     t.integer  "commit_id"
     t.integer  "request_id"
     t.string   "state"
-    t.string   "language"
-    t.datetime "archived_at"
     t.integer  "duration"
     t.integer  "owner_id"
     t.string   "owner_type"
-    t.integer  "result"
-    t.integer  "previous_result"
     t.string   "event_type"
     t.string   "previous_state"
     t.text     "pull_request_title"
@@ -106,15 +100,12 @@ ActiveRecord::Schema.define(:version => 20130521115725) do
     t.string   "state"
     t.string   "number"
     t.text     "config"
-    t.integer  "status"
-    t.string   "job_id"
     t.string   "worker"
     t.datetime "started_at"
     t.datetime "finished_at"
     t.datetime "created_at",                       :null => false
     t.datetime "updated_at",                       :null => false
     t.text     "tags"
-    t.integer  "retries",       :default => 0
     t.boolean  "allow_failure", :default => false
     t.integer  "owner_id"
     t.string   "owner_type"
