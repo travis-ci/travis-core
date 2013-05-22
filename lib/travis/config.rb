@@ -113,7 +113,8 @@ module Travis
             :repository_filter => { :include => [/^rails\/rails/], :exclude => [/\/rails$/] },
             :encryption    => (Travis.env == 'development' ? { key: 'secret'*10 } : {}),
             :sync          => { :organizations => { :repositories_limit => 1000 } },
-            :states_cache  => { :memcached_servers => 'localhost:11211' }
+            :states_cache  => { :memcached_servers => 'localhost:11211' },
+            :sentry        => { }
 
     default :_access => [:key]
 
