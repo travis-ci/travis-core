@@ -3,7 +3,7 @@ module Travis
     module Pusher
       module Instruments
         def self.publish?(event)
-          event.to_s != 'job:test:log' || Travis::Features.feature_active?(:instrument_log_updates)
+          event.to_s != 'job:test:log'
         end
 
         class EventHandler < Notification::Instrument::EventHandler
