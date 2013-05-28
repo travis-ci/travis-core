@@ -44,7 +44,7 @@ class Build < ActiveRecord::Base
   autoload :ResultMessage, 'travis/model/build/result_message'
   autoload :States,        'travis/model/build/states'
 
-  include Matrix, SimpleStates, States
+  include Matrix, States, SimpleStates
   include Travis::Model::EnvHelpers
 
   belongs_to :commit

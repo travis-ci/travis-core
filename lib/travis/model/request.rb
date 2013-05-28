@@ -11,7 +11,7 @@ class Request < ActiveRecord::Base
   autoload :Branches, 'travis/model/request/branches'
   autoload :States,   'travis/model/request/states'
 
-  include SimpleStates, States
+  include States, SimpleStates
 
   serialize :token, Travis::Model::EncryptedColumn.new
 
