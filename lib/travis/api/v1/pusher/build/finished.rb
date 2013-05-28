@@ -13,6 +13,7 @@ module Travis
             def build_data
               {
                 'id' => build.id,
+                'number' => build.number,
                 'state' => build.state.to_s,
                 'result' => legacy_build_result(build),
                 'finished_at' => format_date(build.finished_at),
