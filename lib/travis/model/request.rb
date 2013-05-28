@@ -1,4 +1,5 @@
 require 'active_record'
+require 'simple_states'
 
 # Models an incoming request. The only supported source for requests currently is Github.
 #
@@ -10,7 +11,7 @@ class Request < ActiveRecord::Base
   autoload :Branches, 'travis/model/request/branches'
   autoload :States,   'travis/model/request/states'
 
-  include States
+  include SimpleStates, States
 
   serialize :token, Travis::Model::EncryptedColumn.new
 
