@@ -50,6 +50,7 @@ module Travis
   autoload :Api,          'travis/api'
   autoload :Config,       'travis/config'
   autoload :Chunkifier,   'travis/chunkifier'
+  autoload :CommitCommand,   'travis/commit_command'
   autoload :Enqueue,      'travis/enqueue'
   autoload :Event,        'travis/event'
   autoload :Features,     'travis/features'
