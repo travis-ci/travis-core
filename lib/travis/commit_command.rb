@@ -7,13 +7,17 @@ module Travis
     end
 
     def skip?
-      command == 'skip'
+      backwards_skip or command == 'skip'
     end
 
     private
 
     def command
       message =~ /\[ci(?: |:)([\w ]*)\]/i && $1.downcase
+    end
+
+    def backwards_skip
+      message =~ /\[skip\s+ci\]/i && true
     end
   end
 end
