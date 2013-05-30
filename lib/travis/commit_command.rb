@@ -1,6 +1,5 @@
 module Travis
   class CommitCommand
-    attr_reader :message
 
     def initialize(message)
       @message = message.to_s
@@ -11,6 +10,7 @@ module Travis
     end
 
     private
+    attr_reader :message
 
     def command
       message =~ /\[ci(?: |:)([\w ]*)\]/i && $1.downcase
