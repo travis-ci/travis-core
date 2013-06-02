@@ -32,7 +32,15 @@ module Travis
           end
 
           def data
-            @data ||= GH["users/#{params[:login]}"] || raise(Travis::GithubApiError)
+            unless defined?(@data)
+              if params[:github_id]
+                @data ||= GH["user/#{params[:github_id]}"] || raise(Travis::GithubApiError)
+              else
+                @data ||= GH["users/#{params[:login]}"] || raise(Travis::GithubApiError)
+              end
+            end
+
+            @data
           end
       end
     end
