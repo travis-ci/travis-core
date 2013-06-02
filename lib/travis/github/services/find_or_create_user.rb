@@ -13,7 +13,10 @@ module Travis
           def find
             ::User.where(github_id: params[:github_id]).first.tap do |user|
               if user.login != params[:login]
-                user.update_attribute(:login, params[:login])
+                user.update_attributes(params.slice(:login))
+                user.repositories.each do |repository|
+                  repository.update_attributes(owner_name: params[:login])
+                end
               end
             end
           end
