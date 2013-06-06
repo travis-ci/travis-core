@@ -127,7 +127,8 @@ module Travis
           pull_request?: false,
           queue: 'builds.linux',
           pull_request_title: nil,
-          pull_request_number: nil
+          pull_request_number: nil,
+          secure_env_enabled?: true
         )
       end
 

@@ -20,7 +20,7 @@ describe Travis::Api::V0::Worker::Job::Test do
         'source' => {
           'id' => 1,
           'number' => 2
-        },
+        }
       }
     end
 
@@ -33,7 +33,8 @@ describe Travis::Api::V0::Worker::Job::Test do
         'branch' => 'master',
         'ref' => nil,
         'pull_request' => false,
-        'state' => 'passed'
+        'state' => 'passed',
+        'secure_env_enabled' => true
       }
     end
 
@@ -47,7 +48,8 @@ describe Travis::Api::V0::Worker::Job::Test do
         'branch' => 'master',
         'ref'    => nil,
         'pull_request' => false,
-        'state' => 'passed'
+        'state' => 'passed',
+        'secure_env_enabled' => true
       }
     end
 
@@ -72,6 +74,17 @@ describe Travis::Api::V0::Worker::Job::Test do
       commit.stubs(:pull_request?).returns(true)
       commit.stubs(:ref).returns('refs/pull/180/merge')
       commit.stubs(:pull_request_number).returns(180)
+      test.source.stubs(:secure_env_enabled?).returns(false)
+    end
+
+    describe 'from the same repository' do
+      before do
+        test.source.stubs(:secure_env_enabled?).returns(true)
+      end
+
+      it 'enables secure env variables' do
+        data['job']['secure_env_enabled'].should be_true
+      end
     end
 
     it 'contains the expected data' do
@@ -96,7 +109,8 @@ describe Travis::Api::V0::Worker::Job::Test do
         'branch' => 'master',
         'ref'    => 'refs/pull/180/merge',
         'pull_request' => 180,
-        'state' => 'passed'
+        'state' => 'passed',
+        'secure_env_enabled' => false
       }
     end
 
@@ -110,7 +124,8 @@ describe Travis::Api::V0::Worker::Job::Test do
         'branch' => 'master',
         'ref'    => 'refs/pull/180/merge',
         'pull_request' => 180,
-        'state' => 'passed'
+        'state' => 'passed',
+        'secure_env_enabled' => false
       }
     end
 

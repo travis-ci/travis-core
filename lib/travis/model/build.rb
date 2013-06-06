@@ -58,6 +58,8 @@ class Build < ActiveRecord::Base
 
   serialize :config
 
+  delegate :same_repo_pull_request?, :to => :request
+
   class << self
     def recent(options = {})
       descending.paged(options)
@@ -153,6 +155,10 @@ class Build < ActiveRecord::Base
     self.pull_request_number = request.pull_request_number
     self.branch = commit.branch if Build.column_names.include?('branch')
     expand_matrix
+  end
+
+  def secure_env_enabled?
+    !pull_request? || same_repo_pull_request?
   end
 
   # sometimes the config is not deserialized and is returned
