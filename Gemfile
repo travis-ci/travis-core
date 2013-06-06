@@ -13,9 +13,6 @@ gem 'json', '~> 1.7.7'
 
 gem 'dalli'
 
-# TODO need to release the gem as soon i'm certain this change makes sense
-gem 'simple_states', github: 'svenfuchs/simple_states', branch: 'sf-set-state-early'
-
 platform :mri do
   gem 'bunny',            '~> 0.7.9'
   gem 'pg',               '~> 0.14.0'
