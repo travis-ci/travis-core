@@ -39,4 +39,30 @@ describe Travis::Github::Services::SyncUser do
       user.should_not be_syncing
     end
   end
+
+  describe 'new_user?' do
+    it 'sends an email to a new user' do
+      user.synced_at = nil
+      Travis.config.welcome_email = true
+      expect {
+        service.new_user?
+      }.to change(ActionMailer::Base, :deliveries)
+    end
+
+    it "doesn't send an email to an existing user" do
+      user.synced_at = Time.now
+      Travis.config.welcome_email = true
+      expect {
+        service.new_user?
+      }.to_not change(ActionMailer::Base, :deliveries)
+    end
+
+    it "doesn't send an email with the welcome email disabled" do
+      user.synced_at = Time.now
+      Travis.config.welcome_email = false
+      expect {
+        service.new_user?
+      }.to_not change(ActionMailer::Base, :deliveries)
+    end
+  end
 end

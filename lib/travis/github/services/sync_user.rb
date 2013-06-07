@@ -1,3 +1,5 @@
+require 'travis/mailer/user_mailer'
+
 module Travis
   module Github
     module Services
@@ -10,16 +12,32 @@ module Travis
         register :github_sync_user
 
         def run
-          syncing do
-            UserInfo.new(user).run
-            Organizations.new(user).run
-            Repositories.new(user).run
+          new_user? do
+            syncing do
+              UserInfo.new(user).run
+              Organizations.new(user).run
+              Repositories.new(user).run
+            end
           end
         end
 
         def user
           # TODO check that clients are only passing the id
           @user ||= current_user || User.find(params[:id])
+        end
+
+        def new_user?
+          new_user = user.synced_at.nil?
+
+          yield if block_given?
+
+          if new_user and Travis.config.welcome_email
+            send_welcome_email
+          end
+        end
+
+        def send_welcome_email
+          UserMailer.welcome_email(user).deliver
         end
 
         private
