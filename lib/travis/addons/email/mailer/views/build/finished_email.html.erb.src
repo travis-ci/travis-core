@@ -84,9 +84,14 @@
         </table>
       </div>
 
-      <p class="footnote">
-        <a href="http://love.travis-ci.org/sponsors">See all of our sponsors &rarr;</a>
-      <p>
+      <div class="section footnote" style="height: 20px;">
+        <div style="float: right;">
+          Want Travis CI for your <a href="http://travisci.com?utm_source=build_email_footer&utm_campaign=travis-ci.org&utm_medium=email">private repositories?</a>
+        </div>
+        <div style="float: left; vertical-align: top;">
+          Powered by <a href="http://bluebox.net"><img src="https://<%= Travis.config.assets.host -%>/images/sponsors/bluebox-78x15.png"></a>
+        </div>
+      </div>
     </div>
   </body>
 </html>
