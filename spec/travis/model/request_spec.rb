@@ -28,4 +28,34 @@ describe Request do
       request.pull_request_title.should be_nil
     end
   end
+
+  describe 'same_repo_pull_request?' do
+    it 'returns true if the base and head repos match' do
+      request.payload = {
+        'pull_request' => {
+          'base' => { 'repo' => { 'full_name' => 'travis-ci/travis-core' } },
+          'head' => { 'repo' => { 'full_name' => 'travis-ci/travis-core' } }
+        }
+      }
+
+      request.same_repo_pull_request?.should be_true
+    end
+
+    it 'returns false if the base and head repos do not match' do
+      request.payload = {
+        'pull_request' => {
+          'base' => { 'repo' => { 'full_name' => 'travis-ci/travis-core' } },
+          'head' => { 'repo' => { 'full_name' => 'evilmonkey/travis-core' } }
+        }
+      }
+
+      request.same_repo_pull_request?.should be_false
+    end
+
+    it 'returns false if repo data is not available' do
+      request.payload = {}
+
+      request.same_repo_pull_request?.should be_false
+    end
+  end
 end

@@ -35,7 +35,8 @@ module Travis
                 'commit_range' => commit.range,
                 'branch' => commit.branch,
                 'ref' => commit.pull_request? ? commit.ref : nil,
-                'state' => job.state.to_s
+                'state' => job.state.to_s,
+                'secure_env_enabled' => build.secure_env_enabled?
               }
               data['pull_request'] = commit.pull_request? ? commit.pull_request_number : false
               data
