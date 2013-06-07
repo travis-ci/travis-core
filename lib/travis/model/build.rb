@@ -160,6 +160,7 @@ class Build < ActiveRecord::Base
   def secure_env_enabled?
     !pull_request? || same_repo_pull_request?
   end
+  alias addons_enabled? secure_env_enabled?
 
   # sometimes the config is not deserialized and is returned
   # as a string, this is a work around for now :(

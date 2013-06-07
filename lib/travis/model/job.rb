@@ -62,6 +62,7 @@ class Job < ActiveRecord::Base
 
   delegate :request_id, to: :source # TODO denormalize
   delegate :pull_request?, to: :commit
+  delegate :secure_env_enabled?, :addons_enabled?, to: :source
 
   after_initialize do
     self.config = {} if config.nil? rescue nil
@@ -109,10 +110,10 @@ class Job < ActiveRecord::Base
       config[:env] = process_env(config[:env]) { |env| decrypt_env(env) } if config[:env]
       config[:global_env] = process_env(config[:global_env]) { |env| decrypt_env(env) } if config[:global_env]
       if config[:addons]
-        if pull_request?
-          config.delete(:addons)
-        else
+        if addons_enabled?
           config[:addons] = decrypt_addons(config[:addons])
+        else
+          config.delete(:addons)
         end
       end
     end
@@ -139,10 +140,10 @@ class Job < ActiveRecord::Base
     def process_env(env)
       env = [env] unless env.is_a?(Array)
       env = normalize_env(env)
-      env = if pull_request?
-        remove_encrypted_env_vars(env)
-      else
+      env = if secure_env_enabled?
         yield(env)
+      else
+        remove_encrypted_env_vars(env)
       end
       env.compact.presence
     end
