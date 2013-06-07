@@ -24,7 +24,8 @@ module Travis
             Mailer::Build.send(type, payload, recipients, broadcasts).deliver if recipients.any?
           rescue StandardError => e
             # TODO notify the repo
-            error("Could not send email to: #{recipients}\n#{e.message}")
+            error("Could not send email to: #{recipients}")
+            log_exception(e)
             raise
           end
 

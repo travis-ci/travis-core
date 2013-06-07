@@ -6,7 +6,6 @@ gem 'travis-support',     github: 'travis-ci/travis-support'
 gem 'travis-sidekiqs',    github: 'travis-ci/travis-sidekiqs', require: nil
 gem 'gh',                 github: 'rkh/gh'
 gem 'newrelic_rpm',       '~> 3.4.2'
-gem 'hubble',             github: 'roidrage/hubble'
 gem 'addressable'
 gem 'aws-sdk'
 gem 'json', '~> 1.7.7'
@@ -41,4 +40,5 @@ group :test do
   gem 'webmock',          '~> 1.8.0'
   gem 'guard'
   gem 'guard-rspec'
+  gem 'rb-fsevent'
 end

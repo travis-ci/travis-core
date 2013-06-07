@@ -1,6 +1,7 @@
 require 'active_record'
 require 'core_ext/active_record/base'
 require 'core_ext/hash/deep_symbolize_keys'
+require 'simple_states'
 
 # Build currently models a central but rather abstract domain entity: the thing
 # that is triggered by a Github request (service hook ping).
@@ -43,7 +44,7 @@ class Build < ActiveRecord::Base
   autoload :ResultMessage, 'travis/model/build/result_message'
   autoload :States,        'travis/model/build/states'
 
-  include Matrix, States
+  include Matrix, States, SimpleStates
   include Travis::Model::EnvHelpers
 
   belongs_to :commit
