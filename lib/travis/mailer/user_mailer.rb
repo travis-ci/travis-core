@@ -7,7 +7,7 @@ class UserMailer < ActionMailer::Base
 
   def welcome_email(user)
     @user = user
-    mail(from: from, to: user.email) do |format|
+    mail(subject: "Welcome to Travis CI!", from: from, to: user.email) do |format|
       format.html
     end
   end

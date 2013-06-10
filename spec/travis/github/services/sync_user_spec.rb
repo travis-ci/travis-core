@@ -6,6 +6,9 @@ describe Travis::Github::Services::SyncUser do
   let(:user)    { Factory(:user) }
   let(:service) { described_class.new(user) }
 
+  before do
+    Travis.config.email.from = 'support@travis-ci.com'
+  end
   describe 'syncing' do
     it 'returns the block value' do
       service.send(:syncing) { 42 }.should == 42
