@@ -14,7 +14,7 @@ module Travis
             ::User.where(github_id: params[:github_id]).first.tap do |user|
               if user && user.login != params[:login]
                 user.update_attributes(params.slice(:login))
-                user.repositories.update_all(owner_name: params[:login])
+                Repository.where(owner_id: user.id).update_all(owner_name: params[:login])
               end
             end
           end
