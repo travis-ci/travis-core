@@ -13,10 +13,6 @@ class UserMailer < ActionMailer::Base
   end
 
   def from
-    "Travis CI <#{from_email}>"
-  end
-
-  def from_email
     Travis.config.email.from
   end
 end
