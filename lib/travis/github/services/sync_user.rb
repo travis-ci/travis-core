@@ -27,7 +27,7 @@ module Travis
         end
 
         def new_user?
-          new_user = user.synced_at.nil?
+          new_user = user.synced_at.nil? && user.created_at > 48.hours.ago.utc
 
           yield if block_given?
 

@@ -64,5 +64,13 @@ describe Travis::Github::Services::SyncUser do
         service.new_user?
       }.to_not change(ActionMailer::Base, :deliveries)
     end
+
+    it "doesn't send an email if the user is older than 48 hours" do
+      user.created_at = Time.now - 49.hours
+      Travis.config.welcome_email = true
+      expect {
+        service.new_user?
+      }.to_not change(ActionMailer::Base, :deliveries)
+    end
   end
 end
