@@ -38,7 +38,7 @@ module Travis
 
         def send_welcome_email
           UserMailer.welcome_email(user).deliver
-          Travis.logger.info("Sent welcome email to #{user.login}")
+          logger.info("Sent welcome email to #{user.login}")
           Metriks.meter('travis.welcome.email').mark
         end
 
