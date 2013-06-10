@@ -30,15 +30,15 @@ module Travis
           end
 
           def data
-            unless defined?(@data)
-              if params[:github_id]
-                @data ||= GH["user/#{params[:github_id]}"] || raise(Travis::GithubApiError)
-              else
-                @data ||= GH["users/#{params[:login]}"] || raise(Travis::GithubApiError)
-              end
-            end
+            @data ||= fetch_data
+          end
 
-            @data
+          def fetch_data
+            if params[:github_id]
+              GH["user/#{params[:github_id]}"] || raise(Travis::GithubApiError)
+            else
+              GH["users/#{params[:login]}"] || raise(Travis::GithubApiError)
+            end
           end
       end
     end
