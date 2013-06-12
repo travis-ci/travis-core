@@ -29,7 +29,9 @@ module Travis
             scope = scope.timeline
           end
 
-          if (params.keys & [:member, :owner_name, :search]).present?
+          if params[:active]
+            scope = scope.active
+          elsif (params.keys & [:member, :owner_name, :search]).present?
             scope = scope.with_builds
           end
 
