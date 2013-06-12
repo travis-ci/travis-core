@@ -31,7 +31,8 @@ module Travis
                 'last_build_duration' => repository.last_build_duration,
                 'last_build_language' => repository.last_build_language,
                 'last_build_started_at' => format_date(repository.last_build_started_at),
-                'last_build_finished_at' => format_date(repository.last_build_finished_at)
+                'last_build_finished_at' => format_date(repository.last_build_finished_at),
+                'active' => repository.active
               }
             end
         end
