@@ -9,7 +9,7 @@ describe Travis::Services::RegenerateRepoKey do
 
   before :each do
     service.expects(:service).with(:find_repo, :id => repo.id).returns(stub(:run => repo))
-    user.permissions.create!(:repository_id => repo.id, :push => true)
+    user.permissions.create!(:repository_id => repo.id, :admin => true)
   end
 
   describe 'given the request is authorized' do

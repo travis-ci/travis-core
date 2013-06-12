@@ -11,7 +11,7 @@ module Travis
       end
 
       def accept?
-        push_permission?
+        has_permission?
       end
 
       private
@@ -24,8 +24,8 @@ module Travis
           @repo ||= service(:find_repo, params).run
         end
 
-        def push_permission?
-          current_user && current_user.permission?(:push, :repository_id => repo.id)
+        def has_permission?
+          current_user && current_user.permission?(:admin, :repository_id => repo.id)
         end
 
     end
