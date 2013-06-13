@@ -4,7 +4,7 @@ module Travis
       register :find_hooks
 
       def run
-        current_user.service_hooks(params).includes(:permissions).select('*, permissions.admin as admin')
+        current_user.service_hooks(params)
       end
     end
   end
