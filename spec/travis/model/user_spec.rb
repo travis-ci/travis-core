@@ -141,10 +141,12 @@ describe User do
     let(:own_repo)   { Factory(:repository, :name => 'own-repo', :description => 'description', :active => true) }
     let(:admin_repo) { Factory(:repository, :name => 'admin-repo') }
     let(:other_repo) { Factory(:repository, :name => 'other-repo') }
+    let(:push_repo) { Factory(:repository, :name => 'push-repo') }
 
     before :each do
       user.permissions.create! :user => user, :repository => own_repo, :admin => true
       user.permissions.create! :user => user, :repository => admin_repo, :admin => true
+      user.permissions.create! :user => user, :repository => push_repo, :push => true
       other_repo
     end
 
@@ -154,6 +156,14 @@ describe User do
 
     it "does not contain repositories where the user does not have an admin role" do
       user.service_hooks.should_not include(other_repo)
+    end
+
+    it "includes all repositories if :all options is passed" do
+      hooks = user.service_hooks(:all => true)
+      hooks.should include(own_repo)
+      hooks.should include(push_repo)
+      hooks.should include(admin_repo)
+      hooks.should_not include(other_repo)
     end
   end
 

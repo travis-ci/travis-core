@@ -25,7 +25,8 @@ module Travis
                 'owner_name' => hook.owner_name,
                 'description' => hook.description,
                 'active' => hook.active,
-                'private' => hook.private
+                'private' => hook.private,
+                'admin' => hook.admin?
               }
             end
         end
