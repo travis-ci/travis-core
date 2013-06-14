@@ -78,7 +78,7 @@ class User < ActiveRecord::Base
       hooks = hooks.administratable
     end
     hooks = hooks.includes(:permissions).
-              select('*, permissions.admin as admin, permissions.push as push').
+              select('repositories.*, permissions.admin as admin, permissions.push as push').
               order('owner_name, name')
     # TODO remove owner_name/name once we're on api everywhere
     if options.key?(:id)
