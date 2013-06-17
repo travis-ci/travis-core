@@ -382,6 +382,12 @@ describe Build do
         build.config = { rvm: ['1.8.7'], env:  nil }
         build.obfuscated_config.should == { rvm: ['1.8.7'], env:  nil }
       end
+
+      it 'removes source key' do
+        build  = Build.new(repository: Factory(:repository))
+        build.config = { rvm: ['1.8.7'], source_key: '1234' }
+        build.obfuscated_config.should == { rvm: ['1.8.7'] }
+      end
     end
 
     describe :pending? do

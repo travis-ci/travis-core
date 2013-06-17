@@ -179,8 +179,8 @@ class Build < ActiveRecord::Base
 
   def obfuscated_config
     config.dup.tap do |config|
+      config.delete(:source_key)
       next unless config[:env]
-
       config[:env] = [config[:env]] unless config[:env].is_a?(Array)
       if config[:env]
         config[:env] = config[:env].map do |env|

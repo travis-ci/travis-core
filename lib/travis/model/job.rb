@@ -94,6 +94,7 @@ class Job < ActiveRecord::Base
   def obfuscated_config
     config.deep_dup.tap do |config|
       config.delete(:addons)
+      config.delete(:source_key)
       if config[:env]
         obfuscated_env = process_env(config[:env]) { |env| obfuscate_env(env) }
         config[:env] = obfuscated_env ? obfuscated_env.join(' ') : nil

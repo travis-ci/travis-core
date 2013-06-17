@@ -134,6 +134,17 @@ describe Job do
       }
     end
 
+    it 'removes source key' do
+      job = Job.new(repository: Factory(:repository))
+      config = { rvm: '1.8.7',
+                 source_key: '1234'
+               }
+      job.config = config
+
+      job.obfuscated_config.should == {
+        rvm: '1.8.7',
+      }
+    end
     context 'when job has secure env disabled' do
       let :job do
         job = Job.new(repository: Factory(:repository))
