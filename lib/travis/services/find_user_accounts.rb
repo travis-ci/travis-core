@@ -20,7 +20,11 @@ module Travis
         end
 
         def account_names
-          current_user.repositories.administratable.select(:owner_name).map(&:owner_name).uniq
+          repos = current_user.repositories
+          unless params[:all]
+            repos = repos.administratable
+          end
+          repos.select(:owner_name).map(&:owner_name).uniq
         end
     end
   end

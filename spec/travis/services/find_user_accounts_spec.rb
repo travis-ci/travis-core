@@ -14,13 +14,22 @@ describe Travis::Services::FindUserAccounts do
     Factory(:repository, :owner => sinatra, :owner_name => 'sinatra', :name => 'sinatra')
   end
 
-  let(:service) { described_class.new(sven, {}) }
+  let(:service) { described_class.new(sven, params || {}) }
+
+  attr_reader :params
 
   before :each do
     Repository.all.each do |repo|
-      sven.permissions.create!(:repository => repo, :admin => true) unless repo.name == 'sinatra'
+      permissions = repo.name == 'sinatra' ? { :push => true } : { :admin => true }
+      sven.permissions.create!(permissions.merge :repository => repo)
     end
+
     sven.organizations << travis
+  end
+
+  it 'includes all repositories with :all param' do
+    @params = { all: true }
+    service.run.should include(Account.from(sven), Account.from(travis), Account.from(sinatra))
   end
 
   it 'includes the user' do
