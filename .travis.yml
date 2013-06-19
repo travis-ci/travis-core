@@ -10,8 +10,6 @@ matrix:
   include:
     - rvm: 1.9.3
       jdk:
-before_install:
-  - gem install bundler
 before_script:
   - sudo service mysql stop
   - redis-cli config set save ""
