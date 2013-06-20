@@ -14,7 +14,7 @@ FactoryGirl.define do
 
   factory :commit do
     commit '62aae5f70ceee39123ef'
-    branch 'master'
+    branches ['master']
     message 'the commit message'
     committed_at '2011-11-11T11:11:11Z'
     committer_name 'Sven Fuchs'

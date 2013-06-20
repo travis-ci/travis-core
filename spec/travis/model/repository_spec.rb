@@ -5,12 +5,12 @@ describe Repository do
 
   describe '#last_completed_build' do
     let(:repo) {  Factory(:repository, name: 'foobarbaz', builds: [build1, build2]) }
-    let(:build1) { Factory(:build, finished_at: 1.hour.ago, state: :passed) }
-    let(:build2) { Factory(:build, finished_at: Time.now, state: :failed) }
+    let!(:build1) { Factory(:build, finished_at: 1.hour.ago, state: :passed) }
+    let!(:build2) { Factory(:build, finished_at: Time.now, state: :failed) }
 
     before do
-      build1.update_attributes(branch: 'master')
-      build2.update_attributes(branch: 'development')
+      build1.update_attributes(branches: ['master'])
+      build2.update_attributes(branches: ['development'])
     end
 
     it 'returns last completed build' do
@@ -196,7 +196,7 @@ describe Repository do
 
     it 'returns branches for the given repository' do
       %w(master production).each do |branch|
-        2.times { Factory(:build, repository: repo, commit: Factory(:commit, branch: branch)) }
+        2.times { Factory(:build, repository: repo, commit: Factory(:commit, branches: [branch])) }
       end
       repo.branches.sort.should == %w(master production)
     end

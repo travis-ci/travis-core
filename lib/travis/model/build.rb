@@ -1,5 +1,6 @@
 require 'active_record'
 require 'core_ext/active_record/base'
+require 'activerecord-postgres-array'
 require 'core_ext/hash/deep_symbolize_keys'
 require 'simple_states'
 
@@ -80,6 +81,12 @@ class Build < Travis::Model
     def on_branch(branch)
       if Build.column_names.include?('branch')
         pushes.where(branch.present? ? ['branch IN (?)', normalize_to_array(branch)] : [])
+      elsif Build.column_names.include?('branches')
+        if branch.is_a?(String)
+          branch = branch.split(',').map(&:strip)
+        end
+        branches = Array(branch)
+        pushes.where(branch.present? ? ['branches && ?', branches.pg(:string)] : [])
       else
         pushes.joins(:commit).where(branch.present? ? ['commits.branch IN (?)', normalize_to_array(branch)] : [])
       end
@@ -111,6 +118,7 @@ class Build < Travis::Model
     end
 
     def last_build_on(options)
+      options[:branch] = options[:branches] if options[:branches].present?
       scope = descending
       scope = scope.on_state(options[:state])   if options[:state]
       scope = scope.on_branch(options[:branch]) if options[:branch]
@@ -148,12 +156,13 @@ class Build < Travis::Model
 
   # set the build number and expand the matrix
   before_create do
+    self.branch = commit.branch if Build.column_names.include?('branch')
+    self.branches = commit.branches if Build.column_names.include?('branches')
     self.number = repository.builds.next_number
     self.previous_state = last_finished_state_on_branch
     self.event_type = request.event_type
     self.pull_request_title = request.pull_request_title
     self.pull_request_number = request.pull_request_number
-    self.branch = commit.branch if Build.column_names.include?('branch')
     expand_matrix
   end
 
@@ -270,6 +279,27 @@ class Build < Travis::Model
     state.try(:to_sym) == :passed ? 0 : 1
   end
 
+  def branch=(branch)
+    if self.class.column_names.include?('branches')
+      ActiveSupport::Deprecation.warn("branch= is deprecated, please use branches=")
+      branches = self.branches || []
+      unless branches.include? branch
+        self.branches = (branches << branch)
+      end
+    else
+      super
+    end
+  end
+
+  def branch
+    if self.class.column_names.include?('branches')
+      ActiveSupport::Deprecation.warn("branch is deprecated, please use branches")
+      Array(branches).first
+    else
+      super
+    end
+  end
+
   private
 
     def normalize_env_values(values)
@@ -346,7 +376,8 @@ class Build < Travis::Model
     end
 
     def last_finished_state_on_branch
-      repository.builds.finished.last_state_on(branch: commit.branch)
+      branch = self.class.column_names.include?('branches') ? branches : self.branch
+      repository.builds.finished.last_state_on(branch: branch)
     end
 
     def to_postgres_array(ids)

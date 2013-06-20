@@ -87,16 +87,16 @@ describe Build do
 
     describe 'on_branch' do
       it 'returns builds that are on any of the given branches' do
-        Factory(:build, commit: Factory(:commit, branch: 'master'))
-        Factory(:build, commit: Factory(:commit, branch: 'develop'))
-        Factory(:build, commit: Factory(:commit, branch: 'feature'))
+        Factory(:build, commit: Factory(:commit, branches: ['master']))
+        Factory(:build, commit: Factory(:commit, branches: ['develop']))
+        Factory(:build, commit: Factory(:commit, branches: ['feature']))
 
         Build.on_branch('master,develop').map(&:commit).map(&:branch).sort.should == ['develop', 'master']
       end
 
       it 'does not include pull requests' do
-        Factory(:build, commit: Factory(:commit, branch: 'no-pull'), request: Factory(:request, event_type: 'pull_request'))
-        Factory(:build, commit: Factory(:commit, branch: 'no-pull'), request: Factory(:request, event_type: 'push'))
+        Factory(:build, commit: Factory(:commit, branches: ['no-pull']), request: Factory(:request, event_type: 'pull_request'))
+        Factory(:build, commit: Factory(:commit, branches: ['no-pull']), request: Factory(:request, event_type: 'push'))
         Build.on_branch('no-pull').count.should be == 1
       end
     end
@@ -205,7 +205,7 @@ describe Build do
 
       it 'is set to the last finished build state on the same branch (disregards other branches)' do
         Factory(:build, state: 'failed')
-        Factory(:build, state: 'passed', commit: Factory(:commit, branch: 'something'))
+        Factory(:build, state: 'passed', commit: Factory(:commit, branches: ['something']))
         Factory(:build).reload.previous_state.should == 'failed'
       end
     end
@@ -219,13 +219,13 @@ describe Build do
     end
 
     it 'sets previous_state to nil if no last build exists on the same branch' do
-      build = Factory(:build, commit: Factory(:commit, branch: 'master'))
+      build = Factory(:build, commit: Factory(:commit, branches: ['master']))
       build.reload.previous_state.should == nil
     end
 
     it 'sets previous_state to the result of the last build on the same branch if exists' do
-      build = Factory(:build, state: :canceled, commit: Factory(:commit, branch: 'master'))
-      build = Factory(:build, commit: Factory(:commit, branch: 'master'))
+      build = Factory(:build, state: :canceled, commit: Factory(:commit, branches: ['master']))
+      build = Factory(:build, commit: Factory(:commit, branches: ['master']))
       build.reload.previous_state.should == 'canceled'
     end
 
@@ -482,7 +482,7 @@ describe Build do
     end
 
     it 'saves branch before create' do
-      build = Factory(:build,  commit: Factory(:commit, branch: 'development'))
+      build = Factory(:build,  commit: Factory(:commit, branches: ['development']))
       build.branch.should == 'development'
     end
 

@@ -39,7 +39,15 @@ class Repository
 
         build = repo.last_completed_build(branch)
         if build
-          cache.write(repo.id, build.branch, build) if cache_enabled?
+          if cache_enabled?
+            if Build.column_names.include?('branches')
+              build.branches.each do |branch|
+                cache.write(repo.id, branch, build)
+              end
+            else
+              cache.write(repo.id, build.branch, build)
+            end
+          end
           build.state.to_sym
         end
       end

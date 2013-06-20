@@ -116,6 +116,14 @@ class Repository < Travis::Model
         ORDER  BY branch DESC
         LIMIT  25
       )
+    elsif Build.column_names.include?('branches')
+      self.class.connection.select_values %(
+        SELECT DISTINCT(unnest(branches)) branches
+        FROM   builds
+        WHERE  builds.repository_id = #{id}
+        ORDER  BY branches DESC
+        LIMIT  25
+      )
     else
       self.class.connection.select_values %(
         SELECT DISTINCT ON (commits.branch) branch
@@ -151,6 +159,14 @@ class Repository < Travis::Model
         FROM   builds
         WHERE  builds.repository_id = #{id}
         ORDER  BY branch, finished_at DESC
+        LIMIT  25
+      )
+    elsif Build.column_names.include?('branches')
+      self.class.connection.select_values %(
+        SELECT DISTINCT ON (unnest(branches)) builds.id
+        FROM   builds
+        WHERE  builds.repository_id = #{id}
+        ORDER  BY unnest(branches), finished_at DESC
         LIMIT  25
       )
     else

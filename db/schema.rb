@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130916101056) do
+ActiveRecord::Schema.define(:version => 20130920135744) do
 
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
@@ -41,14 +41,14 @@ ActiveRecord::Schema.define(:version => 20130916101056) do
     t.string   "previous_state"
     t.text     "pull_request_title"
     t.integer  "pull_request_number"
-    t.string   "branch"
+    t.string   "branches",            :limit => nil
     t.datetime "canceled_at"
     t.string   "cached_matrix_ids",   :limit => nil
   end
 
   add_index "builds", ["finished_at"], :name => "index_builds_on_finished_at"
   add_index "builds", ["id", "repository_id", "event_type"], :name => "index_builds_on_id_repository_id_and_event_type_desc", :order => {"id"=>:desc}
-  add_index "builds", ["repository_id", "event_type", "state", "branch"], :name => "index_builds_on_repository_id_and_event_type_and_state_and_bran"
+  add_index "builds", ["repository_id", "event_type", "state", "branches"], :name => "index_builds_on_repository_id_and_event_type_and_state_and_bran"
   add_index "builds", ["repository_id", "event_type"], :name => "index_builds_on_repository_id_and_event_type"
   add_index "builds", ["repository_id", "state"], :name => "index_builds_on_repository_id_and_state"
   add_index "builds", ["request_id"], :name => "index_builds_on_request_id"
@@ -58,7 +58,7 @@ ActiveRecord::Schema.define(:version => 20130916101056) do
     t.integer  "repository_id"
     t.string   "commit"
     t.string   "ref"
-    t.string   "branch"
+    t.string   "branches",        :limit => nil
     t.text     "message"
     t.string   "compare_url"
     t.datetime "committed_at"
@@ -66,11 +66,11 @@ ActiveRecord::Schema.define(:version => 20130916101056) do
     t.string   "committer_email"
     t.string   "author_name"
     t.string   "author_email"
-    t.datetime "created_at",      :null => false
-    t.datetime "updated_at",      :null => false
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
   end
 
-  add_index "commits", ["branch"], :name => "index_commits_on_branch"
+  add_index "commits", ["branches"], :name => "index_commits_on_branch"
   add_index "commits", ["commit"], :name => "index_commits_on_commit"
 
   create_table "emails", :force => true do |t|
@@ -202,6 +202,7 @@ ActiveRecord::Schema.define(:version => 20130916101056) do
     t.integer  "github_id"
     t.string   "default_branch"
     t.string   "github_language"
+    t.text     "settings"
   end
 
   add_index "repositories", ["github_id"], :name => "index_repositories_on_github_id", :unique => true

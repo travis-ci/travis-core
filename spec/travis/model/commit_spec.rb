@@ -5,6 +5,11 @@ describe Commit do
 
   let(:commit) { Commit.new(:commit => '12345678') }
 
+  it 'validates presence of branches' do
+    commit = Factory.build(:commit, branches: [])
+    commit.should_not be_valid
+  end
+
   describe 'pull_request_number' do
     context 'when commit is from pull request' do
       before { commit.ref = 'refs/pull/180/merge' }

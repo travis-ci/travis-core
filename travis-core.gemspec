@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   # db
   s.add_dependency 'data_migrations',   '~> 0.0.1'
   s.add_dependency 'redis',             '~> 3.0'
-
+  s.add_dependency 'activerecord-postgres-array'
 
   # structures
   s.add_dependency 'hashr',             '~> 0.0.19'
