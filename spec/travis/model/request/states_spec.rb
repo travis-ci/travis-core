@@ -125,6 +125,17 @@ describe Request::States do
         request.finish
         request.should be_finished
       end
+
+      describe 'with a commit with existing build' do
+        before do
+          Factory(:build)
+        end
+
+        it 'does not create a build' do
+          request.expects(:add_build).never
+          request.finish
+        end
+      end
     end
 
     describe 'with an unapproved request' do

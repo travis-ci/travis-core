@@ -93,7 +93,21 @@ module Travis
           end
 
           def commit
-            @commit ||= repo.commits.create!(payload.commit) if payload.commit
+            @commit ||= begin
+              if Commit.column_names.include?('branches')
+                existing_commit = repo.commits.find_by_commit(payload.commit[:commit]) if payload.commit
+              end
+
+              if existing_commit
+                branch = payload.commit[:branch]
+                if branch && !existing_commit.branches.include?(branch)
+                  existing_commit.update_attributes! branches: existing_commit.branches.push(branch)
+                end
+                existing_commit
+              else
+                repo.commits.create!(payload.commit) if payload.commit
+              end
+            end
           end
 
           class Instrument < Notification::Instrument

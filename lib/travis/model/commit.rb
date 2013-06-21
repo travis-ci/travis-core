@@ -35,10 +35,7 @@ class Commit < Travis::Model
   def branch=(branch)
     if self.class.column_names.include?('branches')
       ActiveSupport::Deprecation.warn("branch= is deprecated, please use branches=")
-      branches = self.branches || []
-      unless branches.include? branch
-        self.branches = (branches << branch)
-      end
+      add_branch(branch)
     else
       super
     end
@@ -51,5 +48,16 @@ class Commit < Travis::Model
     else
       super
     end
+  end
+
+  def add_branch(branch)
+    return unless branch
+
+    branches = self.branches || []
+    unless branches.include?(branch)
+      self.branches = (branches << branch)
+    end
+
+    branches
   end
 end

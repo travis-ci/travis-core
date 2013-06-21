@@ -80,6 +80,18 @@ describe Travis::Requests::Services::Receive do
     end
   end
 
+  shared_examples_for 'does not create a commit' do
+    it 'does not create a commit' do
+      expect { request }.to_not change(Commit, :count)
+    end
+  end
+
+  shared_examples_for 'adds a branch to a commit' do
+    it 'adds a branch to a commit' do
+      request.commit.branches.sort.should == ['development', 'master']
+    end
+  end
+
   shared_examples_for 'creates an object from the github api' do |type, login, github_id|
     it 'creates the object' do
       expect { request }.to change(type.camelize.constantize, :count).by(1)
@@ -130,6 +142,21 @@ describe Travis::Requests::Services::Receive do
         it_should_behave_like 'a created request', type, login
         it_should_behave_like 'creates an object from the github api', type, login, github_id
       end
+
+      describe 'if the commit exists' do
+        before(:each) do
+          params[:payload]['ref'] = 'refs/heads/master'
+          described_class.new(nil, params).run
+          params[:payload]['ref'] = 'refs/heads/development'
+        end
+
+        it_should_behave_like 'does not create a commit'
+        it_should_behave_like 'adds a branch to a commit'
+      end
+
+      describe 'if the commit does not exist' do
+        it_should_behave_like 'creates a commit'
+      end
     end
 
     describe 'for repository belonging to an organization' do
@@ -150,6 +177,20 @@ describe Travis::Requests::Services::Receive do
         it_should_behave_like 'a created request', type, login, github_id
         it_should_behave_like 'creates an object from the github api', type, login, github_id
       end
+
+      describe 'if the commit exists' do
+        before(:each) do
+          params[:payload]['ref'] = 'refs/heads/master'
+          described_class.new(nil, params).run
+          params[:payload]['ref'] = 'refs/heads/development'
+        end
+        it_should_behave_like 'does not create a commit'
+        it_should_behave_like 'adds a branch to a commit'
+      end
+
+      describe 'if the commit does not exist' do
+        it_should_behave_like 'creates a commit'
+      end
     end
   end
 
@@ -161,6 +202,17 @@ describe Travis::Requests::Services::Receive do
       login = 'travis-repos'
       type  = 'organization'
       github_id = 864347
+
+      describe 'if the commit exists' do
+        before(:each) do
+          described_class.new(nil, params).run
+        end
+        it_should_behave_like 'does not create a commit'
+      end
+
+      describe 'if the commit does not exist' do
+        it_should_behave_like 'creates a commit'
+      end
 
       describe 'if the organization exists' do
         before(:each) { Factory(:org, :login => login, github_id: 864347) }

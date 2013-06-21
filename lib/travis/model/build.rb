@@ -86,7 +86,7 @@ class Build < Travis::Model
           branch = branch.split(',').map(&:strip)
         end
         branches = Array(branch)
-        pushes.where(branch.present? ? ['branches && ?', branches.pg(:string)] : [])
+        pushes.where(branch.present? ? ['branches && ?', branches.to_postgres_array(true)] : [])
       else
         pushes.joins(:commit).where(branch.present? ? ['commits.branch IN (?)', normalize_to_array(branch)] : [])
       end
