@@ -32,7 +32,7 @@ module Travis
         end
 
         def validate(user)
-          Timeout.timeout(5) do
+          Timeout.timeout(2) do
             data = Github.authenticated(user) { repository_data }
             if data['permissions'] && data['permissions']['admin']
               user
