@@ -12,7 +12,7 @@ module Travis
 
       def run
         if repository
-          admin = candidates.detect { |user| validate(user) }
+          admin = candidates.first
           admin || raise_admin_missing
         else
           error "[github-admin] repository is nil: #{params.inspect}"
