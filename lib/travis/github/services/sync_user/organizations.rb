@@ -31,6 +31,7 @@ module Travis
           end
 
           extend Travis::Instrumentation
+          include Travis::Logging
 
           attr_reader :user, :data
 
