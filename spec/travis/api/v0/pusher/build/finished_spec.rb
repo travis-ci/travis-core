@@ -48,4 +48,21 @@ describe Travis::Api::V0::Pusher::Build::Finished do
       'description' => 'the repo description',
     }
   end
+
+  it 'commit' do
+    data['commit'].should == {
+      'id' => 1,
+      'sha' => '62aae5f70ceee39123ef',
+      'branch' => 'master',
+      'branches' => ['master', 'development'],
+      'message' => 'the commit message',
+      'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
+      'committed_at' => json_format_time(Time.now.utc - 1.hour),
+      'committer_email' => 'svenfuchs@artweb-design.de',
+      'committer_name' => 'Sven Fuchs',
+      'author_name' => 'Sven Fuchs',
+      'author_email' => 'svenfuchs@artweb-design.de',
+      'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
+    }
+  end
 end
