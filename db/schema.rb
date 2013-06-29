@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130521141357) do
+ActiveRecord::Schema.define(:version => 20130629122945) do
 
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
@@ -19,8 +19,8 @@ ActiveRecord::Schema.define(:version => 20130521141357) do
     t.string   "kind"
     t.string   "message"
     t.boolean  "expired"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "builds", :force => true do |t|
@@ -28,8 +28,8 @@ ActiveRecord::Schema.define(:version => 20130521141357) do
     t.string   "number"
     t.datetime "started_at"
     t.datetime "finished_at"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.text     "config"
     t.integer  "commit_id"
     t.integer  "request_id"
@@ -63,8 +63,8 @@ ActiveRecord::Schema.define(:version => 20130521141357) do
     t.string   "committer_email"
     t.string   "author_name"
     t.string   "author_email"
-    t.datetime "created_at",      :null => false
-    t.datetime "updated_at",      :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "commits", ["branch"], :name => "index_commits_on_branch"
@@ -73,8 +73,8 @@ ActiveRecord::Schema.define(:version => 20130521141357) do
   create_table "emails", :force => true do |t|
     t.integer  "user_id"
     t.string   "email"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "emails", ["email"], :name => "index_emails_on_email"
@@ -86,8 +86,8 @@ ActiveRecord::Schema.define(:version => 20130521141357) do
     t.integer  "repository_id"
     t.string   "event"
     t.text     "data"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "jobs", :force => true do |t|
@@ -103,8 +103,8 @@ ActiveRecord::Schema.define(:version => 20130521141357) do
     t.string   "worker"
     t.datetime "started_at"
     t.datetime "finished_at"
-    t.datetime "created_at",                       :null => false
-    t.datetime "updated_at",                       :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.text     "tags"
     t.boolean  "allow_failure", :default => false
     t.integer  "owner_id"
@@ -118,7 +118,7 @@ ActiveRecord::Schema.define(:version => 20130521141357) do
   add_index "jobs", ["queue", "state"], :name => "index_jobs_on_queue_and_state"
   add_index "jobs", ["repository_id"], :name => "index_jobs_on_repository_id"
   add_index "jobs", ["state", "owner_id", "owner_type"], :name => "index_jobs_on_state_owner_type_owner_id"
-  add_index "jobs", ["type", "source_id", "source_type"], :name => "index_jobs_on_type_and_owner_id_and_owner_type"
+  add_index "jobs", ["type", "source_id", "source_type"], :name => "index_jobs_on_type_and_source_id_and_source_type"
 
   create_table "log_parts", :force => true do |t|
     t.integer  "log_id",     :null => false
@@ -154,8 +154,8 @@ ActiveRecord::Schema.define(:version => 20130521141357) do
     t.string   "name"
     t.string   "login"
     t.integer  "github_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "permissions", :force => true do |t|
@@ -173,8 +173,8 @@ ActiveRecord::Schema.define(:version => 20130521141357) do
     t.string   "name"
     t.string   "url"
     t.integer  "last_duration"
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "last_build_id"
     t.string   "last_build_number"
     t.integer  "last_build_status"
@@ -191,8 +191,10 @@ ActiveRecord::Schema.define(:version => 20130521141357) do
     t.boolean  "private",                :default => false
     t.integer  "last_build_result"
     t.string   "last_build_state"
+    t.integer  "github_id"
   end
 
+  add_index "repositories", ["github_id"], :name => "index_repositories_on_github_id"
   add_index "repositories", ["last_build_started_at"], :name => "index_repositories_on_last_build_started_at"
   add_index "repositories", ["owner_name", "name"], :name => "index_repositories_on_owner_name_and_name"
 
@@ -206,8 +208,8 @@ ActiveRecord::Schema.define(:version => 20130521141357) do
     t.text     "config"
     t.datetime "started_at"
     t.datetime "finished_at"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "event_type"
     t.string   "comments_url"
     t.string   "base_commit"
@@ -224,8 +226,8 @@ ActiveRecord::Schema.define(:version => 20130521141357) do
     t.integer  "repository_id"
     t.text     "public_key"
     t.text     "private_key"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "ssl_keys", ["repository_id"], :name => "index_ssl_key_on_repository_id"
@@ -233,23 +235,23 @@ ActiveRecord::Schema.define(:version => 20130521141357) do
   create_table "tokens", :force => true do |t|
     t.integer  "user_id"
     t.string   "token"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "urls", :force => true do |t|
     t.string   "url"
     t.string   "code"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "users", :force => true do |t|
     t.string   "name"
     t.string   "login"
     t.string   "email"
-    t.datetime "created_at",                            :null => false
-    t.datetime "updated_at",                            :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.boolean  "is_admin",           :default => false
     t.integer  "github_id"
     t.string   "github_oauth_token"
