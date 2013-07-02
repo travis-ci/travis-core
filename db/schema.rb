@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130702144325) do
+ActiveRecord::Schema.define(:version => 20130702154300) do
 
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
@@ -196,7 +196,7 @@ ActiveRecord::Schema.define(:version => 20130702144325) do
     t.string   "github_language"
   end
 
-  add_index "repositories", ["github_id"], :name => "index_repositories_on_github_id"
+  add_index "repositories", ["github_id"], :name => "index_repositories_on_github_id", :unique => true
   add_index "repositories", ["last_build_started_at"], :name => "index_repositories_on_last_build_started_at"
   add_index "repositories", ["owner_name", "name"], :name => "index_repositories_on_owner_name_and_name"
 
