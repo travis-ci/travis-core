@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130521141357) do
+ActiveRecord::Schema.define(:version => 20130702144325) do
 
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
@@ -191,8 +191,12 @@ ActiveRecord::Schema.define(:version => 20130521141357) do
     t.boolean  "private",                :default => false
     t.integer  "last_build_result"
     t.string   "last_build_state"
+    t.integer  "github_id"
+    t.string   "default_branch"
+    t.string   "github_language"
   end
 
+  add_index "repositories", ["github_id"], :name => "index_repositories_on_github_id"
   add_index "repositories", ["last_build_started_at"], :name => "index_repositories_on_last_build_started_at"
   add_index "repositories", ["owner_name", "name"], :name => "index_repositories_on_owner_name_and_name"
 
@@ -260,9 +264,9 @@ ActiveRecord::Schema.define(:version => 20130521141357) do
     t.text     "github_scopes"
   end
 
-  add_index "users", ["github_id"], :name => "index_users_on_github_id"
+  add_index "users", ["github_id"], :name => "index_users_on_github_id", :unique => true
   add_index "users", ["github_oauth_token"], :name => "index_users_on_github_oauth_token"
-  add_index "users", ["login"], :name => "index_users_on_login", :unique => true
+  add_index "users", ["login"], :name => "index_users_on_login"
 
   create_table "workers", :force => true do |t|
     t.string   "name"
