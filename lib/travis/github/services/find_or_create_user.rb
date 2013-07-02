@@ -20,13 +20,18 @@ module Travis
           end
 
           def create
-            User.create!(
+            user = User.create!(
               :name => data['name'],
               :login => data['login'],
               :email => data['email'],
               :github_id => data['id'],
               :gravatar_id => data['gravatar_id']
             )
+
+            User.where(["github_id <> ? AND login = ?", user.github_id, user.login]).update_all(login: nil)
+            Organization.where(["github_id <> ? AND login = ?", user.github_id, user.login]).update_all(login: nil)
+
+            user
           end
 
           def data
