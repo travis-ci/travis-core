@@ -16,15 +16,19 @@ describe Travis::Github::Services::FindOrCreateUser do
     service.run.should == user
   end
 
-  it 'updates repositories owner_name if login is changed' do
+  it 'updates repositories owner_name and nullifies other users or orgs\' login if login is changed' do
     user = Factory(:user, login: 'foobar', github_id: 999)
     user.repositories << Factory(:repository, owner_name: 'foobar', name: 'foo', owner: user)
     user.repositories << Factory(:repository, owner_name: 'foobar', name: 'bar', owner: user)
 
+    same_login_user = Factory(:user, login: 'foobarbaz', github_id: 998)
+    same_login_org  = Factory(:org, login: 'foobarbaz', github_id: 997)
     @params = { github_id: user.github_id, login: 'foobarbaz' }
     service.run.should == user
 
     user.reload.repositories.map(&:owner_name).uniq.should == ['foobarbaz']
+    same_login_user.reload.login.should be_nil
+    same_login_org.reload.login.should be_nil
   end
 
   it 'creates a user from github' do

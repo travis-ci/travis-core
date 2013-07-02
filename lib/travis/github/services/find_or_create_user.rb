@@ -12,9 +12,13 @@ module Travis
 
           def find
             ::User.where(github_id: params[:github_id]).first.tap do |user|
-              if user && user.login != params[:login]
-                user.update_attributes(params.slice(:login))
-                Repository.where(owner_id: user.id).update_all(owner_name: params[:login])
+              if user
+                if user.login != params[:login]
+                  user.update_attributes(params.slice(:login))
+                  Repository.where(owner_id: user.id).update_all(owner_name: params[:login])
+                end
+
+                nullify_logins(user.github_id, user.login)
               end
             end
           end
@@ -28,10 +32,14 @@ module Travis
               :gravatar_id => data['gravatar_id']
             )
 
-            User.where(["github_id <> ? AND login = ?", user.github_id, user.login]).update_all(login: nil)
-            Organization.where(["github_id <> ? AND login = ?", user.github_id, user.login]).update_all(login: nil)
+            nullify_logins(user.github_id, user.login)
 
             user
+          end
+
+          def nullify_logins(github_id, login)
+            User.where(["github_id <> ? AND login = ?", github_id, login]).update_all(login: nil)
+            Organization.where(["login = ?", login]).update_all(login: nil)
           end
 
           def data
