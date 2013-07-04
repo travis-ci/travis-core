@@ -172,7 +172,8 @@ class Build < ActiveRecord::Base
     end
     deserialized
   rescue Psych::SyntaxError => e
-    logger.warn "[build id:#{id}] Config could not be de-seralized due to #{e.message}"
+    logger.warn "[build id:#{id}] Config could not be deserialized due to #{e.message}"
+    {}
   end
 
   def config=(config)
