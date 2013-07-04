@@ -171,6 +171,8 @@ class Build < ActiveRecord::Base
       deserialized = YAML.load(deserialized)
     end
     deserialized
+  rescue Psych::SyntaxError => e
+    logger.warn "[build id:#{id}] Config could not be de-seralized due to #{e.message}"
   end
 
   def config=(config)
