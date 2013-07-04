@@ -118,6 +118,9 @@ class Job < ActiveRecord::Base
         end
       end
     end
+  rescue => e
+    logger.warn "[job id:#{id}] Config could not be decrypted due to #{e.message}"
+    {}
   end
 
   def matrix_config?(config)
