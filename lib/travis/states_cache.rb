@@ -56,7 +56,7 @@ module Travis
       end
 
       def fetch(id, branch = nil)
-        data = client.get(key(id, branch))
+        data = get(key(id, branch))
         data ? JSON.parse(data) : nil
       end
 
@@ -64,8 +64,8 @@ module Travis
         finished_at = data['finished_at']
         data        = data.to_json
 
-        client.set(key(id), data) if update?(id, nil, finished_at)
-        client.set(key(id, branch), data) if update?(id, branch, finished_at)
+        set(key(id), data) if update?(id, nil, finished_at)
+        set(key(id, branch), data) if update?(id, branch, finished_at)
       end
 
       def update?(id, branch, finished_at)
@@ -84,6 +84,30 @@ module Travis
           key << "-#{branch}"
         end
         key
+      end
+
+      private
+
+      def get(key)
+        retry_ringerror do
+          client.get(key)
+        end
+      end
+
+      def set(key, data)
+        retry_ringerror do
+          client.set(key, data)
+        end
+      end
+
+      def retry_ringerror
+        retries = 0
+        begin
+          yield
+        rescue Dalli::RingError
+          retries += 1
+          retries <= 3 ? retry : raise
+        end
       end
     end
   end
