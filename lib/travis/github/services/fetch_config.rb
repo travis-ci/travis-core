@@ -37,6 +37,8 @@ module Travis
             Travis.logger.warn("[request:fetch_config] Empty content for #{config_url}") if content.nil?
             content = content.to_s.unpack('m').first
             Travis.logger.warn("[request:fetch_config] Empty unpacked content for #{config_url}, content was #{content.inspect}") if content.nil?
+            content = content.gsub(/^(\xC2\xA0)+/) { |match| match.gsub("\xC2\xA0", " ") }
+
             content
           end
 
