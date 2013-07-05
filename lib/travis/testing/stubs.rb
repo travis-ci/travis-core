@@ -52,7 +52,6 @@ module Travis
           last_build_state: :passed,
           last_build_state_on: :passed,
           last_build_result: 0, # see repository/compat.rb
-          last_build_language: 'ruby',
           last_build_duration: 60
         )
       end
