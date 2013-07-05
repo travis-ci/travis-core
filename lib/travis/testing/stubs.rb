@@ -50,8 +50,6 @@ module Travis
           last_build_started_at: Time.now.utc - 60,
           last_build_finished_at: Time.now.utc,
           last_build_state: :passed,
-          last_build_state_on: :passed,
-          last_build_result: 0, # see repository/compat.rb
           last_build_duration: 60
         )
       end
