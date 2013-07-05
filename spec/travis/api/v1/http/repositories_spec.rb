@@ -16,7 +16,7 @@ describe Travis::Api::V1::Http::Repositories do
       'last_build_finished_at' => json_format_time(Time.now.utc),
       'last_build_status' => 0, # still here for backwards compatibility
       'last_build_result' => 0,
-      'last_build_language' => 'ruby',
+      'last_build_language' => nil,
       'last_build_duration' => 60
     }
   end
