@@ -41,6 +41,11 @@ describe Travis::Github::Services::FetchConfig do
       GH.stubs(:[]).returns("\tfoo: Foo")
       result['.result'].should == 'parse_error'
     end
+
+    it "converts non-breaking spaces to normal spaces" do
+      GH.stubs(:[]).returns({ "content" => ["foo:\n\xC2\xA0\xC2\xA0bar: Foobar"].pack("m") })
+      result["foo"].should eql({ "bar" => "Foobar" })
+    end
   end
 end
 
