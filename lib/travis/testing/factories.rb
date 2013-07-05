@@ -52,7 +52,6 @@ FactoryGirl.define do
     owner_name 'svenfuchs'
     owner_email 'svenfuchs@artweb-design.de'
     url { |r| "http://github.com/#{r.owner_name}/#{r.name}" }
-    last_duration 60
     created_at { |r| Time.utc(2011, 01, 30, 5, 25) }
     updated_at { |r| r.created_at + 5.minutes }
     last_build_state :passed
@@ -70,7 +69,6 @@ FactoryGirl.define do
     owner_name 'josevalim'
     owner_email 'josevalim@email.com'
     owner { User.find_by_login('josevalim') || Factory(:user, :login => 'josevalim') }
-    last_duration 30
   end
 
   factory :event do
