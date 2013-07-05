@@ -55,7 +55,7 @@
               <th style="text-align: right; padding-right: 16px;" align="right">Duration</th>
               <td><%= duration_in_words(@build.started_at, @build.finished_at) %></td>
             </tr>
-            <% unless (notes = notes_for(@jobs, 'html')).empty? %>
+            <% unless (notes = notes_for(@jobs)).empty? %>
               <tr>
                 <th style="text-align: right; padding-right: 16px;" align="right">Notes</th>
                 <td>
