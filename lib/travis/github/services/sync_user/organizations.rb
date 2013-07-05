@@ -49,9 +49,11 @@ module Travis
           private
 
             def create_or_update
-              fetch.find_all do |data|
+              fetch.map do |data|
+                fetch_resource("organizations/#{data['id']}")
+              end.find_all do |data|
                 options = Travis.config.sync.organizations || {}
-                Filter.new(fetch_resource("organizations/#{data['id']}"), options).allow?
+                Filter.new(data, options).allow?
               end.map do |data|
                 org = Organization.find_or_create_by_github_id(data['id'])
                 org.update_attributes!({
