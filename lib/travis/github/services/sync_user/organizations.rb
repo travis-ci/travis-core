@@ -51,10 +51,18 @@ module Travis
             def create_or_update
               fetch.find_all do |data|
                 options = Travis.config.sync.organizations || {}
-                Filter.new(fetch_resource("orgs/#{data['login']}"), options).allow?
+                Filter.new(fetch_resource("organizations/#{data['id']}"), options).allow?
               end.map do |data|
                 org = Organization.find_or_create_by_github_id(data['id'])
-                org.update_attributes!(:name => data['name'], :login => data['login'])
+                org.update_attributes!({
+                  :name => data['name'], 
+                  :login => data['login'],
+                  :email => data['email'],
+                  :avatar_url => avatar_url(data['_links']['avatar']),
+                  :location => data['location'],
+                  :homepage => data['_links']['blog'].try(:fetch, 'href'),
+                  :company => data['company']
+                })
                 user.organizations << org unless user.organizations.include?(org)
                 org
               end
@@ -90,6 +98,11 @@ module Travis
               GH[resource] # TODO should be: ?type=#{self.class.type} but GitHub doesn't work as documented
             rescue GH::Error => e
               log_exception(e)
+            end
+
+            def avatar_url(github_data)
+              href = github_data.try(:fetch, 'href')
+              href ? href[/^(https:\/\/[\w\.\/]*)/, 1] : nil
             end
 
             class Instrument < Notification::Instrument
