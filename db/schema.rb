@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130629174449) do
+ActiveRecord::Schema.define(:version => 20130705123456) do
 
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
@@ -139,6 +139,7 @@ ActiveRecord::Schema.define(:version => 20130629174449) do
     t.boolean  "archiving"
     t.datetime "archived_at"
     t.boolean  "archive_verified"
+    t.datetime "purged_at"
   end
 
   add_index "logs", ["archive_verified"], :name => "index_logs_on_archive_verified"
@@ -156,6 +157,11 @@ ActiveRecord::Schema.define(:version => 20130629174449) do
     t.integer  "github_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "avatar_url"
+    t.string   "location"
+    t.string   "email"
+    t.string   "company"
+    t.string   "homepage"
   end
 
   create_table "permissions", :force => true do |t|
@@ -172,24 +178,20 @@ ActiveRecord::Schema.define(:version => 20130629174449) do
   create_table "repositories", :force => true do |t|
     t.string   "name"
     t.string   "url"
-    t.integer  "last_duration"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "last_build_id"
     t.string   "last_build_number"
-    t.integer  "last_build_status"
     t.datetime "last_build_started_at"
     t.datetime "last_build_finished_at"
     t.string   "owner_name"
     t.text     "owner_email"
     t.boolean  "active"
     t.text     "description"
-    t.string   "last_build_language"
     t.integer  "last_build_duration"
     t.integer  "owner_id"
     t.string   "owner_type"
     t.boolean  "private",                :default => false
-    t.integer  "last_build_result"
     t.string   "last_build_state"
     t.integer  "github_id"
     t.string   "default_branch"
