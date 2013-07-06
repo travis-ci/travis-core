@@ -112,6 +112,12 @@ describe Request::Approval do
       approval.send(:github_pages?).should be_true
     end
 
+    it 'returns true when a PR is for gh_pages' do
+      request.commit.stubs(:ref).returns 'patch-1'
+      request.commit.stubs(:branch).returns 'gh_pages'
+      approval.send(:github_pages?).should be_true
+    end
+
     it 'returns false for a branch named master' do
       commit.stubs(:branch).returns 'master'
       approval.send(:github_pages?).should be_false
