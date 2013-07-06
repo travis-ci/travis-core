@@ -88,7 +88,7 @@ class Job < ActiveRecord::Base
   end
 
   def config=(config)
-    super(config ? config.deep_symbolize_keys : {})
+    super normalize_config(config)
   end
 
   def obfuscated_config
@@ -140,6 +140,17 @@ class Job < ActiveRecord::Base
   end
 
   private
+
+    def normalize_config(config)
+      config = config ? config.deep_symbolize_keys : {}
+
+      if config[:deploy]
+        config[:addons] ||= {}
+        config[:addons][:deploy] = config.delete(:deploy)
+      end
+
+      config
+    end
 
     def process_env(env)
       env = [env] unless env.is_a?(Array)
