@@ -40,6 +40,7 @@ class Request
       elsif !approved?
         Travis.logger.warn("[request:finish] Request not creating a build: not approved commit=#{commit.try(:commit).inspect} message=#{approval.message.inspect}")
       elsif parse_error?
+        Travis.logger.info("[request:finish] Request created but Build and Job automatically errored due to a config parsing error. commit=#{commit.try(:commit).inspect}")
         add_parse_error_build
       else
         add_build
