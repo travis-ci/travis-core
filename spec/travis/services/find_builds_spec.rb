@@ -15,6 +15,11 @@ describe Travis::Services::FindBuilds do
       service.run.should == [build]
     end
 
+    it 'finds recent builds when no repo given' do
+      @params = nil
+      service.run.should == [build]
+    end
+
     it 'finds builds older than the given number' do
       @params = { :repository_id => repo.id, :after_number => 2 }
       service.run.should == [build]

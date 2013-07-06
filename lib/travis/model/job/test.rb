@@ -11,8 +11,7 @@ class Job
   class Test < Job
     include Sponsors, Tagging
 
-    # TODO remove :finished once we've updated the state column
-    FINISHED_STATES = [:finished, :passed, :failed, :errored, :canceled]
+    FINISHED_STATES = [:passed, :failed, :errored, :canceled]
 
     include SimpleStates, Travis::Event
 
@@ -35,8 +34,7 @@ class Job
     end
 
     def finish(data = {})
-      data = data.symbolize_keys.slice(:state, :finished_at, :result)
-      data.delete(:state) if data.key?(:result) # TODO legacy payload, remove once workers set :state
+      data = data.symbolize_keys.slice(:state, :finished_at)
       data.each { |key, value| send(:"#{key}=", value) }
     end
 
@@ -64,15 +62,15 @@ class Job
     end
 
     def passed?
-      state == :passed || result == 0 # TODO remove as soon we're using state everywhere
+      state == "passed"
     end
 
     def failed?
-      state == :failed || result == 1 # TODO remove as soon we're using state everywhere
+      state == "failed"
     end
 
     def unknown?
-      !passed? && !failed? && result == nil
+      state == nil
     end
 
     def notify(event, *args)
@@ -81,13 +79,5 @@ class Job
     end
 
     delegate :id, :content, :to => :log, :prefix => true, :allow_nil => true
-
-    protected
-
-      LEGACY_RESULTS = { 0 => 'passed', 1 => 'failed' }
-
-      def map_legacy_result(result)
-        LEGACY_RESULTS[result.to_i] if result.to_s =~ /^[\d]+$/
-      end
   end
 end

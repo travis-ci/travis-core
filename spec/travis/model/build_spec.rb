@@ -5,14 +5,36 @@ describe Build do
 
   let(:repository) { Factory(:repository) }
 
+  describe '#secure_env_enabled?' do
+    it 'returns true if we\'re not dealing with pull request' do
+      build = Factory.build(:build)
+      build.stubs(:pull_request?).returns(false)
+      build.secure_env_enabled?.should be_true
+    end
+
+    it 'returns true if pull request is from the same repository' do
+      build = Factory.build(:build)
+      build.stubs(:pull_request?).returns(true)
+      build.stubs(:same_repo_pull_request?).returns(true)
+      build.secure_env_enabled?.should be_true
+    end
+
+    it 'returns false if pull request is not from the same repository' do
+      build = Factory.build(:build)
+      build.stubs(:pull_request?).returns(true)
+      build.stubs(:same_repo_pull_request?).returns(false)
+      build.secure_env_enabled?.should be_false
+    end
+  end
+
   describe 'class methods' do
     describe 'recent' do
-      it 'returns recent builds ordered by creation time descending' do
-        Factory(:build, state: 'passed')
-        Factory(:build, state: 'started')
-        Factory(:build, state: 'created')
+      it 'returns recent builds ordered by started time descending' do
+        Factory(:build, state: 'passed', started_at: 2.second.ago)
+        Factory(:build, state: 'started', started_at: 1.second.ago)
+        Factory(:build, state: 'created', started_at: nil)
 
-        Build.recent.all.map(&:state).should == ['created', 'started', 'passed']
+        Build.recent.all.map(&:state).should == ['started', 'passed']
       end
     end
 
@@ -360,6 +382,12 @@ describe Build do
         build.config = { rvm: ['1.8.7'], env:  nil }
         build.obfuscated_config.should == { rvm: ['1.8.7'], env:  nil }
       end
+
+      it 'removes source key' do
+        build  = Build.new(repository: Factory(:repository))
+        build.config = { rvm: ['1.8.7'], source_key: '1234' }
+        build.obfuscated_config.should == { rvm: ['1.8.7'] }
+      end
     end
 
     describe :pending? do
@@ -403,7 +431,7 @@ describe Build do
       end
     end
 
-    it 'saves event_type before crate' do
+    it 'saves event_type before create' do
       build = Factory(:build,  request: Factory(:request, event_type: 'pull_request'))
       build.event_type.should == 'pull_request'
 
@@ -411,10 +439,15 @@ describe Build do
       build.event_type.should == 'push'
     end
 
-    it 'saves pull_request_title before crate' do
+    it 'saves pull_request_title before create' do
       payload = { 'pull_request' => { 'title' => 'A pull request' } }
       build = Factory(:build,  request: Factory(:request, event_type: 'pull_request', payload: payload))
       build.pull_request_title.should == 'A pull request'
+    end
+
+    it 'saves branch before create' do
+      build = Factory(:build,  commit: Factory(:commit, branch: 'development'))
+      build.branch.should == 'development'
     end
 
     describe 'reset' do

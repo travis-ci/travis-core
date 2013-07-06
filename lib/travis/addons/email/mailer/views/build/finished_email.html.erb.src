@@ -84,57 +84,14 @@
         </table>
       </div>
 
-      <div id="please-donate" class="section">
-        <table border="0">
-          <tr>
-            <td>
-              <img src="https://<%= Travis.config.assets.host %>/<%= Travis.config.assets.version %>/images/mailer/please-donate.png">
-            </td>
-            <td>
-              <h2>We need your help!</h2>
-              <p>
-                Travis CI has run more than 1.6 million tests for more than 48,000 OSS projects to date,
-                including Ruby, Rails, Rubinius, Rubygems, Bundler, Node.js, Leiningen, Symfony ...
-              </p>
-              <p>
-                If you use any of these then you benefit from Travis CI.
-              </p>
-              <p class="last-child">
-                <a href="http://love.travis-ci.org">Please donate so we can make Travis CI even better!</a>
-              </p>
-            </td>
-          </tr>
-        </table>
+      <div class="section footnote" style="height: 20px;">
+        <div style="color: #aaa; float: right;">
+          Want Travis CI for your <a href="http://travisci.com?utm_source=build_email_footer&utm_campaign=travis-ci.org&utm_medium=email">private repositories?</a>
+        </div>
+        <div style="color: #aaa; float: left; vertical-align: top;">
+          Powered by <a href="http://bluebox.net"><img src="https://<%= Travis.config.assets.host -%>/images/sponsors/bluebox-78x15.png"></a>
+        </div>
       </div>
-
-      <div id="sponsors">
-        <table border="0">
-          <tr>
-            <% sponsors.each do |sponsor| %>
-              <td>
-                <div class="section">
-                  <table border="0" <%= (sponsor.package == :platinum ? 'style="width: 717px"' : 'style="width: 339px"').html_safe %>>
-                    <tr>
-                      <td>
-                        <a href="<%= sponsor.url %>">
-                          <img src="https://love.travis-ci.org/images/sponsors/<%= sponsor.name %>-100x60.png">
-                        </a>
-                      </td>
-                      <td>
-                        <%= sponsor.text.html_safe %>
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-              </td>
-            <% end %>
-          </tr>
-        </table>
-      </div>
-
-      <p class="footnote">
-        <a href="http://love.travis-ci.org/sponsors">See all of our sponsors &rarr;</a>
-      <p>
     </div>
   </body>
 </html>

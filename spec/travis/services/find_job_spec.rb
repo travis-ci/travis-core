@@ -18,6 +18,13 @@ describe Travis::Services::FindJob do
       @params = { id: job.id + 1 }
       lambda { service.run }.should_not raise_error
     end
+
+    it 'raises RecordNotFound if a SubclassNotFound error is raised during find' do
+      find_by_id = stub
+      find_by_id.stubs(:find_by_id).raises(ActiveRecord::SubclassNotFound)
+      service.stubs(:scope).returns(find_by_id)
+      lambda { service.run }.should raise_error(ActiveRecord::RecordNotFound)
+    end
   end
 
   describe 'updated_at' do

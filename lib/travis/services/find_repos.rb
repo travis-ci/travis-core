@@ -24,9 +24,15 @@ module Travis
           scope = scope.by_slug(params[:slug])             if params[:slug]
           scope = scope.search(params[:search])            if params[:search].present?
 
-          if (params.keys & [:slug]).empty?
+          if (params.keys & [:member, :owner_name, :search, :slug]).empty?
             # apply timeline scope only if it's default /repos request
             scope = scope.timeline
+          end
+
+          if params[:active]
+            scope = scope.active
+          elsif (params.keys & [:member, :owner_name, :search]).present?
+            scope = scope.with_builds
           end
 
           scope

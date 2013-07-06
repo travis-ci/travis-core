@@ -4,9 +4,11 @@ require 'simple_states'
 class Request
   module States
     extend ActiveSupport::Concern
-    include SimpleStates, Travis::Event
+    include Travis::Event
 
     included do
+      include SimpleStates
+
       states :created, :started, :finished
       event :start,     :to => :started, :after => :configure
       event :configure, :to => :configured, :after => :finish

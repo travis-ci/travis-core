@@ -42,6 +42,24 @@ describe Travis::Logs::Services::Receive do
     service.run
   end
 
+  it "doesn't reraise an error when notifications failed" do
+    Job::Test.stubs(:find).with(job.id).returns(job)
+    job.expects(:notify).raises(StandardError.new)
+    
+    expect {
+      service.run
+    }.to_not raise_error
+  end
+
+  it "tracks a metric when notifications failed" do
+    Job::Test.stubs(:find).with(job.id).returns(job)
+    job.expects(:notify).raises(StandardError.new)
+    
+    expect {
+      service.run
+    }.to change {Metriks.meter('travis.logs.update.notify.errors').count}
+  end
+
   it 'creates a log if missing (should never happen, but does)' do
     log.destroy
     silence { service.run }

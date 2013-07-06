@@ -142,10 +142,10 @@ describe Travis::Addons::Pusher::Task do
       handler.send(:channels).should include('common')
     end
 
-    it 'returns "common" for the event "worker:started"' do
+    it 'returns "workers" for the event "worker:started"' do
       payload = Travis::Api.data(worker, for: 'pusher', type: 'worker', version: 'v1')
       handler = subject.new(payload, event: 'worker:created')
-      handler.send(:channels).should include('common')
+      handler.send(:channels).should include('workers')
     end
   end
 

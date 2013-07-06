@@ -89,29 +89,6 @@ describe Travis::Addons::Email::Mailer::Build do
         html.force_encoding(h.charset) if html.respond_to?(:force_encoding)
         html.should include("まつもとゆきひろ a.k.a. Matz")
       end
-
-      describe 'sponsors' do
-        before :each do
-          Travis.config.sponsors = {
-            platinum: [{ name: 'xing', url: 'http://xing.de', text: '<a href="http://xing.de">XING</a>' }],
-            gold: [{ name: 'xing', url: 'http://xing.de', text: '<a href="http://xing.de">XING</a>' }]
-          }
-        end
-
-        let(:sponsor) do
-          email.deliver
-          email.html_part.decoded =~ /<div[^>]*id="sponsors"[^>]*>(.*)<\/div>/m
-          $1
-        end
-
-        it 'adds a sponsor image' do
-          sponsor.should =~ %r(<img src="https://love.travis-ci.org/images/sponsors/xing-100x60.png")
-        end
-
-        it 'does not escape tags contained in the sponsor text' do
-          sponsor.should =~ %r(<a href="http://xing.de">XING</a>)
-        end
-      end
     end
 
     describe 'broadcasts' do

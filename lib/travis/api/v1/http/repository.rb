@@ -23,7 +23,7 @@ module Travis
               'last_build_status' => legacy_repository_last_build_result(repository),
               'last_build_result' => legacy_repository_last_build_result(repository),
               'last_build_duration' => repository.last_build_duration,
-              'last_build_language' => repository.last_build_language,
+              'last_build_language' => nil,
               'last_build_started_at' => format_date(repository.last_build_started_at),
               'last_build_finished_at' => format_date(repository.last_build_finished_at),
             }

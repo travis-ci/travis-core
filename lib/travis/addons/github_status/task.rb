@@ -16,10 +16,10 @@ module Travis
         }
 
         DESCRIPTIONS = {
-          'pending' => 'The Travis build is in progress',
-          'success' => 'The Travis build passed',
-          'failure' => 'The Travis build failed',
-          'error'   => 'The Travis build could not complete due to an error',
+          'pending' => 'The Travis CI build is in progress',
+          'success' => 'The Travis CI build passed',
+          'failure' => 'The Travis CI build failed',
+          'error'   => 'The Travis CI build could not complete due to an error',
         }
 
         def url

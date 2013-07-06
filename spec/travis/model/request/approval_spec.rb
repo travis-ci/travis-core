@@ -99,21 +99,6 @@ describe Request::Approval do
       request.commit.stubs(:message).returns 'lets party like its 1999 [ci skip]'
       approval.send(:skipped?).should be_true
     end
-
-    it 'returns true when the commit message contains [CI skip]' do
-      request.commit.stubs(:message).returns 'lets party like its 1999 [CI skip]'
-      approval.send(:skipped?).should be_true
-    end
-
-    it 'returns true when the commit message contains [ci:skip]' do
-      request.commit.stubs(:message).returns 'lets party like its 1999 [ci:skip]'
-      approval.send(:skipped?).should be_true
-    end
-
-    it 'returns false when the commit message contains [ci unknown-command]' do
-      request.commit.stubs(:message).returns 'lets party like its 1999 [ci unknown-command]'
-      approval.send(:skipped?).should be_false
-    end
   end
 
   describe 'github_pages?' do

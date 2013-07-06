@@ -5,6 +5,7 @@ module Support
     def silence
       out, $stdout = $stdout, StringIO.new
       yield
+    ensure
       $stdout = out
     end
   end

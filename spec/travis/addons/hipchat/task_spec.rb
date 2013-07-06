@@ -57,6 +57,22 @@ describe Travis::Addons::Hipchat::Task do
     http.verify_stubbed_calls
   end
 
+  it 'works with a list as HipChat configuration' do
+    targets  = ['12345@room_1']
+    template = ['%{repository}', '%{commit}']
+    messages = [
+      'svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): the build has passed',
+      'Change view: https://github.com/svenfuchs/minimal/compare/master...develop',
+      'Build details: http://travis-ci.org/svenfuchs/minimal/builds/1'
+    ]
+
+    payload['build']['config']['notifications'] = { hipchat: [] }
+    expect_hipchat('room_1', '12345', messages)
+
+    run(targets)
+    http.verify_stubbed_calls
+  end
+
   def expect_hipchat(room_id, token, lines, extra_body={})
     Array(lines).each do |line|
       body = { 'room_id' => room_id, 'from' => 'Travis CI', 'message' => line, 'color' => 'green', 'message_format' => 'text' }.merge(extra_body)

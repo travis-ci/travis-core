@@ -1,7 +1,8 @@
 require 'travis/support'
+require 'travis_core/version'
 require 'gh'
 require 'pusher'
-require 'redis'
+require 'travis/redis_pool'
 
 autoload :Account,         'travis/model/account'
 autoload :Broadcast,       'travis/model/broadcast'
@@ -49,6 +50,7 @@ module Travis
   autoload :Api,          'travis/api'
   autoload :Config,       'travis/config'
   autoload :Chunkifier,   'travis/chunkifier'
+  autoload :CommitCommand,   'travis/commit_command'
   autoload :Enqueue,      'travis/enqueue'
   autoload :Event,        'travis/event'
   autoload :Features,     'travis/features'
@@ -59,21 +61,27 @@ module Travis
   autoload :Notification, 'travis/notification'
   autoload :Requests,     'travis/requests'
   autoload :Services,     'travis/services'
+  autoload :StatesCache,  'travis/states_cache'
   autoload :Task,         'travis/task'
   autoload :Testing,      'travis/testing'
 
   extend Services::Helpers
 
   class UnknownRepository < StandardError; end
-  class GithubApiError < StandardError; end
-  class AdminMissing < StandardError; end
+  class GithubApiError    < StandardError; end
+  class AdminMissing      < StandardError; end
+  class RepositoryMissing < StandardError; end
 
   class << self
-    # TODO check with @rkh where this is actually required
-    def setup(config = Travis.config.oauth2)
+    def setup
       Travis.logger.info('Setting up Travis::Core')
 
-      GH.set(:client_id => config[:client_id], :client_secret => config[:client_secret]) if config
+      GH.set(
+        client_id:      Travis.config.oauth2.try(:client_id),
+        client_secret:  Travis.config.oauth2.try(:client_secret),
+        user_agent:     "Travis-CI/#{TravisCore::VERSION} GH/#{GH::VERSION}",
+        origin:         Travis.config.host
+      )
 
       Addons.register
       Services.register
@@ -86,7 +94,7 @@ module Travis
     attr_accessor :redis
 
     def start
-      @redis = Redis.new(url: config.redis.url) # should probably be in travis-support?
+      @redis = Travis::RedisPool.new(config.redis)
     end
 
     def config
@@ -108,6 +116,10 @@ module Travis
 
     def services
       @services ||= Travis::Services
+    end
+
+    def states_cache
+      @states_cache ||= Travis::StatesCache.new
     end
   end
 

@@ -42,11 +42,6 @@ describe Job::Test do
     describe 'finish' do
       let(:data) { WORKER_PAYLOADS['job:test:finish'] }
 
-      it 'sets the state to the given result state (legacy: passing result=[0|1])' do
-        job.finish(data.merge('result' => 0, 'state' => 'finished'))
-        job.state.should == 'passed'
-      end
-
       it 'sets the state to the given result state' do
         job.finish(data)
         job.state.should == 'passed'

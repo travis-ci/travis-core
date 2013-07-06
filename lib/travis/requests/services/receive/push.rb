@@ -60,7 +60,7 @@ module Travis
           end
 
           def skip_commit?(commit)
-            commit['message'].to_s =~ /\[ci(?: |:)([\w ]*)\]/i && $1.downcase == 'skip'
+            Travis::CommitCommand.new(commit['message']).skip?
           end
         end
       end

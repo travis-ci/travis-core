@@ -83,7 +83,7 @@ describe Job do
 
     it 'leaves regular vars untouched' do
       job = Job.new(repository: Factory(:repository))
-      job.expects(:pull_request?).at_least_once.returns(false)
+      job.expects(:secure_env_enabled?).at_least_once.returns(true)
       job.config = { rvm: '1.8.7', env: 'FOO=foo' }
 
       job.obfuscated_config.should == {
@@ -94,7 +94,7 @@ describe Job do
 
     it 'obfuscates env vars' do
       job = Job.new(repository: Factory(:repository))
-      job.expects(:pull_request?).at_least_once.returns(false)
+      job.expects(:secure_env_enabled?).at_least_once.returns(true)
       config = { rvm: '1.8.7',
                  env: [job.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo']
                }
@@ -108,7 +108,7 @@ describe Job do
 
     it 'normalizes env vars which are hashes to strings' do
       job = Job.new(repository: Factory(:repository))
-      job.expects(:pull_request?).at_least_once.returns(false)
+      job.expects(:secure_env_enabled?).at_least_once.returns(true)
 
       config = { rvm: '1.8.7',
                  env: [{FOO: 'bar', BAR: 'baz'},
@@ -134,10 +134,21 @@ describe Job do
       }
     end
 
-    context 'when job is from a pull request' do
+    it 'removes source key' do
+      job = Job.new(repository: Factory(:repository))
+      config = { rvm: '1.8.7',
+                 source_key: '1234'
+               }
+      job.config = config
+
+      job.obfuscated_config.should == {
+        rvm: '1.8.7',
+      }
+    end
+    context 'when job has secure env disabled' do
       let :job do
         job = Job.new(repository: Factory(:repository))
-        job.expects(:pull_request?).returns(true).at_least_once
+        job.expects(:secure_env_enabled?).returns(false).at_least_once
         job
       end
 
@@ -205,7 +216,7 @@ describe Job do
 
     it 'normalizes env vars which are hashes to strings' do
       job = Job.new(repository: Factory(:repository))
-      job.expects(:pull_request?).at_least_once.returns(false)
+      job.expects(:secure_env_enabled?).at_least_once.returns(true)
 
       config = { rvm: '1.8.7',
                  env: [{FOO: 'bar', BAR: 'baz'},
@@ -224,7 +235,7 @@ describe Job do
 
     it 'does not change original config' do
       job = Job.new(repository: Factory(:repository))
-      job.expects(:pull_request?).at_least_once.returns(false)
+      job.expects(:secure_env_enabled?).at_least_once.returns(true)
 
       config = {
                  env: [{secure: 'invalid'}],
@@ -241,7 +252,7 @@ describe Job do
 
     it 'leaves regular vars untouched' do
       job = Job.new(repository: Factory(:repository))
-      job.expects(:pull_request?).returns(false).at_least_once
+      job.expects(:secure_env_enabled?).returns(true).at_least_once
       job.config = { rvm: '1.8.7', env: 'FOO=foo', global_env: 'BAR=bar' }
 
       job.decrypted_config.should == {
@@ -251,10 +262,10 @@ describe Job do
       }
     end
 
-    context 'when job is from a pull request' do
+    context 'when secure env is not enabled' do
       let :job do
         job = Job.new(repository: Factory(:repository))
-        job.expects(:pull_request?).returns(true).at_least_once
+        job.expects(:secure_env_enabled?).returns(false).at_least_once
         job
       end
 
@@ -283,6 +294,15 @@ describe Job do
           env: ['FOO=foo']
         }
       end
+    end
+
+    context 'when addons are disabled' do
+      let :job do
+        job = Job.new(repository: Factory(:repository))
+        job.expects(:addons_enabled?).returns(false).at_least_once
+        job
+      end
+
 
       it 'removes addons config' do
         config = { rvm: '1.8.7',
@@ -301,10 +321,10 @@ describe Job do
       end
     end
 
-    context 'when job is *not* from pull request' do
+    context 'when job has secure env enabled' do
       let :job do
         job = Job.new(repository: Factory(:repository))
-        job.expects(:pull_request?).returns(false).at_least_once
+        job.expects(:secure_env_enabled?).returns(true).at_least_once
         job
       end
 
@@ -334,6 +354,14 @@ describe Job do
           env: ['SECURE BAR=bar', 'FOO=foo'],
           global_env: ['SECURE BAZ=baz', 'QUX=qux']
         }
+      end
+    end
+
+    context 'when job has addons enabled' do
+      let :job do
+        job = Job.new(repository: Factory(:repository))
+        job.expects(:addons_enabled?).returns(true).at_least_once
+        job
       end
 
       it 'decrypts addons config' do

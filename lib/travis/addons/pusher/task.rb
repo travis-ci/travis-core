@@ -27,6 +27,8 @@ module Travis
           case client_event
           when 'job:log'
             ["job-#{payload[:id]}"]
+          when /^worker/
+            ['workers']
           else
             ['common']
           end

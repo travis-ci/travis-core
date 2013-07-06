@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'actionmailer',      '~> 3.2.12'
   s.add_dependency 'railties',          '~> 3.2.12'
   s.add_dependency 'rollout',           '~> 1.1.0'
-  s.add_dependency 'coder',             '~> 0.3.0'
+  s.add_dependency 'coder',             '~> 0.4.0'
 
   # db
   s.add_dependency 'data_migrations',   '~> 0.0.1'
@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'metriks',           '~> 0.9.7'
 
   # app
-  s.add_dependency 'simple_states',     '~> 0.1.1'
+  s.add_dependency 'simple_states',     '~> 1.0.0'
 
   # apis
   s.add_dependency 'pusher',            '~> 0.11.0'

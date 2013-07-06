@@ -41,6 +41,10 @@ class Repository < ActiveRecord::Base
       where(arel_table[:last_build_started_at].not_eq(nil)).order(arel_table[:last_build_started_at].desc)
     end
 
+    def with_builds
+      where(arel_table[:last_build_id].not_eq(nil))
+    end
+
     def administratable
       includes(:permissions).where('permissions.admin = ?', true)
     end
@@ -105,14 +109,28 @@ class Repository < ActiveRecord::Base
   end
 
   def branches
-    self.class.connection.select_values %(
-      SELECT DISTINCT ON (branch) branch
-      FROM   builds
-      JOIN   commits ON builds.commit_id = commits.id
-      WHERE  builds.repository_id = #{id}
-      ORDER  BY branch DESC
-      LIMIT  25
-    )
+    if Build.column_names.include?('branch')
+      self.class.connection.select_values %(
+        SELECT DISTINCT ON (branch) branch
+        FROM   builds
+        WHERE  builds.repository_id = #{id}
+        ORDER  BY branch DESC
+        LIMIT  25
+      )
+    else
+      self.class.connection.select_values %(
+        SELECT DISTINCT ON (commits.branch) branch
+        FROM   builds
+        JOIN   commits ON builds.commit_id = commits.id
+        WHERE  builds.repository_id = #{id}
+        ORDER  BY commits.branch DESC
+        LIMIT  25
+      )
+    end
+  end
+
+  def last_completed_build(branch = nil)
+    builds.pushes.last_build_on(state: [:passed, :failed, :errored], branch: branch)
   end
 
   def build_status(branch)
@@ -124,14 +142,24 @@ class Repository < ActiveRecord::Base
   end
 
   def last_finished_builds_by_branches_ids
-    self.class.connection.select_values %(
-      SELECT DISTINCT ON (branch) builds.id
-      FROM   builds
-      JOIN   commits ON builds.commit_id = commits.id
-      WHERE  builds.repository_id = #{id}
-      ORDER  BY branch, finished_at DESC
-      LIMIT  25
-    )
+    if Build.column_names.include?('branch')
+      self.class.connection.select_values %(
+        SELECT DISTINCT ON (branch) builds.id
+        FROM   builds
+        WHERE  builds.repository_id = #{id}
+        ORDER  BY branch, finished_at DESC
+        LIMIT  25
+      )
+    else
+      self.class.connection.select_values %(
+        SELECT DISTINCT ON (commits.branch) builds.id
+        FROM   builds
+        JOIN   commits ON builds.commit_id = commits.id
+        WHERE  builds.repository_id = #{id}
+        ORDER  BY commits.branch, finished_at DESC
+        LIMIT  25
+      )
+    end
   end
 
   def regenerate_key!

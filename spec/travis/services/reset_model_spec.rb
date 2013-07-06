@@ -11,7 +11,7 @@ describe Travis::Services::ResetModel do
 
   describe 'given a job_id' do
     let(:service) { described_class.new(user, job_id: job.id, token: 'token') }
-    let(:job)     { Factory(:test, state: :finished) }
+    let(:job)     { Factory(:test, state: :passed) }
 
     before :each do
       service.stubs(:service).with(:find_job, id: job.id).returns(stub(run: job))

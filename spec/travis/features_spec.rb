@@ -24,6 +24,7 @@ describe Travis::Features do
 
     let(:repository) {Factory(:repository)}
     let!(:user) {Factory(:user)}
+    let(:organization) {Factory(:org)}
 
     it "should return true if the repository's owner is activated" do
       expect {
@@ -77,6 +78,25 @@ describe Travis::Features do
         }.to change {
           Travis::Features.active?(:feature, repository)
         }
+      end
+    end
+
+    describe "for owners" do
+      it "allows enabling features for an owner" do
+        Travis::Features.activate_owner(:feature, repository.owner)
+        Travis::Features.owner_active?(:feature, repository.owner).should == true
+      end
+
+      it "allows disabling features for an owner" do
+        Travis::Features.activate_owner(:feature, repository.owner)
+        Travis::Features.owner_active?(:feature, repository.owner).should == true
+        Travis::Features.deactivate_owner(:feature, repository.owner)
+        Travis::Features.owner_active?(:feature, repository.owner).should == false
+      end
+
+      it "allows enabling features for an organization" do
+        Travis::Features.activate_owner(:feature, organization)
+        Travis::Features.owner_active?(:feature, organization).should == true
       end
     end
   end
