@@ -68,7 +68,7 @@ class Request
       end
 
       def add_parse_error_build
-        builds.transaction do
+        Build.transaction do
           build = add_build
           job = build.matrix.first
           job.log_content = "\033[31;1mERROR\033[0m: An error occured while trying to parse your .travis.yml file.\n\nPlease make sure that the file is valid YAML.\n\n"
