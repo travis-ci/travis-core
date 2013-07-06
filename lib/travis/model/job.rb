@@ -141,7 +141,7 @@ class Job < ActiveRecord::Base
 
   def log_content=(content)
     create_log! unless log
-    log.update_attributes(:content => content)
+    log.update_attributes(content: content, aggregated_at: Time.now)
   end
 
   private
