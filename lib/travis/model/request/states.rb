@@ -22,7 +22,7 @@ class Request
       elsif config.present?
         Travis.logger.warn("[request:configure] Request not configured: config not blank, config=#{config.inspect} commit=#{commit.try(:commit).inspect}")
       else
-        self.config = fetch_config
+        self.config = fetch_config.deep_symbolize_keys
 
         if branch_accepted?
           Travis.logger.info("[request:configure] Request successfully configured commit=#{commit.commit.inspect}")
@@ -77,7 +77,7 @@ class Request
       end
 
       def parse_error?
-        config[".result"] == "parse_error"
+        config[:".result"] == "parse_error"
       end
   end
 end
