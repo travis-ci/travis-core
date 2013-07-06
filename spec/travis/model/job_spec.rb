@@ -385,6 +385,20 @@ describe Job do
           }
         }
       end
+
+      it 'decrypts deploy addon config' do
+        config = { rvm: '1.8.7',
+                   deploy: { foo: job.repository.key.secure.encrypt('foobar') }
+                 }
+        job.config = config
+
+        job.decrypted_config.should == {
+          rvm: '1.8.7',
+          addons: {
+            deploy: { foo: 'foobar' }
+          }
+        }
+      end
     end
   end
 

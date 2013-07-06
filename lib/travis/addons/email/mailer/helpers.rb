@@ -63,7 +63,7 @@ module Travis
             diff % ONE_MINUTE
           end
 
-          def notes_for(jobs, format)
+          def notes_for(jobs)
             tags_for(jobs).map do |tag|
               rule = rule_for(tag)
               rule.symbolize_keys.merge(jobs: numbers_for(jobs, tag)) if rule

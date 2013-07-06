@@ -6,16 +6,27 @@ describe Travis::Github::Services::SyncUser::Organizations do
   describe 'run' do
     let(:user)    { Factory(:user, :login => 'sven', :github_oauth_token => '123456') }
     let(:action)  { lambda { described_class.new(user).run } }
-    let(:data)    { [{ 'id' => 1, 'login' => 'login' }] }
+    let(:data)    { [{ 'id' => 1, 'login' => 'small' }] }
 
     before :each do
       GH.stubs(:[]).with('user/orgs').returns(data)
-      GH.stubs(:[]).with('orgs/login').returns({})
+      GH.stubs(:[]).with('organizations/1').returns({
+        "id" => 1,
+        "name" => "MEGA ORG",
+        "company" => "Mega Org GmbH",
+        "location" => "Berlin",
+        "email" => "mega@org.com",
+        "login" => "mega",
+        "_links" => {
+          "avatar" => { "href" => "https://secure.gravatar.com/avatar/253768044712357787be0f6a3a53cc66?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-org-420.png" },
+          "blog" => { "href" => "http://travis-ci.org" }
+        }
+      })
     end
 
     describe 'with organization with repos over limit' do
       before do
-        GH.expects(:[]).with('orgs/FooBar').returns('public_repositories' => 11)
+        GH.expects(:[]).with('organizations/2').returns('public_repositories' => 11)
         @old_optons = Travis.config.sync.organizations
         Travis.config.sync.organizations = { :repositories_limit => 10 }
       end
@@ -24,7 +35,7 @@ describe Travis::Github::Services::SyncUser::Organizations do
         Travis.config.sync.organizations = @old_options
       end
 
-      let(:data)    { [{ 'id' => 1, 'login' => 'FooBar' }] }
+      let(:data) { [{ 'id' => 2, 'login' => 'FooBar' }] }
 
       it 'does not create organization matching "exclude" list' do
         action.should_not change(Organization, :count)
@@ -49,9 +60,9 @@ describe Travis::Github::Services::SyncUser::Organizations do
       end
 
       it 'updates the organization attributes' do
-        org = Organization.create!(:github_id => 1, :login => 'old-login')
+        org = Organization.create!(:github_id => 1, :login => 'small')
         action.call
-        org.reload.login.should == 'login'
+        org.reload.login.should == 'mega'
       end
 
       it 'makes the user a member of the organization' do
@@ -84,8 +95,30 @@ describe Travis::Github::Services::SyncUser::Organizations::Instrument do
   before :each do
     Travis::Notification.publishers.replace([publisher])
     GH.stubs(:[]).with('user/orgs').returns data
-    GH.stubs(:[]).with('orgs/travis-ci').returns({})
-    GH.stubs(:[]).with('orgs/sinatra').returns({})
+    GH.stubs(:[]).with('organizations/1').returns({
+      "id" => 1,
+      "name" => "Travis CI",
+      "company" => "Travis CI GmbH",
+      "location" => "Berlin",
+      "email" => "contact@travis-ci.org",
+      "login" => "travis-ci",
+      "_links" => {
+        "avatar" => { "href" => "https://secure.gravatar.com/avatar/253768044712357787be0f6a3a53cc66?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-org-420.png" },
+        "blog" => { "href" => "http://travis-ci.org" }
+      }
+    })
+    GH.stubs(:[]).with('organizations/2').returns({
+      "id" => 2,
+      "name" => "Sinatra",
+      "company" => nil,
+      "location" => nil,
+      "email" => nil,
+      "login" => "sinatra",
+      "_links" => {
+        "avatar" => { "href" => "https://secure.gravatar.com/avatar/253768044712357787be0f6a3a53cc66?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-org-420.png" },
+        "blog" => { "href" => "http://sinatra.org" }
+      }
+    })
     service.run
   end
 
