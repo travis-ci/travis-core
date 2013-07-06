@@ -149,7 +149,7 @@ describe Request::States do
 
       before :each do
         request.stubs(:add_build).returns(build)
-        request.stubs(:config).returns(:'.result' => 'parse_error')
+        request.stubs(:config).returns('.result' => 'parse_error')
       end
 
       it 'builds the build' do

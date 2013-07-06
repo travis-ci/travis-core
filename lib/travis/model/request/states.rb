@@ -78,7 +78,7 @@ class Request
       end
 
       def parse_error?
-        config[:".result"] == "parse_error"
+        config[".result"] == "parse_error"
       end
   end
 end
