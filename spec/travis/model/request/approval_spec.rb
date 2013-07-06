@@ -113,7 +113,7 @@ describe Request::Approval do
     end
 
     it 'returns true when a PR is for gh_pages' do
-      request.commit.stubs(:ref).returns 'patch-1'
+      request.commit.stubs(:ref).returns 'refs/pulls/1/merge'
       request.commit.stubs(:branch).returns 'gh_pages'
       approval.send(:github_pages?).should be_true
     end
