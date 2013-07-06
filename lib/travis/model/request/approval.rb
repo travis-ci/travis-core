@@ -59,7 +59,7 @@ class Request
       end
 
       def github_pages?
-        commit.ref =~ /gh[-_]pages/i
+        commit.branch =~ /gh[-_]pages/i
       end
 
       def excluded_repository?
