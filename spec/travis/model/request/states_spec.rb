@@ -144,7 +144,7 @@ describe Request::States do
     end
 
     describe 'with a config parse error' do
-      let(:job) { stub(:start => nil, :finish => nil, :log_content= => nil) }
+      let(:job) { stub(:finish! => nil, :log_content= => nil) }
       let(:build) { stub(:matrix => [job]) }
 
       before :each do
