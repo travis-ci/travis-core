@@ -69,8 +69,7 @@ class Request
 
       def add_parse_error_build
         build = add_build
-        build.expand_matrix
-        job = build.matrix.first
+        job = build.expand_matrix.first
         job.start!(started_at: Time.now.utc)
         job.log_content = <<ERROR
 \033[31;1mERROR\033[0m: An error occured while trying to parse your .travis.yml file.
@@ -79,7 +78,6 @@ Please make sure that the file is valid YAML.
 
 The error was "#{config[".parse_error"]}".
 ERROR
-        job.save
         job.finish!(state: "errored", finished_at: Time.now.utc)
       end
 

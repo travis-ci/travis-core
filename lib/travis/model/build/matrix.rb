@@ -82,6 +82,7 @@ class Build
         matrix.build(attributes)
       end
       matrix_allow_failures # TODO should be able to join this with the loop above
+      matrix
     end
 
     def expand_matrix!
