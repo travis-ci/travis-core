@@ -43,7 +43,7 @@ class Request
         Travis.logger.info("[request:finish] Request created but Build and Job automatically errored due to a config parsing error. commit=#{commit.try(:commit).inspect}")
         add_parse_error_build
       else
-        add_build.expand_matrix
+        add_build.expand_matrix!
         Travis.logger.info("[request:finish] Request created a build. commit=#{commit.try(:commit).inspect}")
       end
       self.result = approval.result

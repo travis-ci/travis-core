@@ -84,6 +84,11 @@ class Build
       matrix_allow_failures # TODO should be able to join this with the loop above
     end
 
+    def expand_matrix!
+      expand_matrix
+      save!
+    end
+
     protected
 
       def expand_config(row)
