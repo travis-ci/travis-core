@@ -78,8 +78,8 @@ Please make sure that the file is valid YAML.
 
 The error was "#{config[".result_message"]}".
 ERROR
-        sleep(1)
-        job.finish!(state: "errored", finished_at: Time.now.utc)
+        job.finish!(state: "errored",   finished_at: Time.now.utc)
+        build.finish!(state: "errored", finished_at: Time.now.utc)
       end
 
       def parse_error?
