@@ -154,7 +154,6 @@ class Build < ActiveRecord::Base
     self.pull_request_title = request.pull_request_title
     self.pull_request_number = request.pull_request_number
     self.branch = commit.branch if Build.column_names.include?('branch')
-    expand_matrix
   end
 
   def secure_env_enabled?
