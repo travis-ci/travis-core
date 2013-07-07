@@ -21,6 +21,12 @@ describe Travis::Github::Services::FindOrCreateUser do
     user.repositories << Factory(:repository, owner_name: 'foobar', name: 'foo', owner: user)
     user.repositories << Factory(:repository, owner_name: 'foobar', name: 'bar', owner: user)
 
+    # repository with the same owner_id, but which is of organization type
+    organization = Factory(:org, id: user.id)
+    ActiveRecord::Base.connection.execute("SELECT setval('organizations_id_seq', (SELECT MAX(id) FROM organizations));")
+    org_repository = Factory(:repository, owner_name: 'dont_change_me', owner: organization)
+    organization.repositories << org_repository
+
     same_login_user = Factory(:user, login: 'foobarbaz', github_id: 998)
     same_login_org  = Factory(:org, login: 'foobarbaz', github_id: 997)
     @params = { github_id: user.github_id, login: 'foobarbaz' }
@@ -29,6 +35,7 @@ describe Travis::Github::Services::FindOrCreateUser do
     user.reload.repositories.map(&:owner_name).uniq.should == ['foobarbaz']
     same_login_user.reload.login.should be_nil
     same_login_org.reload.login.should be_nil
+    org_repository.reload.owner_name.should == 'dont_change_me'
   end
 
   it 'creates a user from github' do

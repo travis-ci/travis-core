@@ -15,7 +15,7 @@ module Travis
               if user
                 if user.login != params[:login]
                   user.update_attributes(params.slice(:login))
-                  Repository.where(owner_id: user.id).update_all(owner_name: params[:login])
+                  Repository.where(owner_id: user.id, owner_type: 'User').update_all(owner_name: params[:login])
                 end
 
                 nullify_logins(user.github_id, user.login)
