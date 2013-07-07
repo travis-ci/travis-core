@@ -92,7 +92,7 @@ class Job < ActiveRecord::Base
   end
 
   def obfuscated_config
-    config.deep_dup.tap do |config|
+    normalize_config(config).deep_dup.tap do |config|
       config.delete(:addons)
       config.delete(:source_key)
       if config[:env]
@@ -107,7 +107,7 @@ class Job < ActiveRecord::Base
   end
 
   def decrypted_config
-    self.config.deep_dup.tap do |config|
+    normalize_config(self.config).deep_dup.tap do |config|
       config[:env] = process_env(config[:env]) { |env| decrypt_env(env) } if config[:env]
       config[:global_env] = process_env(config[:global_env]) { |env| decrypt_env(env) } if config[:global_env]
       if config[:addons]
