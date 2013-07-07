@@ -13,15 +13,42 @@ module Travis
         private
 
           def find
-            ::Organization.where(:login => params[:login]).first
+            ::Organization.where(:github_id => params[:github_id]).first.tap do |organization|
+              if organization
+                if organization.login != params[:login]
+                  organization.update_attributes(params.slice(:login))
+                  Repository.where(owner_id: organization.id, owner_type: ::Organization).update_all(owner_name: params[:login])
+                end
+
+                nullify_logins(organization.github_id, organization.login)
+              end
+            end
+          end
+
+          def nullify_logins(github_id, login)
+            users = User.where(["login = ?", login])
+            if users.exists?
+              Travis.logger.info("About to nullify login (#{login}) for users: #{users.map(&:id).join(', ')}")
+              users.update_all(login: nil)
+            end
+
+            organizations = Organization.where(["github_id <> ? AND login = ?", github_id, login])
+            if organizations.exists?
+              Travis.logger.info("About to nullify login (#{login}) for organizations: #{organizations.map(&:id).join(', ')}")
+              organizations.update_all(login: nil)
+            end
           end
 
           def create
-            Organization.create!(
+            organization = Organization.create!(
               :name => data['name'],
               :login => data['login'],
               :github_id => data['id']
             )
+
+            nullify_logins(organization.github_id, organization.login)
+
+            organization
           end
 
           def data
