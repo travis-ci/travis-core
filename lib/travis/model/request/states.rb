@@ -76,7 +76,7 @@ class Request
 
 Please make sure that the file is valid YAML.
 
-The error was "#{config[".parse_error"]}".
+The error was "#{config[".result_message"]}".
 ERROR
         job.finish!(state: "errored", finished_at: Time.now.utc)
       end

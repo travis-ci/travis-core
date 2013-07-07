@@ -44,7 +44,7 @@ describe Travis::Github::Services::FetchConfig do
 
     it "returns the error message for an invalid .travis.yml file" do
       GH.stubs(:[]).returns({ "content" => ["\tfoo: Foo"].pack("m") })
-      result[".parse_error"].should match(/line 1 column 1/)
+      result[".result_message"].should match(/line 1 column 1/)
     end
 
     it "converts non-breaking spaces to normal spaces" do

@@ -49,7 +49,7 @@ module Travis
             log_exception(e)
             {
               '.result' => 'parse_error',
-              '.parse_error' => e.is_a?(Psych::SyntaxError) ? e.message.split(": ").last : e.message
+              '.result_message' => e.is_a?(Psych::SyntaxError) ? e.message.split(": ").last : e.message
             }
           end
 
