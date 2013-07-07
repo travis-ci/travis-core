@@ -71,7 +71,13 @@ class Request
         Build.transaction do
           build = add_build
           job = build.matrix.first
-          job.log_content = "\033[31;1mERROR\033[0m: An error occured while trying to parse your .travis.yml file.\n\nPlease make sure that the file is valid YAML.\n\n"
+          job.log_content = <<ERROR
+\033[31;1mERROR\033[0m: An error occured while trying to parse your .travis.yml file.
+
+Please make sure that the file is valid YAML.
+
+The error was "#{config[".parse_error"]}".
+ERROR
           job.finish!(:state => 'errored', :started_at => Time.now.utc, :finished_at => Time.now.utc)
         end
       end
