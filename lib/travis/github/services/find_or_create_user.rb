@@ -38,8 +38,17 @@ module Travis
           end
 
           def nullify_logins(github_id, login)
-            User.where(["github_id <> ? AND login = ?", github_id, login]).update_all(login: nil)
-            Organization.where(["login = ?", login]).update_all(login: nil)
+            users = User.where(["github_id <> ? AND login = ?", github_id, login])
+            if users.exists?
+              Travis.logger.info("About to nullify login (#{login}) for users: #{users.map(&:id).join(', ')}")
+              users.update_all(login: nil)
+            end
+
+            organizations = Organization.where(["login = ?", login])
+            if organizations.exists?
+              Travis.logger.info("About to nullify login (#{login}) for organizations: #{organizations.map(&:id).join(', ')}")
+              organizations.update_all(login: nil)
+            end
           end
 
           def data
