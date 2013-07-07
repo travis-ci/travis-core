@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130702154300) do
+ActiveRecord::Schema.define(:version => 20130707164854) do
 
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
@@ -157,6 +157,8 @@ ActiveRecord::Schema.define(:version => 20130702154300) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  add_index "organizations", ["github_id"], :name => "index_organizations_on_github_id", :unique => true
 
   create_table "permissions", :force => true do |t|
     t.integer "user_id"
