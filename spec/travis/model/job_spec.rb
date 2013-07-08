@@ -9,7 +9,7 @@ describe Job do
     it "returns jobs that are created but not started or finished" do
       jobs.first.start!
       jobs.third.start!
-      jobs.third.finish!(result: 'passed')
+      jobs.third.finish!(state: 'passed')
 
       Job.queued.should include(jobs.second)
       Job.queued.should_not include(jobs.first)
