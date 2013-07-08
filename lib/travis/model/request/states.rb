@@ -39,6 +39,9 @@ class Request
         Travis.logger.warn("[request:finish] Request not creating a build: config is blank, config=#{config.inspect} commit=#{commit.try(:commit).inspect}")
       elsif !approved?
         Travis.logger.warn("[request:finish] Request not creating a build: not approved commit=#{commit.try(:commit).inspect} message=#{approval.message.inspect}")
+      elsif parse_error?
+        Travis.logger.info("[request:finish] Request created but Build and Job automatically errored due to a config parsing error. commit=#{commit.try(:commit).inspect}")
+        add_parse_error_build
       else
         add_build
         Travis.logger.info("[request:finish] Request created a build. commit=#{commit.try(:commit).inspect}")
@@ -62,6 +65,27 @@ class Request
 
       def add_build
         builds.create!(:repository => repository, :commit => commit, :config => config, :owner => owner)
+      end
+
+      def add_parse_error_build
+        Build.transaction do
+          build = add_build
+          job = build.matrix.first
+          job.start!(started_at: Time.now.utc)
+          job.log_content = <<ERROR
+\033[31;1mERROR\033[0m: An error occured while trying to parse your .travis.yml file.
+
+Please make sure that the file is valid YAML.
+
+The error was "#{config[".result_message"]}".
+ERROR
+          job.finish!(state: "errored",   finished_at: Time.now.utc)
+          build.finish!(state: "errored", finished_at: Time.now.utc)
+        end
+      end
+
+      def parse_error?
+        config[".result"] == "parse_error"
       end
   end
 end
