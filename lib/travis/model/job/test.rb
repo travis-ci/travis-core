@@ -66,11 +66,11 @@ class Job
     end
 
     def passed?
-      state == "passed"
+      state.to_s == "passed"
     end
 
     def failed?
-      state == "failed"
+      state.to_s == "failed"
     end
 
     def unknown?
