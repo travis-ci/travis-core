@@ -6,6 +6,6 @@ class AddIndexOnGithubIdToOrganizations < ActiveRecord::Migration
   end
 
   def down
-    execute "DROP INDEX CONCURRENTLY index_organizations_on_github_id"
+    execute "DROP INDEX index_organizations_on_github_id"
   end
 end
