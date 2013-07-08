@@ -58,6 +58,8 @@ class Build < ActiveRecord::Base
 
   serialize :config
 
+  delegate :same_repo_pull_request?, :to => :request
+
   class << self
     def recent(options = {})
       where('state IN (?)', state_names - [:created, :queued]).order(arel_table[:started_at].desc).paged(options)
@@ -155,6 +157,11 @@ class Build < ActiveRecord::Base
     expand_matrix
   end
 
+  def secure_env_enabled?
+    !pull_request? || same_repo_pull_request?
+  end
+  alias addons_enabled? secure_env_enabled?
+
   # sometimes the config is not deserialized and is returned
   # as a string, this is a work around for now :(
   def config
@@ -164,6 +171,9 @@ class Build < ActiveRecord::Base
       deserialized = YAML.load(deserialized)
     end
     deserialized
+  rescue Psych::SyntaxError => e
+    logger.warn "[build id:#{id}] Config could not be deserialized due to #{e.message}"
+    {}
   end
 
   def config=(config)
@@ -172,8 +182,8 @@ class Build < ActiveRecord::Base
 
   def obfuscated_config
     config.dup.tap do |config|
+      config.delete(:source_key)
       next unless config[:env]
-
       config[:env] = [config[:env]] unless config[:env].is_a?(Array)
       if config[:env]
         config[:env] = config[:env].map do |env|

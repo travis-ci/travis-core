@@ -41,7 +41,7 @@ describe Travis::Api::V1::Pusher::Build::Finished do
       'last_build_started_at' => json_format_time(Time.now.utc - 1.minute),
       'last_build_finished_at' => json_format_time(Time.now.utc),
       'last_build_duration' => 60,
-      'last_build_language' => 'ruby',
+      'last_build_language' => nil,
       'description' => 'the repo description',
     }
   end

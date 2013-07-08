@@ -12,7 +12,7 @@ module Travis
 
       def run
         if repository
-          admin = candidates.detect { |user| validate(user) }
+          admin = candidates.first
           admin || raise_admin_missing
         else
           error "[github-admin] repository is nil: #{params.inspect}"
@@ -32,14 +32,19 @@ module Travis
         end
 
         def validate(user)
-          data = Github.authenticated(user) { repository_data }
-          if data['permissions'] && data['permissions']['admin']
-            user
-          else
-            info "[github-admin] #{user.login} no longer has admin access to #{repository.slug}"
-            update(user, data['permissions'])
-            false
+          Timeout.timeout(2) do
+            data = Github.authenticated(user) { repository_data }
+            if data['permissions'] && data['permissions']['admin']
+              user
+            else
+              info "[github-admin] #{user.login} no longer has admin access to #{repository.slug}"
+              update(user, data['permissions'])
+              false
+            end
           end
+        rescue Timeout::Error => error
+          handle_error(user, error)
+          false
         rescue GH::Error => error
           handle_error(user, error)
           false

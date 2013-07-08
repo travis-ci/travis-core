@@ -39,7 +39,7 @@ module Travis
               'last_build_duration' => repository.last_build_duration,
               'last_build_state' => repository.last_build_state.try(:to_s),
               'last_build_result' => legacy_repository_last_build_result(repository),
-              'last_build_language' => repository.last_build_language
+              'last_build_language' => nil
             }
           end
 

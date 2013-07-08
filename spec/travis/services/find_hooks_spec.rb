@@ -5,13 +5,26 @@ describe Travis::Services::FindHooks do
 
   let(:user)    { User.first || Factory(:user) }
   let(:repo)    { Factory(:repository) }
+  let(:push_repo) { Factory(:repository, name: 'push-repo') }
   let(:service) { described_class.new(user, params) }
 
   before :each do
     user.permissions.create!(:repository => repo, :admin => true)
+    user.permissions.create!(:repository => push_repo, :push => true)
   end
 
   attr_reader :params
+
+  it 'finds repositories where the current user has access with :all option' do
+    @params = { all: true }
+    hooks = service.run
+    hooks.should include(repo)
+    hooks.should include(push_repo)
+    hooks.should have(2).items
+
+    # hooks should include admin information
+    hooks.sort_by(&:id).map(&:admin?).should == [true, false]
+  end
 
   it 'finds repositories where the current user has admin access' do
     @params = {}

@@ -48,7 +48,7 @@ class Request
     private
 
       def skipped?
-        commit.message.to_s =~ /\[ci(?: |:)([\w ]*)\]/i && $1.downcase == 'skip'
+        Travis::CommitCommand.new(commit.message).skip?
       end
 
       def github_pages_explicitly_enabled?
@@ -59,7 +59,7 @@ class Request
       end
 
       def github_pages?
-        commit.ref =~ /gh[-_]pages/i
+        commit.branch =~ /gh[-_]pages/i
       end
 
       def excluded_repository?

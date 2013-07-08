@@ -62,6 +62,7 @@ class Job < ActiveRecord::Base
 
   delegate :request_id, to: :source # TODO denormalize
   delegate :pull_request?, to: :commit
+  delegate :secure_env_enabled?, :addons_enabled?, to: :source
 
   after_initialize do
     self.config = {} if config.nil? rescue nil
@@ -87,12 +88,13 @@ class Job < ActiveRecord::Base
   end
 
   def config=(config)
-    super(config ? config.deep_symbolize_keys : {})
+    super normalize_config(config)
   end
 
   def obfuscated_config
-    config.deep_dup.tap do |config|
+    normalize_config(config).deep_dup.tap do |config|
       config.delete(:addons)
+      config.delete(:source_key)
       if config[:env]
         obfuscated_env = process_env(config[:env]) { |env| obfuscate_env(env) }
         config[:env] = obfuscated_env ? obfuscated_env.join(' ') : nil
@@ -105,17 +107,20 @@ class Job < ActiveRecord::Base
   end
 
   def decrypted_config
-    self.config.deep_dup.tap do |config|
+    normalize_config(self.config).deep_dup.tap do |config|
       config[:env] = process_env(config[:env]) { |env| decrypt_env(env) } if config[:env]
       config[:global_env] = process_env(config[:global_env]) { |env| decrypt_env(env) } if config[:global_env]
       if config[:addons]
-        if pull_request?
-          config.delete(:addons)
-        else
+        if addons_enabled?
           config[:addons] = decrypt_addons(config[:addons])
+        else
+          config.delete(:addons)
         end
       end
     end
+  rescue => e
+    logger.warn "[job id:#{id}] Config could not be decrypted due to #{e.message}"
+    {}
   end
 
   def matrix_config?(config)
@@ -136,13 +141,24 @@ class Job < ActiveRecord::Base
 
   private
 
+    def normalize_config(config)
+      config = config ? config.deep_symbolize_keys : {}
+
+      if config[:deploy]
+        config[:addons] ||= {}
+        config[:addons][:deploy] = config.delete(:deploy)
+      end
+
+      config
+    end
+
     def process_env(env)
       env = [env] unless env.is_a?(Array)
       env = normalize_env(env)
-      env = if pull_request?
-        remove_encrypted_env_vars(env)
-      else
+      env = if secure_env_enabled?
         yield(env)
+      else
+        remove_encrypted_env_vars(env)
       end
       env.compact.presence
     end

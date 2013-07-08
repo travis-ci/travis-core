@@ -49,6 +49,15 @@ describe Travis::Services::FindRepos do
     end
   end
 
+  describe 'given an owner_name name and active param' do
+    it 'finds a repository with that owner_name even if it does not have any builds' do
+      repo.update_column(:last_build_id, nil)
+      repo.update_column(:active, true)
+      @params = { :owner_name => 'travis-ci', :active => true }
+      service.run.should include(repo)
+    end
+  end
+
   describe 'given a slug name' do
     it 'finds a repository with that slug' do
       @params = { :slug => 'travis-ci/travis-core' }

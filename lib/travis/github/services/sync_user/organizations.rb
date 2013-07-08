@@ -31,6 +31,7 @@ module Travis
           end
 
           extend Travis::Instrumentation
+          include Travis::Logging
 
           attr_reader :user, :data
 
@@ -48,12 +49,8 @@ module Travis
           private
 
             def create_or_update
-              fetch.find_all do |data|
-                options = Travis.config.sync.organizations || {}
-                Filter.new(fetch_resource("orgs/#{data['login']}"), options).allow?
-              end.map do |data|
-                org = Organization.find_or_create_by_github_id(data['id'])
-                org.update_attributes!(:name => data['name'], :login => data['login'])
+              fetch_and_filter.map do |data|
+                org = create_or_update_org(data)
                 user.organizations << org unless user.organizations.include?(org)
                 org
               end
@@ -85,10 +82,38 @@ module Travis
               result
             end
 
+            def fetch_and_filter
+              fetch.map do |data|
+                fetch_resource("organizations/#{data['id']}")
+              end.find_all do |data|
+                options = Travis.config.sync.organizations || {}
+                Filter.new(data, options).allow?
+              end
+            end
+
             def fetch_resource(resource)
               GH[resource] # TODO should be: ?type=#{self.class.type} but GitHub doesn't work as documented
             rescue GH::Error => e
               log_exception(e)
+            end
+
+            def create_or_update_org(data)
+              org = Organization.find_or_create_by_github_id(data['id'])
+              org.update_attributes!({
+                :name => data['name'], 
+                :login => data['login'],
+                :email => data['email'],
+                :avatar_url => avatar_url(data['_links']['avatar']),
+                :location => data['location'],
+                :homepage => data['_links']['blog'].try(:fetch, 'href'),
+                :company => data['company']
+              })
+              org
+            end
+
+            def avatar_url(github_data)
+              href = github_data.try(:fetch, 'href')
+              href ? href[/^(https:\/\/[\w\.\/]*)/, 1] : nil
             end
 
             class Instrument < Notification::Instrument

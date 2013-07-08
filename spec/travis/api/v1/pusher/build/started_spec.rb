@@ -46,7 +46,7 @@ describe Travis::Api::V1::Pusher::Build::Started do
       'last_build_duration' => nil,
       'last_build_state' => 'started',
       'last_build_result' => nil,
-      'last_build_language' => 'ruby'
+      'last_build_language' => nil
     }
   end
 end

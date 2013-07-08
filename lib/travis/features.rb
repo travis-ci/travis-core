@@ -91,12 +91,29 @@ module Travis
       redis.set(enabled_for_all_key(feature), 0)
     end
 
+    def activate_owner(feature, owner)
+      redis.sadd(owner_key(feature, owner), owner.id)
+    end
+
+    def deactivate_owner(feature, owner)
+      redis.srem(owner_key(feature, owner), owner.id)
+    end
+
+    def owner_active?(feature, owner)
+      redis.sismember(owner_key(feature, owner), owner.id)
+    end
+
     extend self
 
     private
 
     def key(name)
       "feature:#{name}"
+    end
+
+    def owner_key(feature, owner)
+      suffix = owner.class.table_name
+      "#{key(feature)}:#{suffix}"
     end
 
     def repository_key(feature)
