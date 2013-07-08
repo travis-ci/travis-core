@@ -15,9 +15,11 @@ module Travis
           def find
             ::Organization.where(:github_id => params[:github_id]).first.tap do |organization|
               if organization
-                if organization.login != params[:login]
-                  organization.update_attributes(params.slice(:login))
-                  Repository.where(owner_id: organization.id, owner_type: ::Organization).update_all(owner_name: params[:login])
+                login = params[:login] || data['login']
+                if organization.login != login
+                  organization.update_attributes(login: login)
+                  Repository.where(owner_id: organization.id, owner_type: ::Organization).
+                             update_all(owner_name: login)
                 end
 
                 nullify_logins(organization.github_id, organization.login)

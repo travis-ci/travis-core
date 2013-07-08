@@ -18,6 +18,16 @@ describe Travis::Github::Services::FindOrCreateOrg do
     service.run.should == organization
   end
 
+  it 'gets login from data if login is not available in find' do
+    organization = Factory(:org, login: 'foobar', github_id: 999)
+    @params = { github_id: 999 }
+    service.expects(:data).at_least_once.returns({ 'login' => 'foobarbaz' })
+
+    service.run.should == organization
+
+    organization.reload.login.should == 'foobarbaz'
+  end
+
   it 'updates repositories owner_name and nullifies other users or orgs\' login if login is changed' do
     organization = Factory(:org, login: 'foobar', github_id: 999)
     organization.repositories << Factory(:repository, owner_name: 'foobar', name: 'foo', owner: organization)

@@ -16,6 +16,16 @@ describe Travis::Github::Services::FindOrCreateUser do
     service.run.should == user
   end
 
+  it 'gets login from data if login is not available in find' do
+    user = Factory(:user, login: 'foobar', github_id: 999)
+    @params = { github_id: 999 }
+    service.expects(:data).at_least_once.returns({ 'login' => 'foobarbaz' })
+
+    service.run.should == user
+
+    user.reload.login.should == 'foobarbaz'
+  end
+
   it 'updates repositories owner_name and nullifies other users or orgs\' login if login is changed' do
     user = Factory(:user, login: 'foobar', github_id: 999)
     user.repositories << Factory(:repository, owner_name: 'foobar', name: 'foo', owner: user)
