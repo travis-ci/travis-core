@@ -1,3 +1,5 @@
+require 'travis/model/user/renaming'
+
 module Travis
   module Github
     module Services
@@ -10,14 +12,15 @@ module Travis
 
         private
 
+          include ::User::Renaming
+
           def find
             ::User.where(github_id: params[:github_id]).first.tap do |user|
               if user
                 ActiveRecord::Base.transaction do
                   login = params[:login] || data['login']
                   if user.login != login
-                    Repository.where(owner_name: user.login).
-                               update_all(owner_name: login)
+                    rename_repos_owner(user.login, login)
                     user.update_attributes(login: login)
                   end
                 end
@@ -39,20 +42,6 @@ module Travis
             nullify_logins(user.github_id, user.login)
 
             user
-          end
-
-          def nullify_logins(github_id, login)
-            users = User.where(["github_id <> ? AND login = ?", github_id, login])
-            if users.exists?
-              Travis.logger.info("About to nullify login (#{login}) for users: #{users.map(&:id).join(', ')}")
-              users.update_all(login: nil)
-            end
-
-            organizations = Organization.where(["login = ?", login])
-            if organizations.exists?
-              Travis.logger.info("About to nullify login (#{login}) for organizations: #{organizations.map(&:id).join(', ')}")
-              organizations.update_all(login: nil)
-            end
           end
 
           def data
