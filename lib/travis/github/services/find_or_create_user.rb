@@ -13,11 +13,13 @@ module Travis
           def find
             ::User.where(github_id: params[:github_id]).first.tap do |user|
               if user
-                login = params[:login] || data['login']
-                if user.login != login
-                  user.update_attributes(login: login)
-                  Repository.where(owner_id: user.id, owner_type: 'User').
-                             update_all(owner_name: login)
+                ActiveRecord::Base.transaction do
+                  login = params[:login] || data['login']
+                  if user.login != login
+                    Repository.where(owner_name: user.login).
+                               update_all(owner_name: login)
+                    user.update_attributes(login: login)
+                  end
                 end
 
                 nullify_logins(user.github_id, user.login)

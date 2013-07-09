@@ -15,14 +15,16 @@ module Travis
           def find
             ::Organization.where(:github_id => params[:github_id]).first.tap do |organization|
               if organization
-                login = params[:login] || data['login']
-                if organization.login != login
-                  organization.update_attributes(login: login)
-                  Repository.where(owner_id: organization.id, owner_type: ::Organization).
-                             update_all(owner_name: login)
-                end
+                ActiveRecord::Base.transaction do
+                  login = params[:login] || data['login']
+                  if organization.login != login
+                    Repository.where(owner_name: organization.login).
+                               update_all(owner_name: login)
+                    organization.update_attributes(login: login)
+                  end
 
-                nullify_logins(organization.github_id, organization.login)
+                  nullify_logins(organization.github_id, organization.login)
+                end
               end
             end
           end
