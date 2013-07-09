@@ -56,7 +56,11 @@ module Travis
           end
 
           def data
-            @data ||= GH["orgs/#{params[:login]}"] || raise(Travis::GithubApiError)
+            @data ||= if params[:github_id]
+              GH["user/#{params[:github_id]}"] || raise(Travis::GithubApiError)
+            else
+              GH["orgs/#{params[:login]}"] || raise(Travis::GithubApiError)
+            end
           end
       end
     end

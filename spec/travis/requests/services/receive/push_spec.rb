@@ -21,7 +21,8 @@ describe Travis::Requests::Services::Receive::Push do
     it 'returns all attributes required for an Owner' do
       payload.owner.should == {
         :type => 'User',
-        :login => 'svenfuchs'
+        :login => 'svenfuchs',
+        :github_id => 2208
       }
     end
   end
@@ -57,12 +58,12 @@ describe Travis::Requests::Services::Receive::Push do
         payload.commit[:branch].should == 'features/travis-ci'
       end
     end
-    
+
     it 'returns the last commit that isn\'t skipped' do
       payload = Travis::Requests::Services::Receive.payload_for('push', GITHUB_PAYLOADS['skip-last'])
       payload.commit[:commit].should == '586374eac43853e5542a2e2faafd48047127e4be'
     end
-    
+
     it 'returns the last skipped commit if all commits are skipped' do
       payload = Travis::Requests::Services::Receive.payload_for('push', GITHUB_PAYLOADS['skip-all'])
       payload.commit[:commit].should == '46ebe012ef3c0be5542a2e2faafd48047127e4be'
