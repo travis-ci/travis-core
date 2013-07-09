@@ -27,8 +27,9 @@ module Travis
 
           def owner
             @owner ||= {
-              :type  => event['repository']['owner']['type'],
-              :login => event['repository']['owner']['login']
+              :type      => event['repository']['owner']['type'],
+              :login     => event['repository']['owner']['login'],
+              :github_id => event['repository']['owner']['id']
             }
           end
 

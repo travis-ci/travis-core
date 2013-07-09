@@ -40,8 +40,9 @@ module Travis
 
           def owner
             @owner ||= {
-              :type  => repo_owner['type'],
-              :login => repo_owner['login']
+              :type      => repo_owner['type'],
+              :login     => repo_owner['login'],
+              :github_id => repo_owner['id']
             }
           end
 
