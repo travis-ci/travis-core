@@ -14,6 +14,7 @@ module User::Renaming
   end
 
   def rename_repos_owner(old_login, new_login)
+    return if old_login == new_login
     Repository.where(owner_name: old_login).
                update_all(owner_name: new_login)
   end
