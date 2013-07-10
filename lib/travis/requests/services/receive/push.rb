@@ -14,6 +14,7 @@ module Travis
           end
 
           def repository
+            p event
             @repository ||= {
               :name        => event['repository']['name'],
               :description => event['repository']['description'],
@@ -21,7 +22,8 @@ module Travis
               :owner_name  => event['repository']['owner']['login'],
               :owner_email => event['repository']['owner']['email'],
               :owner_type  => event['repository']['owner']['type'],
-              :private     => !!event['repository']['private']
+              :private     => !!event['repository']['private'],
+              :github_id   => event['repository']['id']
             }
           end
 

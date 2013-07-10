@@ -12,7 +12,8 @@ describe Travis::Requests::Services::Receive::Push do
         :owner_name => 'svenfuchs',
         :owner_email => 'svenfuchs@artweb-design.de',
         :owner_type => 'User',
-        :private => false
+        :private => false,
+        :github_id => 100
       }
     end
   end

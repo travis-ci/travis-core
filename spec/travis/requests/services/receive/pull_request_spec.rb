@@ -76,7 +76,8 @@ describe Travis::Requests::Services::Receive::PullRequest do
         :owner_type => 'Organization',
         :owner_name => 'travis-repos',
         :owner_email => nil,
-        :private => false
+        :private => false,
+        :github_id => 1615549
       }
     end
   end

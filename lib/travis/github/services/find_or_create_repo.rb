@@ -13,11 +13,19 @@ module Travis
         private
 
           def find
-            run_service(:find_repo, :owner_name => params[:owner_name], :name => params[:name])
+            ActiveSupport::Deprecation.warn("No github_id passed to FindOrCreateRepo#find, params: #{params.inspect}") unless params[:github_id]
+            query = if params[:github_id]
+              { github_id: params[:github_id] }
+            else
+              { owner_name: params[:owner_name], name: params[:name] }
+            end
+
+            run_service(:find_repo, query)
           end
 
           def create
-            Repository.create!(:owner_name => params[:owner_name], :name => params[:name])
+            ActiveSupport::Deprecation.warn("No github_id passed to FindOrCreateRepo#create, params: #{params.inspect}") unless params[:github_id]
+            Repository.create!(:owner_name => params[:owner_name], :name => params[:name], github_id: params[:github_id])
           end
       end
     end
