@@ -60,6 +60,10 @@ describe Repository do
     describe 'find_by' do
       let(:minimal) { Factory(:repository) }
 
+      it "should find a repository by it's github_id" do
+        Repository.find_by(github_id: minimal.github_id).should == minimal
+      end
+
       it "should find a repository by it's id" do
         Repository.find_by(id: minimal.id).id.should == minimal.id
       end
