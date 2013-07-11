@@ -14,7 +14,6 @@ module Travis
           end
 
           def repository
-            p event
             @repository ||= {
               :name        => event['repository']['name'],
               :description => event['repository']['description'],

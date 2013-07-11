@@ -13,7 +13,12 @@ module Travis
         private
 
           def find
-            ActiveSupport::Deprecation.warn("No github_id passed to FindOrCreateRepo#find, params: #{params.inspect}") unless params[:github_id]
+            unless params[:github_id]
+              message = "No github_id passed to FindOrCreateRepo#find, params: #{params.inspect}"
+              ActiveSupport::Deprecation.warn(message)
+              Travis.logger.info(message)
+            end
+
             query = if params[:github_id]
               { github_id: params[:github_id] }
             else
@@ -24,7 +29,11 @@ module Travis
           end
 
           def create
-            ActiveSupport::Deprecation.warn("No github_id passed to FindOrCreateRepo#create, params: #{params.inspect}") unless params[:github_id]
+            unless params[:github_id]
+              message = "No github_id passed to FindOrCreateRepo#find, params: #{params.inspect}"
+              ActiveSupport::Deprecation.warn(message)
+              Travis.logger.info(message)
+            end
             Repository.create!(:owner_name => params[:owner_name], :name => params[:name], github_id: params[:github_id])
           end
       end
