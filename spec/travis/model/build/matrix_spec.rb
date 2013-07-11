@@ -173,6 +173,24 @@ describe Build, 'matrix' do
     yml
     }
 
+    let(:multiple_tests_config_with_global_env_and_exclusion) {
+      YAML.load <<-yml
+      rvm:
+        - 1.9.2
+        - 2.0.0
+      gemfile:
+        - gemfiles/rails-3.1.x
+        - gemfiles/rails-4.0.x
+      env:
+        global:
+          - FOO=bar
+      matrix:
+        exclude:
+          - rvm: 1.9.2
+            gemfile: gemfiles/rails-4.0.x
+      yml
+    }
+
     let(:multiple_tests_config_with_invalid_exculsion) {
       YAML.load <<-yml
       rvm:
@@ -412,6 +430,17 @@ describe Build, 'matrix' do
             { rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.x', matrix: matrix_exclusion },
             { rvm: '1.9.2', gemfile: 'gemfiles/rails-3.1.x', matrix: matrix_exclusion }
           ]
+        end
+
+        it "excludes a matrix config without specifying global env vars in the exclusion" do
+          build = Factory(:build, config: multiple_tests_config_with_global_env_and_exclusion)
+          matrix_exclusion = { exclude: [{ rvm: "1.9.2", gemfile: "gemfiles/rails-4.0.x" }] }
+
+          build.matrix.map(&:config).should eq([
+            { rvm: "1.9.2", gemfile: "gemfiles/rails-3.1.x", matrix: matrix_exclusion, global_env: ["FOO=bar"] },
+            { rvm: "2.0.0", gemfile: "gemfiles/rails-3.1.x", matrix: matrix_exclusion, global_env: ["FOO=bar"] },
+            { rvm: "2.0.0", gemfile: "gemfiles/rails-4.0.x", matrix: matrix_exclusion, global_env: ["FOO=bar"] },
+          ])
         end
 
         it 'does not exclude a matrix config when the matrix exclusion definition is incomplete' do

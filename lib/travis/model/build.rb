@@ -311,7 +311,11 @@ class Build < ActiveRecord::Base
       config = config.deep_symbolize_keys
       if config[:env]
         result = normalize_env_values(config[:env])
-        config[:env] = result[:env]
+        if result[:env]
+          config[:env] = result[:env]
+        else
+          config.delete(:env)
+        end
 
         key = Travis::Features.feature_active?(:global_env_in_config) ? :global_env : :_global_env
         config[key] = result[:global] if result[:global]

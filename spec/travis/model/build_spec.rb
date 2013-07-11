@@ -277,7 +277,6 @@ describe Build do
         build = Factory(:build, config: config)
 
         build.config.should == {
-          env: nil,
           global_env: ["FOO=bar"]
         }
       end
