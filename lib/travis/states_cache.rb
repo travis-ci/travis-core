@@ -1,4 +1,5 @@
 require 'dalli'
+require 'connection_pool'
 require 'active_support/core_ext/module/delegation'
 
 module Travis
@@ -49,10 +50,16 @@ module Travis
     end
 
     class MemcachedAdapter
-      attr_reader :client
+      attr_reader :pool
 
       def initialize(options = {})
-        @client = options[:client] || Dalli::Client.new(Travis.config.states_cache.memcached_servers, Travis.config.states_cache.memcached_options)
+        @pool = ConnectionPool.new(:size => 10, :timeout => 3) do
+          if options[:client]
+            options[:client]
+          else
+            new_dalli_connection
+          end
+        end
       end
 
       def fetch(id, branch = nil)
@@ -88,15 +95,21 @@ module Travis
 
       private
 
+      def new_dalli_connection
+        client = Dalli::Client.new(Travis.config.states_cache.memcached_servers, Travis.config.states_cache.memcached_options)
+        client.touch 'dalli.connection.alive'
+        client
+      end
+
       def get(key)
         retry_ringerror do
-          client.get(key)
+          pool.with { |client| client.get(key) }
         end
       end
 
       def set(key, data)
         retry_ringerror do
-          client.set(key, data)
+          pool.with { |client| client.set(key, data) }
         end
       end
 
