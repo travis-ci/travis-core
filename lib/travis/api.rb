@@ -14,7 +14,7 @@ module Travis
 
       def builder(resource, options = {})
         target  = (options[:for] || 'http').to_s.camelize
-        version = (options[:version] || DEFAULT_VERSION).to_s.camelize
+        version = (options[:version] || default_version(options)).to_s.camelize
         type    = (options[:type] || type_for(resource)).to_s.camelize
         [name, version, target, type].join('::').constantize rescue nil
       end
@@ -43,6 +43,14 @@ module Travis
 
         def active_record?(object)
           object.respond_to?(:base_class)
+        end
+
+        def default_version(options)
+          if options[:for].to_s.downcase == "pusher"
+            "v0"
+          else
+            DEFAULT_VERSION
+          end
         end
     end
   end
