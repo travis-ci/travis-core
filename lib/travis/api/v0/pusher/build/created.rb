@@ -4,8 +4,6 @@ module Travis
       module Pusher
         class Build
           class Created < Build
-            autoload :Job, 'travis/api/v0/pusher/build/started/job'
-
             include V1::Helpers::Legacy
 
             def data
