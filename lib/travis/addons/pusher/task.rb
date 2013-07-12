@@ -16,7 +16,7 @@ module Travis
         end
 
         def version
-          params[:version] || 'v1'
+          params[:version] || 'v0'
         end
 
         def client_event
@@ -41,7 +41,7 @@ module Travis
           end
 
           def trigger(channel, payload)
-            prefix = version == 'v1' ? nil : version
+            prefix = version == 'v0' ? nil : version
             event = [prefix, client_event].compact.join(':')
 
             parts(payload).each do |part|

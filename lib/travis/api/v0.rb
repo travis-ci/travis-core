@@ -4,6 +4,7 @@ module Travis
     module V0
       autoload :Event,        'travis/api/v0/event'
       autoload :Notification, 'travis/api/v0/notification'
+      autoload :Pusher,       'travis/api/v0/pusher'
       autoload :Worker,       'travis/api/v0/worker'
     end
   end

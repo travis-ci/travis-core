@@ -4,7 +4,7 @@ module Travis
 
       # Notifies registered clients about various state changes through Pusher.
       class EventHandler < Event::Handler
-        API_VERSION = 'v1'
+        API_VERSION = 'v0'
 
         EVENTS = [
           /^build:(created|started|finished)/,
