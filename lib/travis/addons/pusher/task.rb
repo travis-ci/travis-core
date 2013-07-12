@@ -15,10 +15,6 @@ module Travis
           params[:event]
         end
 
-        def version
-          params[:version] || 'v0'
-        end
-
         def client_event
           @client_event ||= (event =~ /job:.*/ ? event.gsub(/(test|configure):/, '') : event)
         end
@@ -41,18 +37,15 @@ module Travis
           end
 
           def trigger(channel, payload)
-            prefix = version == 'v0' ? nil : version
-            event = [prefix, client_event].compact.join(':')
-
             parts(payload).each do |part|
               # TODO: the second argument in meter can be removed when we're sure that apps
               #       using this have newest travis-support version
               Travis::Instrumentation.meter('travis.addons.pusher.task.messages', {})
 
               begin
-                Travis.pusher[channel].trigger(event, part)
+                Travis.pusher[channel].trigger(client_event, part)
               rescue ::Pusher::Error => e
-                Travis.logger.error("[addons:pusher] Could not send event due to Pusher::Error: #{e.message}, event=#{event}, payload: #{part.inspect}")
+                Travis.logger.error("[addons:pusher] Could not send event due to Pusher::Error: #{e.message}, event=#{client_event}, payload: #{part.inspect}")
                 raise
               end
             end
