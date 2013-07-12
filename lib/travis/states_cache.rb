@@ -117,7 +117,14 @@ module Travis
           yield
         rescue Dalli::RingError
           retries += 1
-          retries <= 3 ? retry : raise
+          if retries <= 3
+            # Sleep for up to 1/2 * (2^retries - 1) seconds
+            # For retries <= 3, this means up to 3.5 seconds
+            sleep 0.5 * (rand(2 ** retries - 1) + 1)
+            retry
+          else
+            raise
+          end
         end
       end
     end
