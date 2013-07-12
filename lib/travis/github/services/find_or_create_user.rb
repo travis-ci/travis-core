@@ -49,11 +49,7 @@ module Travis
           end
 
           def fetch_data
-            if params[:github_id]
-              GH["user/#{params[:github_id]}"] || raise(Travis::GithubApiError)
-            else
-              GH["users/#{params[:login]}"] || raise(Travis::GithubApiError)
-            end
+            GH["user/#{params[:github_id]}"] || raise(Travis::GithubApiError)
           end
       end
     end
