@@ -28,10 +28,6 @@ describe Travis::Requests::Services::Receive do
     it 'sets the payload to the request' do
       request.payload.should == payload
     end
-
-    it 'sets the token to the request' do
-      request.token.should == 'token'
-    end
   end
 
   shared_examples_for 'sets the owner for the request and repository to the expected type and login' do |type, login|
@@ -92,7 +88,7 @@ describe Travis::Requests::Services::Receive do
   end
 
   describe 'a github push event' do
-    let(:params) { { :event_type => 'push', :payload => payload, :token => 'token' } }
+    let(:params) { { :event_type => 'push', :payload => payload } }
 
     describe 'for repository belonging to a user' do
       let(:payload) { JSON.parse(GITHUB_PAYLOADS['gem-release']) }
@@ -135,7 +131,7 @@ describe Travis::Requests::Services::Receive do
 
   describe 'a github pull-request event' do
     describe 'for a repository that belongs to an organization' do
-      let(:params)  { { :event_type => 'pull_request', :payload => payload, :token => 'token' } }
+      let(:params)  { { :event_type => 'pull_request', :payload => payload } }
       let(:payload) { JSON.parse(GITHUB_PAYLOADS['pull-request']) }
 
       login = 'travis-repos'
@@ -172,7 +168,7 @@ describe Travis::Requests::Services::Receive::Instrument do
   include Support::ActiveRecord
 
   let(:payload)   { JSON.parse(GITHUB_PAYLOADS['gem-release']) }
-  let(:service)   { Travis::Requests::Services::Receive.new(nil, event_type: 'push', payload: payload, token: 'token') }
+  let(:service)   { Travis::Requests::Services::Receive.new(nil, event_type: 'push', payload: payload) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events.last }
 
@@ -189,7 +185,6 @@ describe Travis::Requests::Services::Receive::Instrument do
       message: 'Travis::Requests::Services::Receive#run:completed type="push"',
       data: {
         type: 'push',
-        token: 'token',
         accept?: true,
         payload: payload
       }
