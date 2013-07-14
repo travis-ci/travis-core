@@ -79,6 +79,15 @@ describe Build, 'matrix' do
     end
   end
 
+  context 'matrix with one allow_failure job' do
+    let(:build) { Factory(:build, config: { rvm: ['1.9.3'] }) }
+
+    it 'returns :passed' do
+      build.matrix[0].update_attributes!(state: "failed", allow_failure: true)
+      build.matrix_state.should == :passed
+    end
+  end
+
   describe :matrix_duration do
     let(:build) do
       Build.new(matrix: [

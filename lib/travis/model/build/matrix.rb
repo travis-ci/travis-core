@@ -55,7 +55,7 @@ class Build
     def matrix_state
       tests = matrix.reject { |test| test.allow_failure? }
       if tests.blank?
-        nil
+        :passed
       elsif tests.any?(&:errored?)
         :errored
       elsif tests.any?(&:canceled?)
