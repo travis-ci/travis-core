@@ -54,7 +54,8 @@ module Travis
               :event_type => event_type,
               :state => :created,
               :commit => commit,
-              :owner => owner
+              :owner => owner,
+              :token => params[:token]
             ))
           end
 
@@ -92,6 +93,7 @@ module Travis
                 :msg => "type=#{params[:event_type].inspect}",
                 :type => params[:event_type],
                 :accept? => target.accept?,
+                :token => params[:token],
                 :payload => params[:payload]
               )
             end
