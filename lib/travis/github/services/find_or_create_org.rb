@@ -47,12 +47,22 @@ module Travis
             organization = Organization.create!(
               :name => data['name'],
               :login => data['login'],
-              :github_id => data['id']
+              :github_id => data['id'],
+              :email => data['email'],
+              :location => data['location'],
+              :avatar_url => data['_links'] && data['_links']['avatar'].try(:fetch, 'href'),
+              :company => data['company'],
+              :homepage => data['_links'] && data['_links']['blog'].try(:fetch, 'href')
             )
 
             nullify_logins(organization.github_id, organization.login)
 
             organization
+          end
+
+          def avatar_url(github_data)
+            href = github_data.try(:fetch, 'href')
+            href ? href[/^(https:\/\/[\w\.\/]*)/, 1] : nil
           end
 
           def data

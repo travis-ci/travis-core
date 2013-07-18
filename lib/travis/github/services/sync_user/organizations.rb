@@ -100,7 +100,7 @@ module Travis
             def create_or_update_org(data)
               org = Organization.find_or_create_by_github_id(data['id'])
               org.update_attributes!({
-                :name => data['name'], 
+                :name => data['name'],
                 :login => data['login'],
                 :email => data['email'],
                 :avatar_url => avatar_url(data['_links']['avatar']),
