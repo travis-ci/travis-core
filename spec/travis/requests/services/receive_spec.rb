@@ -64,7 +64,7 @@ describe Travis::Requests::Services::Receive do
     end
 
     it 'calls the github api to populate the user' do
-      resource = "user/#{github_id}"
+      resource = type == 'organization' ? "organizations/#{github_id}" : "user/#{github_id}"
       GH.expects(:[]).with(resource).returns('name' => login.camelize, 'login' => login, 'id' => github_id)
       request
     end
