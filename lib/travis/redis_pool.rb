@@ -7,10 +7,10 @@ module Travis
     attr_reader :pool
 
     def initialize(options = {})
-      @options = options.delete(:pool) || {}
-      @options[:size] ||= 10
-      @options[:timeout] ||= 10
-      @pool = ConnectionPool.new(options) do
+      pool_options = options.delete(:pool) || {}
+      pool_options[:size] ||= 10
+      pool_options[:timeout] ||= 10
+      @pool = ConnectionPool.new(pool_options) do
         ::Redis.new(options)
       end
     end

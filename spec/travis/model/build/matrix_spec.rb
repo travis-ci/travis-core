@@ -79,6 +79,15 @@ describe Build, 'matrix' do
     end
   end
 
+  context 'matrix with one allow_failure job' do
+    let(:build) { Factory(:build, config: { rvm: ['1.9.3'] }) }
+
+    it 'returns :passed' do
+      build.matrix[0].update_attributes!(state: "failed", allow_failure: true)
+      build.matrix_state.should == :passed
+    end
+  end
+
   describe :matrix_duration do
     let(:build) do
       Build.new(matrix: [
@@ -171,6 +180,24 @@ describe Build, 'matrix' do
           - rvm: 1.9.2
             gemfile: gemfiles/rails-2.3.x
     yml
+    }
+
+    let(:multiple_tests_config_with_global_env_and_exclusion) {
+      YAML.load <<-yml
+      rvm:
+        - 1.9.2
+        - 2.0.0
+      gemfile:
+        - gemfiles/rails-3.1.x
+        - gemfiles/rails-4.0.x
+      env:
+        global:
+          - FOO=bar
+      matrix:
+        exclude:
+          - rvm: 1.9.2
+            gemfile: gemfiles/rails-4.0.x
+      yml
     }
 
     let(:multiple_tests_config_with_invalid_exculsion) {
@@ -412,6 +439,17 @@ describe Build, 'matrix' do
             { rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.x', matrix: matrix_exclusion },
             { rvm: '1.9.2', gemfile: 'gemfiles/rails-3.1.x', matrix: matrix_exclusion }
           ]
+        end
+
+        it "excludes a matrix config without specifying global env vars in the exclusion" do
+          build = Factory(:build, config: multiple_tests_config_with_global_env_and_exclusion)
+          matrix_exclusion = { exclude: [{ rvm: "1.9.2", gemfile: "gemfiles/rails-4.0.x" }] }
+
+          build.matrix.map(&:config).should eq([
+            { rvm: "1.9.2", gemfile: "gemfiles/rails-3.1.x", matrix: matrix_exclusion, global_env: ["FOO=bar"] },
+            { rvm: "2.0.0", gemfile: "gemfiles/rails-3.1.x", matrix: matrix_exclusion, global_env: ["FOO=bar"] },
+            { rvm: "2.0.0", gemfile: "gemfiles/rails-4.0.x", matrix: matrix_exclusion, global_env: ["FOO=bar"] },
+          ])
         end
 
         it 'does not exclude a matrix config when the matrix exclusion definition is incomplete' do

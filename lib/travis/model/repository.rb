@@ -11,10 +11,7 @@ require 'active_record'
 # A repository also has a ServiceHook that can be used to de/activate service
 # hooks on Github.
 class Repository < ActiveRecord::Base
-  autoload :Compat,      'travis/model/repository/compat'
   autoload :StatusImage, 'travis/model/repository/status_image'
-
-  include Compat
 
   has_many :commits, dependent: :delete_all
   has_many :requests, dependent: :delete_all

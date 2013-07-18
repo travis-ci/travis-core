@@ -54,7 +54,11 @@ class Job
     end
 
     def resetable?
-      finished?
+      finished? && !invalid_config?
+    end
+
+    def invalid_config?
+      config[:".result"] == "parse_error"
     end
 
     def finished?
@@ -62,11 +66,11 @@ class Job
     end
 
     def passed?
-      state == "passed"
+      state.to_s == "passed"
     end
 
     def failed?
-      state == "failed"
+      state.to_s == "failed"
     end
 
     def unknown?

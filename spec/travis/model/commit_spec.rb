@@ -54,6 +54,14 @@ describe Commit do
       end
     end
 
+    context 'with a compare_url with ^ in it' do
+      before { commit.compare_url = 'https://github.com/rails/rails/compare/ffaab2c4ffee^...60790e852a4f' }
+
+      it 'returns range' do
+        commit.range.should == 'ffaab2c4ffee^...60790e852a4f'
+      end
+    end
+
     context 'with invalid compare_url' do
       before { commit.compare_url = 'https://github.com/rails/rails/compare/ffaab2c4ffee.....60790e852a4f' }
 

@@ -38,8 +38,13 @@ describe Travis::Github::Services::FetchConfig do
     end
 
     it "returns { '.result' => 'parse_error' } if the .travis.yml is invalid" do
-      GH.stubs(:[]).returns("\tfoo: Foo")
+      GH.stubs(:[]).returns({ "content" => ["\tfoo: Foo"].pack("m") })
       result['.result'].should == 'parse_error'
+    end
+
+    it "returns the error message for an invalid .travis.yml file" do
+      GH.stubs(:[]).returns({ "content" => ["\tfoo: Foo"].pack("m") })
+      result[".result_message"].should match(/line 1 column 1/)
     end
 
     it "converts non-breaking spaces to normal spaces" do

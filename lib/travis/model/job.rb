@@ -139,6 +139,11 @@ class Job < ActiveRecord::Base
     end.inject(:&)
   end
 
+  def log_content=(content)
+    create_log! unless log
+    log.update_attributes!(content: content, aggregated_at: Time.now)
+  end
+
   private
 
     def normalize_config(config)

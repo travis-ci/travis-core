@@ -29,7 +29,6 @@ module Travis
           end
 
           def id
-            # TODO ugh. should be better with API v2
             payload.key?(type.to_sym) ? payload[type.to_sym][:id] : payload[:id]
           end
         end

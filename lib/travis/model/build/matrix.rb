@@ -55,7 +55,7 @@ class Build
     def matrix_state
       tests = matrix.reject { |test| test.allow_failure? }
       if tests.blank?
-        nil
+        :passed
       elsif tests.any?(&:errored?)
         :errored
       elsif tests.any?(&:canceled?)
@@ -69,22 +69,28 @@ class Build
       end
     end
 
-    protected
-
-      # expand the matrix (i.e. create test jobs) and update the config for each job
-      def expand_matrix
-        matrix_config.expand.each_with_index do |row, ix|
-          attributes = self.attributes.slice(*Job.column_names - ['status', 'result']).symbolize_keys
-          attributes.merge!(
-            :owner => owner,
-            :number => "#{number}.#{ix + 1}",
-            :config => expand_config(row),
-            :log => Log.new
-          )
-          matrix.build(attributes)
-        end
-        matrix_allow_failures # TODO should be able to join this with the loop above
+    # expand the matrix (i.e. create test jobs) and update the config for each job
+    def expand_matrix
+      matrix_config.expand.each_with_index do |row, ix|
+        attributes = self.attributes.slice(*Job.column_names - ['status', 'result']).symbolize_keys
+        attributes.merge!(
+          :owner => owner,
+          :number => "#{number}.#{ix + 1}",
+          :config => expand_config(row),
+          :log => Log.new
+        )
+        matrix.build(attributes)
       end
+      matrix_allow_failures # TODO should be able to join this with the loop above
+      matrix
+    end
+
+    def expand_matrix!
+      expand_matrix
+      save!
+    end
+
+    protected
 
       def expand_config(row)
         hash = {}

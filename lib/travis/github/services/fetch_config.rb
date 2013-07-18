@@ -47,7 +47,10 @@ module Travis
             YAML.load(yaml).merge('.result' => 'configured')
           rescue StandardError, Psych::SyntaxError => e
             log_exception(e)
-            { '.result' => 'parse_error' }
+            {
+              '.result' => 'parse_error',
+              '.result_message' => e.is_a?(Psych::SyntaxError) ? e.message.split(": ").last : e.message
+            }
           end
 
           def retrying(times)

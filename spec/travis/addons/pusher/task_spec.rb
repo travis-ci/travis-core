@@ -13,15 +13,14 @@ describe Travis::Addons::Pusher::Task do
   end
 
   def run(event, object, options = {})
-    version = options[:version] || 'v1'
     type = event =~ /^worker:/ ? 'worker' : event.sub('test:', '').sub(':', '/')
-    payload = Travis::Api.data(object, for: 'pusher', type: type, version: version, params: options[:params])
-    subject.new(payload, event: event, version: version).run
+    payload = Travis::Api.data(object, for: 'pusher', type: type, params: options[:params])
+    subject.new(payload, event: event).run
   end
 
   it 'logs Pusher errors and reraises' do
     channel.expects(:trigger).raises(Pusher::Error.new('message'))
-    payload = Travis::Api.data(test, for: 'pusher', type: 'job/started', version: 'v1').deep_symbolize_keys
+    payload = Travis::Api.data(test, for: 'pusher', type: 'job/started').deep_symbolize_keys
     Travis.logger.expects(:error).with("[addons:pusher] Could not send event due to Pusher::Error: message, event=job:started, payload: #{payload.inspect}")
 
     expect {
@@ -107,55 +106,45 @@ describe Travis::Addons::Pusher::Task do
 
   describe 'channels' do
     it 'returns "common" for the event "job:created"' do
-      payload = Travis::Api.data(test, for: 'pusher', type: 'job/created', version: 'v1')
+      payload = Travis::Api.data(test, for: 'pusher', type: 'job/created')
       handler = subject.new(payload, event: 'job:created')
       handler.send(:channels).should include('common')
     end
 
     it 'returns "common" for the event "job:started"' do
-      payload = Travis::Api.data(test, for: 'pusher', type: 'job/started', version: 'v1')
+      payload = Travis::Api.data(test, for: 'pusher', type: 'job/started')
       handler = subject.new(payload, event: 'job:started')
       handler.send(:channels).should include('common')
     end
 
     it 'returns "job-1" for the event "job:log"' do
-      payload = Travis::Api.data(test, for: 'pusher', type: 'job/log', version: 'v1')
+      payload = Travis::Api.data(test, for: 'pusher', type: 'job/log')
       handler = subject.new(payload, event: 'job:log')
       handler.send(:channels).should include("job-#{test.id}")
     end
 
     it 'returns "common" for the event "job:finished"' do
-      payload = Travis::Api.data(test, for: 'pusher', type: 'job/finished', version: 'v1')
+      payload = Travis::Api.data(test, for: 'pusher', type: 'job/finished')
       handler = subject.new(payload, event: 'job:finished')
       handler.send(:channels).should include('common')
     end
 
     it 'returns "common" for the event "build:started"' do
-      payload = Travis::Api.data(build, for: 'pusher', type: 'build/started', version: 'v1')
+      payload = Travis::Api.data(build, for: 'pusher', type: 'build/started')
       handler = subject.new(payload, event: 'build:started')
       handler.send(:channels).should include('common')
     end
 
     it 'returns "common" for the event "build:finished"' do
-      payload = Travis::Api.data(build, for: 'pusher', type: 'build/finished', version: 'v1')
+      payload = Travis::Api.data(build, for: 'pusher', type: 'build/finished')
       handler = subject.new(payload, event: 'build:finished')
       handler.send(:channels).should include('common')
     end
 
     it 'returns "workers" for the event "worker:started"' do
-      payload = Travis::Api.data(worker, for: 'pusher', type: 'worker', version: 'v1')
+      payload = Travis::Api.data(worker, for: 'pusher', type: 'worker')
       handler = subject.new(payload, event: 'worker:created')
       handler.send(:channels).should include('workers')
     end
-  end
-
-  it 'does not prefix channels for version v1' do
-    run('job:test:created', test, version: 'v1')
-    channel.should have_message('job:created', test)
-  end
-
-  it 'prefixes channels for other versions' do
-    run('job:test:created', test, version: 'v2')
-    channel.should have_message('v2:job:created', test)
   end
 end

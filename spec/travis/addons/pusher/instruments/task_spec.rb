@@ -14,7 +14,7 @@ describe Travis::Addons::Pusher::Instruments::Task do
   end
 
   describe 'given a job:started event' do
-    let(:payload) { Travis::Api.data(test, for: 'pusher', type: 'job/started', version: 'v1') }
+    let(:payload) { Travis::Api.data(test, for: 'pusher', type: 'job/started') }
     let(:task)    { subject.new(payload, event: 'job:test:started') }
 
     it 'publishes a event' do
@@ -35,7 +35,7 @@ describe Travis::Addons::Pusher::Instruments::Task do
   end
 
   describe 'given a build:finished event' do
-    let(:payload) { Travis::Api.data(build, for: 'pusher', type: 'build/finished', version: 'v1') }
+    let(:payload) { Travis::Api.data(build, for: 'pusher', type: 'build/finished') }
     let(:task)    { subject.new(payload, event: 'build:finished') }
 
     it 'publishes a event' do
