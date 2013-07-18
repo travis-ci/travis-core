@@ -30,15 +30,6 @@ describe Repository do
     end
   end
 
-  describe 'validates' do
-    it 'uniqueness of :owner_name/:name' do
-      existing = Factory(:repository)
-      repo = Repository.new(existing.attributes.except('last_build_status'))
-      repo.should_not be_valid
-      repo.errors['name'].should == ['has already been taken']
-    end
-  end
-
   describe 'associations' do
     describe 'owner' do
       let(:user) { Factory(:user) }

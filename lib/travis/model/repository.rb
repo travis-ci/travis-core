@@ -24,7 +24,7 @@ class Repository < ActiveRecord::Base
   has_one :key, class_name: 'SslKey'
   belongs_to :owner, polymorphic: true
 
-  validates :name,       presence: true, uniqueness: { scope: :owner_name }
+  validates :name,       presence: true
   validates :owner_name, presence: true
 
   before_create do
