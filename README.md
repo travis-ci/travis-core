@@ -20,6 +20,10 @@ $ bundle exec rake db:test:prepare
 $ bundle exec rake
 ```
 
+## Code Status
+
+  * [![Build Status](https://api.travis-ci.org/travis-ci/travis-core.png)](https://travis-ci.org/travis-ci/travis-core)
+
 ## Metriks from travis-hub and travis-core
 
 * `v1.travis.hub.handler.sync.handle`
