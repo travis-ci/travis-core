@@ -2,10 +2,10 @@ module Travis
   module Addons
     module Hipchat
 
-      # Publishes a build notification to campfire rooms as defined in the
+      # Publishes a build notification to hipchat rooms as defined in the
       # configuration (`.travis.yml`).
       #
-      # Campfire credentials are encrypted using the repository's ssl key.
+      # Hipchat credentials are encrypted using the repository's ssl key.
       class EventHandler < Event::Handler
         API_VERSION = 'v2'
 
