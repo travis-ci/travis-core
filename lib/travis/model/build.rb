@@ -236,7 +236,7 @@ class Build < ActiveRecord::Base
   end
 
   def cancelable?
-    matrix_finished?
+    matrix.any? { |job| job.cancelable? }
   end
 
   def pull_request?
