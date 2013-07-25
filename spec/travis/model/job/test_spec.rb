@@ -9,6 +9,16 @@ describe Job::Test do
     Travis::Event.stubs(:dispatch)
   end
 
+  it 'is cancelable if the job has not started yet' do
+    job = Factory(:test, state: :created)
+    job.should be_cancelable
+  end
+
+  it 'is not cancelable if the job has already been queued' do
+    job = Factory(:test, state: :queued)
+    job.should_not be_cancelable
+  end
+
   describe 'events' do
     describe 'start' do
       let(:data) { WORKER_PAYLOADS['job:test:start'] }
