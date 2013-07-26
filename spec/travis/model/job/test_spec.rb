@@ -36,7 +36,9 @@ describe Job::Test do
       build = Factory(:build, state: :started)
       build.matrix.destroy_all
       job = Factory(:test, state: :created, source: build)
-      Factory(:test, state: :passed, source: build)
+      Job::Test::FINISHED_STATES.each do |state|
+        Factory(:test, source: build, state: state)
+      end
       build.reload
 
       expect {

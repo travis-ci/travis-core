@@ -58,7 +58,6 @@ class Build
       self.state = matrix_state
       self.canceled_at = Time.now
 
-
       save!
     end
 

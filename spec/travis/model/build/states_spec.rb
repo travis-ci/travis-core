@@ -19,16 +19,17 @@ describe Build::States do
         build.matrix.destroy_all
 
         created_job = Factory(:test, source: build, state: :created)
-        passed_job  = Factory(:test, source: build, state: :passed)
+        finished_jobs = Job::Test::FINISHED_STATES.map do |state|
+          Factory(:test, source: build, state: state)
+        end
         build.reload
 
         expect {
-          expect {
-            build.cancel!
-          }.to change { created_job.reload.state }
-        }.to_not change { passed_job.reload.state }
+          build.cancel!
+        }.to change { created_job.reload.state }
 
         created_job.state.should == 'canceled'
+        finished_jobs.map { |j| j.state.to_sym }.should == Job::Test::FINISHED_STATES
       end
     end
 

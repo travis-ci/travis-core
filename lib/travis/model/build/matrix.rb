@@ -52,10 +52,10 @@ class Build
       tests = matrix.reject { |test| test.allow_failure? }
       if tests.blank?
         :passed
-      elsif tests.any?(&:errored?)
-        :errored
       elsif tests.any?(&:canceled?)
         :canceled
+      elsif tests.any?(&:errored?)
+        :errored
       elsif tests.any?(&:failed?)
         :failed
       elsif tests.all?(&:passed?)
