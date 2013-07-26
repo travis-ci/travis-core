@@ -19,6 +19,34 @@ describe Job::Test do
     job.should_not be_cancelable
   end
 
+  describe 'cancelling' do
+    it 'should not propagate cancel state to source' do
+      build = Factory(:build, state: :started)
+      build.matrix.destroy_all
+      job = Factory(:test, state: :created, source: build)
+      Factory(:test, state: :started, source: build)
+      build.reload
+
+      expect {
+        job.cancel!
+      }.to_not change { job.source.reload.state }
+    end
+
+    it 'should put a build into canceled state if all the jobs in matrix are in finished state' do
+      build = Factory(:build, state: :started)
+      build.matrix.destroy_all
+      job = Factory(:test, state: :created, source: build)
+      Factory(:test, state: :passed, source: build)
+      build.reload
+
+      expect {
+        job.cancel!
+      }.to change { build.reload.state }
+
+      build.state.should == 'canceled'
+    end
+  end
+
   describe 'events' do
     describe 'start' do
       let(:data) { WORKER_PAYLOADS['job:test:start'] }

@@ -48,10 +48,6 @@ class Build
       matrix_finished? ? matrix.inject(0) { |duration, job| duration + job.duration.to_i } : nil
     end
 
-    def matrix_cancelable?
-      matrix.all?(&:finished?)
-    end
-
     def matrix_state
       tests = matrix.reject { |test| test.allow_failure? }
       if tests.blank?
