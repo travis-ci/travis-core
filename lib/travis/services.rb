@@ -2,6 +2,7 @@ module Travis
   module Services
     autoload :Base,                'travis/services/base'
     autoload :CancelJob,           'travis/services/cancel_job'
+    autoload :CancelBuild,         'travis/services/cancel_build'
     autoload :FindAdmin,           'travis/services/find_admin'
     autoload :FindBranches,        'travis/services/find_branches'
     autoload :FindBuild,           'travis/services/find_build'
