@@ -5,7 +5,6 @@ id, type = ARGV
 data = {} # ?
 
 Travis::Database.connect
-Travis::Features.start
 Travis::Task.run_local = true
 
 Travis.config.notifications = [type]

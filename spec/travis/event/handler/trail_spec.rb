@@ -7,7 +7,6 @@
 #
 #   before :each do
 #     Travis::Event.stubs(:subscribers).returns [:trail]
-#     Travis::Features.start
 #     Travis::Features.enable_for_all(:event_trail)
 #   end
 #
