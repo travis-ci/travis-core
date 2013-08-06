@@ -25,10 +25,6 @@ module Travis
       delegate(*methods)
     end
 
-    def start
-      # TODO deprecate
-    end
-
     def redis
       Travis.redis
     end

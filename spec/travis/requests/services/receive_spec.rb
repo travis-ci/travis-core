@@ -140,10 +140,6 @@ describe Travis::Requests::Services::Receive do
       type  = 'organization'
       github_id = 864347
 
-      before :each do
-        Travis::Features.start
-      end
-
       describe 'if the organization exists' do
         before(:each) { Factory(:org, :login => login, github_id: 864347) }
         it_should_behave_like 'a created request', type, login, github_id
@@ -194,4 +190,3 @@ describe Travis::Requests::Services::Receive::Instrument do
     )
   end
 end
-
