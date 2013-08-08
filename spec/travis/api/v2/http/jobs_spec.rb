@@ -20,7 +20,8 @@ describe Travis::Api::V2::Http::Jobs do
       'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
       'queue' => 'builds.linux',
       'allow_failure' => false,
-      'tags' => 'tag-a,tag-b'
+      'tags' => 'tag-a,tag-b',
+      'cancelable' => false
     }
   end
 

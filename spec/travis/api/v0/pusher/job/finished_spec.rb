@@ -13,7 +13,8 @@ describe Travis::Api::V0::Pusher::Job::Finished do
       'repository_slug' => 'svenfuchs/minimal',
       'state' => 'passed',
       'result' => 0,
-      'finished_at' => json_format_time(Time.now.utc)
+      'finished_at' => json_format_time(Time.now.utc),
+      'cancelable' => false
     }
   end
 end

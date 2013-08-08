@@ -34,7 +34,8 @@ module Travis
                 'committer_email' => commit.committer_email,
                 'event_type' => request.event_type,
                 'job_ids' => build.matrix.map(&:id),
-                'state' => build.state.to_s
+                'state' => build.state.to_s,
+                'cancelable' => !!build.cancelable?
               }
             end
 

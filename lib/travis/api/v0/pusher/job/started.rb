@@ -18,7 +18,8 @@ module Travis
                 'started_at' => format_date(job.started_at),
                 'finished_at' => format_date(job.finished_at),
                 'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4',
-                'sponsor' => { 'name' => 'Railslove', 'url' => 'http://railslove.de' }
+                'sponsor' => { 'name' => 'Railslove', 'url' => 'http://railslove.de' },
+                'cancelable' => !!job.cancelable?
               }
             end
           end
