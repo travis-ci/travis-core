@@ -27,8 +27,7 @@ describe Travis::Api::V0::Pusher::Job::Started do
       'started_at' => json_format_time(Time.now.utc - 1.minute),
       'finished_at' => nil,
       'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4',
-      'sponsor' => { 'name' => 'Railslove', 'url' => 'http://railslove.de' },
-      'cancelable' => false
+      'sponsor' => { 'name' => 'Railslove', 'url' => 'http://railslove.de' }
     }
   end
 end

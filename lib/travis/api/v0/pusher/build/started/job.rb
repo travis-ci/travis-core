@@ -34,8 +34,7 @@ module Travis
                   'author_email' => commit.author_email,
                   'committer_name' => commit.committer_name,
                   'committer_email' => commit.committer_email,
-                  'allow_failure' => job.allow_failure,
-                  'cancelable' => !!job.cancelable?
+                  'allow_failure' => job.allow_failure
                 }
               end
             end

@@ -38,8 +38,7 @@ module Travis
                 'started_at' => format_date(build.started_at),
                 'finished_at' => format_date(build.finished_at),
                 'duration' => build.duration,
-                'job_ids' => build.matrix_ids,
-                'cancelable' => !!build.cancelable?
+                'job_ids' => build.matrix_ids
               }
             end
 

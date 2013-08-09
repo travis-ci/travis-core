@@ -17,8 +17,7 @@ module Travis
                 'state' => job.state.to_s,
                 'result' => legacy_job_result(job),
                 'log_id' => job.log_id,
-                'allow_failure' => job.allow_failure,
-                'cancelable' => !!job.cancelable?
+                'allow_failure' => job.allow_failure
               }
             end
           end

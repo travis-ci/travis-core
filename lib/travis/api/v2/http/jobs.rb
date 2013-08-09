@@ -36,8 +36,7 @@ module Travis
                 'finished_at' => format_date(job.finished_at),
                 'queue' => job.queue,
                 'allow_failure' => job.allow_failure,
-                'tags' => job.tags,
-                'cancelable' => !!job.cancelable?
+                'tags' => job.tags
               }
             end
 

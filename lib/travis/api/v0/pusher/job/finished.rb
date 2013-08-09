@@ -14,8 +14,7 @@ module Travis
                 'repository_slug' => job.repository.slug,
                 'state' => job.state.to_s,
                 'result' => legacy_job_result(job),
-                'finished_at' => format_date(job.finished_at),
-                'cancelable' => !!job.cancelable?
+                'finished_at' => format_date(job.finished_at)
               }
             end
           end

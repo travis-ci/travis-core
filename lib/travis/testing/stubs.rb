@@ -125,8 +125,7 @@ module Travis
           queue: 'builds.linux',
           pull_request_title: nil,
           pull_request_number: nil,
-          secure_env_enabled?: true,
-          cancelable?: false
+          secure_env_enabled?: true
         )
       end
 
@@ -158,8 +157,7 @@ module Travis
           sponsor: { 'name' => 'Railslove', 'url' => 'http://railslove.de' },
           worker: 'ruby3.worker.travis-ci.org:travis-ruby-4',
           tags: 'tag-a,tag-b',
-          log_content: log.content,
-          cancelable?: false
+          log_content: log.content
         )
 
         source = stub_build(:matrix => [test])

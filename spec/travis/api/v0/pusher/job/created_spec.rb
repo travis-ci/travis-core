@@ -17,8 +17,7 @@ describe Travis::Api::V0::Pusher::Job::Created do
       'result' => nil,
       'queue' => 'builds.linux',
       'log_id' => 1,
-      'allow_failure' => false,
-      'cancelable' => false
+      'allow_failure' => false
     }
   end
 
