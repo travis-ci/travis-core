@@ -10,13 +10,25 @@ describe Travis::Services::CancelJob do
   let(:service) { described_class.new(user, params) }
 
   describe 'run' do
+    it 'should send cancel event to the worker if job has already been started' do
+      job.stubs(:cancelable?).returns(true)
+      service.stubs(:authorized?).returns(true)
+      job.update_attribute(:state, :started)
+
+      publisher = mock('publisher')
+      service.stubs(:publisher).returns(publisher)
+      publisher.expects(:publish).with(type: 'cancel_job', job_id: job.id)
+
+      service.run
+    end
+
     it 'should cancel the job if it\'s cancelable' do
       job.stubs(:cancelable?).returns(true)
       service.stubs(:authorized?).returns(true)
 
       publisher = mock('publisher')
       service.stubs(:publisher).returns(publisher)
-      publisher.expects(:publish).with(type: 'cancel_job', job_id: job.id)
+      publisher.expects(:publish).never
 
       expect {
         service.run

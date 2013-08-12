@@ -19,7 +19,7 @@ module Travis
       end
 
       def cancel
-        publish!
+        publish! unless job.created?
         job.cancel!
       end
 
