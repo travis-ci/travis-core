@@ -57,7 +57,7 @@ class Job
     end
 
     def cancelable?
-      created?
+      !finished?
     end
 
     def resetable?

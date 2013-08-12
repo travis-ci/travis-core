@@ -9,13 +9,16 @@ describe Job::Test do
     Travis::Event.stubs(:dispatch)
   end
 
-  it 'is cancelable if the job has not started yet' do
+  it 'is cancelable if the job has not finished yet' do
     job = Factory(:test, state: :created)
+    job.should be_cancelable
+
+    job = Factory(:test, state: :started)
     job.should be_cancelable
   end
 
-  it 'is not cancelable if the job has already been queued' do
-    job = Factory(:test, state: :queued)
+  it 'is not cancelable if the job has already been finished' do
+    job = Factory(:test, state: :passed)
     job.should_not be_cancelable
   end
 
