@@ -10,7 +10,14 @@ module Travis
       EVENT = [:start, :finish, :reset]
 
       def run
-        job.send(:"#{event}!", data.except(:id))
+        if job.canceled? && event != :reset
+          # job is canceled, so we ignore events other than reset
+          # and we send cancel event to the worker, it may not get
+          # the first one
+          cancel_job_in_worker
+        else
+          job.send(:"#{event}!", data.except(:id))
+        end
       end
       instrument :run
 
@@ -37,6 +44,14 @@ module Travis
 
       def raise_unknown_event
         raise ArgumentError, "Unknown event: #{params[:event]}, data: #{data}"
+      end
+
+      def cancel_job_in_worker
+        publisher.publish(type: 'cancel_job', job_id: job.id)
+      end
+
+      def publisher
+        Travis::Amqp::Publisher.new('worker.commands')
       end
 
       class Instrument < Notification::Instrument
