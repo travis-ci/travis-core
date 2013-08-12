@@ -19,6 +19,7 @@ module Travis
       end
 
       def cancel
+        publish!
         job.cancel!
       end
 
@@ -32,6 +33,16 @@ module Travis
 
       def job
         @job ||= run_service(:find_job, params)
+      end
+
+      def publish!
+        publisher.publish(type: 'cancel_job', job_id: job.id)
+      end
+
+      private
+
+      def publisher
+        Travis::Amqp::Publisher.new('worker.commands')
       end
 
       class Instrument < Notification::Instrument

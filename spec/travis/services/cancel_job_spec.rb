@@ -14,6 +14,10 @@ describe Travis::Services::CancelJob do
       job.stubs(:cancelable?).returns(true)
       service.stubs(:authorized?).returns(true)
 
+      publisher = mock('publisher')
+      service.stubs(:publisher).returns(publisher)
+      publisher.expects(:publish).with(type: 'cancel_job', job_id: job.id)
+
       expect {
         service.run
       }.to change { job.reload.state }
