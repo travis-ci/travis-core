@@ -36,6 +36,7 @@ module Travis
       end
 
       def publish!
+        Travis.logger.info("Publishing cancel_job message to worker.commands queue for Job##{job.id}")
         publisher.publish(type: 'cancel_job', job_id: job.id)
       end
 
