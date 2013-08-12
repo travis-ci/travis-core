@@ -5,8 +5,8 @@ module Travis
       # Notifies registered clients about various state changes through Pusher.
       class EventHandler < Event::Handler
         EVENTS = [
-          /^build:(created|started|finished)/,
-          /^job:test:(created|started|log|finished)/,
+          /^build:(created|started|finished|canceled)/,
+          /^job:test:(created|started|log|finished|canceled)/,
           /^worker:(added|updated|removed)/
         ]
 
