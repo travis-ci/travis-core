@@ -17,7 +17,8 @@ class Build
     DENORMALIZE = {
       start:  %w(id number state duration started_at finished_at),
       finish: %w(state duration finished_at),
-      reset:  %w(state duration started_at finished_at)
+      reset:  %w(state duration started_at finished_at),
+      cancel: %w(state duration finished_at)
     }
 
     def denormalize?(event)

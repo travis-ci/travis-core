@@ -46,11 +46,14 @@ describe Job::Test do
 
       expect {
       expect {
+      expect {
         job.cancel!
       }.to change { build.state }
       }.to change { build.canceled_at }
+      }.to change { build.repository.reload.last_build_state }
 
       build.reload.state.should == 'canceled'
+      build.repository.last_build_state.should == 'canceled'
     end
 
     it 'should set canceled_at and finished_at on job' do

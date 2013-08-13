@@ -55,7 +55,8 @@ class Build
     end
 
     def finalize_cancel
-      self.state = matrix_state
+      self.state       = matrix_state
+      self.duration    = matrix_duration
       self.canceled_at = Time.now
       self.finished_at = Time.now
 
@@ -63,7 +64,11 @@ class Build
     end
 
     def cancel_job
-      finalize_cancel if matrix_finished?
+      if matrix_finished?
+        finalize_cancel
+        denormalize(:cancel)
+        notify(:cancel)
+      end
     end
 
     def reset(options = {})
