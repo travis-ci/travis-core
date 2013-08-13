@@ -14,12 +14,17 @@ module Travis
           extend Travis::Instrumentation
           include Travis::Logging
 
-          class_attribute :type
-          self.type = 'public'
+          class_attribute :types
+          self.types = [:public]
 
           class << self
-            def private?
-              self.type == 'private'
+            # TODO backwards compat, remove once all apps use `types=`
+            def type=(types)
+              self.types = Array.wrap(types).map(&:to_s).join(',').split(',').map(&:to_sym)
+            end
+
+            def include?(type)
+              self.types.include?(type)
             end
           end
 
@@ -57,7 +62,7 @@ module Travis
             end
 
             def filter_based_on_repo_permission
-              fetch.select { |repo| repo['private'] == self.class.private? }
+              fetch.select { |repo| self.class.include?(repo['private'] ? :private : :public) }
             end
 
             def filter_duplicates(repositories)
