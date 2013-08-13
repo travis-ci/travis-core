@@ -57,6 +57,7 @@ class Build
     def finalize_cancel
       self.state = matrix_state
       self.canceled_at = Time.now
+      self.finished_at = Time.now
 
       save!
     end

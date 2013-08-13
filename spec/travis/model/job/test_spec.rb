@@ -45,10 +45,22 @@ describe Job::Test do
       build.reload
 
       expect {
+      expect {
         job.cancel!
-      }.to change { build.reload.state }
+      }.to change { build.state }
+      }.to change { build.canceled_at }
 
-      build.state.should == 'canceled'
+      build.reload.state.should == 'canceled'
+    end
+
+    it 'should set canceled_at and finished_at on job' do
+      job = Factory(:test, state: :created)
+
+      expect {
+      expect {
+        job.cancel!
+      }.to change { job.canceled_at }
+      }.to change { job.finished_at }
     end
   end
 

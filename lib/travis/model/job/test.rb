@@ -52,6 +52,7 @@ class Job
 
     def cancel
       self.canceled_at = Time.now
+      self.finished_at = Time.now
 
       save!
     end
