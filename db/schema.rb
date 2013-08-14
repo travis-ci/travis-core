@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130707164854) do
+ActiveRecord::Schema.define(:version => 20130726101124) do
 
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(:version => 20130707164854) do
     t.text     "pull_request_title"
     t.integer  "pull_request_number"
     t.string   "branch"
+    t.datetime "canceled_at"
   end
 
   add_index "builds", ["finished_at"], :name => "index_builds_on_finished_at"
@@ -111,6 +112,7 @@ ActiveRecord::Schema.define(:version => 20130707164854) do
     t.string   "owner_type"
     t.integer  "result"
     t.datetime "queued_at"
+    t.datetime "canceled_at"
   end
 
   add_index "jobs", ["created_at"], :name => "index_jobs_on_created_at"

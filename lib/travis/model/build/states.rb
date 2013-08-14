@@ -26,6 +26,7 @@ class Build
       event :start,  to: :started,  unless: :started?
       event :finish, to: :finished, if: :matrix_finished?
       event :reset,  to: :created
+      event :cancel, to: :canceled, if: :cancelable?
       event :all, after: [:denormalize, :notify]
 
       # after_create do
@@ -43,6 +44,31 @@ class Build
       self.finished_at = data[:finished_at]
 
       save!
+    end
+
+    def cancel(options = {})
+      matrix.each do |job|
+        job.cancel!
+      end
+
+      finalize_cancel
+    end
+
+    def finalize_cancel
+      self.state       = matrix_state
+      self.duration    = matrix_duration
+      self.canceled_at = Time.now
+      self.finished_at = Time.now
+
+      save!
+    end
+
+    def cancel_job
+      if matrix_finished?
+        finalize_cancel
+        denormalize(:cancel)
+        notify(:cancel)
+      end
     end
 
     def reset(options = {})

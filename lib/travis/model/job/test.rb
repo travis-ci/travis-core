@@ -20,6 +20,7 @@ class Job
     event :start,   to: :started
     event :finish,  to: :finished, after: :add_tags
     event :reset,   to: :created, unless: :created?
+    event :cancel,  to: :canceled, if: :cancelable?
     event :all, after: [:propagate, :notify]
 
     def enqueue # TODO rename to queue and make it an event, simple_states should support that now
@@ -49,8 +50,15 @@ class Job
       end
     end
 
+    def cancel
+      self.canceled_at = Time.now
+      self.finished_at = Time.now
+
+      save!
+    end
+
     def cancelable?
-      created?
+      !finished?
     end
 
     def resetable?

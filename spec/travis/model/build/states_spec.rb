@@ -13,6 +13,26 @@ describe Build::States do
   let(:build) { BuildMock.new }
 
   describe 'events' do
+    describe 'cancel' do
+      it 'cancels all the cancelable jobs' do
+        build = Factory(:build)
+        build.matrix.destroy_all
+
+        created_job = Factory(:test, source: build, state: :created)
+        finished_jobs = Job::Test::FINISHED_STATES.map do |state|
+          Factory(:test, source: build, state: state)
+        end
+        build.reload
+
+        expect {
+          build.cancel!
+        }.to change { created_job.reload.state }
+
+        created_job.state.should == 'canceled'
+        finished_jobs.map { |j| j.state.to_sym }.should == Job::Test::FINISHED_STATES
+      end
+    end
+
     describe 'create' do
       xit 'notifies observers' do
         Travis::Event.expects(:dispatch).with { |event| event == 'build:created' }
