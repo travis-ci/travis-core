@@ -6,7 +6,8 @@ module Travis::Model
       Base64.strict_encode64 str
     end
 
-    let(:column) { EncryptedColumn.new }
+    let(:options){ nil }
+    let(:column) { EncryptedColumn.new(options) }
     let(:iv)     { 'a' * 16 }
     let(:aes)    { stub('aes', :final => '') }
     before { column.stubs :key => 'secret-key' }
@@ -16,6 +17,13 @@ module Travis::Model
         column.encrypt?(nil).should be_false
         column.encrypt?('').should be_false
       end
+
+      context 'when disabled' do
+        let(:options) { { disabled: true } }
+        it 'does not encrypt' do
+          column.encrypt?('--ENCR--abc').should be_false
+        end
+    end
     end
 
     describe '#decrypt?' do
