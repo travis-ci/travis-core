@@ -49,7 +49,12 @@ module Travis
           end
 
           def color
-            build[:state] == 'passed' ? 'green' : 'red'
+            {
+              "passed" => "green",
+              "failed" => "red",
+              "errored" => "gray",
+              "canceled" => "gray",
+            }.fetch(build[:state], "yellow")
           end
 
           def message_format
