@@ -51,7 +51,7 @@ module Travis
       end
 
       def publisher
-        Travis::Amqp::Publisher.new('worker.commands')
+        Travis::Amqp::FanoutPublisher.new('worker.commands')
       end
 
       class Instrument < Notification::Instrument
