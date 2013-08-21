@@ -38,7 +38,7 @@ module Travis
 
           def meter(events, started_at, finished_at)
             events.each do |event|
-              Travis::Instrumentation.meter(event, started_at: started_at, finished_at: finished_at)
+              Travis::Metrics.meter(event, started_at: started_at, finished_at: finished_at)
             end
           end
       end

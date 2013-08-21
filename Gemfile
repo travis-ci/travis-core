@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'travis-support',     github: 'travis-ci/travis-support', ref: 'master-2014-10-06'
+gem 'travis-support',     github: 'travis-ci/travis-support', branch: 'sf-te'
 gem 'travis-sidekiqs',    github: 'travis-ci/travis-sidekiqs', require: nil
 gem 'gh',                 github: 'travis-ci/gh'
 gem 'addressable'

@@ -61,7 +61,7 @@ module Travis
             user.update_column(:synced_at, Time.now)
             result
           rescue GH::TokenInvalid => e
-            logger.warn "user sync for #{user.login} (id:#{user.id}) failed as the token was invalid"
+            logger.warn "user sync for #{user.login} (id:#{user.id}) failed as the token was invalid, dropping the token"
             user.update_column(:github_oauth_token, nil)
           ensure
             user.update_column(:is_syncing, false)

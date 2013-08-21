@@ -99,6 +99,7 @@ module Travis
             github:        { api_url: 'https://api.github.com', token: 'travisbot-token' },
             async:         {},
             notifications: [], # TODO rename to event.handlers
+            metrics:       { reporter: 'logger' },
             queues:        [],
             default_queue: 'builds.linux',
             jobs:          { retry: { after: 60 * 60 * 2, max_attempts: 1, interval: 60 * 5 } },
@@ -120,9 +121,7 @@ module Travis
     default :_access => [:key]
 
     def initialize(data = nil, *args)
-      p data
       data = self.class.normalize(data || self.class.load_env || self.class.load_file || {})
-      p data
       super
     end
 
