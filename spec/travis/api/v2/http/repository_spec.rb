@@ -18,6 +18,7 @@ describe Travis::Api::V2::Http::Repository do
       'last_build_state' => 'passed',
       'last_build_language' => nil,
       'last_build_duration' => 60,
+      'github_language' => 'ruby'
     }
   end
 end

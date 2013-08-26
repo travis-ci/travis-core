@@ -51,7 +51,8 @@ module Travis
           last_build_finished_at: Time.now.utc,
           last_build_state: :passed,
           last_build_duration: 60,
-          owner: nil
+          owner: nil,
+          github_language: 'ruby'
         )
       end
       alias stub_repository stub_repo
