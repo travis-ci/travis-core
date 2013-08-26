@@ -76,7 +76,8 @@ describe Travis::Requests::Services::Receive::PullRequest do
         :owner_type => 'Organization',
         :owner_name => 'travis-repos',
         :owner_email => nil,
-        :private => false
+        :private => false,
+        :github_id => 1615549
       }
     end
   end
@@ -85,7 +86,8 @@ describe Travis::Requests::Services::Receive::PullRequest do
     it 'returns all attributes required for an Owner' do
       payload.owner.should == {
         :type => 'Organization',
-        :login => 'travis-repos'
+        :login => 'travis-repos',
+        :github_id => 864347
       }
     end
   end

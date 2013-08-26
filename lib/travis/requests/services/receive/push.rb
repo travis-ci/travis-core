@@ -21,14 +21,16 @@ module Travis
               :owner_name  => event['repository']['owner']['login'],
               :owner_email => event['repository']['owner']['email'],
               :owner_type  => event['repository']['owner']['type'],
-              :private     => !!event['repository']['private']
+              :private     => !!event['repository']['private'],
+              :github_id   => event['repository']['id']
             }
           end
 
           def owner
             @owner ||= {
-              :type  => event['repository']['owner']['type'],
-              :login => event['repository']['owner']['login']
+              :type      => event['repository']['owner']['type'],
+              :login     => event['repository']['owner']['login'],
+              :github_id => event['repository']['owner']['id']
             }
           end
 

@@ -13,7 +13,7 @@ class Request < ActiveRecord::Base
 
   include States, SimpleStates
 
-  serialize :token, Travis::Model::EncryptedColumn.new
+  serialize :token, Travis::Model::EncryptedColumn.new(disable: true)
 
   class << self
     def last_by_head_commit(head_commit)

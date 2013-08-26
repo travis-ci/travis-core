@@ -58,14 +58,14 @@ describe Travis::Requests::Services::Receive do
     end
   end
 
-  shared_examples_for 'creates an object from the github api' do |type, login|
+  shared_examples_for 'creates an object from the github api' do |type, login, github_id|
     it 'creates the object' do
       expect { request }.to change(type.camelize.constantize, :count).by(1)
     end
 
     it 'calls the github api to populate the user' do
-      resource = type == 'organization' ? "orgs/#{login}" : "users/#{login}"
-      GH.expects(:[]).with(resource).returns('name' => login.camelize, 'login' => login)
+      resource = type == 'organization' ? "organizations/#{github_id}" : "user/#{github_id}"
+      GH.expects(:[]).with(resource).returns('name' => login.camelize, 'login' => login, 'id' => github_id)
       request
     end
   end
@@ -95,9 +95,10 @@ describe Travis::Requests::Services::Receive do
 
       login = 'svenfuchs'
       type  = 'user'
+      github_id = 2208
 
       describe 'if the user exists' do
-        before(:each) { Factory(:user, :login => login) }
+        before(:each) { Factory(:user, :login => login, :github_id => 2208) }
         it_should_behave_like 'a created request', type, login
         it_should_behave_like 'does not create a user'
       end
@@ -105,7 +106,7 @@ describe Travis::Requests::Services::Receive do
       describe 'if the user does not exist' do
         before(:each) { User.delete_all }
         it_should_behave_like 'a created request', type, login
-        it_should_behave_like 'creates an object from the github api', type, login
+        it_should_behave_like 'creates an object from the github api', type, login, github_id
       end
     end
 
@@ -114,17 +115,18 @@ describe Travis::Requests::Services::Receive do
 
       login = 'travis-ci'
       type  = 'organization'
+      github_id = 639823
 
       describe 'if the organization exists' do
-        before(:each) { Factory(:org, :login => login) }
-        it_should_behave_like 'a created request', type, login
+        before(:each) { Factory(:org, :login => login, :github_id => 639823) }
+        it_should_behave_like 'a created request', type, login, github_id
         it_should_behave_like 'does not create an organization'
       end
 
       describe 'if the organization does not exist' do
         before(:each) { Organization.delete_all }
-        it_should_behave_like 'a created request', type, login
-        it_should_behave_like 'creates an object from the github api', type, login
+        it_should_behave_like 'a created request', type, login, github_id
+        it_should_behave_like 'creates an object from the github api', type, login, github_id
       end
     end
   end
@@ -136,14 +138,11 @@ describe Travis::Requests::Services::Receive do
 
       login = 'travis-repos'
       type  = 'organization'
-
-      before :each do
-        Travis::Features.start
-      end
+      github_id = 864347
 
       describe 'if the organization exists' do
-        before(:each) { Factory(:org, :login => login) }
-        it_should_behave_like 'a created request', type, login
+        before(:each) { Factory(:org, :login => login, github_id: 864347) }
+        it_should_behave_like 'a created request', type, login, github_id
         it_should_behave_like 'does not create an organization'
 
         it 'sets the comments_url to the request' do
@@ -154,7 +153,7 @@ describe Travis::Requests::Services::Receive do
       describe 'if the organization does not exist' do
         before(:each) { Organization.delete_all }
         it_should_behave_like 'a created request', type, login
-        it_should_behave_like 'creates an object from the github api', type, login
+        it_should_behave_like 'creates an object from the github api', type, login, github_id
 
         it 'sets the comments_url to the request' do
           request.comments_url.should == 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments'
@@ -191,4 +190,3 @@ describe Travis::Requests::Services::Receive::Instrument do
     )
   end
 end
-

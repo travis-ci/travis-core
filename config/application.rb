@@ -17,7 +17,6 @@ module Travis::Core
 
     console do
       Travis::Database.connect
-      Travis::Features.start
     end
   end
 end

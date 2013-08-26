@@ -74,6 +74,8 @@ module Travis
             rescue ActiveRecord::RecordInvalid
               # ignore for now. this seems to happen when multiple syncs (i.e. user sign
               # in requests are running in parallel?
+            rescue GH::Error(response_status: 404) => e
+              Travis.logger.warn "[github][services][user_sync] GitHub info was not available for #{repo.owner_name}/#{repo.name}: #{e.inspect}"
             end
 
             def owner_name

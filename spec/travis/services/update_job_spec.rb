@@ -12,11 +12,35 @@ describe Travis::Services::UpdateJob do
     build.matrix.delete_all
   end
 
+  describe '#cancel_job_in_worker' do
+    let(:event) { :start }
+
+    it 'sends cancel event to the worker' do
+      publisher = mock('publisher')
+      service.stubs(:publisher).returns(publisher)
+
+      publisher.expects(:publish).with(type: 'cancel_job', job_id: job.id)
+
+      service.cancel_job_in_worker
+    end
+  end
+
   describe 'event: start' do
     let(:event) { :start }
 
     before :each do
       job.repository.update_attributes(last_build_state: :passed)
+    end
+
+    context 'when job is canceled' do
+      before { job.update_attribute(:state, :canceled) }
+
+      it 'does not update state' do
+        service.expects(:cancel_job_in_worker)
+
+        service.run
+        job.reload.state.should == 'canceled'
+      end
     end
 
     it 'sets the job state to started' do
@@ -65,6 +89,17 @@ describe Travis::Services::UpdateJob do
 
     before :each do
       job.repository.update_attributes(last_build_state: :started)
+    end
+
+    context 'when job is canceled' do
+      before { job.update_attribute(:state, :canceled) }
+
+      it 'does not update state' do
+        service.expects(:cancel_job_in_worker)
+
+        service.run
+        job.reload.state.should == 'canceled'
+      end
     end
 
     it 'sets the job state to passed' do

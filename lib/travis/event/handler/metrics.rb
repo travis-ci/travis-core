@@ -19,10 +19,14 @@ module Travis
           case event
           when 'job:test:started'
             events = %W(job.queue.wait_time job.queue.wait_time.#{queue})
-            meter(events, job['created_at'], job['started_at'])
+            if job['created_at'] && job['started_at']
+              meter(events, job['created_at'], job['started_at'])
+            end
           when 'job:test:finished'
             events = %W(job.duration job.duration.#{queue})
-            meter(events, job['started_at'], job['finished_at'])
+            if job['started_at'] && job['finished_at']
+              meter(events, job['started_at'], job['finished_at'])
+            end
           end
         end
 

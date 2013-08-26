@@ -20,7 +20,7 @@ module Travis
       end
 
       def new(resource, options = {})
-        builder = builder(resource, options) || raise(ArgumentError, "cannot serialize #{resource.inspect}")
+        builder = builder(resource, options) || raise(ArgumentError, "cannot serialize #{resource.inspect}, options: #{options.inspect}")
         builder.new(resource, options[:params] || {})
       end
 

@@ -34,14 +34,16 @@ module Travis
               :owner_type  => repo_owner['type'],
               :owner_name  => repo_owner['login'],
               :owner_email => repo_owner['email'],
-              :private     => !!repo['private']
+              :private     => !!repo['private'],
+              :github_id   => repo['id']
             }
           end
 
           def owner
             @owner ||= {
-              :type  => repo_owner['type'],
-              :login => repo_owner['login']
+              :type      => repo_owner['type'],
+              :login     => repo_owner['login'],
+              :github_id => repo_owner['id']
             }
           end
 

@@ -30,15 +30,6 @@ describe Repository do
     end
   end
 
-  describe 'validates' do
-    it 'uniqueness of :owner_name/:name' do
-      existing = Factory(:repository)
-      repo = Repository.new(existing.attributes.except('last_build_status'))
-      repo.should_not be_valid
-      repo.errors['name'].should == ['has already been taken']
-    end
-  end
-
   describe 'associations' do
     describe 'owner' do
       let(:user) { Factory(:user) }
@@ -59,6 +50,10 @@ describe Repository do
   describe 'class methods' do
     describe 'find_by' do
       let(:minimal) { Factory(:repository) }
+
+      it "should find a repository by it's github_id" do
+        Repository.find_by(github_id: minimal.github_id).should == minimal
+      end
 
       it "should find a repository by it's id" do
         Repository.find_by(id: minimal.id).id.should == minimal.id

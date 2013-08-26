@@ -93,7 +93,6 @@ module Travis
                 :msg => "type=#{params[:event_type].inspect}",
                 :type => params[:event_type],
                 :accept? => target.accept?,
-                :token => params[:token],
                 :payload => params[:payload]
               )
             end

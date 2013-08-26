@@ -5,6 +5,32 @@ describe Build do
 
   let(:repository) { Factory(:repository) }
 
+  it 'is cancelable if at least one job is cancelable' do
+    jobs = [
+      Factory.build(:test),
+      Factory.build(:test)
+    ]
+
+    jobs.first.stubs(:cancelable?).returns(true)
+    jobs.second.stubs(:cancelable?).returns(false)
+
+    build = Factory.build(:build, matrix: jobs)
+    build.should be_cancelable
+  end
+
+  it 'is not cancelable if none of the jobs are cancelable' do
+    jobs = [
+      Factory.build(:test),
+      Factory.build(:test)
+    ]
+
+    jobs.first.stubs(:cancelable?).returns(false)
+    jobs.second.stubs(:cancelable?).returns(false)
+
+    build = Factory.build(:build, matrix: jobs)
+    build.should_not be_cancelable
+  end
+
   describe '#secure_env_enabled?' do
     it 'returns true if we\'re not dealing with pull request' do
       build = Factory.build(:build)

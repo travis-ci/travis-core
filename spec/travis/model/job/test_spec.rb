@@ -9,6 +9,64 @@ describe Job::Test do
     Travis::Event.stubs(:dispatch)
   end
 
+  it 'is cancelable if the job has not finished yet' do
+    job = Factory(:test, state: :created)
+    job.should be_cancelable
+
+    job = Factory(:test, state: :started)
+    job.should be_cancelable
+  end
+
+  it 'is not cancelable if the job has already been finished' do
+    job = Factory(:test, state: :passed)
+    job.should_not be_cancelable
+  end
+
+  describe 'cancelling' do
+    it 'should not propagate cancel state to source' do
+      build = Factory(:build, state: :started)
+      build.matrix.destroy_all
+      job = Factory(:test, state: :created, source: build)
+      Factory(:test, state: :started, source: build)
+      build.reload
+
+      expect {
+        job.cancel!
+      }.to_not change { job.source.reload.state }
+    end
+
+    it 'should put a build into canceled state if all the jobs in matrix are in finished state' do
+      build = Factory(:build, state: :started)
+      build.matrix.destroy_all
+      job = Factory(:test, state: :created, source: build)
+      Job::Test::FINISHED_STATES.each do |state|
+        Factory(:test, source: build, state: state)
+      end
+      build.reload
+
+      expect {
+      expect {
+      expect {
+        job.cancel!
+      }.to change { build.state }
+      }.to change { build.canceled_at }
+      }.to change { build.repository.reload.last_build_state }
+
+      build.reload.state.should == 'canceled'
+      build.repository.last_build_state.should == 'canceled'
+    end
+
+    it 'should set canceled_at and finished_at on job' do
+      job = Factory(:test, state: :created)
+
+      expect {
+      expect {
+        job.cancel!
+      }.to change { job.canceled_at }
+      }.to change { job.finished_at }
+    end
+  end
+
   describe 'events' do
     describe 'start' do
       let(:data) { WORKER_PAYLOADS['job:test:start'] }

@@ -59,6 +59,7 @@ FactoryGirl.define do
     last_build_id 2
     last_build_started_at { Time.now.utc }
     last_build_finished_at { Time.now.utc }
+    sequence(:github_id) {|n| n }
   end
 
   factory :minimal, :parent => :repository do

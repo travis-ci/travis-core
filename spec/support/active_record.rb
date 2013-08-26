@@ -1,5 +1,4 @@
 require 'active_record'
-require 'pg'
 require 'logger'
 require 'fileutils'
 require 'database_cleaner'

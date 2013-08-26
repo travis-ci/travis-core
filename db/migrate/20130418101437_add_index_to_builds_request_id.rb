@@ -8,6 +8,6 @@ class AddIndexToBuildsRequestId < ActiveRecord::Migration
   end
 
   def down
-    execute "DROP INDEX CONCURRENTLY index_builds_on_request_id"
+    execute "DROP INDEX index_builds_on_request_id"
   end
 end

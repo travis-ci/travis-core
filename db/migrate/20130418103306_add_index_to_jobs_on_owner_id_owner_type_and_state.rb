@@ -8,6 +8,6 @@ class AddIndexToJobsOnOwnerIdOwnerTypeAndState < ActiveRecord::Migration
   end
 
   def down
-    execute "DROP INDEX CONCURRENTLY index_jobs_on_owner_id_and_owner_type_and_state"
+    execute "DROP INDEX index_jobs_on_owner_id_and_owner_type_and_state"
   end
 end

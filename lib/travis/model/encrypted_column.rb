@@ -3,6 +3,18 @@ require 'base64'
 
 module Travis::Model
   class EncryptedColumn
+    attr_reader :disable
+    alias disabled? disable
+
+    def initialize(options = {})
+      options = options || {}
+      @disable = options[:disable]
+    end
+
+    def enabled?
+      !disabled?
+    end
+
     def load(data)
       return nil unless data
 
@@ -32,7 +44,7 @@ module Travis::Model
     end
 
     def encrypt?(data)
-      data.present? && Travis::Features.feature_active?(:db_encryption)
+      data.present? && enabled? && Travis::Features.feature_active?(:db_encryption)
     end
 
     def prefix_used?(data)

@@ -1,3 +1,5 @@
+require 'travis/model/user/renaming'
+
 module Travis
   module Github
     module Services
@@ -10,22 +12,44 @@ module Travis
 
         private
 
+          include ::User::Renaming
+
           def find
-            ::User.where(:login => params[:login]).first
+            ::User.where(github_id: params[:github_id]).first.tap do |user|
+              if user
+                ActiveRecord::Base.transaction do
+                  login = params[:login] || data['login']
+                  if user.login != login
+                    rename_repos_owner(user.login, login)
+                    user.update_attributes(login: login)
+                  end
+                end
+
+                nullify_logins(user.github_id, user.login)
+              end
+            end
           end
 
           def create
-            User.create!(
+            user = User.create!(
               :name => data['name'],
               :login => data['login'],
               :email => data['email'],
               :github_id => data['id'],
               :gravatar_id => data['gravatar_id']
             )
+
+            nullify_logins(user.github_id, user.login)
+
+            user
           end
 
           def data
-            @data ||= GH["users/#{params[:login]}"] || raise(Travis::GithubApiError)
+            @data ||= fetch_data
+          end
+
+          def fetch_data
+            GH["user/#{params[:github_id]}"] || raise(Travis::GithubApiError)
           end
       end
     end

@@ -8,6 +8,6 @@ class AddMoreIndexesToBuilds < ActiveRecord::Migration
   end
 
   def down
-    execute "DROP INDEX CONCURRENTLY index_builds_on_repository_id_and_event_type_and_state_and_branch"
+    execute "DROP INDEX index_builds_on_repository_id_and_event_type_and_state_and_branch"
   end
 end

@@ -24,7 +24,7 @@ class Repository < ActiveRecord::Base
   has_one :key, class_name: 'SslKey'
   belongs_to :owner, polymorphic: true
 
-  validates :name,       presence: true, uniqueness: { scope: :owner_name }
+  validates :name,       presence: true
   validates :owner_name, presence: true
 
   before_create do
@@ -74,6 +74,8 @@ class Repository < ActiveRecord::Base
     def find_by(params)
       if id = params[:repository_id] || params[:id]
         find_by_id(id)
+      elsif params[:github_id]
+        find_by_github_id(params[:github_id])
       elsif params.key?(:slug)
         by_slug(params[:slug]).first
       elsif params.key?(:name) && params.key?(:owner_name)

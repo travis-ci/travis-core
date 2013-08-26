@@ -19,7 +19,6 @@ require 'patches/rspec_hash_diff'
 
 Travis.logger = Logger.new(StringIO.new)
 Travis.services = Travis::Services
-Travis::Features.start
 ActionMailer::Base.delivery_method = :test
 
 include Mocha::API

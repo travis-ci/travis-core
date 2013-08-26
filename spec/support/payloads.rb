@@ -27,6 +27,7 @@ GITHUB_PAYLOADS = {
 
   "gem-release" => %({
     "repository": {
+      "id": 100,
       "url": "http://github.com/svenfuchs/gem-release",
       "name": "gem-release",
       "description": "Release your gems with ease",

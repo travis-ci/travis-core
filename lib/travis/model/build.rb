@@ -157,6 +157,10 @@ class Build < ActiveRecord::Base
     expand_matrix
   end
 
+  def matrix_ids
+    matrix.map(&:id)
+  end
+
   def secure_env_enabled?
     !pull_request? || same_repo_pull_request?
   end
@@ -236,7 +240,7 @@ class Build < ActiveRecord::Base
   end
 
   def cancelable?
-    matrix_finished?
+    matrix.any? { |job| job.cancelable? }
   end
 
   def pull_request?
