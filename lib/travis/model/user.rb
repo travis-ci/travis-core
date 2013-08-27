@@ -118,6 +118,10 @@ class User < ActiveRecord::Base
     missing.empty?
   end
 
+  def avatar_url
+    "https://0.gravatar.com/avatar/#{profile_image_hash}"
+  end
+
   protected
 
     def track_github_scopes
