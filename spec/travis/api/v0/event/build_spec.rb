@@ -12,7 +12,7 @@ describe Travis::Api::V0::Event::Build do
   before do
   end
 
-  it 'includes a the build data' do
+  it 'includes the build data' do
     data['build'].should == {
       'id' => 1,
       'repository_id' => 1,
