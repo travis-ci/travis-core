@@ -50,7 +50,9 @@ module Travis
           last_build_started_at: Time.now.utc - 60,
           last_build_finished_at: Time.now.utc,
           last_build_state: :passed,
-          last_build_duration: 60
+          last_build_duration: 60,
+          owner: nil,
+          github_language: 'ruby'
         )
       end
       alias stub_repository stub_repo
@@ -102,7 +104,7 @@ module Travis
         Stubs.stub 'build', attributes.reverse_merge(
           id: 1,
           repository_id: repository.id,
-          repository: repository,
+          repository: stub_repository(owner: attributes.delete(:owner)),
           request_id: request.id,
           request: request,
           commit_id: commit.id,

@@ -3,9 +3,16 @@ require 'spec_helper'
 describe Travis::Api::V0::Event::Build do
   include Travis::Testing::Stubs, Support::Formats
 
-  let(:data) { Travis::Api::V0::Event::Build.new(build).data }
+  let(:data) { Travis::Api::V0::Event::Build.new(stub_build(owner: owner)).data }
 
-  it 'build' do
+  let(:owner) {
+    OpenStruct.new(avatar_url: 'https://github.com/roidrage.png')
+  }
+
+  before do
+  end
+
+  it 'includes the build data' do
     data['build'].should == {
       'id' => 1,
       'repository_id' => 1,
@@ -20,6 +27,10 @@ describe Travis::Api::V0::Event::Build do
       'finished_at' => json_format_time(Time.now.utc),
       'duration' => 60
     }
+  end
+
+  it 'includes the repository data' do
+    data['repository']['owner_avatar_url'].should == 'https://github.com/roidrage.png'
   end
 
   # it 'commit' do
