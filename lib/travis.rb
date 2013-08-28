@@ -92,6 +92,9 @@ module Travis
         pusher.app_id = config.pusher.app_id
         pusher.key    = config.pusher.key
         pusher.secret = config.pusher.secret
+        pusher.scheme = config.pusher.scheme if config.pusher.scheme.present?
+        pusher.host   = config.pusher.host   if config.pusher.host.present?
+        pusher.port   = config.pusher.port   if config.pusher.port.present?
       end
     end
 
