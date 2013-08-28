@@ -30,7 +30,10 @@ describe Travis::Api::V0::Pusher::Build::Started do
       'committer_email' => 'svenfuchs@artweb-design.de',
       'committed_at' => json_format_time(Time.now.utc - 1.hour),
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
-      'event_type' => 'push'
+      'event_type' => 'push',
+      'pull_request' => false,
+      'pull_request_title' => nil,
+      'pull_request_number' => nil
     }
   end
 
