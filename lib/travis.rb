@@ -1,6 +1,5 @@
 require 'travis/support'
 require 'travis_core/version'
-require 'gh'
 require 'pusher'
 require 'travis/redis_pool'
 require 'travis/errors'
@@ -63,13 +62,7 @@ module Travis
     def setup
       Travis.logger.info('Setting up Travis::Core')
 
-      GH.set(
-        client_id:      Travis.config.oauth2.try(:client_id),
-        client_secret:  Travis.config.oauth2.try(:client_secret),
-        user_agent:     "Travis-CI/#{TravisCore::VERSION} GH/#{GH::VERSION}",
-        origin:         Travis.config.host
-      )
-
+      Github.setup
       Addons.register
       Services.register
       Enqueue::Services.register
