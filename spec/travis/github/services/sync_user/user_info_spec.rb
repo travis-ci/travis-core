@@ -7,7 +7,8 @@ describe Travis::Github::Services::SyncUser::UserInfo do
     'name'          => 'Konstantin Haase',
     'gravatar_id'   => '5c2b452f6eea4a6d84c105ebd971d2a4',
     'email'         => 'konstantin.haase@gmail.com',
-    'github_scopes' => ['user:email']
+    'github_scopes' => ['user:email'],
+    'id'            => '100'
   }}
 
   let(:emails) {[
@@ -71,10 +72,21 @@ describe Travis::Github::Services::SyncUser::UserInfo do
     args   = user_info.slice('login', 'name', 'email', 'gravatar_id').symbolize_keys
     emails = stub("email")
     user.stubs(:emails).returns(emails)
+    user.stubs(:github_id).returns(100)
+    user.stubs(:id).returns(1)
     user.expects(:update_attributes!).with(args).once
     emails.expects(:find_or_create_by_email!).with("konstantin.mailinglists@gmail.com").once
     emails.expects(:find_or_create_by_email!).with("konstantin.mailinglists@googlemail.com").once
     emails.expects(:find_or_create_by_email!).with("konstantin.haase@gmail.com").once
     subject.run
+  end
+
+  it 'raises an error if github_id does not match' do
+    args   = user_info.slice('login', 'name', 'email', 'gravatar_id').symbolize_keys
+    user.stubs(:github_id).returns(101)
+    user.stubs(:id).returns(1)
+    expect {
+      subject.run
+    }.to raise_error(/Updating User#1\(login="rkh"\) failed/)
   end
 end
