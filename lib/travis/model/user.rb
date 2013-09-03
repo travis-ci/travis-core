@@ -1,7 +1,7 @@
 require 'active_record'
 require 'gh'
 
-class User < ActiveRecord::Base
+class User < Travis::Model
   autoload :Oauth, 'travis/model/user/oauth'
 
   has_many :tokens

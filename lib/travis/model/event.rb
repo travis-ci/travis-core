@@ -1,4 +1,4 @@
-class Event < ActiveRecord::Base
+class Event < Travis::Model
   belongs_to :repository
   belongs_to :source, :polymorphic => true
 

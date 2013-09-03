@@ -1,6 +1,6 @@
 require 'active_record'
 
-class Broadcast < ActiveRecord::Base
+class Broadcast < Travis::Model
   belongs_to :recipient, polymorphic: true
 
   class << self

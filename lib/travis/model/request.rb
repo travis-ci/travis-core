@@ -6,7 +6,7 @@ require 'simple_states'
 # The Request will be configured by fetching `.travis.yml` from the Github API
 # and needs to be approved based on the configuration. Once approved the
 # Request creates a Build.
-class Request < ActiveRecord::Base
+class Request < Travis::Model
   autoload :Approval, 'travis/model/request/approval'
   autoload :Branches, 'travis/model/request/branches'
   autoload :States,   'travis/model/request/states'

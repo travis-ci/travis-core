@@ -1,7 +1,7 @@
 require 'digest/sha1'
 require 'active_record'
 
-class Url < ActiveRecord::Base
+class Url < Travis::Model
 
   validates :url,  :presence => true, :uniqueness => true
   validates :code, :presence => true, :uniqueness => true

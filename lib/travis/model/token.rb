@@ -5,7 +5,7 @@ require 'securerandom'
 # Users can have one or many tokens (even though the current UI only allows for
 # one) that they need use on their service hooks. This gives us some security
 # that people cannot throw random repositories at Travis CI.
-class Token < ActiveRecord::Base
+class Token < Travis::Model
   belongs_to :user
 
   validate :token, :presence => true

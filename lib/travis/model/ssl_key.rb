@@ -4,7 +4,7 @@ require 'base64'
 # A Repository has an SSL key pair that is used to encrypt/decrypt sensitive
 # data so it can be added to a public `.travis.yml` file (e.g. Campfire
 # credentials).
-class SslKey < ActiveRecord::Base
+class SslKey < Travis::Model
   belongs_to :repository
 
   validates :repository_id, :presence => true, :uniqueness => true

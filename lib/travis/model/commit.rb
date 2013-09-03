@@ -2,7 +2,7 @@ require 'active_record'
 
 # Encapsulates a commit that a Build belongs to (and that a Github Request
 # referred to).
-class Commit < ActiveRecord::Base
+class Commit < Travis::Model
   has_one :request
   belongs_to :repository
 

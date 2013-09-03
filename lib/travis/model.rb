@@ -5,7 +5,7 @@
 require 'core_ext/active_record/base'
 
 module Travis
-  module Model
+  class Model < ActiveRecord::Base
     autoload :Account,         'travis/model/account'
     autoload :Broadcast,       'travis/model/broadcast'
     autoload :Build,           'travis/model/build'

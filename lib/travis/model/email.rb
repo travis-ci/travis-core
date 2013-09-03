@@ -1,3 +1,3 @@
-class Email < ActiveRecord::Base
+class Email < Travis::Model
   belongs_to :user
 end

@@ -37,7 +37,7 @@ require 'simple_states'
 #  * Events      - helpers that are used by notification handlers (and that
 #                  TODO probably should be cleaned up and moved to
 #                  travis/notification)
-class Build < ActiveRecord::Base
+class Build < Travis::Model
   autoload :Denormalize,   'travis/model/build/denormalize'
   autoload :Matrix,        'travis/model/build/matrix'
   autoload :Metrics,       'travis/model/build/metrics'

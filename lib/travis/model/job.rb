@@ -8,7 +8,7 @@ require 'active_support/core_ext/hash/deep_dup'
 #  * Job::Test belongs to a Build (one or many Job::Test instances make up a
 #    build matrix) and executes a test suite with parameters defined in the
 #    configuration.
-class Job < ActiveRecord::Base
+class Job < Travis::Model
   autoload :Queue,     'travis/model/job/queue'
   autoload :Sponsors,  'travis/model/job/sponsors'
   autoload :Tagging,   'travis/model/job/tagging'

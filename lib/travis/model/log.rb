@@ -1,7 +1,7 @@
 require 'active_record'
 require 'metriks'
 
-class Log < ActiveRecord::Base
+class Log < Travis::Model
   autoload :Part, 'travis/model/log/part'
 
   AGGREGATE_PARTS_SELECT_SQL = <<-sql.squish

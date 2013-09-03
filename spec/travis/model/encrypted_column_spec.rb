@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module Travis::Model
+class Travis::Model < ActiveRecord::Base
   describe EncryptedColumn do
     def encode str
       Base64.strict_encode64 str

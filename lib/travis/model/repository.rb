@@ -10,7 +10,7 @@ require 'active_record'
 #
 # A repository also has a ServiceHook that can be used to de/activate service
 # hooks on Github.
-class Repository < ActiveRecord::Base
+class Repository < Travis::Model
   autoload :StatusImage, 'travis/model/repository/status_image'
 
   has_many :commits, dependent: :delete_all
