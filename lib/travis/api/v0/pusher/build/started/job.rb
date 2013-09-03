@@ -5,7 +5,7 @@ module Travis
         class Build
           class Started < Build
             class Job
-              include Formats, Helpers::Legacy
+              include Formats, V1::Helpers::Legacy
 
               attr_reader :job, :commit
 
