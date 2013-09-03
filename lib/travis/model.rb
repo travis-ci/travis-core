@@ -24,5 +24,33 @@ module Travis
     autoload :Token,           'travis/model/token'
     autoload :User,            'travis/model/user'
     autoload :Worker,          'travis/model/worker'
+
+    self.abstract_class = true
+
+    cattr_accessor :follower_connection_handler
+
+    class << self
+      def connection_handler
+        if Thread.current['Travis.with_follower_connection_handler']
+          follower_connection_handler
+        else
+          super
+        end
+      end
+
+      def establish_follower_connection(spec)
+        self.follower_connection_handler = ActiveRecord::ConnectionAdapters::ConnectionHandler.new unless self.follower_connection_handler
+        using_follower do
+          self.establish_connection(spec)
+        end
+      end
+
+      def using_follower
+        Thread.current['Travis.with_follower_connection_handler'] = true
+        yield
+      ensure
+        Thread.current['Travis.with_follower_connection_handler'] = false
+      end
+    end
   end
 end
