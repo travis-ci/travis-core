@@ -3,6 +3,8 @@ services:
   - redis
 rvm:
   - jruby-19mode
+  - rbx-2.0.0.rc1
+  - ruby-2.0.0
 jdk:
   - oraclejdk7
   - openjdk6
@@ -12,6 +14,8 @@ matrix:
       jdk:
     - rvm: 2.0.0
       jdk:
+  allow_failures:
+    - rvm: rbx-2.0.0.rc1
 before_script:
   - sudo service mysql stop
   - redis-cli config set save ""
