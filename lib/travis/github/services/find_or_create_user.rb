@@ -20,6 +20,7 @@ module Travis
                 ActiveRecord::Base.transaction do
                   login = params[:login] || data['login']
                   if user.login != login
+                    Travis.logger.info("Changing User##{user.id}'s login: current=\"#{user.login}\", new=\"#{login}\" (FindOrCreateUser)")
                     rename_repos_owner(user.login, login)
                     user.update_attributes(login: login)
                   end
