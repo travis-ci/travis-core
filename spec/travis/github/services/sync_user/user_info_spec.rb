@@ -8,7 +8,8 @@ describe Travis::Github::Services::SyncUser::UserInfo do
     'gravatar_id'   => '5c2b452f6eea4a6d84c105ebd971d2a4',
     'email'         => 'konstantin.haase@gmail.com',
     'github_scopes' => ['user:email'],
-    'id'            => '100'
+    'id'            => '100',
+    'github_id'     => '500'
   }}
 
   let(:emails) {[
@@ -87,6 +88,6 @@ describe Travis::Github::Services::SyncUser::UserInfo do
     user.stubs(:id).returns(1)
     expect {
       subject.run
-    }.to raise_error(/Updating User#1\(login="rkh"\) failed/)
+    }.to raise_error(/Updating.*?failed/)
   end
 end

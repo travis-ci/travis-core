@@ -20,7 +20,7 @@ module Travis
                 ActiveRecord::Base.transaction do
                   login = params[:login] || data['login']
                   if user.login != login
-                    Travis.logger.info("Changing User##{user.id}'s login: current=\"#{user.login}\", new=\"#{login}\" (FindOrCreateUser), data: #{data.inspect}")
+                    Travis.logger.info("Changing #<User id=#{user.id} login=\"#{user.login}\" github_id=#{user.github_id}> login: current=\"#{user.login}\", new=\"#{login}\" (FindOrCreateUser), data: #{data.inspect}")
                     rename_repos_owner(user.login, login)
                     user.update_attributes(login: login)
                   end
@@ -50,7 +50,9 @@ module Travis
           end
 
           def fetch_data
-            GH["user/#{params[:github_id]}"] || raise(Travis::GithubApiError)
+            data = GH["user/#{params[:github_id]}"] || raise(Travis::GithubApiError)
+            Travis.logger.info("Fetching data for github_id=#{params[:github_id]} (FindOrCreateUser), data: #{data.inspect}")
+            data
           end
       end
     end

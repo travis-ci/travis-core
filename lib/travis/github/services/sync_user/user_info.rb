@@ -13,13 +13,13 @@ module Travis
 
           def run
             if user.github_id != user_info['id'].to_i
-              raise "Updating User##{user.id}(login=\"#{user.login}\") failed, github_id differs. github_id on user: #{user.github_id}, github_id from data: #{user_info['id']}"
+              raise "Updating #<User id=#{user.id} login=\"#{user.login}\" github_id=#{user.github_id}> failed, github_id differs. github_id on user: #{user.github_id}, github_id from data: #{user_info['id']}"
             end
             if user.login != login
-              Travis.logger.info("Changing User##{user.id}'s login: current=\"#{user.login}\", new=\"#{login}\" (UserInfo), data: #{user_info.inspect}")
+              Travis.logger.info("Changing #<User id=#{user.id} login=\"#{user.login}\" github_id=#{user.github_id}> login: current=\"#{user.login}\", new=\"#{login}\" (UserInfo), data: #{user_info.inspect}")
             end
             if user.email != email
-              Travis.logger.info("Changing User##{user.id}'s email: current=\"#{user.email}\", new=\"#{email}\" (UserInfo)")
+              Travis.logger.info("Changing #<User id=#{user.id} login=\"#{user.login}\" github_id=#{user.github_id}> email: current=\"#{user.email}\", new=\"#{email}\" (UserInfo)")
             end
 
             user.update_attributes!(name: name, login: login, gravatar_id: gravatar_id, email: email)
@@ -68,7 +68,11 @@ module Travis
             end
 
             def user_info
-              @user_info ||= gh['user'].to_hash
+              @user_info ||= begin
+                data = gh['user'].to_hash
+                Travis.logger.info("Fetching data for github_id=#{user.github_id} (UserInfo), data: #{data.inspect}")
+                data
+              end
             end
         end
       end
