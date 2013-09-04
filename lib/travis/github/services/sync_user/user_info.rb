@@ -29,7 +29,7 @@ module Travis
           end
 
           def name
-            user_info['name'].presence || user.name
+            user_info['name']
           end
 
           def login
