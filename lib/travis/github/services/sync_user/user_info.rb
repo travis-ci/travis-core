@@ -16,7 +16,7 @@ module Travis
               raise "Updating User##{user.id}(login=\"#{user.login}\") failed, github_id differs. github_id on user: #{user.github_id}, github_id from data: #{user_info['id']}"
             end
             if user.login != login
-              Travis.logger.info("Changing User##{user.id}'s login: current=\"#{user.login}\", new=\"#{login}\" (UserInfo)")
+              Travis.logger.info("Changing User##{user.id}'s login: current=\"#{user.login}\", new=\"#{login}\" (UserInfo), data: #{user_info.inspect}")
             end
             if user.email != email
               Travis.logger.info("Changing User##{user.id}'s email: current=\"#{user.email}\", new=\"#{email}\" (UserInfo)")
