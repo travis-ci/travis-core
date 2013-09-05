@@ -167,16 +167,27 @@ describe Repository do
   end
 
   describe 'source_url' do
-    let(:repo) { Repository.new(owner_name: 'travis-ci', name: 'travis-ci') }
+    let(:repo) { Repository.new(owner_name: 'travis-ci', name: 'travis-ci', url: 'https://localhost/travis-ci/travis-ci') }
 
     it 'returns the public git source url for a public repository' do
       repo.private = false
-      repo.source_url.should == 'git://github.com/travis-ci/travis-ci.git'
+      repo.source_url.should == 'git://localhost/travis-ci/travis-ci.git'
     end
 
     it 'returns the private git source url for a private repository' do
       repo.private = true
-      repo.source_url.should == 'git@github.com:travis-ci/travis-ci.git'
+      repo.source_url.should == 'git@localhost:travis-ci/travis-ci.git'
+    end
+
+    it 'uses the source_host' do
+    end
+  end
+
+  describe 'source_host' do
+    let(:repo) { Repository.new(url: 'https://github.com/travis-ci/travis-ci') }
+
+    it 'returns the host name from the repository url' do
+      repo.source_host.should == 'github.com'
     end
   end
 

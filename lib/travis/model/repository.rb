@@ -111,7 +111,11 @@ class Repository < Travis::Model
   end
 
   def source_url
-    private? ? "git@github.com:#{slug}.git": "git://github.com/#{slug}.git"
+    private? ? "git@#{source_host}:#{slug}.git": "git://#{source_host}/#{slug}.git"
+  end
+
+  def source_host
+    url =~ %r(^https?://([^/]*)/) && $1
   end
 
   def branches
