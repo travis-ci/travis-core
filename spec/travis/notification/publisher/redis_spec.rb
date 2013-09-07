@@ -4,7 +4,7 @@ describe Travis::Notification::Publisher::Redis do
   include Support::Notifications
 
   let(:redis) { Redis.connect(url: Travis.config.redis.url) }
-  let(:key) { 'events:#{Travis.uuid}' }
+  let(:key) { "events:#{Travis.uuid}" }
 
   around do |example|
     Timeout.timeout(10) { example.run }
@@ -47,8 +47,6 @@ describe Travis::Notification::Publisher::Redis do
   end
 
   it 'sends out events over pubsub' do
-    pending 'hangs for some reason'
-
     event = nil
 
     redis.subscribe(key) do |on|
@@ -61,10 +59,10 @@ describe Travis::Notification::Publisher::Redis do
     end
 
     event.should == {
-      uuid:    Travis.uuid,
-      event:   'foo.bar.instrumented',
-      message: 'Object#instrumented:completed',
-      data:    { foo: 'bar' }
+      "uuid" =>    Travis.uuid,
+      "event" =>   'foo.bar.instrumented',
+      "message" => 'Object#instrumented:completed',
+      "data" =>    { "foo" => 'bar' }
     }
   end
 end
