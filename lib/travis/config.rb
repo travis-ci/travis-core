@@ -23,7 +23,7 @@ module Travis
   class Config < Hashr
     class << self
       def env
-        puts "[DEPRECATED] Travis::Config.env is deprecated. Please use Travis.env."
+        Travis.logger.info "[DEPRECATED] Travis::Config.env is deprecated. Please use Travis.env."
         Travis.env
       end
 
@@ -127,7 +127,7 @@ module Travis
     end
 
     def env
-      puts "[DEPRECATED] Travis.config.env is deprecated. Please use Travis.env."
+      Travis.logger.info "[DEPRECATED] Travis.config.env is deprecated. Please use Travis.env."
       Travis.env
     end
 
@@ -157,7 +157,7 @@ module Travis
         version = fetch
         if version && assets.version != version
           self.assets.version = version
-          puts "[asset-version] Updated asset version from https://#{Travis.config.assets.host}/current to #{assets.version}"
+          Travis.logger.info "[asset-version] Updated asset version from https://#{Travis.config.assets.host}/current to #{assets.version}"
         end
       end
 
