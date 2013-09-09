@@ -45,7 +45,6 @@ module Travis
         def preload(builds)
           builds = builds.includes(:commit)
           # TODO rescue MissingAttribute in simple_states so we can stop loading :state
-          ActiveRecord::Associations::Preloader.new(builds, :request, :select => [:id, :event_type, :state]).run
           ActiveRecord::Associations::Preloader.new(builds, :matrix, :select => [:id, :source_id, :state]).run
           builds
         end

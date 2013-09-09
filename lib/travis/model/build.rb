@@ -244,7 +244,7 @@ class Build < Travis::Model
   end
 
   def pull_request?
-    request.pull_request?
+    event_type == 'pull_request'
   end
 
   # COMPAT: used in http api v1, deprecate as soon as v1 gets retired

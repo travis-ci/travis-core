@@ -66,7 +66,7 @@ describe 'Travis::Api::V2::Http::Builds using Travis::Services::Builds::FindAll'
   end
 
   it 'queries' do
-    lambda { data }.should issue_queries(5)
+    lambda { data }.should issue_queries(4)
   end
 end
 
