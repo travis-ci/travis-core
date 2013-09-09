@@ -40,6 +40,23 @@ describe Travis::Api::V2::Http::Builds do
     }
   end
 
+  it 'does not use cached_matrix_ids if the column does not exist in DB' do
+    ::Build.stubs(:column_names).returns([])
+    build = stub_build
+    build.expects(:cached_matrix_ids).never
+    build.expects(:matrix_ids).returns([1, 2, 3])
+    data = Travis::Api::V2::Http::Builds.new([build]).data
+    data['builds'].first['job_ids'].should == [1, 2, 3]
+  end
+
+  it 'uses uses cached_matrix_ids if the column exists in DB' do
+    ::Build.stubs(:column_names).returns(['cached_matrix_ids'])
+    build = stub_build
+    build.expects(:cached_matrix_ids).returns([1, 2, 3])
+    data = Travis::Api::V2::Http::Builds.new([build]).data
+    data['builds'].first['job_ids'].should == [1, 2, 3]
+  end
+
   describe 'with a pull request' do
     let(:build) do
       stub_build pull_request?: true,
@@ -66,7 +83,7 @@ describe 'Travis::Api::V2::Http::Builds using Travis::Services::Builds::FindAll'
   end
 
   it 'queries' do
-    lambda { data }.should issue_queries(4)
+    lambda { data }.should issue_queries(3)
   end
 end
 

@@ -36,8 +36,16 @@ module Travis
                 'started_at' => format_date(build.started_at),
                 'finished_at' => format_date(build.finished_at),
                 'duration' => build.duration,
-                'job_ids' => build.matrix_ids
+                'job_ids' => matrix_ids(build)
               }
+            end
+
+            def matrix_ids(build)
+              if ::Build.column_names.include?('cached_matrix_ids')
+                build.cached_matrix_ids || build.matrix_ids
+              else
+                build.matrix_ids
+              end
             end
 
             def commit_data(commit)

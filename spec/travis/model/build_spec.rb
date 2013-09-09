@@ -5,6 +5,17 @@ describe Build do
 
   let(:repository) { Factory(:repository) }
 
+  it 'caches matrix ids' do
+    build = Factory.create(:build, config: { rvm: ['1.9.3', '2.0.0'] })
+    build.cached_matrix_ids.should == build.matrix_ids
+  end
+
+  it 'returns nil if cached_matrix_ids are not set' do
+    build = Factory.create(:build)
+    build.update_column(:cached_matrix_ids, nil)
+    build.reload.cached_matrix_ids.should be_nil
+  end
+
   it 'is cancelable if at least one job is cancelable' do
     jobs = [
       Factory.build(:test),

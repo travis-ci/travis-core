@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130726101124) do
+ActiveRecord::Schema.define(:version => 20130909203321) do
 
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
@@ -28,8 +28,8 @@ ActiveRecord::Schema.define(:version => 20130726101124) do
     t.string   "number"
     t.datetime "started_at"
     t.datetime "finished_at"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
     t.text     "config"
     t.integer  "commit_id"
     t.integer  "request_id"
@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(:version => 20130726101124) do
     t.integer  "pull_request_number"
     t.string   "branch"
     t.datetime "canceled_at"
+    t.string   "cached_matrix_ids",   :limit => nil
   end
 
   add_index "builds", ["finished_at"], :name => "index_builds_on_finished_at"
@@ -202,7 +203,7 @@ ActiveRecord::Schema.define(:version => 20130726101124) do
     t.string   "github_language"
   end
 
-  add_index "repositories", ["github_id"], :name => "index_repositories_on_github_id", :unique => true
+  add_index "repositories", ["github_id"], :name => "index_repositories_on_github_id"
   add_index "repositories", ["last_build_started_at"], :name => "index_repositories_on_last_build_started_at"
   add_index "repositories", ["owner_name", "name"], :name => "index_repositories_on_owner_name_and_name"
 
