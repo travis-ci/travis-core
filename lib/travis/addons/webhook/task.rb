@@ -18,7 +18,15 @@ module Travis
           def send_webhook(target)
             response = http.post(target) do |req|
               req.body = { payload: payload.except(:params).to_json }
-              req.headers['Authorization'] = authorization
+              uri = URI(target)
+              if uri.user && uri.password
+                req.headers['Authorization'] =
+                  Faraday::Request::BasicAuthentication.header(
+                    URI.unescape(uri.user), URI.unescape(uri.password)
+                  )
+              else
+                req.headers['Authorization'] = authorization
+              end
             end
             response.success? ? log_success(response) : log_error(response)
           end
