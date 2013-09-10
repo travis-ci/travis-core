@@ -32,7 +32,7 @@ module Travis
                 'author_email' => commit.author_email,
                 'committer_name' => commit.committer_name,
                 'committer_email' => commit.committer_email,
-                'event_type' => request.event_type,
+                'event_type' => build.event_type,
                 'pull_request' => build.pull_request?,
                 'pull_request_title' => build.pull_request_title,
                 'pull_request_number' => build.pull_request_number,

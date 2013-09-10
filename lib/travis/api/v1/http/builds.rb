@@ -28,7 +28,7 @@ module Travis
               'commit' => build.commit.commit,
               'branch' => build.commit.branch,
               'message' => build.commit.message,
-              'event_type' => build.request.event_type,
+              'event_type' => build.event_type,
             }
           end
         end

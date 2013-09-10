@@ -128,7 +128,8 @@ module Travis
           queue: 'builds.linux',
           pull_request_title: nil,
           pull_request_number: nil,
-          secure_env_enabled?: true
+          secure_env_enabled?: true,
+          event_type: 'push'
         )
       end
 

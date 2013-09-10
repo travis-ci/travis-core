@@ -36,7 +36,7 @@ module Travis
               'committer_name' => commit.committer_name,
               'committer_email' => commit.committer_email,
               'compare_url' => commit.compare_url,
-              'event_type' => request.event_type,
+              'event_type' => build.event_type,
               'matrix' => build.matrix.map { |job| Job.new(job).data },
             }
           end
