@@ -26,6 +26,8 @@ module Travis
             end
 
             def max_queueable
+              return config.default if owner.login.nil?
+
               if unlimited?
                 999
               else
