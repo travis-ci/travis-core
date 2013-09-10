@@ -158,8 +158,11 @@ class Build < Travis::Model
   end
 
   after_save do
-    unless cached_matrix_ids
-      update_column(:cached_matrix_ids, to_postgres_array(matrix_ids))
+
+    if ::Build.column_names.include?('cached_matrix_ids')
+      unless cached_matrix_ids
+        update_column(:cached_matrix_ids, to_postgres_array(matrix_ids))
+      end
     end
   end
 
