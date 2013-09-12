@@ -32,7 +32,7 @@ module Travis
           if params[:active]
             scope = scope.active
           elsif (params.keys & [:member, :owner_name, :search]).present?
-            scope = scope.with_builds
+            scope = scope.with_builds.order('last_build_started_at DESC NULLS FIRST')
           end
 
           scope

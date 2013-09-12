@@ -35,6 +35,18 @@ describe Travis::Services::FindRepos do
       @params = { :member => 'joshk' }
       service.run.should_not include(repo)
     end
+
+    it 'does sort by latest build, putting queued (no last_build_started_at) at the front' do
+      repo.update_column(:last_build_started_at, Time.now - 10)
+      queued = Factory(:repository, last_build_started_at: nil)
+      just_started = Factory(:repository, last_build_started_at: Time.now)
+
+      josh = Factory(:user, :login => 'joshk')
+      [repo, queued, just_started].each { |r| r.users << josh }
+
+      @params = { :member => 'joshk' }
+      service.run.should == [queued, just_started, repo]
+    end
   end
 
   describe 'given an owner_name name' do
