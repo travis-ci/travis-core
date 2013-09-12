@@ -15,7 +15,8 @@ describe Travis::Api::V2::Http::User do
       'locale' => 'de',
       'is_syncing' => false,
       'synced_at' => json_format_time(Time.now.utc - 1.hour),
-      'correct_scopes' => true
+      'correct_scopes' => true,
+      'created_at' => json_format_time(Time.now.utc - 2.hours),
     }
   end
 end

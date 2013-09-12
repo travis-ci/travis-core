@@ -30,7 +30,8 @@ module Travis
                 'locale' => user.locale,
                 'is_syncing' => user.syncing?,
                 'synced_at' => format_date(user.synced_at),
-                'correct_scopes' => user.correct_scopes?
+                'correct_scopes' => user.correct_scopes?,
+                'created_at' => format_date(user.created_at),
               }
             end
         end

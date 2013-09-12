@@ -228,7 +228,8 @@ module Travis
           synced_at: Time.now.utc - 3600,
           tokens: [stub('token', token: 'token')],
           github_scopes: Travis.config.oauth2.try(:scopes).to_s.split(','),
-          correct_scopes?: true
+          correct_scopes?: true,
+          created_at: Time.now.utc - 7200
         )
       end
 
