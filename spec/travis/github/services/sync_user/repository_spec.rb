@@ -7,15 +7,15 @@ describe Travis::Github::Services::SyncUser::Repository do
   let(:run)     { lambda { described_class.new(user, repo).run } }
 
   describe 'find or create repository' do
-    let(:repo) { { 'name' => 'minimal', 'owner' => { 'login' => 'sven' }, 'permissions' => { 'admin' => false, 'push' => false, 'pull' => true } } }
+    let(:repo) { { 'id' => 100, 'name' => 'minimal', 'owner' => { 'login' => 'sven' }, 'permissions' => { 'admin' => false, 'push' => false, 'pull' => true } } }
 
     it 'creates a new repository per record if not yet present' do
       run.call
-      Repository.find_by_owner_name_and_name('sven', 'minimal').should be_present
+      Repository.find_by_github_id(100).should be_present
     end
 
     it 'does not create a new repository' do
-      Repository.create!(:owner_name => 'sven', :name => 'minimal')
+      Repository.create!(:owner_name => 'sven-1', :name => 'minimal-2', :github_id => 100)
       run.should_not change(Repository, :count)
     end
   end

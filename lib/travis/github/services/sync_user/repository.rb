@@ -30,11 +30,11 @@ module Travis
           private
 
             def find
-              ::Repository.where(:owner_name => owner_name, :name => name).first
+              ::Repository.where(:github_id => github_id).first
             end
 
             def create
-              ::Repository.create!(:owner_name => owner_name, :name => name)
+              ::Repository.create!(:owner_name => owner_name, :name => name, github_id: github_id)
             end
             # instrument :create, :level => :debug
 
@@ -84,6 +84,10 @@ module Travis
 
             def name
               data['name']
+            end
+
+            def github_id
+              data['id']
             end
 
             def permission_data
