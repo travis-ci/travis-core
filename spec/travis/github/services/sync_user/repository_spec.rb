@@ -20,6 +20,17 @@ describe Travis::Github::Services::SyncUser::Repository do
     end
   end
 
+  describe "updating" do
+    let(:repo) { { 'id' => 100, 'name' => 'minimal', 'owner' => { 'login' => 'sven' }, 'permissions' => { 'admin' => false, 'push' => false, 'pull' => true } } }
+    it "updates repositorie's name and owner name" do
+      r = Repository.create!(:owner_name => 'sven-1', :name => 'minimal-2', :github_id => 100)
+      run.should change { r.reload.owner_name }
+
+      r.owner_name.should == 'sven'
+      r.name.should == 'minimal'
+    end
+  end
+
   describe 'a public repository' do
     describe 'only pull access' do
       let(:repo) { { 'name' => 'minimal', 'owner' => { 'login' => 'sven' }, 'permissions' => { 'admin' => false, 'push' => false, 'pull' => true } } }

@@ -69,7 +69,9 @@ module Travis
                 description: data['description'],
                 url: data['homepage'],
                 default_branch: data['default_branch'],
-                github_language: data['language']
+                github_language: data['language'],
+                name: name,
+                owner_name: owner_name
               })
             rescue ActiveRecord::RecordInvalid
               # ignore for now. this seems to happen when multiple syncs (i.e. user sign
