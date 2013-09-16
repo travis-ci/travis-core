@@ -2,8 +2,6 @@ require 'hashr'
 
 class Build
   class ResultMessage
-
-    # TODO extract to I18n
     SHORT = {
       pending:  'Pending',
       passed:   'Passed',
@@ -16,14 +14,14 @@ class Build
     }
 
     FULL = {
-      pending:  'The build is pending.',
-      passed:   'The build passed.',
-      failed:   'The build failed.',
-      broken:   'The build was broken.',
-      fixed:    'The build was fixed.',
-      failing:  'The build is still failing.',
-      errored:  'The build has errored.',
-      canceled: 'The build was canceled.'
+      pending:  'Build #%d is pending.',
+      passed:   'Build #%d passed.',
+      failed:   'Build #%d failed.',
+      broken:   'Build #%d was broken.',
+      fixed:    'Build #%d was fixed.',
+      failing:  'Build #%d is still failing.',
+      errored:  'Build #%d has errored.',
+      canceled: 'Build #%d was canceled.'
     }
 
     attr_reader :build
@@ -38,7 +36,7 @@ class Build
     end
 
     def full
-      FULL[result_key]
+      FULL[result_key] % build.number
     end
 
     private

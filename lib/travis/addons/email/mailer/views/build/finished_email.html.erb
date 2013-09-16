@@ -1,102 +1,358 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <link href="/email.css" media="screen" rel="stylesheet" type="text/css" />
+    <style type="text/css" media="screen">
+      body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        color: #808080;
+        width: 570px;
+        margin: 0 auto;
+      }
+
+      table, tr, td {
+        padding: 0px;
+        border: 0px;
+      }
+
+      table {
+        width: 100%;
+      }
+
+      #build {
+        border-radius: 5px;
+        padding: 0px;
+        width: 100%;
+        font-size: 13px;
+      }
+
+      .repository {
+        color: #606060;
+      }
+
+      .repository {
+        font-size: 20px;
+      }
+
+      .repository td {
+        vertical-align: middle;
+      }
+
+      .repository td img {
+        vertical-align: middle;
+        width: 40px;
+        height: 40px;
+      }
+
+      .repository td span {
+        vertical-align: middle;
+      }
+
+      .repository {
+        margin-bottom: 15px;
+        margin-top: 15px;
+      }
+
+      #build thead td {
+        padding: 10px 20px 10px 0px;
+        vertical-align: middle;
+      }
+
+      #build thead td:first-child {
+        text-align: center;
+        vertical-align: middle;
+        padding-top: 5px;
+      }
+
+      #build.failure thead td.build-message {
+        background: url(arrow-failed.png) no-repeat right center;
+        background-size: 20px;
+      }
+
+      #build.success thead td.build-message {
+        background: url(arrow-succeeded.png) no-repeat right center;
+        background-size: 20px;
+      }
+
+      #build.error thead td.build-message {
+        background: url(arrow-error.png) no-repeat right center;
+        background-size: 20px;
+      }
+
+      #build thead tr {
+        font-weight: 700;
+        font-size: 18px;
+      }
+
+      #build.failure thead tr {
+        background-color: #fdcdce;
+        color: #df192a;
+      }
+      
+      #build.success thead tr {
+        background-color: #baecb7;
+        color: #32a32d;
+      }
+
+      #build.error thead tr {
+        background-color: #cccccc;
+        color: #707070;
+      }
+
+      #build thead td {
+        border-top: 1px solid #808080;
+        border-bottom: 1px solid #adadad;
+      }
+
+      #build thead td:first-child {
+        border-left: 1px solid #606060;
+        border-top-left-radius: 5px;
+      }
+
+      #build thead td:last-child {
+        border-right: 1px solid #606060;
+        border-top-right-radius: 5px;
+      }
+
+      #build .status-image {
+        width: 25px;
+        background-size: 25px;
+        height: 30px;
+        margin-left: 15px;
+        margin-top: 0px;
+        vertical-align: middle;
+      }
+
+      #build.success .status-image {
+        background: url(success.png) no-repeat;
+      }
+
+      #build.failure .status-image {
+        background: url(failed.png) no-repeat;
+      }
+
+      #build.error .status-image {
+        background: url(error.png) no-repeat;
+      }
+
+      #build tbody td {
+        padding: 10px 20px 10px 0px;
+        height: 20px;
+      }
+
+      #build tbody td:first-child {
+        border-left: 1px solid #adadad;
+      }
+
+      #build tbody td:last-child {
+        border-right: 1px solid #adadad;
+      }
+
+      #build tbody {
+        margin-bottom: 40px;
+      }
+
+      #build tbody tr:first-child td {
+        padding-top: 20px;
+        padding-bottom: 5px;
+      }
+
+      #build tbody tr:last-child td:last-child {
+        padding-bottom: 20px;
+        padding-top: 0px;
+        border-bottom: 1px solid #adadad;
+        border-bottom-right-radius: 5px;
+      }
+
+      #build tbody tr:last-child td:first-child {
+        border-bottom-left-radius: 5px;
+        border-bottom: 1px solid #adadad;
+      }
+
+      #build table {
+        border-spacing: 0;
+      }
+
+      #build a {
+        text-decoration: none;
+        font-weight: bold;
+        color: #57769d;
+      }
+
+      #build td.profile-image:first-child {
+        text-align: center;
+      }
+
+      #build td:first-child {
+        width: 50px;
+        padding: 0px;
+      }
+
+      .time {
+        font-weight: normal;
+        font-size: 12px;
+        vertical-align: middle;
+      }
+
+      .time div {
+        vertical-align: middle;
+      }
+
+      #build .time .stop-watch {
+        height: 20px;
+        width: 20px;
+        padding: 0px;
+        background-size: 20px;
+        display: inline-block;
+      }
+
+      #build.failure .time .stop-watch {
+        background: url(stopwatch-failed.png) no-repeat;
+      }
+
+      #build.success .time .stop-watch {
+        background: url(stopwatch-success.png) no-repeat;
+      }
+
+      #build.error .time .stop-watch {
+        background: url(stopwatch-error.png) no-repeat;
+      }
+
+      .time span {
+        vertical-align: middle;
+      }
+
+      .footer {
+        background-color: #e9e6e7;
+        border-radius: 5px;
+        border: 1px solid #adadad;
+        padding: 10px;
+        margin-top: 20px;
+        font-size: 12px;
+        width: 570px; 
+        line-height: 16px;
+      }
+
+      .footnote {
+        margin-top: 20px;
+        border-radius: 5px;
+        border: 1px solid #adadad;
+        font-size: 12px;
+        padding: 10px 20px;
+      }
+
+      .footnote strong {
+        font-size: 14px;
+      }
+
+      .footnote p {
+        margin-top: 0px;
+        margin-bottom: 5px;
+      }
+
+      .footnote p:last-child {
+        margin-bottom: 5px;
+      }
+
+      .footnote a, .footer a {
+        color: #606060;
+      }
+
+      .footnote #mascot {
+        -webkit-transform: rotate(10deg);
+        -moz-transform: rotate(270deg);
+        float: right;
+        top: -20px;
+        right: -10px;
+        position: relative;
+      }
+
+      .left {
+        float: left;
+      }
+
+      .right {
+        float: right;
+      }
+
+      .tiny-footer {
+        font-size: 12px;
+        text-align: center;
+        margin: 0px auto;
+        vertical-align: middle;
+        height: 20px;
+      }
+
+      .tiny-footer img {
+        vertical-align: middle;
+      }
+
+      .tiny-footer span {
+        vertical-align: middle;
+      }
+
+      .tiny-footer p {
+        margin-top: 10px;
+        padding-left: 80px;
+      }
+    </style>
   </head>
   <body>
-    <div id="body" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; color: #333; width: 754px; margin: 0 auto;">
-      <% @broadcasts.each do |broadcast| %>
-        <table border="0" class="broadcast section" style="margin-bottom: 16px; width: 754px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; text-align: center; font-size: 14px; font-weight: bold; color: #777; background-color: #f3f4fa; padding: 16px; border: 1px solid #ccc;" bgcolor="#f3f4fa">
-          <tr>
-            <td>
-              <%= broadcast.message.html_safe %>
-            </td>
-          </tr>
-        </table>
-      <% end %>
-      <div id="build" class="section" style="margin-bottom: 16px; width: 752px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; padding: 0; border: 1px solid #ccc;">
-        <div class="content" style="padding: 16px 16px 0;">
-          <h1 style="margin-top: 0;">
-            <table class="result" background="https://<%= Travis.config.assets.host %>/images/mailer/<%= @build.state %>-header-bg.png" style="font-size: 28px; font-weight: bold; color: white; width: 720px; height: 52px; margin-bottom: 18px; text-align: center; vertical-align: middle; border-collapse: collapse; background-repeat: no-repeat;">
-              <tr style="text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);">
-                <td style="line-height: 36px; padding: 8px 0;"><%= @result_message.full %></td>
-              </tr>
-            </table>
-          </h1>
+    <div id="body">
+      <table class="repository" background="" style="">
+        <tr style="">
+          <td><img src="https://secure.gravatar.com/avatar/<%= @repository.owner_avatar_url %>?s=40"/> <span><strong><%= @repository.slug.gsub(/\//, " / ") -%></strong> (<%= @commit.branch -%>)</span></td>
+        </tr>
+      </table>
+      <div id="build" class="<%= build_email_css_class(@build) %>">
+        <div class="content">
           <table>
-            <tr>
-              <th style="text-align: right; padding-right: 16px;" align="right">Repository</th>
-              <td><%= @repository.slug %></td>
-            </tr>
-            <tr>
-              <th style="text-align: right; padding-right: 16px;" align="right">Build #<%= @build.number %></th>
-              <td><%= link_to repository_build_url(slug: @repository.slug, id: @build.id), repository_build_url(slug: @repository.slug, id: @build.id) %></td>
-            </tr>
-            <tr>
-              <th style="text-align: right; padding-right: 16px;" align="right">Changeset</th>
-              <td><%= link_to @commit.compare_url, @commit.compare_url %></td>
-            </tr>
-            <tr>
-              <td>&nbsp;</td>
-            </tr>
-            <tr>
-              <th style="text-align: right; padding-right: 16px;" align="right">Commit</th>
-              <td><%= @commit.sha[0..6] %> (<%= @commit.branch %>)</td>
-            </tr>
-            <tr>
-              <th style="text-align: right; padding-right: 16px;" align="right">Message</th>
-              <td><%= h(@commit.message).gsub("\n", "<br>").html_safe %></td>
-            </tr>
-            <tr>
-              <th style="text-align: right; padding-right: 16px;" align="right">Author</th>
-              <td><%= @commit.author_name %></td>
-            </tr>
-            <tr>
-              <th style="text-align: right; padding-right: 16px;" align="right">Duration</th>
-              <td><%= duration_in_words(@build.started_at, @build.finished_at) %></td>
-            </tr>
-            <% unless (notes = notes_for(@jobs)).empty? %>
+            <thead>
               <tr>
-                <th style="text-align: right; padding-right: 16px;" align="right">Notes</th>
-                <td>
-                  <ul>
-                    <% notes.each do |note| %>
-                      <li><%= note[:message] %> (<%= note[:jobs].to_sentence %>)</li>
-                    <% end %>
-                  </ul>
-                </td>
+                <td><div class="status-image"></div></td>
+                <td class="build-message"><span><%= link_to @result_message.full, repository_build_url(slug: @repository.slug, id: @build.id) %></span></td>
+                <td align="right" class="time"><div class="stop-watch"></div> <span><%= duration_in_words(@build.started_at, @build.finished_at) %></span></td>
+              </tr>
+            </thead>
+            <tbody>
               <tr>
-            <% end %>
+                <td class="profile-image"><img src="https://secure.gravatar.com/avatar/<%= Digest::MD5.hexdigest(@commit.author_email) %>?s=15"></td>
+                <td><strong><%= @commit.author_name %></strong></td>
+                <td align="right"><%= @commit.sha %> <%= link_to "Changeset &rarr;", @commit.compare_url %></a></td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td colspan="2"></th>
+              </tr>
+              </tbody>
           </table>
         </div>
-        <table border="0" class="footer" style="background-color: #f3f4fa; -webkit-border-bottom-right-radius: 6px; -webkit-border-bottom-left-radius: 6px; -moz-border-radius-bottomright: 6px; -moz-border-radius-bottomleft: 6px; border-bottom-right-radius: 6px; border-bottom-left-radius: 6px; margin: 26px 0 0; padding: 16px 16px 14px;" bgcolor="#f3f4fa">
-          <tr>
-            <td style="font-size: 13px; color: #aaa; line-height: 18px;">
-              <img src="https://<%= Travis.config.assets.host %>/images/mailer/footer-logo-38x38.png" style="margin-right: 16px; width: 38px; height: 38px;" />
-            </td>
-            <td style="font-size: 13px; color: #aaa; line-height: 18px;">
-              You can configure recipients for build notifications in your
-              <a href="http://about.travis-ci.org/docs/user/build-configuration" style="color: #aaa;">configuration file</a>.
-              Further documentation about Travis CI can be found <a href="http://about.travis-ci.org/docs" style="color: #aaa;">here</a>.
-              For help please join our IRC channel irc.freenode.net#travis.
-            </td>
-          </tr>
-        </table>
       </div>
 
-      <div class="section footnote" style="margin-bottom: 16px; width: 720px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; margin-top: 0; font-size:
-        14px; padding: 16px; border: 1px solid #ccc; height: 20px;">
-        <div style="float: right; color: #aaa">
-          Want Travis CI for your <a href="http://travisci.com?utm_source=build_email_footer&utm_campaign=travis-ci.org&utm_medium=email">private repositories?</a>
-        </div>
-        <div style="float: left; vertical-align: top; color: #aaa">
-          Powered by <a href="http://bluebox.net"><img src="https://<%= Travis.config.assets.host -%>/images/sponsors/bluebox-78x15.png"></a>
-        </div>
+      <table border="0" class="footer">
+        <tr>
+          <td>
+            <img src="email-footer-travis-logo.png" style="width: 50px; height: 50px;" />
+          </td>
+          <td style="">
+            <a href="http://about.travis-ci.org/docs">Documentation</a> about Travis CI<br/>
+            For help please join our IRC channel irc.freenode.net#travis.<br/>
+            Choose who receives these build notification emails in your <a href="http://about.travis-ci.org/docs/user/build-configuration">configuration file</a>.
+          </td>
+        </tr>
+      </table>
+
+      <div class="section footnote">
+        <img id="mascot" src="travis-mascot.png" width="80" >
+        <p><strong>Would you like to test your private code?</strong></p>
+        <p><a href="http://travisci.com?utm_source=build_email_footer&utm_campaign=travis-ci.org&utm_medium=email">Travis Pro</a> could be your new best friend!</p>
+      </div>
+
+      <div class="tiny-footer">
+        <p> 
+          <span>Travis CI is powered by </span><a href="http://bluebox.net"><img src="https://travis-ci.org/images/sponsors/bluebox-78x15.png"></a>
+        </p>
       </div>
     </div>
-
-<style type="text/css">
-img { margin-right: 16px !important; }
-</style>
 </body>
 </html>
