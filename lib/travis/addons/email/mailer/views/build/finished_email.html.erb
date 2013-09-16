@@ -287,7 +287,7 @@
     <div id="body">
       <table class="repository" background="" style="">
         <tr style="">
-          <td><img src="https://secure.gravatar.com/avatar/<%= @repository.owner_avatar_url %>?s=40"/> <span><strong><%= @repository.slug.gsub(/\//, " / ") -%></strong> (<%= @commit.branch -%>)</span></td>
+          <td><img src="https://secure.gravatar.com/avatar/<%= @repository.owner_avatar_url %>?s=40&d=<%= CGI.escape("https://#{Travis.config.assets.host}/images/mailer/mascot-avatar-40px.png") %>"/> <span><strong><%= @repository.slug.gsub(/\//, " / ") -%></strong> (<%= @commit.branch -%>)</span></td>
         </tr>
       </table>
       <div id="build" class="<%= build_email_css_class(@build) %>">
@@ -302,7 +302,7 @@
             </thead>
             <tbody>
               <tr>
-                <td class="profile-image"><img src="https://secure.gravatar.com/avatar/<%= Digest::MD5.hexdigest(@commit.author_email) %>?s=15"></td>
+                <td class="profile-image"><img src="https://secure.gravatar.com/avatar/<%= Digest::MD5.hexdigest(@commit.author_email) %>?s=15&d=<%= CGI.escape("https://#{Travis.config.assets.host}/images/mailer/mascot-avatar-15px.png") %>"></td>
                 <td><strong><%= @commit.author_name %></strong></td>
                 <td align="right">#<%= @commit.sha[0..6] %> <%= link_to "Changeset →", @commit.compare_url %></a></td>
               </tr>
