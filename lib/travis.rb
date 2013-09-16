@@ -55,7 +55,6 @@ module Travis
   autoload :Event,        'travis/event'
   autoload :Features,     'travis/features'
   autoload :Github,       'travis/github'
-  autoload :Logs,         'travis/logs'
   autoload :Mailer,       'travis/mailer'
   autoload :Model,        'travis/model'
   autoload :Notification, 'travis/notification'
