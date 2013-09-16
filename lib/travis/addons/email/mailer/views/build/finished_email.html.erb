@@ -300,7 +300,7 @@
               <tr>
                 <td class="profile-image"><img src="https://secure.gravatar.com/avatar/<%= Digest::MD5.hexdigest(@commit.author_email) %>?s=15&d=<%= CGI.escape("https://#{Travis.config.assets.host}/images/mailer/mascot-avatar-15px.png") %>"></td>
                 <td><strong><%= @commit.author_name %></strong></td>
-                <td align="right">#<%= @commit.sha[0..6] %> <%= link_to "Changeset →", @commit.compare_url %></a></td>
+                <td align="right"><a href="https://github.com/<%= @repository.slug -%>/commit/<%= @commit.sha %>"><%= @commit.sha[0..6] %></a> <%= link_to "Changeset →", @commit.compare_url %></a></td>
               </tr>
               <tr>
                 <td>&nbsp;</td>
