@@ -310,7 +310,7 @@
             <thead>
               <tr>
                 <td><div class="status-image"></div></td>
-                <td class="build-message"><span><%= link_to @result_message.full, repository_build_url(slug: @repository.slug, id: @build.id) %></span></td>
+                <td class="build-message"><span><%= link_to @result_message.email, repository_build_url(slug: @repository.slug, id: @build.id) %></span></td>
                 <td align="right" class="time"><div class="stop-watch"></div> <span><%= duration_in_words(@build.started_at, @build.finished_at) %></span></td>
               </tr>
             </thead>
@@ -318,11 +318,11 @@
               <tr>
                 <td class="profile-image"><img src="https://secure.gravatar.com/avatar/<%= Digest::MD5.hexdigest(@commit.author_email) %>?s=15"></td>
                 <td><strong><%= @commit.author_name %></strong></td>
-                <td align="right"><%= @commit.sha %> <%= link_to "Changeset &rarr;", @commit.compare_url %></a></td>
+                <td align="right"><%= @commit.sha[0..6] %> <%= link_to "Changeset &rarr;", @commit.compare_url %></a></td>
               </tr>
               <tr>
                 <td>&nbsp;</td>
-                <td colspan="2"></th>
+                <td colspan="2"><%= @commit.message.gsub("\n", "<br/>").html_safe %></td>
               </tr>
               </tbody>
           </table>

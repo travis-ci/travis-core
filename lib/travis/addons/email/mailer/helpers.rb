@@ -84,9 +84,9 @@ module Travis
 
           def build_email_css_class(build)
             case build.state
-            when 'failed', 'broken', 'failing':
+            when 'failed', 'broken', 'failing'
               'failure'
-            when 'fixed' , 'passed';
+            when 'fixed', 'passed'
               'success'
             else
               'error'

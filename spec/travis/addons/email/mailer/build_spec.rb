@@ -59,11 +59,12 @@ describe Travis::Addons::Email::Mailer::Build do
     end
 
     it 'contains the expected html part' do
+      puts email.html_part
       email.html_part.body.should include_lines(%(
-        The build passed.
+        Build #2 passed
         https://github.com/svenfuchs/minimal/compare/master...develop
         https://travis-ci.org/svenfuchs/minimal/builds/#{build.id}
-        62aae5f (master)
+        62aae5f
         まつもとゆきひろ a.k.a. Matz
         the commit message
         1 minute and 0 seconds
@@ -74,12 +75,7 @@ describe Travis::Addons::Email::Mailer::Build do
       it 'escapes newlines in the commit message' do
         build.commit.stubs(:message).returns("bar\nbaz")
         email.deliver # inline css interceptor is called before delivery.
-        email.html_part.decoded.should =~ %r(bar<br( /)?>baz) # nokogiri seems to convert <br> to <br /> on mri, but not jruby?
-      end
-
-      it 'inlines css' do
-        email.deliver
-        email.html_part.decoded.should =~ %r(<div[^>]+style=")
+        email.html_part.decoded.should =~ %r(bar<br( ?/)?>baz) # nokogiri seems to convert <br> to <br /> on mri, but not jruby?
       end
 
       it 'correctly encodes UTF-8 characters' do
@@ -118,41 +114,6 @@ describe Travis::Addons::Email::Mailer::Build do
 
       it 'subject' do
         email.subject.should == '[Broken] svenfuchs/minimal#2 (master - 62aae5f)'
-      end
-    end
-
-    describe 'for a broken build with tags' do
-      before :each do
-        build.stubs(:state).returns(:failed)
-        build.matrix[0].stubs(:tags).returns('database_missing,rake_not_bundled')
-        build.matrix[1].stubs(:tags).returns('database_missing,log_limit_exceeded')
-
-        Job::Tagging.stubs(:rules).returns [
-          { 'tag' => 'database_missing',   'message' => 'Your should create a test database.'                 },
-          { 'tag' => 'rake_not_bundled',   'message' => 'Your Gemfile is missing Rake.'                       },
-          { 'tag' => 'log_limit_exceeded', 'message' => 'Your test suite has output more than 4194304 Bytes.' }
-        ]
-      end
-
-      it 'contains the expected text part' do
-        email.text_part.body.should include_lines(%(
-          Notes:
-            * Your should create a test database. (2.1 and 2.2)
-            * Your Gemfile is missing Rake. (2.1)
-            * Your test suite has output more than 4194304 Bytes. (2.2)
-        ))
-      end
-
-      it 'contains the expected html part' do
-        email.html_part.body.should include_lines(%(
-          <td>
-          <ul>
-            <li>Your should create a test database. (2.1 and 2.2)</li>
-            <li>Your Gemfile is missing Rake. (2.1)</li>
-            <li>Your test suite has output more than 4194304 Bytes. (2.2)</li>
-          </ul>
-          </td>
-        ))
       end
     end
   end
