@@ -10,6 +10,10 @@
         margin: 0 auto;
       }
 
+      .grey {
+        color: #808080;
+      }
+
       table, tr, td {
         padding: 0px;
         border: 0px;
@@ -299,12 +303,12 @@
             <tbody>
               <tr>
                 <td class="profile-image"><img src="https://secure.gravatar.com/avatar/<%= Digest::MD5.hexdigest(@commit.author_email) %>?s=15&d=<%= CGI.escape("https://#{Travis.config.assets.host}/images/mailer/mascot-avatar-15px.png") %>"></td>
-                <td><strong><%= @commit.author_name %></strong></td>
-                <td align="right"><a href="https://github.com/<%= @repository.slug -%>/commit/<%= @commit.sha %>"><%= @commit.sha[0..6] %></a> <%= link_to "Changeset →", @commit.compare_url %></a></td>
+                <td class="grey"><strong><%= @commit.author_name %></strong></td>
+                <td align="right" class="grey"><a href="https://github.com/<%= @repository.slug -%>/commit/<%= @commit.sha %>"><%= @commit.sha[0..6] %></a> <%= link_to "Changeset →", @commit.compare_url %></a></td>
               </tr>
               <tr>
                 <td>&nbsp;</td>
-                <td colspan="2"><%= @commit.message.gsub("\n", "<br/>").html_safe %></td>
+                <td colspan="2" class="grey"><%= @commit.message.gsub("\n", "<br/>").html_safe %></td>
               </tr>
               </tbody>
           </table>
@@ -316,7 +320,7 @@
           <td>
             <img src="https://<%= Travis.config.assets.host -%>/images/mailer/email-footer-travis-logo.png" style="width: 50px; height: 50px;" />
           </td>
-          <td style="">
+          <td style="" class="grey">
             <a href="http://about.travis-ci.org/docs">Documentation</a> about Travis CI<br/>
             For help please join our IRC channel <a href="irc://irc.freenode.net/travis">irc.freenode.net#travis</a>.<br/>
             Choose who receives these build notification emails in your <a href="http://about.travis-ci.org/docs/user/build-configuration">configuration file</a>.
@@ -327,12 +331,12 @@
       <div style="padding-top: 10px; width: 570px">
         <img id="mascot" src="https://<%= Travis.config.assets.host %>/images/mailer/travis-mascot.png" width="80" >
         <div class="section footnote">
-          <p><strong>Would you like to test your private code?</strong></p>
-          <p><a href="http://travis-ci.com?utm_source=build_email_footer&utm_campaign=travis-ci.org&utm_medium=email">Travis Pro</a> could be your new best friend!</p>
+          <p class="grey"><strong>Would you like to test your private code?</strong></p>
+          <p class="grey"><a href="http://travis-ci.com?utm_source=build_email_footer&utm_campaign=travis-ci.org&utm_medium=email">Travis Pro</a> could be your new best friend!</p>
         </div>
 
         <div class="tiny-footer">
-          <p> 
+          <p class="grey"> 
             <span>Travis CI is powered by </span><a href="http://bluebox.net"><img src="https://travis-ci.org/images/sponsors/bluebox-78x15.png"></a>
           </p>
         </div>
