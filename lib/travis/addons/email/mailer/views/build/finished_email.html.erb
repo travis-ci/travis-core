@@ -66,17 +66,18 @@
 
       #build.failure thead td.build-message {
         background: url(https://<%= Travis.config.assets.host -%>/images/mailer/arrow-failed.png) no-repeat right center;
-        background-size: 25px;
+        color: #df192a;
       }
 
       #build.success thead td.build-message {
         background: url(https://<%= Travis.config.assets.host -%>/images/mailer/arrow-succeeded.png) no-repeat right center;
-        background-size: 25px;
+        color: #32a32d;
       }
 
       #build.error thead td.build-message {
         background: url(https://<%= Travis.config.assets.host -%>/images/mailer/arrow-error.png) no-repeat right center;
         background-size: 20px;
+        color: #707070;
       }
 
       #build thead tr {
@@ -84,17 +85,17 @@
         font-size: 18px;
       }
 
-      #build.failure thead tr, #build.failure thead tr a {
+      #build.failure thead tr {
         background-color: #fdcdce;
         color: #df192a;
       }
       
-      #build.success thead tr, #build.failure thead tr a {
+      #build.success thead tr {
         background-color: #baecb7;
         color: #32a32d;
       }
 
-      #build.error thead tr, #build.failure thead tr a {
+      #build.error thead tr {
         background-color: #cccccc;
         color: #707070;
       }
