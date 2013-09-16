@@ -243,13 +243,10 @@
         color: #606060;
       }
 
-      .footnote #mascot {
-        -webkit-transform: rotate(10deg);
-        -moz-transform: rotate(270deg);
-        transform: rotate(270deg);
+      #mascot {
         float: right;
-        margin-top: -20px;
-        margin-right: -10px;
+        margin-top: 10px;
+        margin-right: 20px;
       }
 
       .left {
@@ -327,16 +324,18 @@
         </tr>
       </table>
 
-      <div class="section footnote">
+      <div style="padding: 10px">
         <img id="mascot" src="https://<%= Travis.config.assets.host %>/images/mailer/travis-mascot.png" width="80" >
-        <p><strong>Would you like to test your private code?</strong></p>
-        <p><a href="http://travis-ci.com?utm_source=build_email_footer&utm_campaign=travis-ci.org&utm_medium=email">Travis Pro</a> could be your new best friend!</p>
-      </div>
+        <div class="section footnote">
+          <p><strong>Would you like to test your private code?</strong></p>
+          <p><a href="http://travis-ci.com?utm_source=build_email_footer&utm_campaign=travis-ci.org&utm_medium=email">Travis Pro</a> could be your new best friend!</p>
+        </div>
 
-      <div class="tiny-footer">
-        <p> 
-          <span>Travis CI is powered by </span><a href="http://bluebox.net"><img src="https://travis-ci.org/images/sponsors/bluebox-78x15.png"></a>
-        </p>
+        <div class="tiny-footer">
+          <p> 
+            <span>Travis CI is powered by </span><a href="http://bluebox.net"><img src="https://travis-ci.org/images/sponsors/bluebox-78x15.png"></a>
+          </p>
+        </div>
       </div>
     </div>
 </body>
