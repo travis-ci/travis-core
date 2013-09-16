@@ -54,7 +54,7 @@
       }
 
       #build thead td {
-        padding: 10px 20px 10px 0px;
+        padding: 0px 20px 0px 0px;
         vertical-align: middle;
       }
 
@@ -171,6 +171,12 @@
       #build td:first-child {
         width: 50px;
         padding: 0px;
+      }
+
+      #build .build-message span {
+        display: inline-block;
+        margin-top: 10px;
+        vertical-align: middle;
       }
 
       .time {
@@ -290,7 +296,7 @@
             <thead>
               <tr>
                 <td><div class="status-image"><img src="https://<%= Travis.config.assets.host -%>/images/mailer/<%= build_image_extension(@build) %>.png" width="20" height="20"></div></td>
-                <td class="build-message"><span><%= link_to @result_message.email, repository_build_url(slug: @repository.slug, id: @build.id) %></span><img src="https://<%= Travis.config.assets.host -%>/images/mailer/arrow-<%= build_image_extension(@build) -%>.png" style="float: right; height: 45px"></td>
+                <td class="build-message"><span><%= link_to @result_message.email, repository_build_url(slug: @repository.slug, id: @build.id) %></span><img src="https://<%= Travis.config.assets.host -%>/images/mailer/arrow-<%= build_image_extension(@build) -%>.png" style="float: right;" height="45"></td>
                 <td align="right" class="time"><div class="stop-watch"><img src="https://<%= Travis.config.assets.host -%>/images/mailer/stopwatch-<%= build_image_extension(@build) %>.png" width="20" height="20"></div> <span><%= duration_in_words(@build.started_at, @build.finished_at) %></span></td>
               </tr>
             </thead>
