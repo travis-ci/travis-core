@@ -22,7 +22,7 @@
       #build {
         border-radius: 5px;
         padding: 0px;
-        width: 100%;
+        width: 570px;
         font-size: 13px;
       }
 
@@ -332,7 +332,7 @@
       <table border="0" class="footer">
         <tr>
           <td>
-            <img src="email-footer-travis-logo.png" style="width: 50px; height: 50px;" />
+            <img src="https://<%= Travis.config.assets.host -%>/images/mailer/email-footer-travis-logo.png" style="width: 50px; height: 50px;" />
           </td>
           <td style="">
             <a href="http://about.travis-ci.org/docs">Documentation</a> about Travis CI<br/>
@@ -343,9 +343,9 @@
       </table>
 
       <div class="section footnote">
-        <img id="mascot" src="travis-mascot.png" width="80" >
+        <img id="mascot" src="https://<%= Travis.config.assets.host %>/images/mailer/travis-mascot.png" width="80" >
         <p><strong>Would you like to test your private code?</strong></p>
-        <p><a href="http://travisci.com?utm_source=build_email_footer&utm_campaign=travis-ci.org&utm_medium=email">Travis Pro</a> could be your new best friend!</p>
+        <p><a href="http://travis-ci.com?utm_source=build_email_footer&utm_campaign=travis-ci.org&utm_medium=email">Travis Pro</a> could be your new best friend!</p>
       </div>
 
       <div class="tiny-footer">
