@@ -93,6 +93,18 @@ module Travis
             end
           end
 
+
+          def build_image_extension(build)
+            case build.state
+            when 'failed', 'broken', 'failing'
+              'failed'
+            when 'fixed', 'passed'
+              'success'
+            else
+              'error'
+            end
+          end
+
           # def formated_note(format, message, numbers)
           #   case format
           #     when "text" then "* #{message} (#{numbers}) <br />"
