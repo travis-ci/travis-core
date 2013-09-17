@@ -59,7 +59,6 @@ describe Travis::Addons::Email::Mailer::Build do
     end
 
     it 'contains the expected html part' do
-      puts email.html_part
       email.html_part.body.should include_lines(%(
         Build #2 passed
         https://github.com/svenfuchs/minimal/compare/master...develop

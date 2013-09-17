@@ -280,6 +280,23 @@
       .tiny-footer p {
         margin-top: 10px;
       }
+
+      #broadcasts {
+        width: 528px;
+        padding: 10px 20px;
+        border: 1px solid #adadad;
+        border-radius: 5px;
+        margin-top: 10px;
+        font-size: 12px;
+        margin-bottom: 0px;
+        background-color: #FBFddc;
+        margin-top: 20px;
+      }
+
+      #broadcasts p {
+        margin-top: 5px;
+        margin-bottom: 0px;
+      }
     </style>
   </head>
   <body>
@@ -313,6 +330,19 @@
           </table>
         </div>
       </div>
+
+      <% if @broadcasts.any? -%>
+      <div id="broadcasts">
+        <span class="grey">
+          <b>System message:</b>
+          <% @broadcasts.each do |broadcast| -%>
+          <p>
+            <%= broadcast.message.html_safe -%>
+          </p>
+          <% end -%>
+        </span>
+      </div>
+      <% end -%>
 
       <table border="0" class="footer">
         <tr>
