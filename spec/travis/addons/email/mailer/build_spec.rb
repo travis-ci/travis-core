@@ -14,6 +14,7 @@ describe Travis::Addons::Email::Mailer::Build do
     I18n.reload!
     ActionMailer::Base.delivery_method = :test
     build.commit.stubs(:author_name).returns('まつもとゆきひろ a.k.a. Matz')
+    Travis.config.build_email_footer = true
   end
 
   describe 'finished build email notification' do
@@ -83,6 +84,26 @@ describe Travis::Addons::Email::Mailer::Build do
         html = h.body.to_s
         html.force_encoding(h.charset) if html.respond_to?(:force_encoding)
         html.should include("まつもとゆきひろ a.k.a. Matz")
+      end
+
+      it 'includes the build footer' do
+        email.deliver # inline css interceptor is called before delivery.
+        email.html_part.decoded.should =~ %r(<div class="tiny-footer">)
+      end
+
+      describe 'with the footer disabled' do
+        before do
+          Travis.config.build_email_footer = false
+        end
+
+        after do
+          Travis.config.build_email_footer = true
+        end
+
+        it "doesn't include the build footer" do
+          email.deliver # inline css interceptor is called before delivery.
+          email.html_part.decoded.should_not =~ %r(<div class="tiny-footer">)
+        end
       end
     end
 

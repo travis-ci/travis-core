@@ -360,6 +360,7 @@
         </tr>
       </table>
 
+      <% if Travis.config.build_email_footer? -%>
       <div style="padding-top: 10px; width: 570px">
         <img id="mascot" src="https://<%= Travis.config.assets.host %>/images/mailer/travis-mascot.png" width="80" >
         <div class="section footnote">
@@ -373,6 +374,8 @@
           </p>
         </div>
       </div>
+      <% end -%>
+
     </div>
 </body>
 </html>
