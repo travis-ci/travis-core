@@ -82,6 +82,29 @@ module Travis
             jobs.map { |job| job.number if job.tags.to_s.include?(tag) }.compact
           end
 
+          def build_email_css_class(build)
+            case build.state
+            when 'failed', 'broken', 'failing'
+              'failure'
+            when 'fixed', 'passed'
+              'success'
+            else
+              'error'
+            end
+          end
+
+
+          def build_image_extension(build)
+            case build.state
+            when 'failed', 'broken', 'failing'
+              'failed'
+            when 'fixed', 'passed'
+              'success'
+            else
+              'error'
+            end
+          end
+
           # def formated_note(format, message, numbers)
           #   case format
           #     when "text" then "* #{message} (#{numbers}) <br />"

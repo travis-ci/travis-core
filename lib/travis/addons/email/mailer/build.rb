@@ -25,6 +25,10 @@ module Travis
             mail(from: from, to: recipients, subject: subject, template_path: 'build')
           end
 
+          def url_options
+            nil
+          end
+
           private
 
             def subject

@@ -26,6 +26,18 @@ class Build
       canceled: 'The build was canceled.'
     }
 
+    EMAIL = {
+      pending:  'Build #%d is pending.',
+      passed:   'Build #%d passed.',
+      failed:   'Build #%d failed.',
+      broken:   'Build #%d was broken.',
+      fixed:    'Build #%d was fixed.',
+      failing:  'Build #%d is still failing.',
+      errored:  'Build #%d has errored.',
+      canceled: 'Build #%d was canceled.'
+    }
+
+
     attr_reader :build
 
     def initialize(build)
@@ -39,6 +51,10 @@ class Build
 
     def full
       FULL[result_key]
+    end
+
+    def email
+      EMAIL[result_key] % build.number.to_i
     end
 
     private
