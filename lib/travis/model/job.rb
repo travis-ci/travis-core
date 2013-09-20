@@ -98,7 +98,7 @@ class Job < Travis::Model
 
   def obfuscated_config
     normalize_config(config).deep_dup.tap do |config|
-      config.delete(:addons)
+      delete_addons(config)
       config.delete(:source_key)
       if config[:env]
         obfuscated_env = process_env(config[:env]) { |env| obfuscate_env(env) }
@@ -119,7 +119,7 @@ class Job < Travis::Model
         if addons_enabled?
           config[:addons] = decrypt_addons(config[:addons])
         else
-          config.delete(:addons)
+          delete_addons(config)
         end
       end
     end
@@ -150,6 +150,18 @@ class Job < Travis::Model
   end
 
   private
+
+    def whitelisted_addons
+      [:firefox, :hosts]
+    end
+
+    def delete_addons(config)
+      if config[:addons].is_a?(Hash)
+        config[:addons].keep_if { |key, value| whitelisted_addons.include? key.to_sym }
+      else
+        config.delete(:addons)
+      end
+    end
 
     def normalize_config(config)
       config = config ? config.deep_symbolize_keys : {}
