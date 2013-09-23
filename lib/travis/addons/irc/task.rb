@@ -89,6 +89,7 @@ module Travis
 
           def client(host, nick, options, &block)
             client = Client.new(host, nick, options)
+            client.wait_for_numeric
             client.run(&block) if block_given?
             client.quit
           end
