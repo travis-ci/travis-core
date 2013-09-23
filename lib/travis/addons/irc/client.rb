@@ -40,9 +40,13 @@ module Travis
 
         def wait_for_numeric
           # Loop until we get a numeric (second word is a 3-digit number).
-          loop do
-            break if @numeric_received
+          Timeout.timeout(60) do
+            loop do
+              break if @numeric_received
+            end
           end
+        rescue Timeout::Error => e
+          Travis.logger.warn("Gave up waiting for #{server}:#{options[:port] || 6667} to return a numeric") 
         end
 
         def join(channel, key = nil)
