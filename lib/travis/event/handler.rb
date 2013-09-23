@@ -1,5 +1,4 @@
 require 'active_support/core_ext/object/blank'
-require 'core_ext/module/async'
 
 module Travis
   module Event
