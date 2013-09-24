@@ -12,7 +12,6 @@
 # It's strongly recommended to check this file into your version control system.
 
 ActiveRecord::Schema.define(:version => 20131109101056) do
-
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
     t.string   "recipient_type"
@@ -192,6 +191,7 @@ ActiveRecord::Schema.define(:version => 20131109101056) do
     t.integer  "github_id"
     t.string   "default_branch"
     t.string   "github_language"
+    t.text     "settings"
   end
 
   add_index "repositories", ["github_id"], :name => "index_repositories_on_github_id", :unique => true
