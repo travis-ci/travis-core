@@ -64,7 +64,8 @@ describe Travis::Api::V0::Worker::Job::Test do
         'last_build_number' => 2,
         'last_build_duration' => 60,
         'last_build_state' => 'passed',
-        'description' => 'the repo description'
+        'description' => 'the repo description',
+        'github_id' => 549743
       }
     end
   end
@@ -140,7 +141,8 @@ describe Travis::Api::V0::Worker::Job::Test do
         'last_build_number' => 2,
         'last_build_duration' => 60,
         'last_build_state' => 'passed',
-        'description' => 'the repo description'
+        'description' => 'the repo description',
+        'github_id' => 549743
       }
     end
   end

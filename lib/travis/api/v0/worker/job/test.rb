@@ -46,6 +46,7 @@ module Travis
               {
                 'id' => repository.id,
                 'slug' => repository.slug,
+                'github_id' => repository.github_id,
                 'source_url' => repository.source_url,
                 'last_build_id' => repository.last_build_id,
                 'last_build_number' => repository.last_build_number,
