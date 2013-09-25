@@ -2,7 +2,7 @@
 
 class Repository::Settings
   def self.load(repository, json_string)
-    self.new(repository, JSON.parse(json_string))
+    self.new(repository, json_string ? JSON.parse(json_string) : {})
   end
 
   def initialize(repository, settings)

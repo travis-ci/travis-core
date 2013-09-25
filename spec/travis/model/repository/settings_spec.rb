@@ -4,6 +4,11 @@ require 'spec_helper'
 describe Repository::Settings do
   let(:repo) { stub('repository') }
 
+  it 'allows to load from nil' do
+    settings = Repository::Settings.new(repo, nil)
+    settings.to_hash == {}
+  end
+
   describe '#merge' do
     it 'merges individual fields' do
       json = {
@@ -90,8 +95,9 @@ describe Repository::Settings do
         'foo' => [{'bar' => {'type' => 'password', 'value' => '∗∗∗'}}, {'type' => 'foobar', 'value' => 'foobar'}, 'bar']
       }
 
-      settings.to_hash.should == json
+      # ensure if we're not modyfing original hash
+      settings.to_hash['campfire']['api_key']['value'].should == 'abc123'
+      settings.to_hash['foo'].first['bar']['value'].should == '123'
     end
   end
 end
-#

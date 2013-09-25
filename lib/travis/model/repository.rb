@@ -155,4 +155,16 @@ class Repository < Travis::Model
       save!
     end
   end
+
+  def settings
+    Settings.load(self, super)
+  end
+
+  def settings=(value)
+    if value.is_a?(String) || value.nil?
+      super(value)
+    else
+      super(value.to_json)
+    end
+  end
 end

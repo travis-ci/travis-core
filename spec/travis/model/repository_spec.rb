@@ -218,6 +218,42 @@ describe Repository do
     end
   end
 
+  describe 'settings' do
+    let(:repo) { Factory.build(:repository) }
+
+    it "allows to set nil for settings" do
+      repo.settings = nil
+      repo.settings.to_hash.should == {}
+    end
+
+    it "allows to set settings as JSON string" do
+      repo.settings = '{"foo": "bar"}'
+      repo.settings.to_hash.should == {'foo' => 'bar'}
+    end
+
+    it "allows to set settings as a Hash" do
+      repo.settings = {'foo' => 'bar'}
+      repo.settings.to_hash.should == {'foo' => 'bar'}
+    end
+
+    it 'updates settings in the DB' do
+      repo.settings = {'foo' => 'bar'}
+      repo.save
+
+      repo.reload.settings.to_hash.should == {'foo' => 'bar'}
+
+      repo.settings.merge('foo' => 'baz')
+      repo.save
+
+      repo.reload.settings.to_hash.should == {'foo' => 'baz'}
+
+      repo.settings['bar'] = 'baz'
+      repo.save
+
+      repo.reload.settings.to_hash.should == {'foo' => 'baz', 'bar' => 'baz'}
+    end
+  end
+
   describe 'last_finished_builds_by_branches' do
     let(:repo) { Factory(:repository) }
 
