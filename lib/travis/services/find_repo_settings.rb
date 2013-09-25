@@ -11,11 +11,11 @@ module Travis
         result.try(:updated_at)
       end
 
-      private
+      def authorized?
+        current_user.permission?(:push, :repository_id => repo.id)
+      end
 
-        def authorized?
-          current_user.permission?(:push, :repository_id => repo.id)
-        end
+      private
 
         def repo
           @repo ||= run_service(:find_repo, params)
