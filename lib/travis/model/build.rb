@@ -128,7 +128,7 @@ class Build < Travis::Model
     end
 
     def next_number
-      maximum(floor('number')).to_i + 1
+      maximum('number::int4').to_i + 1
     end
 
     protected
