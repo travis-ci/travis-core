@@ -42,6 +42,9 @@ class Request
       elsif parse_error?
         Travis.logger.info("[request:finish] Request created but Build and Job automatically errored due to a config parsing error. commit=#{commit.try(:commit).inspect}")
         add_parse_error_build
+      elsif server_error?
+        Travis.logger.info("[request:finish] Request created but Build and Job automatically errored due to a config server error. commit=#{commit.try(:commit).inspect}")
+        add_server_error_build
       else
         add_build
         Travis.logger.info("[request:finish] Request created a build. commit=#{commit.try(:commit).inspect}")
@@ -86,6 +89,25 @@ ERROR
 
       def parse_error?
         config[".result"] == "parse_error"
+      end
+
+      def add_server_error_build
+        Build.transaction do
+          build = add_build
+          job = build.matrix.first
+          job.start!(started_at: Time.now.utc)
+          job.log_content = <<ERROR
+\033[31;1mERROR\033[0m: An error occured while trying to fetch your .travis.yml file.
+
+Is GitHub down? Please contact support@travis-ci.com if this persists.
+ERROR
+          job.finish!(state: "errored",   finished_at: Time.now.utc)
+          build.finish!(state: "errored", finished_at: Time.now.utc)
+        end
+      end
+
+      def server_error?
+        config[".result"] == "server_error"
       end
   end
 end
