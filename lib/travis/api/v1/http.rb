@@ -2,6 +2,7 @@ module Travis
   module Api
     module V1
       module Http
+        autoload :Branch,       'travis/api/v1/http/branch'
         autoload :Branches,     'travis/api/v1/http/branches'
         autoload :Build,        'travis/api/v1/http/build'
         autoload :Builds,       'travis/api/v1/http/builds'
