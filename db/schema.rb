@@ -13,6 +13,25 @@
 
 ActiveRecord::Schema.define(:version => 20130916101056) do
 
+  create_table "artifact_parts", :force => true do |t|
+    t.integer "artifact_id"
+    t.string  "content"
+    t.integer "number"
+  end
+
+  add_index "artifact_parts", ["artifact_id", "number"], :name => "index_artifact_parts_on_artifact_id_and_number"
+
+  create_table "artifacts", :force => true do |t|
+    t.text     "content"
+    t.integer  "job_id"
+    t.string   "type"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+    t.datetime "aggregated_at"
+  end
+
+  add_index "artifacts", ["type", "job_id"], :name => "index_artifacts_on_type_and_job_id"
+
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
     t.string   "recipient_type"
@@ -195,9 +214,9 @@ ActiveRecord::Schema.define(:version => 20130916101056) do
     t.boolean  "active"
     t.text     "description"
     t.integer  "last_build_duration"
+    t.boolean  "private",                :default => false
     t.integer  "owner_id"
     t.string   "owner_type"
-    t.boolean  "private",                :default => false
     t.string   "last_build_state"
     t.integer  "github_id"
     t.string   "default_branch"
@@ -220,12 +239,12 @@ ActiveRecord::Schema.define(:version => 20130916101056) do
     t.datetime "finished_at"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
+    t.integer  "owner_id"
+    t.string   "owner_type"
     t.string   "event_type"
     t.string   "comments_url"
     t.string   "base_commit"
     t.string   "head_commit"
-    t.integer  "owner_id"
-    t.string   "owner_type"
     t.string   "result"
     t.string   "message"
   end

@@ -132,6 +132,10 @@ class Repository < Travis::Model
     builds.pushes.last_build_on(state: [:passed, :failed, :errored], branch: branch)
   end
 
+  def last_build_on(branch)
+    builds.pushes.last_build_on(branch: branch)
+  end
+
   def build_status(branch)
     builds.pushes.last_state_on(state: [:passed, :failed, :errored], branch: branch)
   end

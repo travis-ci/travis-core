@@ -4,6 +4,7 @@ module Travis
     autoload :CancelJob,           'travis/services/cancel_job'
     autoload :CancelBuild,         'travis/services/cancel_build'
     autoload :FindAdmin,           'travis/services/find_admin'
+    autoload :FindBranch,          'travis/services/find_branch'
     autoload :FindBranches,        'travis/services/find_branches'
     autoload :FindBuild,           'travis/services/find_build'
     autoload :FindBuilds,          'travis/services/find_builds'
