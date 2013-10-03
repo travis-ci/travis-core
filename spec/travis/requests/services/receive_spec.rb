@@ -16,6 +16,28 @@ describe Travis::Requests::Services::Receive do
     Request.any_instance.stubs(:start)
   end
 
+  describe 'without a repository data' do
+    before { payload['repository'] = nil }
+
+    context 'a push' do
+      let(:params) { { :event_type => 'push', :github_guid => 'abc123', :payload => payload } }
+
+      it 'raises validation error' do
+        message = "Repository data is not present in payload, github-guid=abc123, event-type=push"
+        expect { request }.to raise_error Travis::Requests::Services::Receive::PayloadValidationError, message
+      end
+    end
+
+    context 'a pull request' do
+      let(:params) { { :event_type => 'pull_request', :github_guid => 'abc123', :payload => payload } }
+
+      it 'raises validation error' do
+        message = "Repository data is not present in payload, github-guid=abc123, event-type=pull_request"
+        expect { request }.to raise_error Travis::Requests::Services::Receive::PayloadValidationError, message
+      end
+    end
+  end
+
   shared_examples_for 'creates a request and repository' do
     it 'creates a request for the given payload' do
       expect { request }.to change(Request, :count).by(1)

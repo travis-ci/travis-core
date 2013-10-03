@@ -9,6 +9,8 @@ module Travis
 
         extend Travis::Instrumentation
 
+        class PayloadValidationError < StandardError; end
+
         register :receive_request
 
         class << self
@@ -39,11 +41,15 @@ module Travis
         instrument :run
 
         def accept?
+          payload.validate!
           payload.accept?
         rescue GH::Error(response_status: 404) => e
           slug = payload.repository.values_at(:owner_name, :name).join('/')
           Travis.logger.warn "the following payload for #{slug} could not be accepted as a 404 response code was returned by GitHub: #{payload.inspect}"
           false
+        rescue PayloadValidationError => e
+          e.message << ", github-guid=#{github_guid}, event-type=#{event_type}"
+          raise e
         end
 
         private
@@ -65,6 +71,10 @@ module Travis
 
           def payload
             @payload ||= self.class.payload_for(event_type, params[:payload])
+          end
+
+          def github_guid
+            params[:github_guid]
           end
 
           def event_type
