@@ -10,7 +10,7 @@ module Travis
       end
 
       def updated_at
-        result.maximum(:updated_at)
+        result.updated_at
       end
 
       private
