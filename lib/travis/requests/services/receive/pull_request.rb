@@ -18,6 +18,12 @@ module Travis
             end
           end
 
+          def validate!
+            if event['repository'].nil?
+              raise PayloadValidationError, "Repository data is not present in payload"
+            end
+          end
+
           def disabled?
             Travis::Features.feature_deactivated?(:pull_requests)
           end

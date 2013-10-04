@@ -13,6 +13,12 @@ module Travis
             true
           end
 
+          def validate!
+            if event['repository'].nil?
+              raise PayloadValidationError, "Repository data is not present in payload"
+            end
+          end
+
           def repository
             @repository ||= {
               :name        => event['repository']['name'],
