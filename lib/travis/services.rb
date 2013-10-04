@@ -29,7 +29,6 @@ module Travis
     autoload :SyncUser,            'travis/services/sync_user_'     # TODO wtf, y u no load this file if named properly
     autoload :UpdateHook,          'travis/services/update_hook'
     autoload :UpdateJob,           'travis/services/update_job'
-    autoload :UpdateLog,           'travis/services/update_log'
     autoload :UpdateUser,          'travis/services/update_user'
     autoload :UpdateWorkers,       'travis/services/update_workers'
 

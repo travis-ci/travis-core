@@ -1,6 +1,5 @@
 module Travis
   module Addons
-    autoload :Archive,      'travis/addons/archive'
     autoload :Campfire,     'travis/addons/campfire'
     autoload :Email,        'travis/addons/email'
     autoload :Flowdock,     'travis/addons/flowdock'
