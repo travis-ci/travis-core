@@ -31,6 +31,8 @@ module Travis
             url, token = parse(target)
             http.basic_auth(token, 'X')
             lines.each { |line| send_line(url, line) }
+          rescue => e
+            Travis.logger.info("Error connecting to Campfire service for #{target}: #{e.message}")
           end
 
           def send_line(url, line)
