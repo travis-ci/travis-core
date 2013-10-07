@@ -28,6 +28,27 @@ describe Travis::Addons::Email::Task do
     handler.run
   end
 
+  it 'reraises an error when sending an email' do
+    expect {
+      email.stubs(:deliver).raises(StandardError, "something's broken")
+      handler.run
+    }.to raise_error(StandardError)
+  end
+
+  it "doesn't reraise an error with bad recipient syntax" do
+    expect {
+      email.stubs(:deliver).raises(Net::SMTPServerBusy, "401 4.1.3 Bad recipient address syntax")
+      handler.run
+    }.not_to raise_error(Net::SMTPServerBusy)
+  end
+
+  it "reraises an smtp server busy error when it's not about the syntax" do
+    expect {
+      email.stubs(:deliver).raises(Net::SMTPServerBusy, "403 2.2.2 Out of fish")
+      handler.run
+    }.to raise_error(Net::SMTPServerBusy)
+  end
+
   it 'includes valid email addresses' do
     @recipients = ['me@email.org']
     handler.recipients.should contain_recipients('me@email.org')

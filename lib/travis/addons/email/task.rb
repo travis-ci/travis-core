@@ -22,8 +22,10 @@ module Travis
 
           def process
             Mailer::Build.send(type, payload, recipients, broadcasts).deliver if recipients.any?
+          rescue Net::SMTPServerBusy => e
+            error("Could not send email to: #{recipients} (error: #{e.message})")
+            raise unless e.message =~ /Bad recipient address syntax/
           rescue StandardError => e
-            # TODO notify the repo
             error("Could not send email to: #{recipients}")
             log_exception(e)
             raise
