@@ -42,7 +42,14 @@ describe Travis::Addons::Email::Task do
     }.not_to raise_error(Net::SMTPServerBusy)
   end
 
-  it "reraises an smtp server busy error when it's not about the syntax" do
+  it "doesn't reraise an error when recipient was rejected" do
+    expect {
+      email.stubs(:deliver).raises(Net::SMTPServerBusy, "450 4.1.1 <test@localhost.localdomain>: Recipient address rejected: User unknown in local recipient table")
+      handler.run
+    }.not_to raise_error(Net::SMTPServerBusy)
+  end
+
+ it "reraises an smtp server busy error when it's not about the syntax" do
     expect {
       email.stubs(:deliver).raises(Net::SMTPServerBusy, "403 2.2.2 Out of fish")
       handler.run
