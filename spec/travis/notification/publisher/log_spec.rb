@@ -24,12 +24,12 @@ describe Travis::Notification::Publisher::Log do
 
   it 'defaults to INFO' do
     publish(msg: 'foo bar')
-    log.should include('I Object#instrumented:completed foo bar')
+    log.should =~ /I TID=.*? Object#instrumented:completed foo bar/
   end
 
   it 'uses ERROR if an exception occured' do
     instrument(exception: true).publish(msg: 'foo bar')
-    log.should include('E Object#instrumented:completed foo bar')
+    log.should =~ /E TID=.*? Object#instrumented:completed foo bar/
   end
 
   it 'does not include extra information if no exception occured' do
