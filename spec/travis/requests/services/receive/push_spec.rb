@@ -45,6 +45,12 @@ describe Travis::Requests::Services::Receive::Push do
     end
 
     describe 'branch processing' do
+      it 'returns head_commit if commits info is not present' do
+        payload.event.data['head_commit'] = payload.event.data['commits'].first
+        payload.event.data['commits'] = []
+        payload.commit[:commit].should == '586374eac43853e5542a2e2faafd48047127e4be'
+      end
+
       it 'returns master when ref is ref/heads/master' do
         payload.commit[:branch].should == 'master'
       end

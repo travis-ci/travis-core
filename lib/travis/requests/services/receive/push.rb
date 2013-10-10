@@ -45,7 +45,10 @@ module Travis
           end
 
           def commit
-            @commit ||= if commit = last_unskipped_commit(event['commits']) || event['commits'].last
+            @commit ||= if commit = last_unskipped_commit(event['commits']) ||
+                                    event['commits'].last ||
+                                    event['head_commit']
+
               {
                 :commit          => commit['sha'],
                 :message         => commit['message'],
