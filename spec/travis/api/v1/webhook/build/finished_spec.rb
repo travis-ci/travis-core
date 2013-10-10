@@ -6,7 +6,7 @@ describe Travis::Api::V1::Webhook::Build::Finished do
   let(:data)    { Travis::Api::V1::Webhook::Build::Finished.new(build, options).data }
   let(:options) { { :include_logs => true } }
 
-  it 'data' do
+  it 'includes the build data' do
     data.except('repository', 'matrix').should == {
       'id' => 1,
       'number' => 2,
@@ -28,10 +28,11 @@ describe Travis::Api::V1::Webhook::Build::Finished do
       'committer_email' => 'svenfuchs@artweb-design.de',
       'author_name' => 'Sven Fuchs',
       'author_email' => 'svenfuchs@artweb-design.de',
+      'type' => 'push',
     }
   end
 
-  it 'repository' do
+  it 'includes the repository' do
     data['repository'].should == {
       'id' => 1,
       'name' => 'minimal',
@@ -40,7 +41,7 @@ describe Travis::Api::V1::Webhook::Build::Finished do
     }
   end
 
-  describe 'matrix' do
+  describe 'includes the build matrix' do
     it 'payload' do
       data['matrix'].first.except('log').should == {
         'id' => 1,
@@ -61,7 +62,7 @@ describe Travis::Api::V1::Webhook::Build::Finished do
         'committer_name' => 'Sven Fuchs',
         'committer_email' => 'svenfuchs@artweb-design.de',
         'committed_at' => json_format_time(Time.now.utc - 1.hour),
-        'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
+        'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop'
       }
     end
 
@@ -73,6 +74,11 @@ describe Travis::Api::V1::Webhook::Build::Finished do
     it 'given include_logs is false' do
       options.replace :include_logs => false
       data['matrix'].first['log'].should be_nil
+    end
+
+    it 'has a different type for pull requests' do
+      build.stubs(:event_type).returns('pull_request')
+      data['type'].should == 'pull_request'
     end
   end
 end
