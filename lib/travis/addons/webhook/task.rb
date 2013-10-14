@@ -27,12 +27,13 @@ module Travis
               else
                 req.headers['Authorization'] = authorization
               end
+              req.headers['X-Travis-Repo-Slug'] = repo_slug
             end
             response.success? ? log_success(response) : log_error(response)
           end
 
           def authorization
-            Digest::SHA2.hexdigest(repository.values_at(:owner_name, :name).join('/') + params[:token].to_s)
+            Digest::SHA2.hexdigest(repo_slug + params[:token].to_s)
           end
 
           def log_success(response)
@@ -41,6 +42,10 @@ module Travis
 
           def log_error(response)
             error "Could not notify #{response.env[:url].to_s}. Status: #{response.status} (#{response.body.inspect})"
+          end
+
+          def repo_slug
+            repository.values_at(:owner_name, :name).join('/')
           end
 
           Instruments::Task.attach_to(self)

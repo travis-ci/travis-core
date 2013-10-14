@@ -8,10 +8,12 @@ describe Travis::Addons::Webhook::Task do
   let(:http)    { Faraday::Adapter::Test::Stubs.new }
   let(:client)  { Faraday.new { |f| f.request :url_encoded; f.adapter :test, http } }
   let(:payload) { Travis::Api.data(build, for: 'webhook', type: 'build/finished', version: 'v1') }
+  let(:repo_slug) { "svenfuchs/minimal#{rand(1..100)}" }
 
   before do
     Travis.config.notifications = [:webhook]
     subject.any_instance.stubs(:http).returns(client)
+    subject.any_instance.stubs(:repo_slug).returns(repo_slug)
   end
 
   def run(targets)
@@ -25,7 +27,7 @@ describe Travis::Addons::Webhook::Task do
       uri = URI.parse(url)
       http.post uri.path do |env|
         env[:url].host.should == uri.host
-        env[:request_headers]['Authorization'].should == authorization_for('svenfuchs/minimal', '123456')
+        env[:request_headers]['Authorization'].should == authorization_for(repo_slug, '123456')
         payload_from(env).keys.sort.should == payload.keys.map(&:to_s).sort
       end
     end
@@ -42,6 +44,19 @@ describe Travis::Addons::Webhook::Task do
       auth = env[:request_headers]['Authorization']
       auth.should == 'Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
       auth.should == Faraday::Request::BasicAuthentication.header('Aladdin', 'open sesame')
+      payload_from(env).keys.sort.should == payload.keys.map(&:to_s).sort
+    end
+
+    subject.new(payload, targets: [url]).run
+    http.verify_stubbed_calls
+  end
+
+  it 'includes a X-Travis-Repo-Slug header' do
+    url = 'https://one.webhook.com/path'
+    uri = URI.parse(url)
+    http.post uri.path do |env|
+      env[:url].host.should == uri.host
+      env[:request_headers]['X-Travis-Repo-Slug'].should == repo_slug
       payload_from(env).keys.sort.should == payload.keys.map(&:to_s).sort
     end
 
