@@ -22,6 +22,11 @@ describe Travis::Services::CancelBuild do
       job.stubs(:cancelable?).returns(true)
       service.stubs(:authorized?).returns(true)
 
+      publisher = mock('publisher')
+      service.stubs(:publisher).returns(publisher)
+      publisher.expects(:publish).with(type: 'cancel_job', job_id: job.id)
+      publisher.expects(:publish).with(type: 'cancel_job', job_id: passed_job.id)
+
       expect {
         expect {
           service.run
