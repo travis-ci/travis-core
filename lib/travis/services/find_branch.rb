@@ -10,7 +10,7 @@ module Travis
       end
 
       def updated_at
-        result.updated_at
+        result.updated_at if result
       end
 
       private
