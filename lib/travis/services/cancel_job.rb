@@ -5,6 +5,14 @@ module Travis
 
       register :cancel_job
 
+      attr_reader :source
+
+      def initialize(*)
+        super
+
+        @source = params.delete(:source) || 'unknown'
+      end
+
       def run
         cancel if can_cancel?
       end
@@ -37,7 +45,7 @@ module Travis
 
       def publish!
         Travis.logger.info("Publishing cancel_job message to worker.commands queue for Job##{job.id}")
-        publisher.publish(type: 'cancel_job', job_id: job.id)
+        publisher.publish(type: 'cancel_job', job_id: job.id, source: source)
       end
 
       private

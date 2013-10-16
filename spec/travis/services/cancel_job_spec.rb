@@ -5,7 +5,7 @@ describe Travis::Services::CancelJob do
 
   let(:repo)    { Factory(:repository) }
   let!(:job)    { Factory(:test, repository: repo, state: :created) }
-  let(:params)  { { id: job.id } }
+  let(:params)  { { id: job.id, source: 'tests' } }
   let(:user)    { Factory(:user) }
   let(:service) { described_class.new(user, params) }
 
@@ -16,7 +16,7 @@ describe Travis::Services::CancelJob do
 
       publisher = mock('publisher')
       service.stubs(:publisher).returns(publisher)
-      publisher.expects(:publish).with(type: 'cancel_job', job_id: job.id)
+      publisher.expects(:publish).with(type: 'cancel_job', job_id: job.id, source: 'tests')
 
       expect {
         service.run
