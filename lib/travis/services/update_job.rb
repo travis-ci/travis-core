@@ -47,7 +47,7 @@ module Travis
       end
 
       def cancel_job_in_worker
-        publisher.publish(type: 'cancel_job', job_id: job.id)
+        publisher.publish(type: 'cancel_job', job_id: job.id, source: 'update_job_service')
       end
 
       def publisher
