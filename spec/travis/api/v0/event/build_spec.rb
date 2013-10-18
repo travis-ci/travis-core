@@ -3,7 +3,8 @@ require 'spec_helper'
 describe Travis::Api::V0::Event::Build do
   include Travis::Testing::Stubs, Support::Formats
 
-  let(:data) { Travis::Api::V0::Event::Build.new(stub_build(owner: owner)).data }
+  let(:build) { stub_build(owner: owner) }
+  let(:data) { Travis::Api::V0::Event::Build.new(build).data }
 
   let(:owner) {
     OpenStruct.new(avatar_url: 'https://github.com/roidrage.png')
@@ -33,43 +34,24 @@ describe Travis::Api::V0::Event::Build do
     data['repository']['owner_avatar_url'].should == 'https://github.com/roidrage.png'
   end
 
-  # it 'commit' do
-  #   data['commit'].should == {
-  #     'id' => 1,
-  #     'sha' => '62aae5f70ceee39123ef',
-  #     'branch' => 'master',
-  #     'message' => 'the commit message',
-  #     'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
-  #     'committed_at' => json_format_time(Time.now.utc - 1.hour),
-  #     'committer_email' => 'svenfuchs@artweb-design.de',
-  #     'committer_name' => 'Sven Fuchs',
-  #     'author_name' => 'Sven Fuchs',
-  #     'author_email' => 'svenfuchs@artweb-design.de',
-  #     'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
-  #   }
-  # end
+  it 'includes the commit' do
+    data['commit'].should == {
+      'id' => 1,
+      'sha' => '62aae5f70ceee39123ef',
+      'branch' => 'master',
+      'message' => 'the commit message',
+      'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
+      'committed_at' => json_format_time(Time.now.utc - 1.hour),
+      'committer_email' => 'svenfuchs@artweb-design.de',
+      'committer_name' => 'Sven Fuchs',
+      'author_name' => 'Sven Fuchs',
+      'author_email' => 'svenfuchs@artweb-design.de',
+      'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
+    }
+  end
 
-  # context 'with encrypted env vars' do
-  #   let(:build) do
-  #     stub_build(:obfuscated_config => { 'env' => 'FOO=[secure]' })
-  #   end
-
-  #   it 'shows encrypted env vars in human readable way' do
-  #     data['build']['config']['env'].should == 'FOO=[secure]'
-  #   end
-  # end
+  it "doesn't include the source key" do
+    build.config[:source_key] = '1234'
+    data['build']['config']['source_key'].should == nil
+  end
 end
-
-# describe 'Travis::Api::V0::Event::Build using Travis::Services::Builds::FindOne' do
-#   include Support::ActiveRecord
-#
-#   let!(:record) { Factory(:build) }
-#   let(:build)   { Travis::Services::Builds::FindOne.new(nil, :id => record.id).run }
-#   let(:data)    { Travis::Api::V0::Event::Build.new(build).data }
-#
-#   it 'queries' do
-#     lambda { data }.should issue_queries(5)
-#   end
-# end
-#
-

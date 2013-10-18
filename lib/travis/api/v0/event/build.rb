@@ -34,7 +34,7 @@ module Travis
                 'commit_id' => build.commit_id,
                 'number' => build.number,
                 'pull_request' => build.pull_request?,
-                'config' => build.config,
+                'config' => build.config.try(:except, :source_key),
                 'state' => build.state.to_s,
                 'previous_state' => build.previous_state.to_s,
                 'started_at' => format_date(build.started_at),
@@ -58,7 +58,6 @@ module Travis
               {
                 'token' => request.token,
                 'head_commit' => (request.head_commit || '')
-                # 'base_commit' => (request.base_commit || '')
               }
             end
 
@@ -68,7 +67,7 @@ module Travis
                 'sha' => commit.commit,
                 'branch' => commit.branch,
                 'message' => commit.message,
-                'committed_at' => commit.committed_at,
+                'committed_at' => format_date(commit.committed_at),
                 'author_name' => commit.author_name,
                 'author_email' => commit.author_email,
                 'committer_name' => commit.committer_name,
@@ -83,24 +82,8 @@ module Travis
                 'number' => job.number,
                 'state' => job.state.to_s,
                 'tags' => job.tags
-                # 'repository_id' => job.repository_id,
-                # 'build_id' => job.source_id,
-                # 'commit_id' => job.commit_id,
-                # 'log_id' => job.log.id,
-                # 'state' => job.state.to_s,
-                # 'config' => job.obfuscated_config.stringify_keys,
-                # 'started_at' => format_date(job.started_at),
-                # 'finished_at' => format_date(job.finished_at),
-                # 'queue' => job.queue,
-                # 'allow_failure' => job.allow_failure,
-              }
+             }
             end
-
-            # def broadcast_data(broadcast)
-            #   {
-            #     'message' => broadcast.message
-            #   }
-            # end
         end
       end
     end
