@@ -20,6 +20,7 @@ module Travis
           @args ||= {
             repository:     data[:repository][:slug],
             build_number:   data[:build][:number].to_s,
+            build_id:       data[:build][:id].to_s,
             branch:         data[:commit][:branch],
             commit:         data[:commit][:sha][0..6],
             author:         data[:commit][:author_name],
