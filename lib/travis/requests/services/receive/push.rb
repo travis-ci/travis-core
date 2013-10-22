@@ -10,7 +10,11 @@ module Travis
           end
 
           def accept?
-            true
+            !tag_push?
+          end
+
+          def tag_push?
+            event['ref'] =~ /^refs\/tags\/.*/
           end
 
           def validate!

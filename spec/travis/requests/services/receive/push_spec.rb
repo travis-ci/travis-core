@@ -18,6 +18,13 @@ describe Travis::Requests::Services::Receive::Push do
     end
   end
 
+  describe 'accept?' do
+    it 'rejects tags pushes' do
+      payload.event.data['ref'] = 'refs/tags/deploy.2013.02.03'
+      payload.accept?.should be_false
+    end
+  end
+
   describe 'owner' do
     it 'returns all attributes required for an Owner' do
       payload.owner.should == {
