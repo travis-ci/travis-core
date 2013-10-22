@@ -8,7 +8,7 @@ describe Travis::Addons::Webhook::Task do
   let(:http)    { Faraday::Adapter::Test::Stubs.new }
   let(:client)  { Faraday.new { |f| f.request :url_encoded; f.adapter :test, http } }
   let(:payload) { Travis::Api.data(build, for: 'webhook', type: 'build/finished', version: 'v1') }
-  let(:repo_slug) { "svenfuchs/minimal#{rand(1..100)}" }
+  let(:repo_slug) { 'svenfuchs/minimal' }
 
   before do
     Travis.config.notifications = [:webhook]
@@ -51,12 +51,12 @@ describe Travis::Addons::Webhook::Task do
     http.verify_stubbed_calls
   end
 
-  it 'includes a X-Travis-Repo-Slug header' do
+  it 'includes a Travis-Repo-Slug header' do
     url = 'https://one.webhook.com/path'
     uri = URI.parse(url)
     http.post uri.path do |env|
       env[:url].host.should == uri.host
-      env[:request_headers]['X-Travis-Repo-Slug'].should == repo_slug
+      env[:request_headers]['Travis-Repo-Slug'].should == repo_slug
       payload_from(env).keys.sort.should == payload.keys.map(&:to_s).sort
     end
 

@@ -27,7 +27,7 @@ module Travis
               else
                 req.headers['Authorization'] = authorization
               end
-              req.headers['X-Travis-Repo-Slug'] = repo_slug
+              req.headers['Travis-Repo-Slug'] = repo_slug
             end
             response.success? ? log_success(response) : log_error(response)
           end
