@@ -3,7 +3,18 @@ require 'spec_helper'
 describe Travis::Addons::Util::Template do
   include Travis::Testing::Stubs
 
-  VAR_NAMES = %w(repository build_number branch commit author message compare_url build_url result)
+  VAR_NAMES = %w(
+    repository
+    build_number
+    build_id
+    branch
+    commit
+    author
+    message
+    compare_url
+    build_url
+    result
+  )
   TEMPLATE  = VAR_NAMES.map { |name| "#{name}=%{#{name}}" }.join(' ')
 
   let(:data)     { Travis::Api.data(build, for: 'event', version: 'v0') }
@@ -18,6 +29,10 @@ describe Travis::Addons::Util::Template do
 
     it 'replaces the build_number' do
       result.should =~ /build_number=#{build.number}/
+    end
+
+    it "replaces the build_id" do
+      result.should =~ /build_id=1/
     end
 
     it 'replaces the branch' do
