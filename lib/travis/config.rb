@@ -100,6 +100,7 @@ module Travis
             async:         {},
             notifications: [], # TODO rename to event.handlers
             metrics:       { reporter: 'logger' },
+            logger:        { thread_id: true },
             queues:        [],
             default_queue: 'builds.linux',
             jobs:          { retry: { after: 60 * 60 * 2, max_attempts: 1, interval: 60 * 5 } },
