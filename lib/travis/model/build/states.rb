@@ -72,7 +72,7 @@ class Build
     end
 
     def reset(options = {})
-      self.state = :created
+      self.state = :created unless matrix.any? { |job| job.state == :started }
       %w(duration started_at finished_at).each { |attr| write_attribute(attr, nil) }
       matrix.each(&:reset!) if options[:reset_matrix]
     end

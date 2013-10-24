@@ -40,6 +40,22 @@ describe Build::States do
       end
     end
 
+    describe 'reset' do
+      before :each do
+        build.stubs(:write_attribute)
+      end
+      it 'does not set the state to created if any jobs in the matrix are running' do
+        build.stubs(matrix: [stub(state: :started)])
+        build.reset
+        build.state.should_not == :started
+      end
+      it 'sets the state to created if none of the jobs in the matrix are running' do
+        build.stubs(matrix: [stub(state: :passed)])
+        build.reset
+        build.state.should == :created
+      end
+    end
+
     describe 'start' do
       let(:data) { WORKER_PAYLOADS['job:test:start'] }
 
