@@ -15,7 +15,8 @@ module Travis
 
         def publish(event)
           payload = MultiJson.encode(event)
-          list    = 'events:' << event[:uuid]
+          # list = 'events:' << event[:uuid]
+          lit = 'events'
 
           redis.publish list, payload
 
