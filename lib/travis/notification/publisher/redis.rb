@@ -14,9 +14,10 @@ module Travis
         end
 
         def publish(event)
+          event = filter(event)
           payload = MultiJson.encode(event)
           # list = 'events:' << event[:uuid]
-          lit = 'events'
+          list = 'events'
 
           redis.publish list, payload
 
@@ -29,8 +30,20 @@ module Travis
           #   end
           # end
         end
-
         rescues :publish, from: Exception
+
+        def filter(value)
+          case value
+          when Array
+            value.map { |value| filter(value) }
+          when Hash
+            value.inject({}) { |hash, (key, value)| hash.merge(key => filter(value)) }
+          when String, Numeric, TrueClass, FalseClass, NilClass
+            value
+          else
+            nil
+          end
+        end
       end
     end
   end

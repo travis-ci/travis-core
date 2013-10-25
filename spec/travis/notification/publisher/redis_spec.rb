@@ -47,22 +47,23 @@ describe Travis::Notification::Publisher::Redis do
   end
 
   it 'sends out events over pubsub' do
-    event = nil
+    pending 'feature disabled at the moment'
+    # event = nil
 
-    redis.subscribe(key) do |on|
-      on.message do |channel, message|
-        event = MultiJson.decode(message)
-        redis.unsubscribe
-      end
+    # redis.subscribe(key) do |on|
+    #   on.message do |channel, message|
+    #     event = MultiJson.decode(message)
+    #     redis.unsubscribe
+    #   end
 
-      on.subscribe { publish(foo: 'bar') }
-    end
+    #   on.subscribe { publish(foo: 'bar') }
+    # end
 
-    event.should == {
-      "uuid" =>    Travis.uuid,
-      "event" =>   'foo.bar.instrumented',
-      "message" => 'Object#instrumented:completed',
-      "data" =>    { "foo" => 'bar' }
-    }
+    # event.should == {
+    #   "uuid" =>    Travis.uuid,
+    #   "event" =>   'foo.bar.instrumented',
+    #   "message" => 'Object#instrumented:completed',
+    #   "data" =>    { "foo" => 'bar' }
+    # }
   end
 end
