@@ -136,4 +136,10 @@ describe Travis::Github::Services::FetchConfig::Instrument do
     service.run
     event[:data][:url].should == '/foo/bar?ref=abcd&access_token=[secure]'
   end
+
+  it 'strips a secret if present (2)' do
+    service.stubs(:config_url).returns('/foo/bar?ref=abcd&client_secret=123456')
+    service.run
+    event[:data][:url].should == '/foo/bar?ref=abcd&client_secret=[secure]'
+  end
 end
