@@ -71,13 +71,16 @@ describe Repository do
     end
 
     describe 'timeline' do
-      it 'sorts the most repository with the most recent build to the top' do
-        one   = Factory(:repository, name: 'one',   last_build_started_at: '2011-11-11')
-        two   = Factory(:repository, name: 'two',   last_build_started_at: '2011-11-12')
+      it 'sorts repositories with running builds to the top, most recent builds next, un-built repos last' do
+        Factory(:repository, name: 'unbuilt 1',  active: true, last_build_started_at: nil, last_build_finished_at: nil)
+        Factory(:repository, name: 'unbuilt 2',  active: true, last_build_started_at: nil, last_build_finished_at: nil)
+        Factory(:repository, name: 'finished 1', active: true, last_build_started_at: '2011-11-12 12:00:00', last_build_finished_at: '2011-11-12 12:00:05')
+        Factory(:repository, name: 'finished 2', active: true, last_build_started_at: '2011-11-12 12:00:01', last_build_finished_at: '2011-11-11 12:00:06')
+        Factory(:repository, name: 'started 1',  active: true, last_build_started_at: '2011-11-11 12:00:00', last_build_finished_at: nil)
+        Factory(:repository, name: 'started 2',  active: true, last_build_started_at: '2011-11-11 12:00:01', last_build_finished_at: nil)
 
-        repositories = Repository.timeline.all
-        repositories.first.id.should == two.id
-        repositories.last.id.should  == one.id
+        repositories = Repository.timeline
+        repositories.map(&:name).should == ['started 2', 'started 1', 'finished 2', 'finished 1', 'unbuilt 2', 'unbuilt 1']
       end
     end
 

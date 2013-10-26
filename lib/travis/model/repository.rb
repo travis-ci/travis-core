@@ -36,7 +36,7 @@ class Repository < Travis::Model
 
   class << self
     def timeline
-      where(arel_table[:last_build_started_at].not_eq(nil)).order(arel_table[:last_build_started_at].desc)
+      active.order('last_build_finished_at IS NULL AND last_build_started_at IS NOT NULL DESC, last_build_started_at DESC NULLS LAST, id DESC')
     end
 
     def with_builds
