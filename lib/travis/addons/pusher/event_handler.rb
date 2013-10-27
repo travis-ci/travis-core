@@ -6,9 +6,7 @@ module Travis
       class EventHandler < Event::Handler
         EVENTS = [
           /^build:(created|started|finished|canceled)/,
-          /^job:test:(created|started|log|finished|canceled)/,
-          /^worker:(added|updated|removed)/,
-          /^annotation:(created|updated)/,
+          /^job:test:(created|started|log|finished|canceled)/
         ]
 
         attr_reader :channels
@@ -29,11 +27,7 @@ module Travis
         private
 
           def type
-            if event =~ /^worker:/
-              'worker'
-            else
-              event.sub('test:', '').sub(':', '/')
-            end
+            event.sub('test:', '').sub(':', '/')
           end
 
           Instruments::EventHandler.attach_to(self)

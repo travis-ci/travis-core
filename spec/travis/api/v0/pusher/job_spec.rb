@@ -12,6 +12,7 @@ describe Travis::Api::V0::Pusher::Job::Started do
       'build_id' => 1,
       'repository_id' => 1,
       'repository_slug' => 'svenfuchs/minimal',
+      'repository_private' => false,
       'number' => '2.1',
       'started_at' => json_format_time(Time.now.utc - 1.minute),
       'finished_at' => nil,
