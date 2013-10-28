@@ -2,6 +2,7 @@ require 'travis/notification'
 
 module Travis
   module Addons
+    require 'travis/addons/archive'
     require 'travis/addons/campfire'
     require 'travis/addons/email'
     require 'travis/addons/flowdock'

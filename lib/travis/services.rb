@@ -1,4 +1,3 @@
-
 module Travis
   module Services
     module Registry
