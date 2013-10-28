@@ -29,6 +29,8 @@ module Travis
       end
 
       def cancel
+        # job may have been retrieved with a :join query, so we need to reset the readonly status
+        job.send(:instance_variable_set, :@readonly, false)
         publish!
         job.cancel!
       end
