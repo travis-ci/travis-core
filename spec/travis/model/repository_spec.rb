@@ -171,7 +171,11 @@ describe Repository do
 
   describe 'source_url' do
     describe 'default source endpoint' do
-      let(:repo) { Repository.new(owner_name: 'travis-ci', name: 'travis-ci', url: 'https://github.com/travis-ci/travis-ci') }
+      let(:repo) { Repository.new(owner_name: 'travis-ci', name: 'travis-ci') }
+
+      before :each do
+        Travis.config.github.source_host = nil
+      end
 
       it 'returns the public git source url for a public repository' do
         repo.private = false
@@ -184,8 +188,12 @@ describe Repository do
       end
     end
 
-    describe 'default source endpoint' do
-      let(:repo) { Repository.new(owner_name: 'travis-ci', name: 'travis-ci', url: 'https://localhost/travis-ci/travis-ci') }
+    describe 'custom source endpoint' do
+      let(:repo) { Repository.new(owner_name: 'travis-ci', name: 'travis-ci') }
+
+      before :each do
+        Travis.config.github.source_host = 'localhost'
+      end
 
       it 'returns the private git source url for a public repository' do
         repo.private = false
@@ -200,10 +208,12 @@ describe Repository do
   end
 
   describe 'source_host' do
-    let(:repo) { Repository.new(url: 'https://github.com/travis-ci/travis-ci') }
+    before :each do
+      Travis.config.github.stubs(:source_host).returns('localhost')
+    end
 
-    it 'returns the host name from the repository url' do
-      repo.source_host.should == 'github.com'
+    it 'returns the source_host name from Travis.config' do
+      Repository.new.source_host.should == 'localhost'
     end
   end
 
