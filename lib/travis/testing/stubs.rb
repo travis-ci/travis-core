@@ -272,7 +272,7 @@ module Travis
           size: 1000,
           slug: 'cache',
           branch: 'master',
-          last_modified: Time.at(0)
+          last_modified: Time.at(0).utc
         )
       end
     end
