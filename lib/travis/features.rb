@@ -40,15 +40,15 @@ module Travis
     end
 
     def activate_repository(feature, repository)
-      redis.sadd(repository_key(feature), repository.id)
+      redis.sadd(repository_key(feature), repository_identifier(repository))
     end
 
     def deactivate_repository(feature, repository)
-      redis.srem(repository_key(feature), repository.id)
+      redis.srem(repository_key(feature), repository_identifier(repository))
     end
 
     def repository_active?(feature, repository)
-      redis.sismember(repository_key(feature), repository.id)
+      redis.sismember(repository_key(feature), repository_identifier(repository))
     end
 
     def user_active?(feature, user)
@@ -102,6 +102,19 @@ module Travis
     extend self
 
     private
+
+    # Allow to identify repository by both slug and id.
+    # This may be useful when we don't want to fetch the
+    # repository record and slug is enough to identify it.
+    def repository_identifier(repository)
+      if repository.is_a?(Hash)
+        repository[:slug] || repository[:id]
+      elsif repository.respond_to?(:id)
+        repository = reppository.id
+      else
+        repository = repository.to_i
+      end
+    end
 
     def key(name)
       "feature:#{name}"

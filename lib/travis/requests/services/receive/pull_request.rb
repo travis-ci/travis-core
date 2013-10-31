@@ -13,7 +13,12 @@ module Travis
             return false if disabled?
             case action
             when :opened, :reopened then !!merge_commit
-            when :synchronize       then head_change?
+            when :synchronize       then
+              if Travis::Features.repository_active?(:test_pull_request_on_synchronize, slug: repository_slug)
+                !!merge_commit
+              else
+                head_change?
+              end
             else false
             end
           end
@@ -30,6 +35,10 @@ module Travis
 
           def head_change?
             head_commit && ::Request.last_by_head_commit(head_commit['sha']).nil?
+          end
+
+          def repository_slug
+            "#{repository[:owner_name]}/#{repository[:name]}"
           end
 
           def repository

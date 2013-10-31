@@ -45,6 +45,13 @@ describe Travis::Requests::Services::Receive::PullRequest do
         payload.event.data['action'] = 'synchronize'
       end
 
+      it 'returns true even if head did not chante when repo is enabled to test on syncrhonize' do
+        payload.event.data['repository']['name'] = 'foo'
+        Travis::Features.activate_repository(:test_pull_request_on_synchronize, slug: 'travis-repos/foo')
+        Request.stubs(:last_by_head_commit).returns(last)
+        payload.accept?.should be_true
+      end
+
       it 'returns true if head has changed' do
         Request.stubs(:last_by_head_commit).returns(nil)
         payload.accept?.should be_true
