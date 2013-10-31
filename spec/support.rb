@@ -7,6 +7,7 @@ module Support
   autoload :Mocks,          'support/mocks'
   autoload :Notifications,  'support/notifications'
   autoload :Redis,          'support/redis'
+  autoload :S3,             'support/s3'
   autoload :Silence,        'support/silence'
 end
 

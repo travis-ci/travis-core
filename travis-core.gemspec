@@ -38,6 +38,7 @@ Gem::Specification.new do |s|
 
   # apis
   s.add_dependency 'pusher',            '~> 0.11.0'
+  s.add_dependency 's3',                '~> 0.3'
   s.add_dependency 'gh'
   s.add_dependency 'multi_json'
 end
