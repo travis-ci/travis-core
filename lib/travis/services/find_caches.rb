@@ -6,7 +6,6 @@ module Travis
       register :find_caches
 
       class Wrapper
-        extend Forwardable
         attr_reader :repository, :s3_object
 
         def initialize(repository, s3_object)
