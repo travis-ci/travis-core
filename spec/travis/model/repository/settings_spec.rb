@@ -4,9 +4,50 @@ require 'spec_helper'
 describe Repository::Settings do
   let(:repo) { stub('repository') }
 
+  describe '.defaults=' do
+    it 'saves defaults to redis' do
+      described_class.defaults = { 'foo' => 'bar' }
+
+      Travis.redis.get(described_class.settings_key).should == { 'foo' => 'bar' }.to_json
+    end
+  end
+
   it 'allows to load from nil' do
     settings = Repository::Settings.new(repo, nil)
     settings.to_hash == {}
+  end
+
+  describe 'save' do
+    it 'saves settings to the repository' do
+      repo.expects('settings=').with({'foo' => 'bar'}.to_json)
+      repo.expects('save')
+
+      settings = Repository::Settings.new(repo, 'foo' => 'bar')
+      settings.save
+    end
+  end
+
+  describe '#replace' do
+    it 'rejects asterisked values' do
+      settings = Repository::Settings.new(repo, {})
+
+      settings.expects(:save)
+      settings.replace('campfire' => {
+        'room_id' => 1,
+        'domain'  => 'travis',
+        'api_key' => { 'type' => 'password', 'value' => '∗1∗∗∗1' } })
+
+      settings['campfire'].should == {
+        'room_id' => 1,
+        'api_key' => { 'type' => 'password' },
+        'domain'  => 'travis'
+      }
+
+      settings.expects(:save)
+      settings.replace('foo' => ['∗∗∗∗1', 'bar', '2∗∗'])
+
+      settings['foo'].should == ['bar']
+    end
   end
 
   describe '#merge' do
@@ -20,7 +61,7 @@ describe Repository::Settings do
       }
       settings = Repository::Settings.new(repo, json)
 
-      repo.expects('settings=')
+      settings.expects(:save)
       settings.merge('campfire' => { 'api_key' => 'def456' })
 
       settings['campfire'].should == {
@@ -40,7 +81,7 @@ describe Repository::Settings do
       }
       settings = Repository::Settings.new(repo, json)
 
-      repo.expects('settings=')
+      settings.expects(:save)
       settings.merge('campfire' => { 'api_key' => { 'type' => 'password', 'value' => '∗1∗∗∗1' } })
 
       settings['campfire'].should == {
@@ -49,7 +90,7 @@ describe Repository::Settings do
         'domain'  => 'travis'
       }
 
-      repo.expects('settings=')
+      settings.expects(:save)
       settings.merge('foo' => ['∗∗∗∗1', 'bar', '2∗∗'])
 
       settings['foo'].should == ['bar']
@@ -65,7 +106,7 @@ describe Repository::Settings do
       }
       settings = Repository::Settings.new(repo, json)
 
-      repo.expects('settings=')
+      settings.expects(:save)
       settings.merge('campfire' => { 'api_key' => { 'type' => 'password', 'value' => '*****' } })
 
       settings['campfire'].should == {
@@ -76,7 +117,55 @@ describe Repository::Settings do
      end
   end
 
+  describe 'to_hash' do
+    it 'returns defaults, overwritten by settings' do
+      json = {
+        'builds' => {
+          'only_with_travis_yml' => true
+        }
+      }
+      settings = Repository::Settings.new(repo, json)
+
+      settings.expects(:defaults).returns(
+        'builds' => {
+          'only_with_travis_yml' => false,
+          'build_pr_on_synchronize' => true
+        }
+      )
+
+      settings.obfuscated.should == {
+        'builds' => {
+          'only_with_travis_yml' => true,
+          'build_pr_on_synchronize' => true
+        }
+      }
+    end
+  end
+
   describe '#obfuscated' do
+    it 'returns defaults, overwritten by settings' do
+      json = {
+        'builds' => {
+          'only_with_travis_yml' => true
+        }
+      }
+      settings = Repository::Settings.new(repo, json)
+
+      settings.expects(:defaults).returns(
+        'builds' => {
+          'only_with_travis_yml' => false,
+          'build_pr_on_synchronize' => true
+        }
+      )
+
+      settings.obfuscated.should == {
+        'builds' => {
+          'only_with_travis_yml' => true,
+          'build_pr_on_synchronize' => true
+        }
+      }
+    end
+
     it 'changes all of the password values into obfuscated values' do
       json = {
         'campfire' => {

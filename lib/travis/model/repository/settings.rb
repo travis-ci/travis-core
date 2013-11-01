@@ -7,15 +7,39 @@ class Repository::Settings
 
   def initialize(repository, settings)
     self.repository = repository
-    self.settings = settings
+    self.settings = settings || {}
   end
 
   attr_accessor :settings, :repository
 
   delegate :to_json, :[], to: :settings
+  delegate :defaults, :defaults=, to: 'self.class'
+
+  class << self
+    def defaults
+      retry_redis do
+        json = Travis.redis.get(settings_key) || '{}'
+        JSON.parse(json)
+      end
+    end
+
+    def defaults=(hash)
+      retry_redis do
+        Travis.redis.set(settings_key, hash.to_json)
+      end
+    end
+
+    def settings_key
+      'repository:default_settings'
+    end
+  end
 
   def to_hash
-    settings
+    defaults.deep_merge(settings)
+  end
+
+  def defaults
+    self.class.defaults
   end
 
   def merge(json)
@@ -25,12 +49,13 @@ class Repository::Settings
   end
 
   def replace(settings)
+    remove_asterisks(settings)
     self.settings = settings || {}
     save
   end
 
   def obfuscated
-    obfuscate(settings)
+    obfuscate(to_hash)
   end
 
   def []=(key, val)
@@ -39,7 +64,8 @@ class Repository::Settings
   end
 
   def save
-    repository.settings = self.to_json
+    repository.settings = settings.to_json
+    repository.save
   end
 
   private
@@ -75,4 +101,14 @@ class Repository::Settings
 
     item
   end
+
+  private
+
+    def self.retry_redis(times = 3)
+      retried ||= 0
+      yield
+    rescue StandardError
+      retried += 1
+      retry if retried <= times
+    end
 end
