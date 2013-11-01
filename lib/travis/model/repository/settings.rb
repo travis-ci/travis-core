@@ -34,6 +34,12 @@ class Repository::Settings
     end
   end
 
+  def get(path)
+    current = to_hash
+    path.split('.').take_while { |key| current = current[key] }
+    current
+  end
+
   def to_hash
     defaults.deep_merge(settings)
   end

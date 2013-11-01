@@ -4,6 +4,19 @@ require 'spec_helper'
 describe Repository::Settings do
   let(:repo) { stub('repository') }
 
+  describe '#get' do
+    it 'fetches a given path' do
+      json = { 'foo' => { 'bar' => { 'baz' => 'qux' } } }
+      settings = Repository::Settings.new(repo, json)
+      settings.get('foo.bar.baz').should == 'qux'
+    end
+
+    it 'returns nil when path is not available' do
+      settings = Repository::Settings.new(repo, {})
+      settings.get('foo.bar.baz').should == nil
+    end
+  end
+
   describe '.defaults=' do
     it 'saves defaults to redis' do
       described_class.defaults = { 'foo' => 'bar' }
