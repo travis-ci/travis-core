@@ -31,12 +31,16 @@ module Travis
         @load_env ||= YAML.load(ENV['travis_config']) if ENV['travis_config']
       end
 
-      def load_file
-        @load_file ||= YAML.load_file(filename)[Travis.env] if File.exists?(filename) rescue {}
+      def load_files
+        @load_files ||= filenames.inject({}) { |conf, filename| conf.deep_merge(load_file(filename)) }
       end
 
-      def filename
-        @filename ||= File.expand_path('config/travis.yml')
+      def load_file(filename)
+        YAML.load_file(filename)[Travis.env] || {} if File.file?(filename) rescue {}
+      end
+
+      def filenames
+        @filenames ||= Dir['config/{travis.yml,travis/*.yml}'].sort
       end
 
       def database_env_url
@@ -122,7 +126,7 @@ module Travis
     default :_access => [:key]
 
     def initialize(data = nil, *args)
-      data = self.class.normalize(data || self.class.load_env || self.class.load_file || {})
+      data = self.class.normalize(data || self.class.load_env || self.class.load_files || {})
       super
     end
 
