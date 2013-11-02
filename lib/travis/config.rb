@@ -143,11 +143,6 @@ module Travis
       "http://#{shorten_host}"
     end
 
-    def update_periodically
-      update
-      run_periodically(Travis.config.assets.interval, &method(:update))
-    end
-
     def endpoints
       @endpoints ||= begin
         result = super
@@ -155,33 +150,8 @@ module Travis
       end
     end
 
-    protected
-
-      def update
-        version = fetch
-        if version && assets.version != version
-          self.assets.version = version
-          Travis.logger.info "[asset-version] Updated asset version from https://#{Travis.config.assets.host}/current to #{assets.version}"
-        end
-      end
-
-      def fetch
-        response = http_client.get("https://#{Travis.config.assets.host}/version")
-        if response.success?
-          response.body
-        else
-          log_error "Could not retrieve asset version (#{response[:status]} #{response[:body]})."
-          nil
-        end
-      rescue Faraday::Error::ClientError => e
-        log_error "Could not retrieve asset version (#{e.inspect})."
-      end
-
-      def http_client
-        @http_client ||= Faraday.new do |f|
-          f.request :url_encoded
-          f.adapter :net_http
-        end
-      end
+    def update_periodically
+      Travis.logger.info "[deprecated] Travis.config.update_periodically doesn't do anything anymore"
+    end
   end
 end
