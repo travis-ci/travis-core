@@ -18,6 +18,10 @@ describe Repository::Settings do
   end
 
   describe '.defaults=' do
+    after do
+      described_class.defaults = nil
+    end
+
     it 'saves defaults to redis' do
       described_class.defaults = { 'foo' => 'bar' }
 

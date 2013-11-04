@@ -15,6 +15,10 @@ class Repository::Settings
   delegate :to_json, :[], to: :settings
   delegate :defaults, :defaults=, to: 'self.class'
 
+  def builds_only_with_travis_yml?
+    get('builds.only_with_travis_yml')
+  end
+
   class << self
     def defaults
       retry_redis do
@@ -24,6 +28,7 @@ class Repository::Settings
     end
 
     def defaults=(hash)
+      hash ||= {}
       retry_redis do
         Travis.redis.set(settings_key, hash.to_json)
       end

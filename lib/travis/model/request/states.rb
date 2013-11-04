@@ -24,7 +24,7 @@ class Request
       else
         self.config = fetch_config
 
-        if branch_accepted?
+        if branch_accepted? && config_accepted?
           Travis.logger.info("[request:configure] Request successfully configured commit=#{commit.commit.inspect}")
         else
           self.config = nil
@@ -56,7 +56,7 @@ class Request
 
     protected
 
-      delegate :accepted?, :approved?, :branch_accepted?, :to => :approval
+      delegate :accepted?, :approved?, :branch_accepted?, :config_accepted?, :to => :approval
 
       def approval
         @approval ||= Approval.new(self)

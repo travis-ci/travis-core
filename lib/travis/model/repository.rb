@@ -96,6 +96,8 @@ class Repository < Travis::Model
     end
   end
 
+  delegate :builds_only_with_travis_yml?, to: :settings
+
   def admin
     @admin ||= Travis.run_service(:find_admin, repository: self) # TODO check who's using this
   end
