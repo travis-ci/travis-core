@@ -108,24 +108,13 @@ class Repository < Travis::Model
   end
 
   def branches
-    if Build.column_names.include?('branch')
-      self.class.connection.select_values %(
-        SELECT DISTINCT ON (branch) branch
-        FROM   builds
-        WHERE  builds.repository_id = #{id}
-        ORDER  BY branch DESC
-        LIMIT  25
-      )
-    else
-      self.class.connection.select_values %(
-        SELECT DISTINCT ON (commits.branch) branch
-        FROM   builds
-        JOIN   commits ON builds.commit_id = commits.id
-        WHERE  builds.repository_id = #{id}
-        ORDER  BY commits.branch DESC
-        LIMIT  25
-      )
-    end
+    self.class.connection.select_values %(
+      SELECT DISTINCT ON (branch) branch
+      FROM   builds
+      WHERE  builds.repository_id = #{id}
+      ORDER  BY branch DESC
+      LIMIT  25
+    )
   end
 
   def last_completed_build(branch = nil)
@@ -145,24 +134,13 @@ class Repository < Travis::Model
   end
 
   def last_finished_builds_by_branches_ids
-    if Build.column_names.include?('branch')
-      self.class.connection.select_values %(
-        SELECT DISTINCT ON (branch) builds.id
-        FROM   builds
-        WHERE  builds.repository_id = #{id}
-        ORDER  BY branch, finished_at DESC
-        LIMIT  25
-      )
-    else
-      self.class.connection.select_values %(
-        SELECT DISTINCT ON (commits.branch) builds.id
-        FROM   builds
-        JOIN   commits ON builds.commit_id = commits.id
-        WHERE  builds.repository_id = #{id}
-        ORDER  BY commits.branch, finished_at DESC
-        LIMIT  25
-      )
-    end
+    self.class.connection.select_values %(
+      SELECT DISTINCT ON (branch) builds.id
+      FROM   builds
+      WHERE  builds.repository_id = #{id}
+      ORDER  BY branch, finished_at DESC
+      LIMIT  25
+    )
   end
 
   def regenerate_key!
