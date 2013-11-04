@@ -18,7 +18,7 @@ module Travis
           private
 
           def build_url
-            [Travis.config.http_host, repository.slug, 'builds', build.id].join('/')
+            ["https://#{Travis.config.host}", repository.slug, 'builds', build.id].join('/')
           end
         end
       end

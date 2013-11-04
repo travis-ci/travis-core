@@ -3,81 +3,24 @@ require 'hashr'
 require 'yaml'
 
 require 'active_support/core_ext/object/blank'
+require 'active_support/core_ext/string/inflections'
 require 'core_ext/hash/deep_symbolize_keys'
 require 'core_ext/kernel/run_periodically'
 
-# Encapsulates the configuration necessary for travis-core.
-#
-# Configuration values will be read from
-#
-#  * either ENV['travis_config'] (this variable is set on Heroku by `travis config [env]`,
-#    see travis-cli) or
-#  * a local file config/travis.yml which contains the current env key (e.g. development,
-#    production, test)
-#
-# The env key can be set through various ENV variables, see Travis::Config.env.
-#
-# On top of that the database configuration can be overloaded by setting a database URL
-# to ENV['DATABASE_URL'] or ENV['SHARED_DATABASE_URL'] (which is something Heroku does).
 module Travis
   class Config < Hashr
+    autoload :Docker, 'travis/config/docker'
+    autoload :Env,    'travis/config/env'
+    autoload :Files,  'travis/config/files'
+    autoload :Heroku, 'travis/config/heroku'
+
     class << self
-      def env
-        Travis.logger.info "[DEPRECATED] Travis::Config.env is deprecated. Please use Travis.env."
-        Travis.env
-      end
-
-      def load_env
-        @load_env ||= YAML.load(ENV['travis_config']) if ENV['travis_config']
-      end
-
-      def load_files
-        @load_files ||= filenames.inject({}) { |conf, filename| conf.deep_merge(load_file(filename)) }
-      end
-
-      def load_file(filename)
-        YAML.load_file(filename)[Travis.env] || {} if File.file?(filename) rescue {}
-      end
-
-      def filenames
-        @filenames ||= Dir['config/{travis.yml,travis/*.yml}'].sort
-      end
-
-      def database_env_url
-        ENV.values_at('DATABASE_URL', 'SHARED_DATABASE_URL').first
-      end
-
-      def database_from_env
-        url = database_env_url
-        url ? parse_database_url(url) : {}
-      end
-
-      def parse_database_url(url)
-        if url =~ %r((.+?)://(.+):(.+)@([^:]+):?(.*)/(.+))
-          database = $~.to_a.last
-          adapter, username, password, host, port = $~.to_a[1..-2]
-          adapter = 'postgresql' if adapter == 'postgres'
-          { :adapter => adapter, :username => username, :password => password, :host => host, :database => database }.tap do |config|
-            config.merge!(:port => port) unless port.blank?
-          end
-        else
-          {}
+      def load(*loaders)
+        data = loaders.inject({}) do |data, loader|
+          loader = const_get(loader.to_s.camelize).new
+          data.deep_merge(loader.load.deep_symbolize_keys)
         end
-      end
-
-      def normalize(data)
-        data.deep_symbolize_keys!
-        if database_from_env
-          data[:database] ||= {}
-          data[:database].merge! database_from_env do |key, old_value, new_value|
-            if old_value == new_value
-              old_value
-            else
-              fail "Conflict in database config between ENV and travis.yml: #{key} is #{old_value.inspect} vs #{new_value}"
-            end
-          end
-        end
-        data
+        new(data)
       end
     end
 
@@ -93,13 +36,14 @@ module Travis
             shorten_host:  'trvs.io',
             tokens:        { internal: 'token' },
             auth:          { target_origin: nil },
-            assets:        { host: HOSTS[Travis.env.to_sym], version: defined?(Travis::Assets) ? Travis::Assets.version : 'asset-id', interval: 15 },
+            assets:        { host: HOSTS[Travis.env.to_sym] },
             amqp:          { username: 'guest', password: 'guest', host: 'localhost', prefetch: 1 },
             database:      { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning' },
             s3:            { access_key_id: '', secret_access_key: '' },
             pusher:        { app_id: 'app-id', key: 'key', secret: 'secret' },
             sidekiq:       { namespace: 'sidekiq', pool_size: 1 },
             smtp:          {},
+            email:         {},
             github:        { api_url: 'https://api.github.com', token: 'travisbot-token' },
             async:         {},
             notifications: [], # TODO rename to event.handlers
@@ -116,7 +60,7 @@ module Travis
             ssl:           {},
             redis:         { url: 'redis://localhost:6379' },
             repository_filter: { include: [/^rails\/rails/], exclude: [/\/rails$/] },
-            encryption:    Travis.env == 'development' || Travis.env == 'test' ? { key: 'secret'*10 } : {},
+            encryption:    Travis.env == 'development' || Travis.env == 'test' ? { key: 'secret' * 10 } : {},
             sync:          { organizations: { repositories_limit: 1000 } },
             states_cache:  { memcached_servers: 'localhost:11211' },
             sentry:        { },
@@ -124,24 +68,6 @@ module Travis
             settings:      { timeouts: { defaults: { hard_limit: 50, log_silence: 10 }, maximums: { hard_limit: 180, log_silence: 60 } } }
 
     default :_access => [:key]
-
-    def initialize(data = nil, *args)
-      data = self.class.normalize(data || self.class.load_env || self.class.load_files || {})
-      super
-    end
-
-    def env
-      Travis.logger.info "[DEPRECATED] Travis.config.env is deprecated. Please use Travis.env."
-      Travis.env
-    end
-
-    def http_host
-      "https://#{host}"
-    end
-
-    def http_shorten_host
-      "http://#{shorten_host}"
-    end
 
     def endpoints
       @endpoints ||= begin
