@@ -6,13 +6,14 @@ describe Travis::Services::FindCaches do
   let(:user) { User.first || Factory(:user) }
   let(:service) { described_class.new(user, params) }
   let(:repo) { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
+  let(:cache_options) {{ s3: { bucket_name: '' } }}
   let(:result) { service.run }
   let(:has_access) { true }
   subject { result }
 
   before :each do
     Travis.config.roles = {}
-    Travis.config.cache_options = { s3: { bucket_name: '' } }
+    Travis.config.cache_options = cache_options
     user.stubs(:permission?).returns(has_access)
   end
 
@@ -53,6 +54,12 @@ describe Travis::Services::FindCaches do
       describe 'without access' do
         let(:has_access) { false }
         its(:size) { should be == 0 }
+      end
+
+      describe 'without s3 credentials' do
+        let(:cache_options) {{ }}
+        before { service.logger.expects(:warn).with("[services:find-caches] S3 credentials missing") }
+        it { should be == [] }
       end
     end
   end

@@ -31,13 +31,19 @@ module Travis
       end
 
       def run
-        return [] unless permission?
+        return [] unless setup? and permission?
         caches = bucket.objects(prefix: prefix).map { |object| Wrapper.new(repo, object) }
         caches.select! { |o| o.slug.include?(params[:match]) } if params[:match]
         caches
       end
 
       private
+
+        def setup?
+          return true if bucket
+          logger.warn "[services:find-caches] S3 credentials missing"
+          false
+        end
 
         def permission?
           current_user.permission?(required_role, repository_id: repo.id)
@@ -63,7 +69,7 @@ module Travis
 
         def bucket
           @bucket ||= begin
-            config  = Travis.config.to_hash.fetch(:cache_options).fetch(:s3)
+            config  = Travis.config.to_hash.fetch(:cache_options) { return nil }.fetch(:s3) { return nil }
             service = ::S3::Service.new(config.slice(:secret_access_key, :access_key_id))
             service.buckets.find(config.fetch(:bucket_name))
           end
