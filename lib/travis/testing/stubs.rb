@@ -24,6 +24,7 @@ module Travis
             let(:url)           { stub_url          }
             let(:broadcast)     { stub_broadcast    }
             let(:travis_token)  { stub_travis_token }
+            let(:cache)         { stub_cache        }
           end
         end
       end
@@ -262,6 +263,16 @@ module Travis
           id: 1,
           user: stub_user,
           token: 'super secret'
+        )
+      end
+
+      def stub_cache(attributes = {})
+        Stubs.stub 'cache', attributes.reverse_merge(
+          repository: stub_repository,
+          size: 1000,
+          slug: 'cache',
+          branch: 'master',
+          last_modified: Time.at(0).utc
         )
       end
     end
