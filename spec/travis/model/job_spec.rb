@@ -54,22 +54,6 @@ describe Job do
     end
   end
 
-  describe 'tagging' do
-    let(:job) { Factory.create(:test) }
-
-    before :each do
-      Job::Tagging.stubs(:rules).returns [
-        { 'tag' => 'rake_not_bundled', 'pattern' => 'rake is not part of the bundle.' }
-      ]
-    end
-
-    xit 'should tag a job its log contains a particular string' do
-      job.log.update_attributes!(content: 'rake is not part of the bundle')
-      job.finish!
-      job.reload.tags.should == "rake_not_bundled"
-    end
-  end
-
   describe 'obfuscated config' do
     it 'handles nil env' do
       job = Job.new(repository: Factory(:repository))

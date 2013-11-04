@@ -34,7 +34,6 @@ module Travis
               'committer_name' => commit.committer_name,
               'committer_email' => commit.committer_email,
               'compare_url' => commit.compare_url,
-              'sponsor' => job.sponsor.to_hash.stringify_keys,
               'worker' => job.worker
             }
           end

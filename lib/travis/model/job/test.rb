@@ -9,8 +9,6 @@ class Job
   # Job::Test belongs to a Build as part of the build matrix and will be
   # created with the Build.
   class Test < Job
-    include Sponsors, Tagging
-
     FINISHED_STATES = [:passed, :failed, :errored, :canceled]
 
     include SimpleStates, Travis::Event

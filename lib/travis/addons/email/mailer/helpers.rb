@@ -63,19 +63,8 @@ module Travis
             diff % ONE_MINUTE
           end
 
-          def notes_for(jobs)
-            tags_for(jobs).map do |tag|
-              rule = rule_for(tag)
-              rule.symbolize_keys.merge(jobs: numbers_for(jobs, tag)) if rule
-            end.compact
-          end
-
           def tags_for(jobs)
             jobs.map(&:tags).join(',').split(',').uniq
-          end
-
-          def rule_for(tag)
-            Job::Tagging.rules.detect { |rule| rule['tag'] == tag }
           end
 
           def numbers_for(jobs, tag)

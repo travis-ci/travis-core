@@ -39,8 +39,7 @@ describe Travis::Api::V1::Http::Job do
       'author_name' => 'Sven Fuchs',
       'author_email' => 'svenfuchs@artweb-design.de',
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
-      'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4',
-      'sponsor' => { 'name' => 'Railslove', 'url' => 'http://railslove.de' }
+      'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4'
     }
   end
 
