@@ -22,15 +22,14 @@ class Repository::Settings
   class << self
     def defaults
       retry_redis do
-        json = Travis.redis.get(settings_key) || '{}'
+        json = Travis.redis.get(settings_key).presence || '{}'
         JSON.parse(json)
       end
     end
 
     def defaults=(hash)
-      hash ||= {}
       retry_redis do
-        Travis.redis.set(settings_key, hash.to_json)
+        Travis.redis.set(settings_key, (hash || {}).to_json)
       end
     end
 

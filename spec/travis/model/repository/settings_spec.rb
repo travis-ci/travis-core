@@ -17,6 +17,13 @@ describe Repository::Settings do
     end
   end
 
+  describe '.defaults' do
+    it 'defaults to {}' do
+      Travis.redis.set(described_class.settings_key, nil)
+      described_class.defaults.should == {}
+    end
+  end
+
   describe '.defaults=' do
     after do
       described_class.defaults = nil
