@@ -16,7 +16,7 @@ class Job
     states :created, :queued, :started, :passed, :failed, :errored, :canceled
 
     event :start,   to: :started
-    event :finish,  to: :finished, after: :add_tags
+    event :finish,  to: :finished
     event :reset,   to: :created, unless: :created?
     event :cancel,  to: :canceled, if: :cancelable?
     event :all, after: [:propagate, :notify]
