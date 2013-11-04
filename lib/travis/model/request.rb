@@ -7,9 +7,9 @@ require 'simple_states'
 # and needs to be approved based on the configuration. Once approved the
 # Request creates a Build.
 class Request < Travis::Model
-  autoload :Approval, 'travis/model/request/approval'
-  autoload :Branches, 'travis/model/request/branches'
-  autoload :States,   'travis/model/request/states'
+  require 'travis/model/request/approval'
+  require 'travis/model/request/branches'
+  require 'travis/model/request/states'
 
   include States, SimpleStates
 

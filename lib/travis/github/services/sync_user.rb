@@ -4,10 +4,10 @@ module Travis
   module Github
     module Services
       class SyncUser < Travis::Services::Base
-        autoload :Organizations, 'travis/github/services/sync_user/organizations'
-        autoload :Repositories,  'travis/github/services/sync_user/repositories'
-        autoload :Repository,    'travis/github/services/sync_user/repository'
-        autoload :UserInfo,      'travis/github/services/sync_user/user_info'
+        require 'travis/github/services/sync_user/organizations'
+        require 'travis/github/services/sync_user/repositories'
+        require 'travis/github/services/sync_user/repository'
+        require 'travis/github/services/sync_user/user_info'
 
         register :github_sync_user
 

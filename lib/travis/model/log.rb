@@ -1,8 +1,9 @@
 require 'active_record'
 require 'metriks'
+require 'active_support/core_ext/string/filters'
 
 class Log < Travis::Model
-  autoload :Part, 'travis/model/log/part'
+  require 'travis/model/log/part'
 
   AGGREGATE_PARTS_SELECT_SQL = <<-sql.squish
     SELECT array_to_string(array_agg(log_parts.content ORDER BY number, id), '')

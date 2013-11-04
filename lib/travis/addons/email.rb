@@ -4,14 +4,14 @@ require 'i18n'
 module Travis
   module Addons
     module Email
-      autoload :EventHandler,   'travis/addons/email/event_handler'
-      autoload :Instruments,    'travis/addons/email/instruments'
-      autoload :Task,           'travis/addons/email/task'
-
       module Mailer
-        autoload :Build,        'travis/addons/email/mailer/build'
-        autoload :Helpers,      'travis/addons/email/mailer/helpers'
+        require 'travis/addons/email/mailer/helpers'
+        require 'travis/addons/email/mailer/build'
       end
+
+      require 'travis/addons/email/instruments'
+      require 'travis/addons/email/event_handler'
+      require 'travis/addons/email/task'
 
       class << self
         def setup

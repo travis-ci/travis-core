@@ -1,7 +1,7 @@
 module Travis
   module Requests
     module Services
-      autoload :Receive, 'travis/requests/services/receive'
+      require 'travis/requests/services/receive'
 
       class << self
         def register

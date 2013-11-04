@@ -1,6 +1,6 @@
 module Travis
   module Enqueue
-    autoload :Services, 'travis/enqueue/services'
+    require 'travis/enqueue/services'
   end
 end
 

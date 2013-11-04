@@ -3,7 +3,7 @@ module Travis
     module V0
       module Worker
         class Job
-          autoload :Test, 'travis/api/v0/worker/job/test'
+          require 'travis/api/v0/worker/job/test'
 
           attr_reader :job
 

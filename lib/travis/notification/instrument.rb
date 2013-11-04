@@ -4,8 +4,8 @@ require 'core_ext/hash/compact'
 module Travis
   module Notification
     class Instrument
-      autoload :EventHandler, 'travis/notification/instrument/event_handler'
-      autoload :Task,         'travis/notification/instrument/task'
+      require 'travis/notification/instrument/event_handler'
+      require 'travis/notification/instrument/task'
 
       class << self
         def attach_to(const)

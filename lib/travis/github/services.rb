@@ -1,12 +1,12 @@
 module Travis
   module Github
     module Services
-      autoload :FetchConfig,      'travis/github/services/fetch_config'
-      autoload :FindOrCreateOrg,  'travis/github/services/find_or_create_org'
-      autoload :FindOrCreateRepo, 'travis/github/services/find_or_create_repo'
-      autoload :FindOrCreateUser, 'travis/github/services/find_or_create_user'
-      autoload :SetHook,          'travis/github/services/set_hook'
-      autoload :SyncUser,         'travis/github/services/sync_user'
+      require 'travis/github/services/fetch_config'
+      require 'travis/github/services/find_or_create_org'
+      require 'travis/github/services/find_or_create_repo'
+      require 'travis/github/services/find_or_create_user'
+      require 'travis/github/services/set_hook'
+      require 'travis/github/services/sync_user'
 
       class << self
         def register

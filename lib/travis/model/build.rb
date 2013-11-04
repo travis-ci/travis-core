@@ -38,11 +38,12 @@ require 'simple_states'
 #                  TODO probably should be cleaned up and moved to
 #                  travis/notification)
 class Build < Travis::Model
-  autoload :Denormalize,   'travis/model/build/denormalize'
-  autoload :Matrix,        'travis/model/build/matrix'
-  autoload :Metrics,       'travis/model/build/metrics'
-  autoload :ResultMessage, 'travis/model/build/result_message'
-  autoload :States,        'travis/model/build/states'
+  require 'travis/model/build/denormalize'
+  require 'travis/model/build/matrix'
+  require 'travis/model/build/metrics'
+  require 'travis/model/build/result_message'
+  require 'travis/model/build/states'
+  require 'travis/model/env_helpers'
 
   include Matrix, States, SimpleStates
   include Travis::Model::EnvHelpers

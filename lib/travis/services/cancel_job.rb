@@ -1,3 +1,5 @@
+require 'travis/notification'
+
 module Travis
   module Services
     class CancelJob < Base

@@ -3,7 +3,7 @@ module Travis
     module V1
       module Http
         class Build
-          autoload :Job, 'travis/api/v1/http/build/job'
+          require 'travis/api/v1/http/build/job'
 
           include Formats, Helpers::Legacy
 

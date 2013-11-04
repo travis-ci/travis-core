@@ -9,7 +9,7 @@ module Travis
       class EnqueueJobs < Travis::Services::Base
         extend Travis::Instrumentation, Travis::Exceptions::Handling
 
-        autoload :Limit, 'travis/enqueue/services/enqueue_jobs/limit'
+        require 'travis/enqueue/services/enqueue_jobs/limit'
 
         register :enqueue_jobs
 

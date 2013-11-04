@@ -3,7 +3,7 @@ require 'core_ext/hash/compact'
 
 module Travis
   module Testing
-    autoload :Stubs, 'travis/testing/stubs'
+    require 'travis/testing/stubs'
   end
 end
 

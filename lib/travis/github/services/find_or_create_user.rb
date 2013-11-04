@@ -1,3 +1,4 @@
+require 'travis/model'
 require 'travis/model/user/renaming'
 
 module Travis

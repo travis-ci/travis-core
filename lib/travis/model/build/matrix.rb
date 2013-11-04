@@ -18,7 +18,7 @@ class Build
   #  * an arbitrary env key that can be used from within the test suite in
   #    order to branch out specific variations of the test run
   module Matrix
-    autoload :Config, 'travis/model/build/matrix/config'
+    require 'travis/model/build/matrix/config'
     extend ActiveSupport::Concern
     ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl, :compiler, :go, :xcode_sdk, :xcode_scheme]
 

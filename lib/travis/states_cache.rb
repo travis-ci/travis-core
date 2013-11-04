@@ -1,6 +1,7 @@
 require 'dalli'
 require 'connection_pool'
 require 'active_support/core_ext/module/delegation'
+require 'travis/api'
 
 module Travis
   class StatesCache

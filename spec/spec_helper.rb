@@ -7,6 +7,11 @@ end
 require 'support'
 
 require 'travis'
+
+require 'travis/model'
+require 'travis/states_cache'
+require 'travis/testing'
+
 require 'travis/support'
 require 'travis/support/testing/webmock'
 require 'travis/testing/matchers'
