@@ -16,7 +16,7 @@ describe Travis::Services::FindRepoSettings do
   describe 'run' do
     it 'should return repo settings' do
       user.permissions.create(repository_id: repo.id, push: true)
-      service.run.to_hash.should == { 'foo' => 'bar' }
+      service.run.to_hash.should == Repository::Settings.defaults.deep_merge({ 'foo' => 'bar' })
     end
 
     it 'should not be able to get settings if user does not have push permission' do

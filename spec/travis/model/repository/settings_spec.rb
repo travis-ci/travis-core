@@ -17,25 +17,6 @@ describe Repository::Settings do
     end
   end
 
-  describe '.defaults' do
-    it 'defaults to {}' do
-      Travis.redis.set(described_class.settings_key, nil)
-      described_class.defaults.should == {}
-    end
-  end
-
-  describe '.defaults=' do
-    after do
-      described_class.defaults = nil
-    end
-
-    it 'saves defaults to redis' do
-      described_class.defaults = { 'foo' => 'bar' }
-
-      Travis.redis.get(described_class.settings_key).should == { 'foo' => 'bar' }.to_json
-    end
-  end
-
   it 'allows to load from nil' do
     settings = Repository::Settings.new(repo, nil)
     settings.to_hash == {}
@@ -200,13 +181,13 @@ describe Repository::Settings do
       }
       settings = Repository::Settings.new(repo, json)
 
-      settings.obfuscated.should == {
+      settings.obfuscated.should == described_class.defaults.deep_merge({
         'campfire' => {
           'room_id' => 1,
           'api_key' => { 'type' => 'password', 'value' => '∗∗∗∗∗∗' },
         },
         'foo' => [{'bar' => {'type' => 'password', 'value' => '∗∗∗'}}, {'type' => 'foobar', 'value' => 'foobar'}, 'bar']
-      }
+      })
 
       # ensure if we're not modyfing original hash
       settings.to_hash['campfire']['api_key']['value'].should == 'abc123'

@@ -223,34 +223,32 @@ describe Repository do
 
     it "allows to set nil for settings" do
       repo.settings = nil
-      repo.settings.to_hash.should == {}
+      repo.settings.to_hash.should == Repository::Settings.defaults
     end
 
     it "allows to set settings as JSON string" do
       repo.settings = '{"foo": "bar"}'
-      repo.settings.to_hash.should == {'foo' => 'bar'}
+      repo.settings.to_hash.should == Repository::Settings.defaults.merge({'foo' => 'bar'})
     end
 
     it "allows to set settings as a Hash" do
       repo.settings = {'foo' => 'bar'}
-      repo.settings.to_hash.should == {'foo' => 'bar'}
+      repo.settings.to_hash.should == Repository::Settings.defaults.merge({'foo' => 'bar'})
     end
 
     it 'updates settings in the DB' do
       repo.settings = {'foo' => 'bar'}
       repo.save
 
-      repo.reload.settings.to_hash.should == {'foo' => 'bar'}
+      repo.reload.settings['foo'].should == 'bar'
 
       repo.settings.merge('foo' => 'baz')
-      repo.save
 
-      repo.reload.settings.to_hash.should == {'foo' => 'baz'}
+      repo.reload.settings['foo'].should == 'baz'
 
       repo.settings['bar'] = 'baz'
-      repo.save
 
-      repo.reload.settings.to_hash.should == {'foo' => 'baz', 'bar' => 'baz'}
+      repo.reload.settings['bar'].should == 'baz'
     end
   end
 

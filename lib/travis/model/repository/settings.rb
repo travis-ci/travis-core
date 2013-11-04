@@ -6,6 +6,7 @@ class Repository::Settings
   end
 
   def initialize(repository, settings)
+    p settings
     self.repository = repository
     self.settings = settings || {}
   end
@@ -21,20 +22,11 @@ class Repository::Settings
 
   class << self
     def defaults
-      retry_redis do
-        json = Travis.redis.get(settings_key).presence || '{}'
-        JSON.parse(json)
-      end
-    end
-
-    def defaults=(hash)
-      retry_redis do
-        Travis.redis.set(settings_key, (hash || {}).to_json)
-      end
-    end
-
-    def settings_key
-      'repository:default_settings'
+      {
+        'builds' => {
+          'only_with_travis_yml' => false
+        }
+      }
     end
   end
 
@@ -66,6 +58,10 @@ class Repository::Settings
 
   def obfuscated
     obfuscate(to_hash)
+  end
+
+  def [](key)
+    to_hash[key]
   end
 
   def []=(key, val)
@@ -111,14 +107,4 @@ class Repository::Settings
 
     item
   end
-
-  private
-
-    def self.retry_redis(times = 3)
-      retried ||= 0
-      yield
-    rescue Redis::BaseError
-      retried += 1
-      retry if retried <= times
-    end
 end
