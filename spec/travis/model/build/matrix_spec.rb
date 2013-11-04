@@ -335,23 +335,6 @@ describe Build, 'matrix' do
     end
 
     describe :expand_matrix do
-      context 'with global_env_in_config disabled' do
-        before do
-          Travis::Features.disable_for_all(:global_env_in_config)
-        end
-
-        it 'adds global entries in env to all of the matrix elements' do
-          build = Factory(:build, config: env_global_config)
-
-          build.expand_matrix_config(build.matrix_config).should == [
-            [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, ['FOO=bar', 'TOKEN=abcdef']]],
-            [[:rvm, '1.9.2'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, ['BAR=baz', 'TOKEN=abcdef']]],
-            [[:rvm, '1.9.3'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, ['FOO=bar', 'TOKEN=abcdef']]],
-            [[:rvm, '1.9.3'], [:gemfile, 'gemfiles/rails-4.0.0'], [:env, ['BAR=baz', 'TOKEN=abcdef']]]
-          ]
-        end
-      end
-
       it 'does not add global entries to a matrix, but leaves them in job config' do
         build = Factory(:build, config: env_global_config)
 

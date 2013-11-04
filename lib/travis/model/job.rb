@@ -132,15 +132,7 @@ class Job < Travis::Model
     return false unless config.respond_to?(:to_hash)
     config = config.to_hash.symbolize_keys
     Build.matrix_keys_for(config).map do |key|
-      if Travis::Features.feature_inactive?(:global_env_in_config) && key.to_sym == :env && self.config[:_global_env]
-        # TODO: remove this part when we're sure that all workers
-        #       are capable of handling global_env
-        job_env    = Array(self.config[key.to_sym])
-        config_env = Array(config[key])
-        (job_env - self.config[:_global_env]) == config_env
-      else
-        self.config[key.to_sym] == config[key] || commit.branch == config[key]
-      end
+      self.config[key.to_sym] == config[key] || commit.branch == config[key]
     end.inject(:&)
   end
 

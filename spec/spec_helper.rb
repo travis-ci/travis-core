@@ -33,7 +33,6 @@ RSpec.configure do |c|
   c.include Travis::Support::Testing::Webmock
 
   c.before :each do
-    Travis::Features.enable_for_all(:global_env_in_config)
     Travis::Event.instance_variable_set(:@queues, nil)
     Travis::Event.instance_variable_set(:@subscriptions, nil)
     Travis::Event.stubs(:subscribers).returns []
