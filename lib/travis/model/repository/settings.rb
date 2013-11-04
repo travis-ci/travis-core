@@ -118,7 +118,7 @@ class Repository::Settings
     def self.retry_redis(times = 3)
       retried ||= 0
       yield
-    rescue StandardError
+    rescue Redis::BaseError
       retried += 1
       retry if retried <= times
     end
