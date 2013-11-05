@@ -27,8 +27,6 @@ module Travis
         end
 
         def preload(job)
-          # TODO move sponsor extraction to the client
-          # ActiveRecord::Associations::Preloader.new(job, :log, :select => [:id, :job_id]).run
           ActiveRecord::Associations::Preloader.new(job, :log).run
           ActiveRecord::Associations::Preloader.new(job, :commit).run
           job

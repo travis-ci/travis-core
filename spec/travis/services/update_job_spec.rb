@@ -168,7 +168,7 @@ describe Travis::Services::UpdateJob do
 
     it 'resets the job worker name' do
       service.run
-      job.reload.worker.should == ''
+      job.reload.worker.should be_nil
     end
 
     it 'resets the build state to started' do

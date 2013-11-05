@@ -8,13 +8,6 @@ Duration: <%= duration_in_words(@build.started_at, @build.finished_at) %>
 Commit: <%= @commit.sha[0..6] %> (<%= @commit.branch %>)
 Author: <%= @commit.author_name %>
 Message: <%= @commit.message %>
-<% unless (notes = notes_for(@jobs)).empty? %>
-
-Notes:
-<% notes.each do |note| %>
-  * <%= note[:message] %> (<%= note[:jobs].to_sentence %>)
-<% end %>
-<% end %>
 
 View the changeset: <%= @commit.compare_url %>
 

@@ -160,7 +160,6 @@ module Travis
           allow_failure: false,
           started_at: Time.now.utc - 60,
           finished_at: Time.now.utc,
-          sponsor: { 'name' => 'Railslove', 'url' => 'http://railslove.de' },
           worker: 'ruby3.worker.travis-ci.org:travis-ruby-4',
           tags: 'tag-a,tag-b',
           log_content: log.content

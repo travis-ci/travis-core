@@ -10,8 +10,6 @@ require 'active_support/core_ext/hash/deep_dup'
 #    configuration.
 class Job < Travis::Model
   autoload :Queue,     'travis/model/job/queue'
-  autoload :Sponsors,  'travis/model/job/sponsors'
-  autoload :Tagging,   'travis/model/job/tagging'
   autoload :Test,      'travis/model/job/test'
 
   class << self
