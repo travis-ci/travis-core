@@ -78,11 +78,7 @@ class Build < Travis::Model
     end
 
     def on_branch(branch)
-      if Build.column_names.include?('branch')
-        pushes.where(branch.present? ? ['branch IN (?)', normalize_to_array(branch)] : [])
-      else
-        pushes.joins(:commit).where(branch.present? ? ['commits.branch IN (?)', normalize_to_array(branch)] : [])
-      end
+      pushes.where(branch.present? ? ['branch IN (?)', normalize_to_array(branch)] : [])
     end
 
     def by_event_type(event_type)
@@ -153,16 +149,13 @@ class Build < Travis::Model
     self.event_type = request.event_type
     self.pull_request_title = request.pull_request_title
     self.pull_request_number = request.pull_request_number
-    self.branch = commit.branch if Build.column_names.include?('branch')
+    self.branch = commit.branch
     expand_matrix
   end
 
   after_save do
-
-    if ::Build.column_names.include?('cached_matrix_ids')
-      unless cached_matrix_ids
-        update_column(:cached_matrix_ids, to_postgres_array(matrix_ids))
-      end
+    unless cached_matrix_ids
+      update_column(:cached_matrix_ids, to_postgres_array(matrix_ids))
     end
   end
 

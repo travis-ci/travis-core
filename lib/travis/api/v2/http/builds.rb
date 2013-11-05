@@ -41,11 +41,7 @@ module Travis
             end
 
             def matrix_ids(build)
-              if ::Build.column_names.include?('cached_matrix_ids')
-                build.cached_matrix_ids || build.matrix_ids
-              else
-                build.matrix_ids
-              end
+              build.cached_matrix_ids || build.matrix_ids
             end
 
             def commit_data(commit)
