@@ -48,6 +48,7 @@ module Travis
                 'slug' => repository.slug,
                 'github_id' => repository.github_id,
                 'source_url' => repository.source_url,
+                'api_url' => repository.api_url,
                 'last_build_id' => repository.last_build_id,
                 'last_build_number' => repository.last_build_number,
                 'last_build_started_at' => format_date(repository.last_build_started_at),

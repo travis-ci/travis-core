@@ -41,6 +41,7 @@ module Travis
           description: 'the repo description',
           url: 'http://github.com/svenfuchs/minimal',
           source_url: 'git://github.com/svenfuchs/minimal.git',
+          api_url: 'https://api.github.com/repos/svenfuchs/minimal',
           key: stub_key,
           admin: stub_user,
           active: true,

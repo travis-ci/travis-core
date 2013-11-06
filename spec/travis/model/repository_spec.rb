@@ -154,6 +154,18 @@ describe Repository do
     end
   end
 
+  describe 'api_url' do
+    let(:repo) { Repository.new(owner_name: 'travis-ci', name: 'travis-ci') }
+
+    before :each do
+      Travis.config.github.api_url = 'https://api.github.com'
+    end
+
+    it 'returns the api url for the repository' do
+      repo.api_url.should == 'https://api.github.com/repos/travis-ci/travis-ci'
+    end
+  end
+
   describe 'source_url' do
     let(:repo) { Repository.new(owner_name: 'travis-ci', name: 'travis-ci') }
 
