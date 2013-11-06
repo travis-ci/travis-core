@@ -26,6 +26,10 @@ module Travis
           def build
             request
           end
+
+          def admin
+            repository.admin
+          end
         end
       end
     end
