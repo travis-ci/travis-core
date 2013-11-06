@@ -11,13 +11,37 @@ module Travis
           end
 
           def data
-            { 'permissions' => repo_ids }
+            {
+              'permissions' => repo_ids,
+              'admin'       => admin_ids,
+              'pull'        => pull_ids,
+              'push'        => push_ids
+            }
           end
 
           private
+            def filtered_ids(perm = nil)
+              if perm
+                permissions.find_all { |p| p.send("#{perm}?") }.map { |permission| permission.repository_id }
+              else
+                permissions.map { |permission| permission.repository_id }
+              end
+            end
 
             def repo_ids
-              permissions.map { |permission| permission.repository_id }
+              filtered_ids
+            end
+
+            def admin_ids
+              filtered_ids(:admin)
+            end
+
+            def pull_ids
+              filtered_ids(:pull)
+            end
+
+            def push_ids
+              filtered_ids(:push)
             end
         end
       end
