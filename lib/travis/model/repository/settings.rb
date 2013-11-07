@@ -6,7 +6,6 @@ class Repository::Settings
   end
 
   def initialize(repository, settings)
-    p settings
     self.repository = repository
     self.settings = settings || {}
   end
@@ -20,11 +19,21 @@ class Repository::Settings
     get('builds.only_with_travis_yml')
   end
 
+  def build_pushes?
+    get('builds.build_pushes')
+  end
+
+  def build_pull_requests?
+    get('builds.build_pull_requests')
+  end
+
   class << self
     def defaults
       {
         'builds' => {
-          'only_with_travis_yml' => false
+          'only_with_travis_yml' => false,
+          'build_pushes' => true,
+          'build_pull_requests' => true
         }
       }
     end
@@ -106,5 +115,23 @@ class Repository::Settings
     end
 
     item
+  end
+end
+
+class Repository::DefaultSettings < Repository::Settings
+  def initialize
+    self.settings = {}
+  end
+
+  def merge(*)
+    raise "merge is not supported on default settings"
+  end
+
+  def replace(*)
+    raise "replace is not supported on default settings"
+  end
+
+  def []=(*)
+    raise "setting values is not supported on default settings"
   end
 end

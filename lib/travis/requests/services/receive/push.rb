@@ -1,8 +1,11 @@
+require 'travis/requests/services/receive/settings_support'
+
 module Travis
   module Requests
     module Services
       class Receive < Travis::Services::Base
         class Push
+          include SettingsSupport
           attr_reader :event
 
           def initialize(event)
@@ -10,7 +13,7 @@ module Travis
           end
 
           def accept?
-            true
+            repository_settings.build_pushes?
           end
 
           def validate!
