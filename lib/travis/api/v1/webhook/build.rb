@@ -3,7 +3,7 @@ module Travis
     module V1
       module Webhook
         class Build
-          autoload :Finished, 'travis/api/v1/webhook/build/finished'
+          require 'travis/api/v1/webhook/build/finished'
 
           attr_reader :build, :commit, :request, :repository, :options
 

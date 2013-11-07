@@ -2,16 +2,16 @@ module Travis
   module Api
     module V1
       module Http
-        autoload :Branches,     'travis/api/v1/http/branches'
-        autoload :Build,        'travis/api/v1/http/build'
-        autoload :Builds,       'travis/api/v1/http/builds'
-        autoload :Hooks,        'travis/api/v1/http/hooks'
-        autoload :Job,          'travis/api/v1/http/job'
-        autoload :Jobs,         'travis/api/v1/http/jobs'
-        autoload :Repositories, 'travis/api/v1/http/repositories'
-        autoload :Repository,   'travis/api/v1/http/repository'
-        autoload :User,         'travis/api/v1/http/user'
-        autoload :Workers,      'travis/api/v1/http/workers'
+        require 'travis/api/v1/http/branches'
+        require 'travis/api/v1/http/build'
+        require 'travis/api/v1/http/builds'
+        require 'travis/api/v1/http/hooks'
+        require 'travis/api/v1/http/job'
+        require 'travis/api/v1/http/jobs'
+        require 'travis/api/v1/http/repositories'
+        require 'travis/api/v1/http/repository'
+        require 'travis/api/v1/http/user'
+        require 'travis/api/v1/http/workers'
       end
     end
   end

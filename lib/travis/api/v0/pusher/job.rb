@@ -3,11 +3,11 @@ module Travis
     module V0
       module Pusher
         class Job
-          autoload :Canceled, 'travis/api/v0/pusher/job/canceled'
-          autoload :Created,  'travis/api/v0/pusher/job/created'
-          autoload :Log,      'travis/api/v0/pusher/job/log'
-          autoload :Started,  'travis/api/v0/pusher/job/started'
-          autoload :Finished, 'travis/api/v0/pusher/job/finished'
+          require 'travis/api/v0/pusher/job/canceled'
+          require 'travis/api/v0/pusher/job/created'
+          require 'travis/api/v0/pusher/job/log'
+          require 'travis/api/v0/pusher/job/started'
+          require 'travis/api/v0/pusher/job/finished'
 
           include Formats
 

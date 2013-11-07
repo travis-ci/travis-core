@@ -1,6 +1,6 @@
 module Travis
   module Github
-    autoload :Services, 'travis/github/services'
+    require 'travis/github/services'
 
     class << self
       def authenticated(user, &block)

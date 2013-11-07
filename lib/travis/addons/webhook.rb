@@ -1,9 +1,9 @@
 module Travis
   module Addons
     module Webhook
-      autoload :EventHandler, 'travis/addons/webhook/event_handler'
-      autoload :Instruments,  'travis/addons/webhook/instruments'
-      autoload :Task,         'travis/addons/webhook/task'
+      require 'travis/addons/webhook/instruments'
+      require 'travis/addons/webhook/event_handler'
+      require 'travis/addons/webhook/task'
     end
   end
 end

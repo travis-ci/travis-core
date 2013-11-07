@@ -6,7 +6,7 @@ require 'multi_json'
 require 'securerandom'
 
 class Worker
-  autoload :Repository, 'travis/model/worker/repository'
+  require 'travis/model/worker/repository'
 
   include Travis::Event
   extend Repository

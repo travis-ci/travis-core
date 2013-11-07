@@ -1,15 +1,17 @@
+require 'travis/notification'
+
 module Travis
   module Addons
-    autoload :Campfire,     'travis/addons/campfire'
-    autoload :Email,        'travis/addons/email'
-    autoload :Flowdock,     'travis/addons/flowdock'
-    autoload :GithubStatus, 'travis/addons/github_status'
-    autoload :Hipchat,      'travis/addons/hipchat'
-    autoload :Irc,          'travis/addons/irc'
-    autoload :Pusher,       'travis/addons/pusher'
-    autoload :StatesCache,  'travis/addons/states_cache'
-    autoload :Util,         'travis/addons/util'
-    autoload :Webhook,      'travis/addons/webhook'
+    require 'travis/addons/campfire'
+    require 'travis/addons/email'
+    require 'travis/addons/flowdock'
+    require 'travis/addons/github_status'
+    require 'travis/addons/hipchat'
+    require 'travis/addons/irc'
+    require 'travis/addons/pusher'
+    require 'travis/addons/states_cache'
+    require 'travis/addons/util'
+    require 'travis/addons/webhook'
 
     class << self
       def register

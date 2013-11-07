@@ -14,10 +14,10 @@ module Travis
   # turns it into a namespaced client event name like 'job:test:created').
   # Notification handlers register for and deal with these client event names.
   module Event
-    autoload :Config,       'travis/event/config'
-    autoload :Handler,      'travis/event/handler'
-    autoload :Subscription, 'travis/event/subscription'
-    autoload :SecureConfig, 'travis/event/secure_config'
+    require 'travis/event/config'
+    require 'travis/event/handler'
+    require 'travis/event/subscription'
+    require 'travis/event/secure_config'
 
     SUBSCRIBERS = %w(metrics)
 

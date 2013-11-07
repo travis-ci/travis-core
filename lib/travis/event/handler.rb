@@ -3,8 +3,8 @@ require 'active_support/core_ext/object/blank'
 module Travis
   module Event
     class Handler
-      autoload :Metrics, 'travis/event/handler/metrics'
-      autoload :Trail,   'travis/event/handler/trail'
+      require 'travis/event/handler/metrics'
+      require 'travis/event/handler/trail'
 
       include Logging
       extend  Instrumentation, Exceptions::Handling

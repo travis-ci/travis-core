@@ -1,3 +1,5 @@
+require 'travis/api/v1/helpers/legacy'
+
 module Travis
   module Api
     module V1

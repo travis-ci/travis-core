@@ -3,7 +3,7 @@ require 'active_support/core_ext/numeric/time'
 module Travis
   module Testing
     module Stubs
-      autoload :Stub, 'travis/testing/stubs/stub'
+      require 'travis/testing/stubs/stub'
 
       class << self
         include Stub

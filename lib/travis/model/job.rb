@@ -9,8 +9,9 @@ require 'active_support/core_ext/hash/deep_dup'
 #    build matrix) and executes a test suite with parameters defined in the
 #    configuration.
 class Job < Travis::Model
-  autoload :Queue,     'travis/model/job/queue'
-  autoload :Test,      'travis/model/job/test'
+  require 'travis/model/job/queue'
+  require 'travis/model/job/test'
+  require 'travis/model/env_helpers'
 
   class << self
     # what we return from the json api

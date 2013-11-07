@@ -1,3 +1,5 @@
+require 'travis/api/v2/http/branches'
+
 module Travis
   module Api
     module V2

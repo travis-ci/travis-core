@@ -2,8 +2,8 @@ require 'active_support/core_ext/hash/reverse_merge'
 
 module Travis
   module Notification
-    autoload :Instrument, 'travis/notification/instrument'
-    autoload :Publisher,  'travis/notification/publisher'
+    require 'travis/notification/instrument'
+    require 'travis/notification/publisher'
 
     class << self
       attr_accessor :publishers

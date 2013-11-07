@@ -4,8 +4,8 @@ module Travis
   module Requests
     module Services
       class Receive < Travis::Services::Base
-        autoload :PullRequest, 'travis/requests/services/receive/pull_request'
-        autoload :Push,        'travis/requests/services/receive/push'
+        require 'travis/requests/services/receive/pull_request'
+        require 'travis/requests/services/receive/push'
 
         extend Travis::Instrumentation
 

@@ -1,3 +1,5 @@
+require 'travis/api/v1'
+
 module Travis
   module Api
     module V0

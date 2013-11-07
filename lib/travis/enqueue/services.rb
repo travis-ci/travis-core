@@ -1,7 +1,7 @@
 module Travis
   module Enqueue
     module Services
-      autoload :EnqueueJobs, 'travis/enqueue/services/enqueue_jobs'
+      require 'travis/enqueue/services/enqueue_jobs'
 
       class << self
         def register

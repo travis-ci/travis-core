@@ -1,9 +1,9 @@
 module Travis
   module Api
-    autoload :Formats, 'travis/api/formats'
-    autoload :V0,      'travis/api/v0'
-    autoload :V1,      'travis/api/v1'
-    autoload :V2,      'travis/api/v2'
+    require 'travis/api/formats'
+    require 'travis/api/v0'
+    require 'travis/api/v1'
+    require 'travis/api/v2'
 
     DEFAULT_VERSION = 'v2'
 

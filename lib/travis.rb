@@ -4,27 +4,6 @@ require 'gh'
 require 'pusher'
 require 'travis/redis_pool'
 
-autoload :Account,         'travis/model/account'
-autoload :Broadcast,       'travis/model/broadcast'
-autoload :Build,           'travis/model/build'
-autoload :Commit,          'travis/model/commit'
-autoload :Email,           'travis/model/email'
-autoload :EncryptedColumn, 'travis/model/encrypted_column'
-autoload :EnvHelpers,      'travis/model/env_helpers'
-autoload :Event,           'travis/model/event'
-autoload :Job,             'travis/model/job'
-autoload :Log,             'travis/model/log'
-autoload :Membership,      'travis/model/membership'
-autoload :Organization,    'travis/model/organization'
-autoload :Permission,      'travis/model/permission'
-autoload :Repository,      'travis/model/repository'
-autoload :Request,         'travis/model/request'
-autoload :SslKey,          'travis/model/ssl_key'
-autoload :Token,           'travis/model/token'
-autoload :Url,             'travis/model/url'
-autoload :User,            'travis/model/user'
-autoload :Worker,          'travis/model/worker'
-
 # travis-core holds the central parts of the model layer used in both travis-ci
 # (i.e. the web application) as well as travis-hub (a non-rails ui-less JRuby
 # application that receives, processes and distributes messages from/to the
@@ -46,25 +25,30 @@ autoload :Worker,          'travis/model/worker'
 # (needed in travis-hub in order to connect to the database) and Travis::Renderer
 # (our inferior layer on top of Rabl).
 module Travis
-  autoload :Addons,       'travis/addons'
-  autoload :Api,          'travis/api'
-  autoload :Config,       'travis/config'
-  autoload :Chunkifier,   'travis/chunkifier'
-  autoload :CommitCommand,   'travis/commit_command'
-  autoload :Enqueue,      'travis/enqueue'
-  autoload :Event,        'travis/event'
-  autoload :Features,     'travis/features'
-  autoload :Github,       'travis/github'
-  autoload :Mailer,       'travis/mailer'
-  autoload :Model,        'travis/model'
-  autoload :Notification, 'travis/notification'
-  autoload :Requests,     'travis/requests'
-  autoload :Services,     'travis/services'
-  autoload :StatesCache,  'travis/states_cache'
-  autoload :Task,         'travis/task'
-  autoload :Testing,      'travis/testing'
+  class << self
+    def services=(services)
+      # Travis.logger.info("Using services: #{services}")
+      @services = services
+    end
 
-  extend Services::Helpers
+    def services
+      @services ||= Travis::Services
+    end
+  end
+
+  require 'travis/task'
+  require 'travis/event'
+  require 'travis/addons'
+  require 'travis/api'
+  require 'travis/config'
+  require 'travis/commit_command'
+  require 'travis/features'
+  require 'travis/services'
+  require 'travis/enqueue'
+  require 'travis/requests'
+  require 'travis/github'
+  require 'travis/mailer'
+  require 'travis/notification'
 
   class UnknownRepository < StandardError; end
   class GithubApiError    < StandardError; end
@@ -105,15 +89,6 @@ module Travis
         pusher.key    = config.pusher.key
         pusher.secret = config.pusher.secret
       end
-    end
-
-    def services=(services)
-      # Travis.logger.info("Using services: #{services}")
-      @services = services
-    end
-
-    def services
-      @services ||= Travis::Services
     end
 
     def states_cache

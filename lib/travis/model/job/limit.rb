@@ -1,6 +1,6 @@
 class Job
   module Limit
-    autoload :ByOwner, 'travis/model/job/limit/by_owner'
+    require 'travis/model/job/limit/by_owner'
 
     class << self
       def all(owner)
