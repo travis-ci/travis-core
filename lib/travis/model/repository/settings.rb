@@ -27,13 +27,18 @@ class Repository::Settings
     get('builds.build_pull_requests')
   end
 
+  def build_pull_requests_on_synchronize?
+    get('builds.build_pull_requests_on_synchronize')
+  end
+
   class << self
     def defaults
       {
         'builds' => {
           'only_with_travis_yml' => false,
           'build_pushes' => true,
-          'build_pull_requests' => true
+          'build_pull_requests' => true,
+          'build_pull_requests_on_synchronize' => false
         }
       }
     end

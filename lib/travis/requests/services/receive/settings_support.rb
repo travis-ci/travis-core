@@ -5,7 +5,7 @@ module Travis
         module SettingsSupport
           include Travis::Services::Helpers
 
-          delegate :build_pushes?, :build_pull_requests?,
+          delegate :build_pushes?, :build_pull_requests?, :build_pull_requests_on_synchronize?,
                    to: :repository_settings
 
           def repository_settings

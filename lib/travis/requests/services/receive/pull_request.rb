@@ -17,7 +17,12 @@ module Travis
             return false if disabled?
             case action
             when :opened, :reopened then !!merge_commit
-            when :synchronize       then head_change?
+            when :synchronize       then
+              if build_pull_requests_on_synchronize?
+                !!merge_commit
+              else
+                head_change?
+              end
             else false
             end
           end
