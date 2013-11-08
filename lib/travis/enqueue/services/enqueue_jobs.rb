@@ -41,13 +41,19 @@ module Travis
                 next unless owner
                 Metriks.timer('enqueue.full_enqueue_per_owner').time do
                   limit = nil
+                  queueable = nil
                   Metriks.timer('enqueue.limit_per_owner').time do
                     limit = Limit.new(owner, jobs)
+                    queueable = limit.queueable
                   end
+
                   Metriks.timer('enqueue.enqueue_per_owner').time do
-                    enqueue(limit.queueable)
+                    enqueue(queueable)
                   end
-                  reports[owner.login] = limit.report
+
+                  Metriks.timer('enqueue.report_per_owner').time do
+                    reports[owner.login] = limit.report
+                  end
                 end
               end
             end
