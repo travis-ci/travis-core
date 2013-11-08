@@ -22,7 +22,7 @@ module Travis
           private
 
             def running
-              @running ||= Job.owned_by(owner).running.count
+              @running ||= Job.owned_by(owner).running.count(:id)
             end
 
             def max_queueable
