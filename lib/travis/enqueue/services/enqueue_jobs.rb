@@ -39,21 +39,28 @@ module Travis
             Metriks.timer('enqueue.total').time do
               grouped_jobs.each do |owner, jobs|
                 next unless owner
-                limit = Limit.new(owner, jobs)
-                enqueue(limit.queueable)
-                reports[owner.login] = limit.report
+                Metriks.timer('enqueue.full_enqueue_per_owner').time do
+                  limit = nil
+                  Metriks.timer('enqueue.limit_per_owner').time do
+                    limit = Limit.new(owner, jobs)
+                  end
+                  Metriks.timer('enqueue.enqueue_per_owner').time do
+                    enqueue(limit.queueable)
+                  end
+                  reports[owner.login] = limit.report
+                end
               end
             end
           end
 
           def enqueue(jobs)
-            Metriks.timer('enqueue.enqueue_per_owner').time do
-              jobs.each do |job|
+            jobs.each do |job|
+              Metriks.timer('enqueue.publish_job').time do
                 publish(job)
+              end
 
-                Metriks.timer('enqueue.enqueue_job').time do
-                  job.enqueue
-                end
+              Metriks.timer('enqueue.enqueue_job').time do
+                job.enqueue
               end
             end
           end
