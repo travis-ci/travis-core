@@ -67,7 +67,7 @@ module Travis
 
           def jobs
             Metriks.timer('enqueue.fetch_jobs').time do
-              Job.includes(:owner).queueable
+              Job.includes(:owner).queueable.all
             end
           end
 

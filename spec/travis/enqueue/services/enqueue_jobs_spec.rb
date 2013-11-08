@@ -35,7 +35,9 @@ describe Travis::Enqueue::Services::EnqueueJobs do
     let(:test)      { stub_test(state: :created, enqueue: nil) }
 
     before :each do
-      Job.stubs(:queueable).returns([test])
+      scope = stub('scope')
+      scope.stubs(:all).returns([test])
+      Job.stubs(:queueable).returns(scope)
       service.stubs(:publisher).returns(publisher)
     end
 
