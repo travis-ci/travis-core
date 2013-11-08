@@ -17,7 +17,6 @@ describe Travis::Api::V0::Worker::Job::Test do
         'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
         'queue' => 'builds.linux',
         'uuid' => Travis.uuid,
-        'oauth_token' => 'token',
         'source' => {
           'id' => 1,
           'number' => 2
@@ -96,7 +95,6 @@ describe Travis::Api::V0::Worker::Job::Test do
         'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
         'queue' => 'builds.linux',
         'uuid' => Travis.uuid,
-        'oauth_token' => 'token',
         'source' => {
           'id' => 1,
           'number' => 2

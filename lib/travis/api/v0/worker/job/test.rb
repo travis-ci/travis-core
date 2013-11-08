@@ -16,7 +16,6 @@ module Travis
                 'repository' => repository_data,
                 'config' => job.decrypted_config,
                 'queue' => job.queue,
-                'oauth_token' => admin.github_oauth_token,
                 'uuid' => Travis.uuid
               }
             end
