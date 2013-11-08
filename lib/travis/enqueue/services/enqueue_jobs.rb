@@ -34,20 +34,21 @@ module Travis
         private
 
           def enqueue_all
-            jobs.group_by(&:owner).each do |owner, jobs|
-              next unless owner
-              limit = Limit.new(owner, jobs)
-              enqueue(limit.queueable)
-              reports[owner.login] = limit.report
+            grouped_jobs = jobs.group_by(&:owner)
+
+            Metriks.timer('enqueue.total').time do
+              grouped_jobs.each do |owner, jobs|
+                next unless owner
+                limit = Limit.new(owner, jobs)
+                enqueue(limit.queueable)
+                reports[owner.login] = limit.report
+              end
             end
           end
 
           def enqueue(jobs)
-            _jobs = jobs
-
-
-            Metriks.timer('enqueue.publish_and_enqueue_total').time do
-              _jobs.each do |job|
+            Metriks.timer('enqueue.enqueue_per_owner').time do
+              jobs.each do |job|
                 publish(job)
 
                 Metriks.timer('enqueue.enqueue_job').time do
