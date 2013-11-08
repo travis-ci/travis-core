@@ -43,19 +43,31 @@ module Travis
           end
 
           def enqueue(jobs)
-            jobs.each do |job|
-              publish(job)
-              job.enqueue
+            _jobs = jobs
+
+
+            Metriks.timer('enqueue.publish_and_enqueue_total').time do
+              _jobs.each do |job|
+                publish(job)
+
+                Metriks.timer('enqueue.enqueue_job').time do
+                  job.enqueue
+                end
+              end
             end
           end
 
           def publish(job)
-            payload = Travis::Api.data(job, for: 'worker', type: 'Job::Test', version: 'v0')
-            publisher(job.queue).publish(payload, properties: { type: payload['type'] })
+            Metriks.timer('enqueue.publish_job').time do
+              payload = Travis::Api.data(job, for: 'worker', type: 'Job::Test', version: 'v0')
+              publisher(job.queue).publish(payload, properties: { type: payload['type'] })
+            end
           end
 
           def jobs
-            Job.includes(:owner).queueable
+            Metriks.timer('enqueue.fetch_jobs').time do
+              Job.includes(:owner).queueable
+            end
           end
 
           def publisher(queue)
