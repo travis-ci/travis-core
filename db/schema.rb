@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130916101056) do
+ActiveRecord::Schema.define(:version => 20131109101056) do
 
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
@@ -82,16 +82,6 @@ ActiveRecord::Schema.define(:version => 20130916101056) do
 
   add_index "emails", ["email"], :name => "index_emails_on_email"
   add_index "emails", ["user_id"], :name => "index_emails_on_user_id"
-
-  create_table "events", :force => true do |t|
-    t.integer  "source_id"
-    t.string   "source_type"
-    t.integer  "repository_id"
-    t.string   "event"
-    t.text     "data"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
-  end
 
   create_table "jobs", :force => true do |t|
     t.integer  "repository_id"
