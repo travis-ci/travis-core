@@ -10,6 +10,7 @@ class Job
   # created with the Build.
   class Test < Job
     FINISHED_STATES = [:passed, :failed, :errored, :canceled]
+    FAILED_STATES = [:failed, :errored, :canceled]
 
     include SimpleStates, Travis::Event
 
@@ -69,6 +70,18 @@ class Job
 
     def finished?
       FINISHED_STATES.include?(state.to_sym)
+    end
+
+    def finished_unsuccessfully?
+      FAILED_STATES.include?(state.to_sym)
+    end
+
+    def waiting_for_result?
+      if config.fetch(:matrix, {})[:fast_finish]
+        allow_failure? || finished_unsuccessfully?
+      else
+        finished?
+      end
     end
 
     def passed?

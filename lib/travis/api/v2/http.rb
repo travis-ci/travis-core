@@ -19,8 +19,6 @@ module Travis
         require 'travis/api/v2/http/repository'
         require 'travis/api/v2/http/ssl_key'
         require 'travis/api/v2/http/user'
-        require 'travis/api/v2/http/workers'
-        require 'travis/api/v2/http/worker'
       end
     end
   end

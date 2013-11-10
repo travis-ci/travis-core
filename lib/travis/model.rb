@@ -23,7 +23,6 @@ module Travis
     require 'travis/model/ssl_key'
     require 'travis/model/token'
     require 'travis/model/user'
-    require 'travis/model/worker'
     require 'travis/model/url'
     require 'travis/model/event'
 

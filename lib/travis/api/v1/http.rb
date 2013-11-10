@@ -11,7 +11,6 @@ module Travis
         require 'travis/api/v1/http/repositories'
         require 'travis/api/v1/http/repository'
         require 'travis/api/v1/http/user'
-        require 'travis/api/v1/http/workers'
       end
     end
   end
