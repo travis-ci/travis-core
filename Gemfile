@@ -4,7 +4,7 @@ gemspec
 
 gem 'travis-support',     github: 'travis-ci/travis-support'
 gem 'travis-sidekiqs',    github: 'travis-ci/travis-sidekiqs', require: nil
-gem 'gh',                 github: 'rkh/gh'
+gem 'gh',                 github: 'travis-ci/gh'
 gem 'newrelic_rpm',       '~> 3.4.2'
 gem 'addressable'
 gem 'aws-sdk'
