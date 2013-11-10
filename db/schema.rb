@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130916101056) do
+ActiveRecord::Schema.define(:version => 20131109101056) do
 
   create_table "broadcasts", :force => true do |t|
     t.integer  "recipient_id"
@@ -275,20 +275,5 @@ ActiveRecord::Schema.define(:version => 20130916101056) do
   add_index "users", ["github_id"], :name => "index_users_on_github_id", :unique => true
   add_index "users", ["github_oauth_token"], :name => "index_users_on_github_oauth_token"
   add_index "users", ["login"], :name => "index_users_on_login"
-
-  create_table "workers", :force => true do |t|
-    t.string   "name"
-    t.string   "host"
-    t.string   "state"
-    t.datetime "last_seen_at"
-    t.text     "payload"
-    t.text     "last_error"
-    t.string   "queue"
-    t.string   "full_name"
-  end
-
-  add_index "workers", ["full_name"], :name => "index_workers_on_full_name"
-  add_index "workers", ["last_seen_at"], :name => "index_workers_on_last_seen_at"
-  add_index "workers", ["name", "host"], :name => "index_workers_on_name_and_host"
 
 end
