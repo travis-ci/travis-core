@@ -40,8 +40,8 @@ class Build
       config.blank? ? matrix : matrix.select { |job| job.matrix_config?(config) }
     end
 
-    def matrix_finished?(*)
-      matrix.all?(&:finished?)
+    def matrix_finished?
+      matrix.all?(&:waiting_for_result?)
     end
 
     def matrix_duration
