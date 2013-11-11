@@ -24,7 +24,6 @@ module Travis
     require 'travis/model/token'
     require 'travis/model/user'
     require 'travis/model/url'
-    require 'travis/model/event'
 
     self.abstract_class = true
 

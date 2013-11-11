@@ -8,7 +8,6 @@ module Travis
         require 'travis/api/v2/http/branches'
         require 'travis/api/v2/http/build'
         require 'travis/api/v2/http/builds'
-        require 'travis/api/v2/http/events'
         require 'travis/api/v2/http/caches'
         require 'travis/api/v2/http/hooks'
         require 'travis/api/v2/http/job'
