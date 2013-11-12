@@ -45,8 +45,8 @@ describe Travis::Services::CancelBuild do
       }.to_not change { build.reload.state }
     end
 
-    it 'should not be able to cancel job if user does not have push permission' do
-      user.permissions.create(repository_id: repo.id, push: false)
+    it 'should not be able to cancel job if user does not have any permissions' do
+      user.permissions.destroy_all
 
       service.can_cancel?.should be_false
     end
