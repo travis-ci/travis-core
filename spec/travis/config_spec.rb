@@ -104,6 +104,17 @@ describe Travis::Config do
     end
   end
 
+  describe 'with both file and env config' do
+    before(:each) do
+      Travis::Config.stubs(:load_file).returns({})
+      Travis::Config.stubs(:load_env).returns({})
+    end
+
+    it 'should throw an error' do
+      lambda { config.pusher.key }.should raise_error /Both ENV config and file config detected/
+    end
+  end
+
   describe 'the example config file' do
     let(:data)    { {} }
     before(:each) { Travis::Config.stubs(:load_file).returns(data) }

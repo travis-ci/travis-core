@@ -118,7 +118,14 @@ module Travis
     default :_access => [:key]
 
     def initialize(data = nil, *args)
-      data = self.class.normalize(data || self.class.load_env || self.class.load_file || {})
+      env_config  = self.class.load_env
+      file_config = self.class.load_file
+
+      if env_config && file_config
+        raise "Both ENV config and file config detected, this is not probably what you want, stopping"
+      end
+
+      data = self.class.normalize(data || env_config || file_config || {})
       super
     end
 
