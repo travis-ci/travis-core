@@ -251,6 +251,10 @@ class Build < Travis::Model
     state.try(:to_sym) == :passed ? 0 : 1
   end
 
+  def on_default_branch?
+    branch == repository.default_branch
+  end
+
   private
 
     def normalize_env_values(values)
