@@ -37,7 +37,6 @@ describe Travis::Addons::Email::EventHandler do
 
     before :each do
       Broadcast.stubs(:by_repo).with(build.repository).returns([broadcast])
-      build.stubs(:repository).returns(repository)
       build.stubs(:on_default_branch?).returns(true)
     end
 
