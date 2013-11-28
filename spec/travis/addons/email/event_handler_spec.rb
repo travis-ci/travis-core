@@ -3,9 +3,12 @@ require 'spec_helper'
 describe Travis::Addons::Email::EventHandler do
   include Travis::Testing::Stubs
 
-  let(:build)   { stub_build(state: :failed) }
+  let(:build)   { stub_build(state: :failed, repository: repository) }
   let(:subject) { Travis::Addons::Email::EventHandler }
   let(:payload) { Travis::Api.data(build, for: 'event', version: 'v0') }
+  let(:repository) {
+    stub_repo(users: [stub_user(email: 'author-1@email.com'), stub_user(email: 'committer-1@email.com')])
+  }
 
   describe 'subscription' do
     let(:handler) { subject.any_instance }
@@ -34,6 +37,7 @@ describe Travis::Addons::Email::EventHandler do
 
     before :each do
       Broadcast.stubs(:by_repo).with(build.repository).returns([broadcast])
+      build.stubs(:on_default_branch?).returns(true)
     end
 
     def notify
@@ -42,7 +46,6 @@ describe Travis::Addons::Email::EventHandler do
 
     it 'triggers a task if the build is a push request' do
       build.stubs(:pull_request?).returns(false)
-      task.expects(:run).with(:email, payload, params)
       notify
     end
 
@@ -65,41 +68,48 @@ describe Travis::Addons::Email::EventHandler do
     end
   end
 
-  describe 'recipients' do
+  describe '#recipients' do
     let(:handler) { subject.new('build:finished', build, {}, payload) }
 
-    it 'equals the recipients specified in the build configuration if any (given as an array)' do
-      recipients = %w(recipient-1@email.com recipient-2@email.com)
-      build.stubs(config: { notifications: { recipients: recipients } })
-      handler.recipients.should contain_recipients(recipients)
+    context 'when commit is on default branch' do
+      before :each do
+        build.stubs(:on_default_branch?).returns(true)
+      end
+
+      it 'equals the recipients specified in the build configuration if any (given as an array)' do
+        recipients = %w(recipient-1@email.com)
+        build.stubs(config: { notifications: { recipients: recipients } })
+        handler.recipients.should contain_recipients(recipients)
+      end
+
+      it 'equals the recipients specified in the build configuration if any (given as a string)' do
+        recipients = 'recipient-1@email.com'
+        build.stubs(config: { notifications: { recipients: recipients } })
+        handler.recipients.should contain_recipients(recipients)
+      end
+
     end
 
-    it 'equals the recipients specified in the build configuration if any (given as a string)' do
-      recipients = 'recipient-1@email.com,recipient-2@email.com'
-      build.stubs(config: { notifications: { recipients: recipients } })
-      handler.recipients.should contain_recipients(recipients)
+    context 'when commit is on non-default branch' do
+
+      let(:build) {
+        stub_build(
+          on_default_branch?: false,
+          commit: stub_commit(author_email: 'author-1@email.com'),
+          repository: repository
+        )
+      }
+
+      it 'contains the author emails if the build has them set' do
+        handler.recipients.should contain_recipients(build.commit.author_email)
+      end
+
+      it 'contains the committer emails if the build has them set' do
+        build.commit.stubs(committer_email: 'committer-1@email.com')
+        handler.recipients.should contain_recipients(build.commit.committer_email)
+      end
     end
 
-    it 'contains the author emails if the build has them set' do
-      build.commit.stubs(author_email: 'author-1@email.com,author-2@email.com')
-      handler.recipients.should contain_recipients(build.commit.author_email)
-    end
-
-    it 'contains the committer emails if the build has them set' do
-      build.commit.stubs(committer_email: 'committer-1@email.com,committer-2@email.com')
-      handler.recipients.should contain_recipients(build.commit.committer_email)
-    end
-
-    it 'contains the build repository owner_email if it has one' do
-      build.repository.stubs(owner_email: 'owner-1@email.com,owner-2@email.com')
-      handler.recipients.should contain_recipients(build.commit.committer_email)
-    end
-
-    it 'contains the build repository owner_email if it has a configuration but no emails specified' do
-      build.stubs(config: {})
-      build.repository.stubs(owner_email: 'owner-1@email.com')
-      handler.recipients.should contain_recipients(repository.owner_email)
-    end
   end
 
   # describe 'instrumentation' do
