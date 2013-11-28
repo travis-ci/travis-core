@@ -38,7 +38,7 @@ module Travis
       end
 
       def authorized?
-        current_user.permission?(:push, :repository_id => job.repository_id)
+        current_user.permission?(:pull, :repository_id => job.repository_id)
       end
 
       def job

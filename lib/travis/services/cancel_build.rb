@@ -49,7 +49,7 @@ module Travis
       end
 
       def authorized?
-        current_user.permission?(:push, :repository_id => build.repository_id)
+        current_user.permission?(:pull, :repository_id => build.repository_id)
       end
 
       def build
