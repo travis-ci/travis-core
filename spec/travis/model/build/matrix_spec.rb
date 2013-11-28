@@ -34,38 +34,38 @@ describe Build, 'matrix' do
           build.matrix[0].update_attributes!(state: :passed)
           build.matrix[1].update_attributes!(state: :passed)
 
-          build.matrix_finished?.should_not be_nil
+          build.matrix_finished?.should be_true
         end
       end
     end
     context 'if config[:matrix][:finish_fast] is set' do
       context 'if at least one job has not finished and is not allowed to fail' do
         it 'returns false' do
-          build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'] })
+          build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'], matrix: {fast_finish: true} })
           build.matrix[0].update_attributes(state: :passed)
           build.matrix[1].update_attributes(state: :started)
 
-          build.matrix_finished?.should_not be_true
+          build.matrix_finished?.should be_false
         end
       end
 
       context 'if at least one job has not finished and is allowed to fail' do
         it 'returns true' do
-          build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'] })
+          build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'], matrix: {fast_finish: true} })
           build.matrix[0].update_attributes(state: :passed)
           build.matrix[1].update_attributes(state: :started, allow_failure: true)
 
-          build.matrix_finished?.should_not be_true
+          build.matrix_finished?.should be_true
         end
       end
 
       context 'if all jobs have finished' do
         it 'returns true' do
-          build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'] })
+          build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'], matrix: {fast_finish: true} })
           build.matrix[0].update_attributes!(state: :passed)
           build.matrix[1].update_attributes!(state: :passed)
 
-          build.matrix_finished?.should_not be_nil
+          build.matrix_finished?.should be_true
         end
       end
     end
