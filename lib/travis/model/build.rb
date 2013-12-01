@@ -252,7 +252,7 @@ class Build < Travis::Model
   end
 
   def on_default_branch?
-    branch == repository.default_branch
+    branch == repository.default_branch && !pull_request?
   end
 
   private

@@ -467,5 +467,47 @@ describe Build do
         build.reset
       end
     end
+
+    describe '#on_default_branch?' do
+      let(:repository) { Factory(:repository) }
+      let(:build) { Factory(:build, repository: repository) }
+
+      context 'when branch is the repository\'s default branch' do
+        before do
+          build.branch = repository.default_branch
+        end
+
+        context 'and build is not from a pull request' do
+          before do
+            build.event_type = 'push'
+          end
+
+          it 'returns true' do
+            build.on_default_branch?.should be_true
+          end
+        end
+
+        context 'and build is from a pull request' do
+          before do
+            build.event_type = 'pull_request'
+          end
+
+          it 'returns false' do
+            build.on_default_branch?.should be_false
+          end
+        end
+      end
+
+      context 'when branch is not the repository\'s default branch' do
+        before do
+          build.branch = 'foobarbaz'
+          build.event_type = 'push'
+        end
+
+        it 'returns false' do
+          build.on_default_branch?.should be_false
+        end
+      end
+    end
   end
 end
