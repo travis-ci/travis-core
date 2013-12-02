@@ -12,7 +12,7 @@ module Travis
       end
 
       def authorized?
-        current_user.permission?(:push, :repository_id => repo.id)
+        current_user && current_user.permission?(:push, :repository_id => repo.id)
       end
 
       private

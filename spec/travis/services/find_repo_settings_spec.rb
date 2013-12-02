@@ -13,6 +13,14 @@ describe Travis::Services::FindRepoSettings do
     repo.save
   end
 
+  describe 'authorized?' do
+    let(:service) { described_class.new(nil, params) }
+
+    it 'should be unauthorized with current_user' do
+      service.should_not be_authorized
+    end
+  end
+
   describe 'run' do
     it 'should return repo settings' do
       user.permissions.create(repository_id: repo.id, push: true)
