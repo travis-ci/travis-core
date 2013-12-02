@@ -34,7 +34,9 @@ module Travis
               GH.post(url, :state => state, :description => description, :target_url => target_url)
             end
           rescue GH::Error => e
-            error "Could not update the PR status on #{GH.api_host + url} (#{e.message})."
+            message = "Could not update the PR status on #{GH.api_host + url} (#{e.message})."
+            error message
+            raise message
           end
 
           def target_url
