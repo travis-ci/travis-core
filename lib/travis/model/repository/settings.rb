@@ -16,25 +16,23 @@ class Repository::Settings
   delegate :defaults, :defaults=, to: 'self.class'
 
   def builds_only_with_travis_yml?
-    get('builds.only_with_travis_yml')
+    get('builds_only_with_travis_yml')
   end
 
   def build_pushes?
-    get('builds.build_pushes')
+    get('build_pushes')
   end
 
   def build_pull_requests?
-    get('builds.build_pull_requests')
+    get('build_pull_requests')
   end
 
   class << self
     def defaults
       {
-        'builds' => {
-          'only_with_travis_yml' => false,
-          'build_pushes' => true,
-          'build_pull_requests' => true
-        }
+        'builds_only_with_travis_yml' => false,
+        'build_pushes' => true,
+        'build_pull_requests' => true
       }
     end
   end
