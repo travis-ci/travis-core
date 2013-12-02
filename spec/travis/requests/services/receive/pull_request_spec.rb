@@ -54,17 +54,6 @@ describe Travis::Requests::Services::Receive::PullRequest do
         payload.event.data['action'] = 'synchronize'
       end
 
-      it 'returns true even if head didn\'t change when repo is enabled to test on synchronize' do
-        id = payload.event['repository']['id']
-        settings = mock('settings')
-        repo = stub('repository', settings: settings)
-        payload.expects(:run_service).with(:find_repo, id: id).returns(repo)
-        settings.expects(:build_pull_requests_on_synchronize?).returns(true)
-        settings.expects(:build_pull_requests?).returns(true)
-        Request.stubs(:last_by_head_commit).returns(last)
-        payload.accept?.should be_true
-      end
-
       it 'returns true if head has changed' do
         Request.stubs(:last_by_head_commit).returns(nil)
         payload.accept?.should be_true
