@@ -22,6 +22,11 @@ describe Travis::Services::FindRepoSettings do
   end
 
   describe 'run' do
+    it 'should return nil without a repo' do
+      repo.destroy
+      service.run.should be_nil
+    end
+
     it 'should return repo settings' do
       user.permissions.create(repository_id: repo.id, push: true)
       service.run.to_hash.should == Repository::Settings.defaults.deep_merge({ 'foo' => 'bar' })

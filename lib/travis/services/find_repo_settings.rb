@@ -4,7 +4,7 @@ module Travis
       register :find_repo_settings
 
       def run(options = {})
-        result if authorized?
+        result if repo && authorized?
       end
 
       def updated_at
