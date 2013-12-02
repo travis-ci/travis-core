@@ -39,13 +39,10 @@ module Travis
 
           def default_recipients
             recipients = object.repository.users.map(&:email)
-            unless object.on_default_branch?
-              recipients.select! do |r|
-                r == object.commit.author_email or
-                r == object.commit.committer_email
-              end
+            recipients.keep_if do |r|
+              r == object.commit.author_email or
+              r == object.commit.committer_email
             end
-            recipients
           end
 
           Instruments::EventHandler.attach_to(self)
