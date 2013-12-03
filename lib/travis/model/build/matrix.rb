@@ -41,7 +41,11 @@ class Build
     end
 
     def matrix_finished?
-      matrix.all?(&:waiting_for_result?)
+      if matrix_config.matrix_settings[:fast_finish]
+        matrix.all?(&:waiting_for_result?) || matrix.any?(&:finished_unsuccessfully?)
+      else
+        matrix.all?(&:waiting_for_result?)
+      end
     end
 
     def matrix_duration
