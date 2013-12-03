@@ -10,6 +10,8 @@ RSpec::Core::RakeTask.new do |t|
   t.pattern = './spec/**/*_spec.rb'
 end
 
+ActiveRecord::Base.schema_format = :sql
+
 module ActiveRecord
   class Migration
     class << self
