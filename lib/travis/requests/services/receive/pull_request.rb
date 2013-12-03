@@ -1,8 +1,12 @@
+require 'travis/requests/services/receive/settings_support'
+
 module Travis
   module Requests
     module Services
       class Receive < Travis::Services::Base
         class PullRequest
+          include SettingsSupport
+
           attr_reader :event
 
           def initialize(event)
@@ -25,7 +29,7 @@ module Travis
           end
 
           def disabled?
-            Travis::Features.feature_deactivated?(:pull_requests)
+            Travis::Features.feature_deactivated?(:pull_requests) || !repository_settings.build_pull_requests?
           end
 
           def head_change?

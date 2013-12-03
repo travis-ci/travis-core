@@ -5,6 +5,26 @@ describe Request::Approval do
 
   let(:approval) { Request::Approval.new(request) }
 
+  describe 'config_accepted?' do
+    it 'approves the build when .travis.yml is missing, but builds with .travis.yml are allowed' do
+      request.config['.result'] = 'not_found'
+      approval.config_accepted?.should be_true
+    end
+
+    it 'does not approve the build if .travis.yml is missing and builds without it are not allowed' do
+      request.repository.stubs(:builds_only_with_travis_yml?).returns(true)
+      request.config['.result'] = 'not_found'
+
+      approval.config_accepted?.should be_false
+      approval.message.should == '.travis.yml is missing and builds without .travis.yml are disabled'
+    end
+
+    it 'approves the build when .travis.yml is present' do
+      request.config['.result'] = 'configured'
+      approval.config_accepted?.should be_true
+    end
+  end
+
   describe 'branch_accepted?' do
     it 'does not accept a request that belongs to the github_pages branch' do
       request.commit.stubs(:branch).returns('gh_pages')
