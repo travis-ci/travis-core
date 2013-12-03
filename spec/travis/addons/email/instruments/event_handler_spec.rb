@@ -8,7 +8,9 @@ describe Travis::Addons::Email::Instruments::EventHandler do
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events[1] }
   let(:repository) {
-    stub_repo(users: [stub_user(email: 'svenfuchs@artweb-design.de')])
+    stub_repo(users: [
+      stub_user(emails: [stub_email(email: 'svenfuchs@artweb-design.de')])
+    ])
   }
 
   before :each do

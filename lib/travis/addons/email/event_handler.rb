@@ -38,7 +38,7 @@ module Travis
           end
 
           def default_recipients
-            recipients = object.repository.users.map(&:email)
+            recipients = object.repository.users.map {|u| u.emails.map(&:email)}.flatten
             recipients.keep_if do |r|
               r == object.commit.author_email or
               r == object.commit.committer_email
