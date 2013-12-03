@@ -275,6 +275,12 @@ module Travis
           last_modified: Time.at(0).utc
         )
       end
+
+      def stub_email(attributes = {})
+        Stubs.stub 'email', attributes.reverse_merge(
+          email: 'email'
+        )
+      end
     end
   end
 end

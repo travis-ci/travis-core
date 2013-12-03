@@ -7,7 +7,10 @@ describe Travis::Addons::Email::EventHandler do
   let(:subject) { Travis::Addons::Email::EventHandler }
   let(:payload) { Travis::Api.data(build, for: 'event', version: 'v0') }
   let(:repository) {
-    stub_repo(users: [stub_user(email: 'author-1@email.com'), stub_user(email: 'committer-1@email.com')])
+    stub_repo(users: [
+      stub_user(emails: [stub_email(email: 'author-1@email.com'   )]),
+      stub_user(emails: [stub_email(email: 'committer-1@email.com')])
+    ])
   }
 
   describe 'subscription' do
