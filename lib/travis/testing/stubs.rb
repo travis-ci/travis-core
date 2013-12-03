@@ -55,8 +55,7 @@ module Travis
           last_build_duration: 60,
           owner: nil,
           github_language: 'ruby',
-          github_id: 549743,
-          builds_only_with_travis_yml?: false
+          github_id: 549743
         )
       end
       alias stub_repository stub_repo

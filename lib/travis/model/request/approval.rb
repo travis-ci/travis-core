@@ -19,18 +19,6 @@ class Request
       github_pages_explicitly_enabled? || !github_pages?
     end
 
-    def config_accepted?
-      (travis_yml_present? || allow_builds_without_travis_yml?)
-    end
-
-    def travis_yml_present?
-      request.config && request.config['.result'] == 'configured'
-    end
-
-    def allow_builds_without_travis_yml?
-      !repository.builds_only_with_travis_yml?
-    end
-
     def approved?
       accepted? && request.config.present? && branch_approved?
     end
@@ -52,8 +40,6 @@ class Request
         'missing config'
       elsif !branch_approved? || !branch_accepted?
         'branch not included or excluded'
-      elsif !config_accepted?
-        '.travis.yml is missing and builds without .travis.yml are disabled'
       elsif repository.private?
         'private repository'
       end

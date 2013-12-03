@@ -47,20 +47,6 @@ describe Request::States do
         request.result.should == :accepted
       end
 
-      describe 'but rejected config' do
-        before :each do
-          approval.stubs(:config_accepted?).returns(false)
-        end
-
-        it 'does config, but resets it to nil' do
-          request.expects(:fetch_config).returns({})
-
-          request.start
-
-          request.config.should be_nil
-        end
-      end
-
       describe 'but rejected branch' do
         before :each do
           approval.stubs(:branch_accepted?).returns(false)
