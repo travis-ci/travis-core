@@ -5,6 +5,8 @@ env:
     - RUBY_FREE_MIN=200000
 services:
   - redis
+addons:
+  postgresql: 9.3
 rvm:
   - jruby-19mode
 jdk:
