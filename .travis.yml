@@ -24,7 +24,8 @@ matrix:
 before_script:
   - sudo service mysql stop
   - redis-cli config set save ""
-  - 'bundle exec rake db:create db:test:prepare --trace'
+  - psql -c 'create database travis_test;' -U postgres
+  - 'psql travis_test < db/structure.sql'
 script:
   - './build.sh'
 notifications:
