@@ -12,6 +12,7 @@ require 'active_record'
 # hooks on Github.
 class Repository < Travis::Model
   require 'travis/model/repository/status_image'
+  require 'travis/model/repository/settings'
 
   has_many :commits, dependent: :delete_all
   has_many :requests, dependent: :delete_all
@@ -95,6 +96,8 @@ class Repository < Travis::Model
     end
   end
 
+  delegate :builds_only_with_travis_yml?, to: :settings
+
   def admin
     @admin ||= Travis.run_service(:find_admin, repository: self) # TODO check who's using this
   end
@@ -152,6 +155,18 @@ class Repository < Travis::Model
       key.destroy
       build_key
       save!
+    end
+  end
+
+  def settings
+    Settings.load(self, super)
+  end
+
+  def settings=(value)
+    if value.is_a?(String) || value.nil?
+      super(value)
+    else
+      super(value.to_json)
     end
   end
 end

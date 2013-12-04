@@ -26,6 +26,15 @@ describe Travis::Requests::Services::Receive::PullRequest do
         Travis::Features.disable_for_all(:pull_requests)
         payload.accept?.should be_false
       end
+
+      it 'rejects when the feature is disabled for the repository' do
+        id = payload.event['repository']['id']
+        settings = mock('settings')
+        repo = stub('repository', settings: settings)
+        payload.expects(:run_service).with(:find_repo, github_id: id).returns(repo)
+        settings.expects(:build_pull_requests?).returns(false)
+        payload.accept?.should be_false
+      end
     end
 
     describe 'given action is "reopened"' do
