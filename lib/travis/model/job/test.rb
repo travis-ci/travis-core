@@ -79,7 +79,7 @@ class Job
     def waiting_for_result?
       matrix = config.fetch(:matrix, {})
       if matrix && matrix[:fast_finish]
-        finished? || allow_failure? || finished_unsuccessfully?
+        finished? || allow_failure?
       else
         finished?
       end
