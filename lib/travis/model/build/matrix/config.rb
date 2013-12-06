@@ -10,8 +10,7 @@ class Build
       end
 
       def keys
-        lang = config.fetch(:language, DEFAULT_LANG)
-        @keys ||= Build::ENV_KEYS & config.keys.map(&:to_sym) & ( Build::EXPANSION_KEYS_UNIVERSAL | Build::EXPANSION_KEYS_LANGUAGE[lang] )
+        @keys ||= Build::ENV_KEYS & config.keys.map(&:to_sym) & Build.matrix_lang_keys(config)
       end
 
       def size

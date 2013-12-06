@@ -592,16 +592,12 @@ describe Build, 'matrix' do
   end
 
   describe 'matrix_keys_for' do
-    it 'only selects ENV_KEYS' do
-      Build::Matrix::ENV_KEYS.each do |key|
-        Build.matrix_keys_for('invalid key' => 'invalid', key => 'valid').should == [key]
-      end
-    end
+    let(:config_default_lang) { { 'rvm' => ['1.8.7', '1.9.2'], 'env' => ['DB=sqlite3', 'DB=postgresql'] } }
+    let(:config_non_def_lang) { { 'language' => 'scala', 'rvm' => ['1.8.7', '1.9.2'], 'env' => ['DB=sqlite3', 'DB=postgresql'] } }
 
-    it 'selects symbolized ENV_KEYS' do
-      Build::Matrix::ENV_KEYS.each do |key|
-        Build.matrix_keys_for(key => 'valid').should == [key]
-      end
+    it 'only selects appropriate keys' do
+      Build.matrix_keys_for(config_default_lang).should == [:rvm, :env]
+      Build.matrix_keys_for(config_non_def_lang).should == [:env]
     end
   end
 end

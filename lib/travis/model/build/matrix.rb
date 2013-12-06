@@ -44,12 +44,19 @@ class Build
 
     module ClassMethods
       def matrix?(config)
-        config.values_at(*ENV_KEYS).compact.any? { |value| value.is_a?(Array) && value.size > 1 }
+        config.values_at(matrix_lang_keys(config)).compact.any? { |value| value.is_a?(Array) && value.size > 1 }
       end
 
       def matrix_keys_for(config)
-        keys = ENV_KEYS + [:branch]
+        keys = matrix_lang_keys(config) + [:branch]
         keys & config.keys.map(&:to_sym)
+      end
+
+      def matrix_lang_keys(config)
+        env_keys = ENV_KEYS
+        lang = config.symbolize_keys.fetch(:language, Build::Matrix::Config::DEFAULT_LANG)
+        env_keys &= EXPANSION_KEYS_LANGUAGE[lang]
+        env_keys | EXPANSION_KEYS_UNIVERSAL
       end
     end
 
