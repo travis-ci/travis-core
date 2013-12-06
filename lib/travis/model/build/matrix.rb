@@ -40,7 +40,7 @@ class Build
       'scala'       => [:scala]
     }
 
-    EXPANSION_KEYS_UNIVERSAL = [:env]
+    EXPANSION_KEYS_UNIVERSAL = [:env, :branch]
 
     module ClassMethods
       def matrix?(config)
@@ -48,7 +48,7 @@ class Build
       end
 
       def matrix_keys_for(config)
-        keys = matrix_lang_keys(config) + [:branch]
+        keys = matrix_lang_keys(config)
         keys & config.keys.map(&:to_sym)
       end
 
