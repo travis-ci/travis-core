@@ -344,6 +344,20 @@ describe Build, 'matrix' do
     yml
     }
 
+    let(:matrix_with_unwanted_expansion_python) {
+      YAML.load <<-yml
+      language: python
+      python:
+        - "3.3"
+        - "2.7"
+      rvm:
+        - 2.0.0
+        - 1.9.3
+      gemfile:
+        - 'gemfiles/rails-4'
+    yml
+    }
+
     describe :expand_matrix do
       it 'does not add global entries to a matrix, but leaves them in job config' do
         build = Factory(:build, config: env_global_config)
@@ -406,10 +420,16 @@ describe Build, 'matrix' do
       end
 
       it 'ignores irrelevant matrix dimensions' do
-        build = Factory(:build, config: matrix_with_unwanted_expansion_ruby)
-        build.matrix_config.expand.should == [
+        build_ruby = Factory(:build, config: matrix_with_unwanted_expansion_ruby)
+        build_ruby.matrix_config.expand.should == [
           [[:rvm, "2.0.0"], [:gemfile, "gemfiles/rails-4"]],
           [[:rvm, "1.9.3"], [:gemfile, "gemfiles/rails-4"]]
+        ]
+
+        build_python = Factory(:build, config: matrix_with_unwanted_expansion_python)
+        build_python.matrix_config.expand.should == [
+          [[:python, "3.3"]],
+          [[:python, "2.7"]]
         ]
       end
 
