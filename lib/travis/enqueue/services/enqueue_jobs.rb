@@ -81,7 +81,7 @@ module Travis
           def publish(job)
             Metriks.timer('enqueue.publish_job').time do
               payload = Travis::Api.data(job, for: 'worker', type: 'Job::Test', version: 'v0')
-              publisher(job.queue).publish(payload, properties: { type: payload['type'] })
+              publisher(job.queue).publish(payload, properties: { type: payload['type'], persistent: true })
             end
           end
 
