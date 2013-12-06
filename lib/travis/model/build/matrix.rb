@@ -32,7 +32,7 @@ class Build
       'haskell'     => [],
       'java'        => [:jdk],
       'node_js'     => [:node_js],
-      'objective-c' => [:rvm, :gemfile, :xcode_project, :xcode_scheme],
+      'objective-c' => [:rvm, :gemfile, :xcode_sdk, :xcode_scheme],
       'perl'        => [:perl],
       'php'         => [:php],
       'python'      => [:python],
