@@ -27,7 +27,7 @@ module Travis
           enqueue_all && reports unless disabled?
         end
         instrument :run
-        rescues :run, from: Exception
+        rescues :run, from: Exception, backtrace: false
 
         def disabled?
           Timeout.timeout(TIMEOUT) do
