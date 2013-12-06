@@ -22,6 +22,25 @@ class Build
     extend ActiveSupport::Concern
     ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl, :compiler, :go, :xcode_sdk, :xcode_scheme]
 
+    EXPANSION_KEYS_LANGUAGE = {
+      'c'           => [:compiler],
+      'clojure'     => [:lein, :jdk],
+      'cpp'         => [:compiler],
+      'erlang'      => [:otp_release],
+      'go'          => [:go],
+      'groovy'      => [:jdk],
+      'haskell'     => [],
+      'java'        => [:jdk],
+      'node_js'     => [:node_js],
+      'objective-c' => [:xcode_project, :xcode_scheme],
+      'perl'        => [:perl],
+      'php'         => [:php],
+      'python'      => [:python],
+      'ruby'        => [:rvm, :gemfile, :jdk],
+      'scala'       => [:scala]
+    }
+
+    EXPANSION_KEYS_UNIVERSAL = [:env]
 
     module ClassMethods
       def matrix?(config)
@@ -103,12 +122,6 @@ class Build
 
       def matrix_config
         @matrix_config ||= Config.new(self)
-      end
-
-      # TODO: this is used in tests, fix this, it's not needed anymore, there is
-      #       you can use matrix_config.expand method
-      def expand_matrix_config(config)
-        config.expand
       end
 
       def matrix_allow_failures

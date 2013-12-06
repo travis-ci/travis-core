@@ -2,6 +2,7 @@ class Build
   module Matrix
     class Config
       attr_reader :build, :config
+      DEFAULT_LANG = 'ruby'
 
       def initialize(build)
         @build  = build
@@ -9,7 +10,8 @@ class Build
       end
 
       def keys
-        @keys ||= Build::ENV_KEYS & config.keys.map(&:to_sym)
+        lang = config.fetch(:language, DEFAULT_LANG)
+        @keys ||= Build::ENV_KEYS & config.keys.map(&:to_sym) & ( Build::EXPANSION_KEYS_UNIVERSAL | Build::EXPANSION_KEYS_LANGUAGE[lang] )
       end
 
       def size
