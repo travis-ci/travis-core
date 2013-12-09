@@ -23,8 +23,8 @@ class Build
 
       states :created, :started, :passed, :failed, :errored, :canceled
 
-      event :start,  to: :started,  unless: :started?
-      event :finish, to: :finished, if: :matrix_finished?
+      event :start,  to: :started,  unless: [:started?, :failed?, :errored?]
+      event :finish, to: :finished, if: :should_finish?
       event :reset,  to: :created
       event :cancel, to: :canceled, if: :cancelable?
       event :all, after: [:denormalize, :notify]
@@ -32,6 +32,10 @@ class Build
       # after_create do
       #   notify(:create)
       # end
+    end
+
+    def should_finish?
+      matrix_finished? && !finished?
     end
 
     def start(data = {})
