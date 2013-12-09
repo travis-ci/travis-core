@@ -43,10 +43,6 @@ class Build
     EXPANSION_KEYS_UNIVERSAL = [:env, :branch]
 
     module ClassMethods
-      def matrix?(config)
-        config.values_at(matrix_lang_keys(config)).compact.any? { |value| value.is_a?(Array) && value.size > 1 }
-      end
-
       def matrix_keys_for(config)
         keys = matrix_lang_keys(config)
         keys & config.keys.map(&:to_sym)
