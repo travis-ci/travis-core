@@ -317,19 +317,6 @@ describe Build, 'matrix' do
     yml
     }
 
-    let(:matrix_with_os_ruby) {
-      YAML.load <<-yml
-      os:
-        - osx
-        - linux
-      rvm:
-        - 2.0.0
-        - 1.9.3
-      gemfile:
-        - 'gemfiles/rails-4'
-    yml
-    }
-
     let(:matrix_with_unwanted_expansion_ruby) {
       YAML.load <<-yml
       language: ruby
