@@ -143,7 +143,7 @@ class Job < Travis::Model
   private
 
     def whitelisted_addons
-      [:firefox, :hosts]
+      [:firefox, :hosts, :postgresql]
     end
 
     def delete_addons(config)
