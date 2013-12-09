@@ -91,6 +91,38 @@ describe Build::States do
           build.start(data)
         end
       end
+
+      describe 'when the build has failed' do
+        before :each do
+          build.state = :failed
+        end
+
+        it 'does not denormalize attributes' do
+          build.expects(:denormalize).never
+          build.start(data)
+        end
+
+        it 'does not notify observers' do
+          Travis::Event.expects(:dispatch).never
+          build.start(data)
+        end
+      end
+
+      describe 'when the build has errored' do
+        before :each do
+          build.state = :errored
+        end
+
+        it 'does not denormalize attributes' do
+          build.expects(:denormalize).never
+          build.start(data)
+        end
+
+        it 'does not notify observers' do
+          Travis::Event.expects(:dispatch).never
+          build.start(data)
+        end
+      end
     end
 
     describe 'finish' do
@@ -101,46 +133,69 @@ describe Build::States do
           build.stubs(matrix_finished?: false)
         end
 
-        it 'does not change the state' do
-          build.finish(data)
-          build.state.should == :created
-        end
+        describe 'when the build is already finished' do
+          before(:each) do
+            build.state = :finished
+          end
 
-        it 'does not denormalizes attributes' do
-          build.expects(:denormalize).never
-          build.finish(data)
-        end
+          it 'does not denormalize attributes' do
+            build.expects(:denormalize).never
+            build.finish(data)
+          end
 
-        it 'does not notify observers' do
-          Travis::Event.expects(:dispatch).never
-          build.finish(data)
+          it 'does not notify observers' do
+            Travis::Event.expects(:dispatch).never
+            build.finish(data)
+          end
         end
       end
 
       describe 'when the matrix is finished' do
         before(:each) do
           build.stubs(matrix_finished?: true, matrix_state: :passed, matrix_duration: 30)
-          build.expects(:save!)
         end
 
-        it 'sets the state to the matrix state' do
-          build.finish(data)
-          build.state.should == :passed
+        describe 'when the build has not finished' do
+          before(:each) do
+            build.state = :started
+            build.expects(:save!)
+          end
+
+          it 'sets the state to the matrix state' do
+            build.finish(data)
+            build.state.should == :passed
+          end
+
+          it 'calculates the duration based on the matrix durations' do
+            build.finish(data)
+            build.duration.should == 30
+          end
+
+          it 'denormalizes attributes' do
+            build.expects(:denormalize).with(:finish, data)
+            build.finish(data)
+          end
+
+          it 'notifies observers' do
+            Travis::Event.expects(:dispatch).with('build:finished', build, data)
+            build.finish(data)
+          end
         end
 
-        it 'calculates the duration based on the matrix durations' do
-          build.finish(data)
-          build.duration.should == 30
-        end
+        describe 'when the build has already finished' do
+          before(:each) do
+            build.state = :passed
+          end
 
-        it 'denormalizes attributes' do
-          build.expects(:denormalize).with(:finish, data)
-          build.finish(data)
-        end
+          it 'does not denormalize attributes' do
+            build.expects(:denormalize).never
+            build.finish(data)
+          end
 
-        it 'notifies observers' do
-          Travis::Event.expects(:dispatch).with('build:finished', build, data)
-          build.finish(data)
+          it 'does not notify observers' do
+            Travis::Event.expects(:dispatch).never
+            build.finish(data)
+          end
         end
       end
     end
