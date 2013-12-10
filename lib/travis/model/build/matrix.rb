@@ -29,7 +29,7 @@ class Build
       'erlang'      => [:otp_release],
       'go'          => [:go],
       'groovy'      => [:jdk],
-      'haskell'     => [],
+      'haskell'     => [:ghc],
       'java'        => [:jdk],
       'node_js'     => [:node_js],
       'objective-c' => [:rvm, :gemfile, :xcode_sdk, :xcode_scheme],
