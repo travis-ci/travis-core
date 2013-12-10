@@ -22,15 +22,37 @@ class Build
     extend ActiveSupport::Concern
     ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl, :compiler, :go, :xcode_sdk, :xcode_scheme, :ghc]
 
+    EXPANSION_KEYS_LANGUAGE = {
+      'c'           => [:compiler],
+      'clojure'     => [:lein, :jdk],
+      'cpp'         => [:compiler],
+      'erlang'      => [:otp_release],
+      'go'          => [:go],
+      'groovy'      => [:jdk],
+      'haskell'     => [],
+      'java'        => [:jdk],
+      'node_js'     => [:node_js],
+      'objective-c' => [:rvm, :gemfile, :xcode_sdk, :xcode_scheme],
+      'perl'        => [:perl],
+      'php'         => [:php],
+      'python'      => [:python],
+      'ruby'        => [:rvm, :gemfile, :jdk],
+      'scala'       => [:scala]
+    }
+
+    EXPANSION_KEYS_UNIVERSAL = [:env, :branch]
 
     module ClassMethods
-      def matrix?(config)
-        config.values_at(*ENV_KEYS).compact.any? { |value| value.is_a?(Array) && value.size > 1 }
+      def matrix_keys_for(config)
+        keys = matrix_lang_keys(config)
+        keys & config.keys.map(&:to_sym)
       end
 
-      def matrix_keys_for(config)
-        keys = ENV_KEYS + [:branch]
-        keys & config.keys.map(&:to_sym)
+      def matrix_lang_keys(config)
+        env_keys = ENV_KEYS
+        lang = config.symbolize_keys.fetch(:language, Build::Matrix::Config::DEFAULT_LANG)
+        env_keys &= EXPANSION_KEYS_LANGUAGE[lang]
+        env_keys | EXPANSION_KEYS_UNIVERSAL
       end
     end
 
@@ -103,12 +125,6 @@ class Build
 
       def matrix_config
         @matrix_config ||= Config.new(self)
-      end
-
-      # TODO: this is used in tests, fix this, it's not needed anymore, there is
-      #       you can use matrix_config.expand method
-      def expand_matrix_config(config)
-        config.expand
       end
 
       def matrix_allow_failures
