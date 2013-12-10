@@ -8,6 +8,7 @@ describe 'Job::Queue' do
   before do
     Travis.config.queues = [
       { :queue => 'builds.rails', :slug => 'rails/rails' },
+      { :queue => 'builds.osx', :os => 'osx'},
       { :queue => 'builds.cloudfoundry', :owner => 'cloudfoundry' },
       { :queue => 'builds.clojure', :language => 'clojure' },
       { :queue => 'builds.erlang', :language => 'erlang' },
@@ -54,11 +55,23 @@ describe 'Job::Queue' do
       job = stub('job', :config => { :language => ['clojure'] }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-ci'))
       Job::Queue.for(job).name.should == 'builds.clojure'
     end
+
+    context 'when "os" value matches the given configuration hash' do
+      it 'returns the matching queue' do
+        job = stub('job', :config => { :os => 'osx'}, :repository => stub('travis-core', :owner_name => 'travis-ci', :name => 'bosh'))
+        Job::Queue.for(job).name.should == 'builds.osx'
+      end
+
+      it 'returns the matching queue when language is also given' do
+        job = stub('job', :config => {:language => 'clojure', :os => 'osx'}, :repository => stub('travis-core', :owner_name => 'travis-ci', :name => 'bosh'))
+        Job::Queue.for(job).name.should == 'builds.osx'
+      end
+    end
   end
 
   describe 'Queue.queues' do
     it 'returns an array of Queues for the config hash' do
-      rails, cloudfoundry, clojure, erlang = Job::Queue.send(:queues)
+      rails, os, cloudfoundry, clojure, erlang = Job::Queue.send(:queues)
 
       rails.name.should == 'builds.rails'
       rails.slug.should == 'rails/rails'
@@ -90,6 +103,11 @@ describe 'Job::Queue' do
     it "returns true when the given language matches" do
       queue = queue('builds.linux', nil, nil, 'clojure')
       queue.send(:matches?, nil, nil, 'clojure').should be_true
+    end
+
+    it 'returns true when os is missing' do
+      queue = queue('builds.linux', nil, nil, 'clojure', nil)
+      queue.send(:matches?, nil, nil, 'clojure', nil).should be_true
     end
   end
 end
