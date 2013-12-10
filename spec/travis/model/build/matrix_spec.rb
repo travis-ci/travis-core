@@ -412,12 +412,14 @@ describe Build, 'matrix' do
           [[:rvm, "2.0.0"], [:gemfile, "gemfiles/rails-4"]],
           [[:rvm, "1.9.3"], [:gemfile, "gemfiles/rails-4"]]
         ]
+        build_ruby.config.keys.should_not include(:python)
 
         build_python = Factory(:build, config: matrix_with_unwanted_expansion_python)
         build_python.matrix_config.expand.should == [
           [[:python, "3.3"]],
           [[:python, "2.7"]]
         ]
+        build_python.config.keys.should_not include(:ruby)
       end
 
       it 'copies build attributes' do
