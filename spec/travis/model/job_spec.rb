@@ -320,7 +320,9 @@ describe Job do
                        username: 'johndoe',
                        access_key: job.repository.key.secure.encrypt('foobar')
                      },
-                     firefox: '22.0'
+                     firefox: '22.0',
+                     postgresql: '9.3',
+                     hosts: ["travis.dev"]
                    }
                  }
         job.config = config
@@ -328,7 +330,9 @@ describe Job do
         job.decrypted_config.should == {
           rvm: '1.8.7',
           addons: {
-            firefox: '22.0'
+            firefox: '22.0',
+            postgresql: '9.3',
+            hosts: ["travis.dev"]
           }
         }
       end
