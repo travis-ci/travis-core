@@ -12,7 +12,11 @@ class Build
       def keys
         @keys ||= Build::ENV_KEYS & config.keys.map(&:to_sym) & Build.matrix_lang_keys(config)
         config.delete_if {|k,v| Build::ENV_KEYS.include?(k) && ! @keys.include?(k) }
-        @keys
+        if Travis::Features.active?(:multi_os, build.request.repository)
+          @keys = [:os] | @keys
+        else
+          @keys
+        end
       end
 
       def size
