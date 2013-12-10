@@ -11,10 +11,11 @@ class Build
 
       def keys
         @keys ||= Build::ENV_KEYS & config.keys.map(&:to_sym) & Build.matrix_lang_keys(config)
-        config.delete_if {|k,v| Build::ENV_KEYS.include?(k) && ! @keys.include?(k) }
         if Travis::Features.active?(:multi_os, build.request.repository)
+          config.delete_if {|k,v| Build::ENV_KEYS.include?(k) && !( @keys.include?(k) || k == :os) }
           @keys = [:os] | @keys
         else
+          config.delete_if {|k,v| Build::ENV_KEYS.include?(k) && ! @keys.include?(k) }
           @keys
         end
       end
