@@ -83,8 +83,8 @@ class Build
 
       private
       def remove_superfluous_config_keys(opts = {})
-        except = Array(opts[:except])
-        config.delete_if {|k,v| Build::ENV_KEYS.include?(k) && ! @keys.include?(k) && !except.include?(k)}
+        exceptions = Array(opts[:except])
+        config.delete_if {|k,v| Build::ENV_KEYS.include?(k) && ! @keys.include?(k) && !exceptions.include?(k)}
       end
     end
   end
