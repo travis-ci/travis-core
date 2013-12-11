@@ -52,13 +52,13 @@ class Build
           Travis::Features.stubs(:active?).with(:multi_os, repo).returns(false)
           @config = Config.new(build)
         end
- 
+
         it 'does not expand on :os' do
           @config.expand.should == [
             [[:rvm, '2.0.0'], [:gemfile, 'gemfiles/rails-4']],
             [[:rvm, '1.9.3'], [:gemfile, 'gemfiles/rails-4']],
           ]
-        end      
+        end
       end
     end
   end

@@ -16,7 +16,7 @@ describe 'Job::Queue' do
     Job::Queue.instance_variable_set(:@queues, nil)
     Job::Queue.instance_variable_set(:@default, nil)
   end
-  
+
   after do
     Travis.config.default_queue = 'builds.linux'
   end
