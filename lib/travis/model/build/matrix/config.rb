@@ -11,7 +11,7 @@ class Build
 
       def keys
         @keys ||= Build::ENV_KEYS & config.keys.map(&:to_sym) & Build.matrix_lang_keys(config)
-        if Travis::Features.active?(:multi_os, build.request.repository)
+        if Travis::Features.active?(:multi_os, build.repository)
           remove_superfluous_config_keys(except: :os)
           @keys = [:os] | @keys
         else
