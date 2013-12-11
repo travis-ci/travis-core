@@ -12,10 +12,10 @@ class Build
       def keys
         @keys ||= Build::ENV_KEYS & config.keys.map(&:to_sym) & Build.matrix_lang_keys(config)
         if Travis::Features.active?(:multi_os, build.request.repository)
-          config.delete_if {|k,v| Build::ENV_KEYS.include?(k) && !( @keys.include?(k) || k == :os) }
+          remove_superfluous_config_keys(except: :os)
           @keys = [:os] | @keys
         else
-          config.delete_if {|k,v| Build::ENV_KEYS.include?(k) && ! @keys.include?(k) }
+          remove_superfluous_config_keys
           @keys
         end
       end
@@ -79,6 +79,12 @@ class Build
         include_configs = matrix_settings[:include] || []
         include_configs = include_configs.map(&:to_a).map(&:sort)
         matrix + include_configs
+      end
+
+      private
+      def remove_superfluous_config_keys(opts = {})
+        except = Array(opts[:except])
+        config.delete_if {|k,v| Build::ENV_KEYS.include?(k) && ! @keys.include?(k) && !except.include?(k)}
       end
     end
   end
