@@ -603,10 +603,12 @@ describe Build, 'matrix' do
   describe 'matrix_keys_for' do
     let(:config_default_lang) { { 'rvm' => ['1.8.7', '1.9.2'], 'env' => ['DB=sqlite3', 'DB=postgresql'] } }
     let(:config_non_def_lang) { { 'language' => 'scala', 'rvm' => ['1.8.7', '1.9.2'], 'env' => ['DB=sqlite3', 'DB=postgresql'] } }
+    let(:config_lang_array)   { { 'language' => ['scala'], 'rvm' => ['1.8.7', '1.9.2'], 'env' => ['DB=sqlite3', 'DB=postgresql'] } }
 
     it 'only selects appropriate keys' do
       Build.matrix_keys_for(config_default_lang).should == [:rvm, :env]
       Build.matrix_keys_for(config_non_def_lang).should == [:env]
+      Build.matrix_keys_for(config_lang_array).should == [:env]
     end
   end
 end
