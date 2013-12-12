@@ -130,8 +130,8 @@ class Build
       def matrix_allow_failures
         allow_configs = matrix_config.matrix_settings[:allow_failures] || []
         allow_configs.each do |config|
-          config.merge!(language: matrix_config.config.fetch(:language, Build::Matrix::Config::DEFAULT_LANG))
-          matrix_for(config).each { |m| m.allow_failure = true }
+          cfg = config.merge(language: matrix_config.config.fetch(:language, Build::Matrix::Config::DEFAULT_LANG))
+          matrix_for(cfg).each { |m| m.allow_failure = true }
         end
       end
   end
