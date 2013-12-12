@@ -51,7 +51,7 @@ class Build
       def matrix_lang_keys(config)
         env_keys = ENV_KEYS
         lang = Array(config.symbolize_keys[:language]).first
-        env_keys &= EXPANSION_KEYS_LANGUAGE[lang] if lang
+        env_keys &= EXPANSION_KEYS_LANGUAGE[lang] if EXPANSION_KEYS_LANGUAGE.has_key?(lang)
         env_keys | EXPANSION_KEYS_UNIVERSAL
       end
     end
