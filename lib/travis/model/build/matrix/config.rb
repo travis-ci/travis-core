@@ -10,9 +10,12 @@ class Build
       end
 
       def keys
-        @keys ||= Build::ENV_KEYS & config.keys.map(&:to_sym) & Build.matrix_lang_keys(config)
-        if Travis::Features.active?(:multi_os, build.repository)
-          @keys = [:os] | @keys
+        unless @keys
+          var = Build::ENV_KEYS & config.keys.map(&:to_sym) & Build.matrix_lang_keys(config)
+          if Travis::Features.active?(:multi_os, build.repository)
+            var = [:os] | var
+          end
+          @keys = var
         end
         @keys
       end
