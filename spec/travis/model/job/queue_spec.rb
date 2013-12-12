@@ -8,7 +8,7 @@ describe 'Job::Queue' do
   before do
     Travis.config.queues = [
       { :queue => 'builds.rails', :slug => 'rails/rails' },
-      { :queue => 'builds.osx', :os => 'osx'},
+      { :queue => 'builds.mac_osx', :os => 'osx'},
       { :queue => 'builds.cloudfoundry', :owner => 'cloudfoundry' },
       { :queue => 'builds.clojure', :language => 'clojure' },
       { :queue => 'builds.erlang', :language => 'erlang' },
@@ -59,12 +59,12 @@ describe 'Job::Queue' do
     context 'when "os" value matches the given configuration hash' do
       it 'returns the matching queue' do
         job = stub('job', :config => { :os => 'osx'}, :repository => stub('travis-core', :owner_name => 'travis-ci', :name => 'bosh'))
-        Job::Queue.for(job).name.should == 'builds.osx'
+        Job::Queue.for(job).name.should == 'builds.mac_osx'
       end
 
       it 'returns the matching queue when language is also given' do
         job = stub('job', :config => {:language => 'clojure', :os => 'osx'}, :repository => stub('travis-core', :owner_name => 'travis-ci', :name => 'bosh'))
-        Job::Queue.for(job).name.should == 'builds.osx'
+        Job::Queue.for(job).name.should == 'builds.mac_osx'
       end
     end
   end

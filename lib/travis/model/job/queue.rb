@@ -12,8 +12,7 @@ class Job
       def for(job)
         repo_name = job.repository.try(:name)
         owner     = job.repository.try(:owner_name)
-        language  = job.config[:language]
-        language  = Array(language).flatten.compact.first
+        language  = Array(job.config[:language]).flatten.compact.first
         os        = job.config[:os]
         queues.detect { |queue| queue.send(:matches?, owner, repo_name, language, os) } || default
       end
