@@ -12,12 +12,9 @@ class Build
       def keys
         @keys ||= Build::ENV_KEYS & config.keys.map(&:to_sym) & Build.matrix_lang_keys(config)
         if Travis::Features.active?(:multi_os, build.repository)
-          remove_superfluous_config_keys(except: :os)
           @keys = [:os] | @keys
-        else
-          remove_superfluous_config_keys
-          @keys
         end
+        @keys
       end
 
       def size
@@ -49,6 +46,9 @@ class Build
       end
 
       def expand
+        exceptions = Travis::Features.active?(:multi_os, build.repository) ? [:os] : nil
+        remove_superfluous_config_keys except: exceptions
+
         # recursively builds up permutations of values in the rows of a nested array
         matrix = lambda do |*args|
           base, result = args.shift, args.shift || []
@@ -84,7 +84,7 @@ class Build
       private
       def remove_superfluous_config_keys(opts = {})
         exceptions = Array(opts[:except])
-        config.delete_if {|k,v| Build::ENV_KEYS.include?(k) && ! @keys.include?(k) && !exceptions.include?(k)}
+        config.delete_if {|k,v| Build::ENV_KEYS.include?(k) && !keys.include?(k) && !exceptions.include?(k)}
       end
     end
   end
