@@ -51,7 +51,7 @@ class Build
       def matrix_lang_keys(config)
         env_keys = ENV_KEYS
         lang = Array(config.symbolize_keys[:language]).first
-        env_keys &= EXPANSION_KEYS_LANGUAGE[lang] if EXPANSION_KEYS_LANGUAGE.has_key?(lang)
+        env_keys &= EXPANSION_KEYS_LANGUAGE.fetch(lang, EXPANSION_KEYS_LANGUAGE[Build::Matrix::Config::DEFAULT_LANG])
         env_keys | EXPANSION_KEYS_UNIVERSAL
       end
     end
@@ -130,6 +130,7 @@ class Build
       def matrix_allow_failures
         allow_configs = matrix_config.matrix_settings[:allow_failures] || []
         allow_configs.each do |config|
+          config.merge!(language: matrix_config.config.fetch(:language, Build::Matrix::Config::DEFAULT_LANG))
           matrix_for(config).each { |m| m.allow_failure = true }
         end
       end
