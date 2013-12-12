@@ -46,8 +46,7 @@ class Build
       end
 
       def expand
-        exceptions = Travis::Features.active?(:multi_os, build.repository) ? [:os] : nil
-        remove_superfluous_config_keys except: exceptions
+        remove_superfluous_config_keys
 
         # recursively builds up permutations of values in the rows of a nested array
         matrix = lambda do |*args|
@@ -82,9 +81,8 @@ class Build
       end
 
       private
-      def remove_superfluous_config_keys(opts = {})
-        exceptions = Array(opts[:except])
-        config.delete_if {|k,v| Build::ENV_KEYS.include?(k) && !keys.include?(k) && !exceptions.include?(k)}
+      def remove_superfluous_config_keys
+        config.delete_if {|k,v| Build::ENV_KEYS.include?(k) && !keys.include?(k)}
       end
     end
   end
