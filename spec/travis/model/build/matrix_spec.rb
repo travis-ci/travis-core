@@ -285,17 +285,17 @@ describe Build, 'matrix' do
 
     let(:multiple_tests_config_with_allow_failures) {
       YAML.load <<-yml
+      language: objective-c
       rvm:
         - 1.8.7
         - 1.9.2
-      gemfile:
-        - gemfiles/rails-2.3.x
-        - gemfiles/rails-3.0.x
-        - gemfiles/rails-3.1.x
+      xcode_sdk:
+        - iphonesimulator6.1
+        - iphonesimulator7.0
       matrix:
         allow_failures:
-          - rvm: 1.9.2
-            gemfile: gemfiles/rails-2.3.x
+          - rvm: 1.8.7
+            xcode_sdk: iphonesimulator7.0
     yml
     }
 
@@ -398,7 +398,7 @@ describe Build, 'matrix' do
 
       it 'sets the config to the jobs (allow failures config)' do
         build = Factory(:build, config: multiple_tests_config_with_allow_failures)
-        build.matrix.map(&:allow_failure).should == [false, false, false, true, false, false]
+        build.matrix.map(&:allow_failure).should == [false, true, false, false]
       end
 
       it 'ignores global env config when setting allow failures' do
