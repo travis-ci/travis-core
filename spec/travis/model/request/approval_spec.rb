@@ -97,6 +97,12 @@ describe Request::Approval do
       approval.message.should == 'excluded repository'
     end
 
+    it 'returns "excluded repository" if the repository is an excluded repository and exclude rule is a string' do
+      Travis.config.repository_filter.stubs(:exclude).returns(["\\/rails$"])
+      request.repository.stubs(:slug).returns('svenfuchs/rails')
+      approval.message.should == 'excluded repository'
+    end
+
     it 'returns "github pages branch" if the branch is a github pages branch' do
       request.commit.stubs(:branch).returns('gh-pages')
       approval.message.should == 'github pages branch'
@@ -150,7 +156,19 @@ describe Request::Approval do
       approval.send(:included_repository?).should be_true
     end
 
+    it 'returns true if the repository is an included repository with rule as a string' do
+      Travis.config.repository_filter.stubs(:include).returns(["rails\\/rails"])
+      request.repository.stubs(:slug).returns 'rails/rails'
+      approval.send(:included_repository?).should be_true
+    end
+
     it 'returns false if the repository is not included' do
+      request.repository.stubs(:slug).returns 'josh/completeness-fu'
+      approval.send(:included_repository?).should be_false
+    end
+
+    it 'returns false if the repository is not included with rule as a string' do
+      Travis.config.repository_filter.stubs(:include).returns(["rails\\/rails"])
       request.repository.stubs(:slug).returns 'josh/completeness-fu'
       approval.send(:included_repository?).should be_false
     end
@@ -163,6 +181,18 @@ describe Request::Approval do
     end
 
     it 'returns false if the repository is not excluded' do
+      request.repository.stubs(:slug).returns 'josh/completeness-fu'
+      approval.send(:excluded_repository?).should be_false
+    end
+
+    it 'returns true if the repository is an excluded repository with rule as a string' do
+      Travis.config.repository_filter.stubs(:exclude).returns(["\\/rails$"])
+      request.repository.stubs(:slug).returns 'josh/rails'
+      approval.send(:excluded_repository?).should be_true
+    end
+
+    it 'returns false if the repository is not excluded with rule as a string' do
+      Travis.config.repository_filter.stubs(:exclude).returns(["\\/rails$"])
       request.repository.stubs(:slug).returns 'josh/completeness-fu'
       approval.send(:excluded_repository?).should be_false
     end
