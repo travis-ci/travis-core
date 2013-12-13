@@ -22,6 +22,10 @@ module Travis
             end
           end
 
+          def action
+            nil
+          end
+
           def repository
             @repository ||= {
               :name        => event['repository']['name'],
