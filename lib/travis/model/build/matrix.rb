@@ -37,7 +37,7 @@ class Build
       'php'         => [:php],
       'python'      => [:python],
       'ruby'        => [:rvm, :gemfile, :jdk],
-      'scala'       => [:scala]
+      'scala'       => [:scala, :jdk]
     }
 
     EXPANSION_KEYS_UNIVERSAL = [:env, :branch]
