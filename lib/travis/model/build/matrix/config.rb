@@ -89,7 +89,7 @@ class Build
 
       private
       def remove_superfluous_config_keys
-        @config = config.dup.delete_if {|k,v| Build::ENV_KEYS.include?(k) && !keys.include?(k)}
+        @config = config.delete_if {|k,v| Build::ENV_KEYS.include?(k) && !keys.include?(k)}
       end
     end
   end
