@@ -77,11 +77,19 @@ class Request
       end
 
       def excluded_repository?
-        Travis.config.repository_filter.exclude.any? { |rule| repository.slug =~ rule }
+        exclude_rules.any? { |rule| repository.slug =~ rule }
       end
 
       def included_repository?
-        Travis.config.repository_filter.include.any? { |rule| repository.slug =~ rule }
+        include_rules.any? { |rule| repository.slug =~ rule }
+      end
+
+      def include_rules
+        Travis.config.repository_filter.include.map { |rule| rule.is_a?(Regexp) ? rule : Regexp.new(rule) }
+      end
+
+      def exclude_rules
+        Travis.config.repository_filter.exclude.map { |rule| rule.is_a?(Regexp) ? rule : Regexp.new(rule) }
       end
 
       def branch_approved?

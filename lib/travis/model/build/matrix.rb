@@ -37,7 +37,7 @@ class Build
       'php'         => [:php],
       'python'      => [:python],
       'ruby'        => [:rvm, :gemfile, :jdk],
-      'scala'       => [:scala]
+      'scala'       => [:scala, :jdk]
     }
 
     EXPANSION_KEYS_UNIVERSAL = [:env, :branch]
@@ -51,7 +51,7 @@ class Build
       def matrix_lang_keys(config)
         env_keys = ENV_KEYS
         lang = Array(config.symbolize_keys[:language]).first
-        env_keys &= EXPANSION_KEYS_LANGUAGE[lang] if lang
+        env_keys &= EXPANSION_KEYS_LANGUAGE.fetch(lang, EXPANSION_KEYS_LANGUAGE[Build::Matrix::Config::DEFAULT_LANG])
         env_keys | EXPANSION_KEYS_UNIVERSAL
       end
     end
@@ -130,7 +130,8 @@ class Build
       def matrix_allow_failures
         allow_configs = matrix_config.matrix_settings[:allow_failures] || []
         allow_configs.each do |config|
-          matrix_for(config).each { |m| m.allow_failure = true }
+          cfg = config.merge(language: matrix_config.config.fetch(:language, Build::Matrix::Config::DEFAULT_LANG))
+          matrix_for(cfg).each { |m| m.allow_failure = true }
         end
       end
   end

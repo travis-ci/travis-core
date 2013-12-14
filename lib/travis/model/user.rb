@@ -40,7 +40,7 @@ class User < Travis::Model
     end
 
     def with_github_token
-      where('github_oauth_token IS NOT NULL')
+      where("github_oauth_token IS NOT NULL and github_oauth_token != ''")
     end
   end
 

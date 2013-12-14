@@ -132,6 +132,23 @@ describe Travis::Requests::Services::Receive do
       end
     end
 
+    describe 'with disabled pushes' do
+      let(:payload) { JSON.parse(GITHUB_PAYLOADS['travis-core']) }
+
+      login = 'travis-ci'
+      type  = 'organization'
+      github_id = 639823
+
+      before do
+        repo = Factory.create(:repository, name: 'travis-core', owner_name: 'travis-ci', github_id: 111)
+        repo.settings.merge('build_pushes' => false)
+      end
+
+      it 'rejects the commit' do
+        expect { request }.not_to change(Build, :count)
+      end
+    end
+
     describe 'for repository belonging to an organization' do
       let(:payload) { JSON.parse(GITHUB_PAYLOADS['travis-core']) }
 

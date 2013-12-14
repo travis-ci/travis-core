@@ -170,6 +170,7 @@ GITHUB_PAYLOADS = {
 
   "travis-core" => %({
     "repository": {
+      "id": 111,
       "url": "http://github.com/travis-ci/travis-core",
       "name": "gem-release",
       "description": "description for travis-core",
