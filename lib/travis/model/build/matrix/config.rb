@@ -6,7 +6,11 @@ class Build
 
       def initialize(build)
         @build  = build
-        @config = build.config || {}
+        if build.config
+          @config = build.config.dup
+        else
+          @config = {}
+        end
       end
 
       def keys
@@ -85,7 +89,7 @@ class Build
 
       private
       def remove_superfluous_config_keys
-        config.delete_if {|k,v| Build::ENV_KEYS.include?(k) && !keys.include?(k)}
+        @config = config.dup.delete_if {|k,v| Build::ENV_KEYS.include?(k) && !keys.include?(k)}
       end
     end
   end
