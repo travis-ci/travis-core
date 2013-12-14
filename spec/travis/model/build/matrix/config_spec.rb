@@ -7,6 +7,7 @@ class Build
 
       let(:matrix_with_os_ruby) {
         YAML.load <<-yml
+        language: ruby
         os:
           - osx
           - linux
