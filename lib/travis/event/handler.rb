@@ -19,7 +19,7 @@ module Travis
 
       attr_reader :event, :object, :data, :payload
 
-      def initialize(event, object, data = {}, payload = nil)
+      def initialize(event, object, data = {}, payload = {})
         @event   = event
         @object  = object
         @data    = data
