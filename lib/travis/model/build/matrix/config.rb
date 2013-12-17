@@ -6,12 +6,21 @@ class Build
 
       def initialize(build)
         @build  = build
-        @config = build.config || {}
+        if build.config
+          @config = build.config.dup
+        else
+          @config = {}
+        end
       end
 
       def keys
-        @keys ||= Build::ENV_KEYS & config.keys.map(&:to_sym) & Build.matrix_lang_keys(config)
-        config.delete_if {|k,v| Build::ENV_KEYS.include?(k) && ! @keys.include?(k) }
+        unless @keys
+          var = Build::ENV_KEYS & config.keys.map(&:to_sym) & Build.matrix_lang_keys(config)
+          if Travis::Features.active?(:multi_os, build.repository)
+            var = [:os] | var
+          end
+          @keys = var
+        end
         @keys
       end
 
@@ -44,6 +53,8 @@ class Build
       end
 
       def expand
+        remove_superfluous_config_keys
+
         # recursively builds up permutations of values in the rows of a nested array
         matrix = lambda do |*args|
           base, result = args.shift, args.shift || []
@@ -74,6 +85,11 @@ class Build
         include_configs = matrix_settings[:include] || []
         include_configs = include_configs.map(&:to_a).map(&:sort)
         matrix + include_configs
+      end
+
+      private
+      def remove_superfluous_config_keys
+        @config = config.delete_if {|k,v| Build::ENV_KEYS.include?(k) && !keys.include?(k)}
       end
     end
   end

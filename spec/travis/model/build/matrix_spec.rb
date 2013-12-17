@@ -406,20 +406,38 @@ describe Build, 'matrix' do
         build.matrix.map(&:allow_failure).should == [true, false, false, false]
       end
 
-      it 'ignores irrelevant matrix dimensions' do
-        build_ruby = Factory(:build, config: matrix_with_unwanted_expansion_ruby)
-        build_ruby.matrix_config.expand.should == [
-          [[:rvm, "2.0.0"], [:gemfile, "gemfiles/rails-4"]],
-          [[:rvm, "1.9.3"], [:gemfile, "gemfiles/rails-4"]]
-        ]
-        build_ruby.config.keys.should_not include(:python)
+      context 'when ruby project contains unwanted key' do
+        before :each do
+          @build_ruby = Factory(:build, config: matrix_with_unwanted_expansion_ruby)
+        end
 
-        build_python = Factory(:build, config: matrix_with_unwanted_expansion_python)
-        build_python.matrix_config.expand.should == [
-          [[:python, "3.3"]],
-          [[:python, "2.7"]]
-        ]
-        build_python.config.keys.should_not include(:ruby)
+        it 'ignores irrelevant matrix dimensions' do
+          @build_ruby.matrix_config.expand.should == [
+            [[:rvm, "2.0.0"], [:gemfile, "gemfiles/rails-4"]],
+            [[:rvm, "1.9.3"], [:gemfile, "gemfiles/rails-4"]]
+          ]
+        end
+
+        it 'does not touch config' do
+          @build_ruby.config.keys.should include(:python)
+        end
+      end
+
+      context 'when python project contains unwanted key' do
+        before :each do
+          @build_python = Factory(:build, config: matrix_with_unwanted_expansion_python)
+        end
+
+        it 'ignores irrelevant matrix dimensions' do
+          @build_python.matrix_config.expand.should == [
+            [[:python, "3.3"]],
+            [[:python, "2.7"]]
+          ]
+        end
+
+        it 'does not touch config' do
+          @build_python.config.keys.should include(:rvm)
+        end
       end
 
       it 'copies build attributes' do
