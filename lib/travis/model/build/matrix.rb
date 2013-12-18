@@ -122,11 +122,7 @@ class Build
 
         c = config.merge(hash)
         lang = Array(c.symbolize_keys[:language]).first
-        c.delete_if do |k,v|
-          ENV_KEYS.include?(k) &&
-          !EXPANSION_KEYS_UNIVERSAL.include?(k) &&
-          !EXPANSION_KEYS_LANGUAGE.fetch(lang, EXPANSION_KEYS_LANGUAGE[Build::Matrix::Config::DEFAULT_LANG]).include?(k)
-        end
+        c.delete_if { |k,v| !lang_expands_key? lang, k }
       end
 
       def matrix_config
@@ -140,5 +136,12 @@ class Build
           matrix_for(cfg).each { |m| m.allow_failure = true }
         end
       end
+
+    private
+    def lang_expands_key?(lang, key)
+      !ENV_KEYS.include?(key) ||
+      EXPANSION_KEYS_UNIVERSAL.include?(key) ||
+      EXPANSION_KEYS_LANGUAGE.fetch(lang, EXPANSION_KEYS_LANGUAGE[Build::Matrix::Config::DEFAULT_LANG]).include?(key)
+    end
   end
 end
