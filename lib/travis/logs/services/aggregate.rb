@@ -1,4 +1,8 @@
 require 'active_support/core_ext/string/filters'
+require 'travis/features'
+require 'travis/model/log'
+require 'travis/model/log/part'
+require 'travis/services/base'
 
 module Travis
   module Logs

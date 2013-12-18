@@ -1,3 +1,8 @@
+require 'travis/addons/email/instruments'
+require 'travis/addons/email/task'
+require 'travis/event/handler'
+require 'travis/model/broadcast'
+
 module Travis
   module Addons
     module Email

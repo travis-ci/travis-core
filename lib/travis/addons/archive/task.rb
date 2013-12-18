@@ -1,3 +1,5 @@
+require 'travis/task'
+
 module Travis
   module Addons
     module Archive

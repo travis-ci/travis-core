@@ -1,3 +1,7 @@
+require 'travis/addons/webhook/instruments'
+require 'travis/addons/webhook/task'
+require 'travis/event/handler'
+
 # TODO include_logs? has been removed. gotta be deprecated!
 #
 module Travis

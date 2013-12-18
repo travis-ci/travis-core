@@ -1,3 +1,7 @@
+require 'travis/addons/campfire/instruments'
+require 'travis/addons/campfire/task'
+require 'travis/event/handler'
+
 module Travis
   module Addons
     module Campfire

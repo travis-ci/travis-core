@@ -1,6 +1,6 @@
 require 'uri'
 require 'core_ext/hash/compact'
-require 'active_record'
+require 'travis/model'
 
 # Models a repository that has many builds and requests.
 #

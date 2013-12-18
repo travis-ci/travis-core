@@ -1,3 +1,7 @@
+require 'travis/addons/archive/task'
+require 'travis/event/handler'
+require 'travis/features'
+
 module Travis
   module Addons
     module Archive

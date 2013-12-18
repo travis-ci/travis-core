@@ -1,5 +1,6 @@
 require "active_record"
 require "addressable/uri"
+require 'travis/event'
 
 class Annotation < ActiveRecord::Base
   include Travis::Event

@@ -1,6 +1,7 @@
-require 'travis/support'
-require 'travis_core/version'
 require 'pusher'
+require 'travis/support'
+require 'travis/support/database'
+require 'travis_core/version'
 require 'travis/redis_pool'
 require 'travis/errors'
 
@@ -36,6 +37,7 @@ module Travis
     end
   end
 
+  require 'travis/model'
   require 'travis/task'
   require 'travis/event'
   require 'travis/addons'

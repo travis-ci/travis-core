@@ -1,4 +1,5 @@
 require 'gh'
+require 'travis/model'
 
 class Organization < Travis::Model
   has_many :memberships

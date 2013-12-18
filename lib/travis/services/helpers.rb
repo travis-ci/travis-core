@@ -1,3 +1,5 @@
+require 'travis/services/registry'
+
 module Travis
   module Services
     module Helpers
@@ -13,4 +15,6 @@ module Travis
       end
     end
   end
+
+  extend Services::Helpers
 end

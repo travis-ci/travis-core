@@ -1,4 +1,9 @@
+require 'gh'
+require 'yaml'
 require 'active_support/core_ext/class/attribute'
+require 'travis/support/logging'
+require 'travis/support/instrumentation'
+require 'travis/services/base'
 
 module Travis
   module Github

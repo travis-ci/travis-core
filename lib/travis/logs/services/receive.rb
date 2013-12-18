@@ -1,4 +1,8 @@
 require 'coder'
+require 'metriks'
+require 'travis/model/log/part'
+require 'travis/model/job/test'
+require 'travis/services/base'
 
 module Travis
   module Logs

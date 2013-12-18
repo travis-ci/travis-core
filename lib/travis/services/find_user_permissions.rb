@@ -1,3 +1,5 @@
+require 'travis/services/base'
+
 module Travis
   module Services
     class FindUserPermissions < Base

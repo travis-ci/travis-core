@@ -1,4 +1,6 @@
+require 'metriks'
 require 'travis/mailer/user_mailer'
+require 'travis/services/base'
 
 module Travis
   module Github

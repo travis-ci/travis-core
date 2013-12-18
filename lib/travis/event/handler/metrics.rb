@@ -1,3 +1,5 @@
+require 'travis/support/metrics'
+
 module Travis
   module Event
     class Handler

@@ -1,3 +1,6 @@
+require 'travis/support/instrumentation'
+require 'travis/services/base'
+
 module Travis
   module Services
     class UpdateLog < Base

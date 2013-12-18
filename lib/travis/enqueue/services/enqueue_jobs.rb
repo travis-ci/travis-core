@@ -1,3 +1,7 @@
+require 'travis/services/base'
+require 'travis/support/instrumentation'
+require 'travis/support/exceptions/handling'
+
 module Travis
   module Enqueue
     module Services

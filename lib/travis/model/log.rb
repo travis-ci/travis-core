@@ -1,6 +1,6 @@
-require 'active_record'
 require 'metriks'
 require 'active_support/core_ext/string/filters'
+require 'travis/model'
 
 class Log < Travis::Model
   require 'travis/model/log/part'

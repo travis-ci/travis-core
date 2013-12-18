@@ -1,4 +1,11 @@
 require 'active_support/core_ext/object/blank'
+require 'travis/support/logging'
+require 'travis/support/instrumentation'
+require 'travis/support/exceptions/handling'
+
+require 'travis/api'
+require 'travis/event/config'
+require 'travis/model/build'
 
 module Travis
   module Event

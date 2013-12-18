@@ -2,8 +2,12 @@ begin
   require 'aws/s3'
 rescue LoadError => e
 end
-require 'active_support/core_ext/hash/slice'
 require 'uri'
+require 'active_support/core_ext/hash/slice'
+require 'faraday'
+require 'travis/support/instrumentation'
+require 'travis/notification/instrument'
+require 'travis/services/base'
 
 module Travis
   class S3
