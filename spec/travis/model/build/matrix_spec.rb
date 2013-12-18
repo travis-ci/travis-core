@@ -418,6 +418,12 @@ describe Build, 'matrix' do
           ]
         end
 
+        it 'creates jobs whose config does not contain unwanted keys' do
+          @build_ruby.expand_matrix.each do |job|
+            job.config.keys.should_not include(:python)
+          end
+        end
+
         it 'does not touch config' do
           @build_ruby.config.keys.should include(:python)
         end
