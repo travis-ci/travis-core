@@ -22,6 +22,8 @@ class Build
     extend ActiveSupport::Concern
     ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl, :compiler, :go, :xcode_sdk, :xcode_scheme, :ghc]
 
+    EXPANSION_KEYS_FEATURE   = [:os]
+
     EXPANSION_KEYS_LANGUAGE = {
       'c'           => [:compiler],
       'clojure'     => [:lein, :jdk],
@@ -122,7 +124,7 @@ class Build
 
         c = config.merge(hash)
         lang = Array(c.symbolize_keys[:language]).first
-        c.delete_if { |k,v| !lang_expands_key? lang, k }
+        c.delete_if { |k,v| !lang_expands_key? lang, k, v }
       end
 
       def matrix_config
@@ -138,8 +140,8 @@ class Build
       end
 
     private
-    def lang_expands_key?(lang, key)
-      !ENV_KEYS.include?(key) ||
+    def lang_expands_key?(lang, key, value)
+      ! (ENV_KEYS | EXPANSION_KEYS_FEATURE).include?(key) ||
       EXPANSION_KEYS_UNIVERSAL.include?(key) ||
       EXPANSION_KEYS_LANGUAGE.fetch(lang, EXPANSION_KEYS_LANGUAGE[Build::Matrix::Config::DEFAULT_LANG]).include?(key)
     end

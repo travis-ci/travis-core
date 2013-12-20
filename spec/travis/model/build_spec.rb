@@ -16,6 +16,11 @@ describe Build do
     build.reload.cached_matrix_ids.should be_nil
   end
 
+  it 'does not expand on :os' do
+    build = Factory.create(:build, config: { rvm: ['1.9.3', '2.0.0'], os: ['osx', 'linux']})
+    build.matrix.map(&:config).should == [{:rvm=>"1.9.3"}, {:rvm=>"2.0.0"}]
+  end
+
   it 'is cancelable if at least one job is cancelable' do
     jobs = [
       Factory.build(:test),
