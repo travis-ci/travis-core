@@ -10,23 +10,19 @@ describe Build do
     build.cached_matrix_ids.should == build.matrix_ids
   end
 
+  it 'does not expand on :os' do
+    build = Factory.create(:build, config: { rvm: ['1.9.3', '2.0.0'], os: ['osx', 'linux']})
+    build.matrix.map(&:config).should == [{ rvm: '1.9.3', rvm: '2.0.0' }]
+  end
+
   it 'returns nil if cached_matrix_ids are not set' do
     build = Factory.create(:build)
     build.update_column(:cached_matrix_ids, nil)
     build.reload.cached_matrix_ids.should be_nil
   end
 
-  it 'does not expand on :os' do
-    build = Factory.create(:build, config: { rvm: ['1.9.3', '2.0.0'], os: ['osx', 'linux']})
-    build.matrix.map(&:config).should == [{:rvm=>"1.9.3"}, {:rvm=>"2.0.0"}]
-  end
-
   it 'is cancelable if at least one job is cancelable' do
-    jobs = [
-      Factory.build(:test),
-      Factory.build(:test)
-    ]
-
+    jobs = [Factory.build(:test), Factory.build(:test)]
     jobs.first.stubs(:cancelable?).returns(true)
     jobs.second.stubs(:cancelable?).returns(false)
 
@@ -35,11 +31,7 @@ describe Build do
   end
 
   it 'is not cancelable if none of the jobs are cancelable' do
-    jobs = [
-      Factory.build(:test),
-      Factory.build(:test)
-    ]
-
+    jobs = [Factory.build(:test), Factory.build(:test)]
     jobs.first.stubs(:cancelable?).returns(false)
     jobs.second.stubs(:cancelable?).returns(false)
 
@@ -242,50 +234,6 @@ describe Build do
       it 'deep_symbolizes keys on write' do
         build = Factory(:build, config: { 'foo' => { 'bar' => 'bar' } })
         build.config[:foo][:bar].should == 'bar'
-      end
-
-      it 'normalizes env vars global and matrix which are hashes to strings' do
-        env = {
-          'global' => [{FOO: 'bar', BAR: 'baz'}],
-          'matrix' => [{ONE: 1, TWO: '2'}]
-        }
-        config = { 'env' => env }
-        build = Factory(:build, config: config)
-
-        build.config.should == {
-          env: ["ONE=1 TWO=2"],
-          global_env: ["FOO=bar BAR=baz"]
-        }
-      end
-
-      it 'works fine even if matrix part of env is undefined' do
-        env = { 'global' => ['FOO=bar'] }
-        config = { 'env' => env }
-        build = Factory(:build, config: config)
-
-        build.config.should == { global_env: ["FOO=bar"] }
-      end
-
-      it 'works fine even if global part of env is undefined' do
-        env = { 'matrix' => ['FOO=bar'] }
-        config = { 'env' => env }
-        build = Factory(:build, config: config)
-
-        build.config.should == { env: ["FOO=bar"] }
-      end
-
-      it 'squashes matrix and global keys to save config as an array, not as a hash' do
-        env = {
-          'global' => ['FOO=bar'],
-          'matrix' => [['BAR=baz', 'BAZ=qux'], 'QUX=foo']
-        }
-        config = { 'env' => env }
-        build = Factory(:build, config: config)
-
-        build.config.should == {
-          global_env: ["FOO=bar"],
-          env: [["BAR=baz", "BAZ=qux"], "QUX=foo"]
-        }
       end
     end
 

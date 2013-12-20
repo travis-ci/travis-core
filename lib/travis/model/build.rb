@@ -38,6 +38,7 @@ require 'simple_states'
 #                  TODO probably should be cleaned up and moved to
 #                  travis/notification)
 class Build < Travis::Model
+  require 'travis/model/build/config'
   require 'travis/model/build/denormalize'
   require 'travis/model/build/matrix'
   require 'travis/model/build/metrics'
@@ -179,7 +180,7 @@ class Build < Travis::Model
   alias addons_enabled? secure_env_enabled?
 
   def config=(config)
-    super(config ? normalize_config(config) : {})
+    super(Config.new(config).normalize)
   end
 
   def obfuscated_config
@@ -189,39 +190,11 @@ class Build < Travis::Model
       config[:env] = [config[:env]] unless config[:env].is_a?(Array)
       if config[:env]
         config[:env] = config[:env].map do |env|
-          env = normalize_env_hashes(env)
+          # env = normalize_env_hashes(env)
           obfuscate_env(env).join(' ')
         end
       end
     end
-  end
-
-  def normalize_env_hashes(lines)
-    process_line = ->(line) do
-      if line.is_a?(Hash)
-        env_hash_to_string(line)
-      elsif line.is_a?(Array)
-        line.map do |line|
-          env_hash_to_string(line)
-        end
-      else
-        line
-      end
-    end
-
-
-    if lines.is_a?(Array)
-      lines.map { |env| process_line.(env) }
-    else
-      process_line.(lines)
-    end
-  end
-
-  def env_hash_to_string(hash)
-    return hash unless hash.is_a?(Hash)
-    return hash if hash.has_key?(:secure)
-
-    hash.map { |k,v| "#{k}=#{v}" }.join(' ')
   end
 
   def cancelable?
@@ -243,52 +216,12 @@ class Build < Travis::Model
 
   private
 
-    def normalize_env_values(values)
-      env = values
-      global = nil
-
-      if env.is_a?(Hash) && (env[:global] || env[:matrix])
-        global = env[:global]
-        env    = env[:matrix]
-      end
-
-      if env
-        env = [env] unless env.is_a?(Array)
-        env = normalize_env_hashes(env)
-      end
-
-      if global
-        global = [global] unless global.is_a?(Array)
-        global = normalize_env_hashes(global)
-      end
-
-      { env: env, global: global }
-    end
-
-
-    def normalize_config(config)
-      config = config.deep_symbolize_keys
-      if config[:env]
-        result = normalize_env_values(config[:env])
-        if result[:env]
-          config[:env] = result[:env]
-        else
-          config.delete(:env)
-        end
-
-        config[:global_env] = result[:global] if result[:global]
-      end
-      config
-    end
-
     def last_finished_state_on_branch
       repository.builds.finished.last_state_on(branch: commit.branch)
     end
 
     def to_postgres_array(ids)
       ids = ids.compact.uniq
-      unless ids.empty?
-        "{#{ids.map { |id| id.to_i.to_s }.join(',')}}"
-      end
+      "{#{ids.map { |id| id.to_i.to_s }.join(',')}}" unless ids.empty?
     end
 end
