@@ -178,20 +178,6 @@ class Build < Travis::Model
   end
   alias addons_enabled? secure_env_enabled?
 
-  # sometimes the config is not deserialized and is returned
-  # as a string, this is a work around for now :(
-  def config
-    deserialized = self['config']
-    if deserialized.is_a?(String)
-      logger.warn "Attribute config isn't YAML. Current serialized attributes: #{Build.serialized_attributes}"
-      deserialized = YAML.load(deserialized)
-    end
-    deserialized
-  rescue Psych::SyntaxError => e
-    logger.warn "[build id:#{id}] Config could not be deserialized due to #{e.message}"
-    {}
-  end
-
   def config=(config)
     super(config ? normalize_config(config) : {})
   end
