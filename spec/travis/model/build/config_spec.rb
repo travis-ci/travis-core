@@ -3,14 +3,6 @@ require 'spec_helper'
 describe Build::Config do
   include Support::ActiveRecord
 
-  # yaml:
-  #   env:
-  #     - FOO=foo
-  #     - BAR=bar
-  #
-  # config:
-  #   env: ['FOO=foo', 'BAR=bar']
-  #
   it 'keeps the given env if it is an array' do
     config = YAML.load %(
       env:
@@ -19,7 +11,10 @@ describe Build::Config do
     )
     config = Build::Config.new(config).normalize
     config.should == {
-      env: ['FOO=foo', 'BAR=bar']
+      env: [
+        'FOO=foo',
+        'BAR=bar'
+      ]
     }
   end
 
@@ -31,7 +26,9 @@ describe Build::Config do
         BAR: bar
     )
     Build::Config.new(config).normalize.should == {
-      env: ['FOO=foo BAR=bar']
+      env: [
+        'FOO=foo BAR=bar'
+      ]
     }
   end
 
@@ -46,8 +43,14 @@ describe Build::Config do
           - BUZ=buz
     )
     Build::Config.new(config).normalize.should == {
-      global_env: ['FOO=foo', 'BAR=bar'],
-      env: ['BAZ=baz', 'BUZ=buz']
+      global_env: [
+        'FOO=foo',
+        'BAR=bar'
+      ],
+      env: [
+        'BAZ=baz',
+        'BUZ=buz'
+      ]
     }
   end
 
@@ -63,8 +66,12 @@ describe Build::Config do
           BUZ: buz
     )
     Build::Config.new(config).normalize.should == {
-      global_env: ['FOO=foo BAR=bar'],
-      env: ['BAZ=baz BUZ=buz']
+      global_env: [
+        'FOO=foo BAR=bar'
+      ],
+      env: [
+        'BAZ=baz BUZ=buz'
+      ]
     }
   end
 
@@ -74,7 +81,9 @@ describe Build::Config do
         global: FOO=foo
     )
     Build::Config.new(config).normalize.should == {
-      global_env: ['FOO=foo']
+      global_env: [
+        'FOO=foo'
+      ]
     }
   end
 
@@ -84,11 +93,13 @@ describe Build::Config do
         matrix: FOO=foo
     )
     Build::Config.new(config).normalize.should == {
-      env: ['FOO=foo']
+      env: [
+        'FOO=foo'
+      ]
     }
   end
 
-  # How would achieve this in YAML?
+  # Seems odd. What's the usecase? Broken yaml?
   it 'keeps matrix and global config as arrays, not hashes' do
     config = YAML.load %(
       env:
@@ -100,8 +111,35 @@ describe Build::Config do
           - BUZ=buz
     )
     Build::Config.new(config).normalize.should == {
-      global_env: ['FOO=foo'],
-      env: [['BAR=bar', 'BAZ=baz'], 'BUZ=buz']
+      global_env: [
+        'FOO=foo'
+      ],
+      env: [
+        ['BAR=bar', 'BAZ=baz'],
+        'BUZ=buz'
+      ]
     }
   end
+
+  # Seems super odd. Do people actually pass such stuff?
+  it 'keeps wild nested array/hashes structure' do
+    config = YAML.load %(
+      env:
+        -
+          -
+            secure: encrypted-value
+          - FOO=foo
+        -
+          -
+            BAR: bar
+            BAZ: baz
+    )
+    Build::Config.new(config).normalize.should == {
+      env: [
+        [{ secure: 'encrypted-value' }, 'FOO=foo'],
+        ['BAR=bar BAZ=baz']
+      ]
+    }
+  end
+
 end

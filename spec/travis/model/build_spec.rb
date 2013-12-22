@@ -240,10 +240,8 @@ describe Build do
     describe 'obfuscated config' do
       it 'normalizes env vars which are hashes to strings' do
         build  = Build.new(repository: Factory(:repository))
-        config = {
-          env: [[build.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo'], [{ONE: 1, TWO: '2'}]]
-        }
-        build.config = config
+        encrypted = build.repository.key.secure.encrypt('BAR=barbaz')
+        build.config = { env: [[encrypted, 'FOO=foo'], [{ONE: 1, TWO: '2'}]] }
 
         build.obfuscated_config.should == {
           env: ['BAR=[secure] FOO=foo', 'ONE=1 TWO=2']
