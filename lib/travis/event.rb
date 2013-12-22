@@ -17,7 +17,6 @@ module Travis
     require 'travis/event/config'
     require 'travis/event/handler'
     require 'travis/event/subscription'
-    require 'travis/event/secure_config'
 
     SUBSCRIBERS = %w(metrics)
 

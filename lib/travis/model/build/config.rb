@@ -1,4 +1,5 @@
 require 'travis/model/build/config/env'
+require 'travis/model/build/config/obfuscate'
 
 class Build
   class Config
@@ -13,12 +14,18 @@ class Build
 
     def normalize
       normalizers.inject(config) do |config, normalizer|
-        normalizer.normalize(config)
+        normalizer.run(config)
       end
     end
 
-    def normalizers
-      NORMALIZERS.map { |const| const.new(config, options) }
+    def obfuscate
+      Obfuscate.new(options).run(config.dup)
     end
+
+    private
+
+      def normalizers
+        NORMALIZERS.map { |const| const.new(options) }
+      end
   end
 end

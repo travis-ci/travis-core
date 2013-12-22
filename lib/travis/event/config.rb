@@ -1,3 +1,5 @@
+require 'travis/secure_config'
+
 module Travis
   module Event
     class Config
@@ -94,7 +96,7 @@ module Travis
       end
 
       def notifications
-        Travis::Event::SecureConfig.decrypt(config.fetch(:notifications, {}), secure_key)
+        Travis::SecureConfig.decrypt(config.fetch(:notifications, {}), secure_key)
       end
 
       def normalize_array(values)

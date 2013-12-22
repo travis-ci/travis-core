@@ -12,7 +12,7 @@ describe Build do
 
   it 'does not expand on :os' do
     build = Factory.create(:build, config: { rvm: ['1.9.3', '2.0.0'], os: ['osx', 'linux']})
-    build.matrix.map(&:config).should == [{ rvm: '1.9.3', rvm: '2.0.0' }]
+    build.matrix.map(&:config).should == [{ rvm: '1.9.3' }, { rvm: '2.0.0' }]
   end
 
   it 'returns nil if cached_matrix_ids are not set' do
@@ -234,73 +234,6 @@ describe Build do
       it 'deep_symbolizes keys on write' do
         build = Factory(:build, config: { 'foo' => { 'bar' => 'bar' } })
         build.config[:foo][:bar].should == 'bar'
-      end
-    end
-
-    describe 'obfuscated config' do
-      it 'normalizes env vars which are hashes to strings' do
-        build  = Build.new(repository: Factory(:repository))
-        encrypted = build.repository.key.secure.encrypt('BAR=barbaz')
-        build.config = { env: [[encrypted, 'FOO=foo'], [{ONE: 1, TWO: '2'}]] }
-
-        build.obfuscated_config.should == {
-          env: ['BAR=[secure] FOO=foo', 'ONE=1 TWO=2']
-        }
-      end
-
-      it 'leaves regular vars untouched' do
-        build = Build.new(repository: Factory(:repository))
-        build.config = { rvm: ['1.8.7'], env: ['FOO=foo'] }
-
-        build.obfuscated_config.should == {
-          rvm: ['1.8.7'],
-          env: ['FOO=foo']
-        }
-      end
-
-      it 'obfuscates env vars' do
-        build  = Build.new(repository: Factory(:repository))
-        build.config = {
-          rvm: ['1.8.7'],
-          env: [[build.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo'], 'BAR=baz']
-        }
-
-        build.obfuscated_config.should == {
-          rvm: ['1.8.7'],
-          env: ['BAR=[secure] FOO=foo', 'BAR=baz']
-        }
-      end
-
-      it 'obfuscates env vars which are not in nested array' do
-        build  = Build.new(repository: Factory(:repository))
-        build.config = {
-          rvm: ['1.8.7'],
-          env: [build.repository.key.secure.encrypt('BAR=barbaz')]
-        }
-
-        build.obfuscated_config.should == {
-          rvm: ['1.8.7'],
-          env: ['BAR=[secure]']
-        }
-      end
-
-      it 'works with nil values' do
-        build  = Build.new(repository: Factory(:repository))
-        build.config = { rvm: ['1.8.7'] }
-        build.config[:env] = [[nil, {secure: ''}]]
-        build.obfuscated_config.should == { rvm: ['1.8.7'], env:  [''] }
-      end
-
-      it 'does not make an empty env key an array but leaves it empty' do
-        build  = Build.new(repository: Factory(:repository))
-        build.config = { rvm: ['1.8.7'], env:  nil }
-        build.obfuscated_config.should == { rvm: ['1.8.7'], env:  nil }
-      end
-
-      it 'removes source key' do
-        build  = Build.new(repository: Factory(:repository))
-        build.config = { rvm: ['1.8.7'], source_key: '1234' }
-        build.obfuscated_config.should == { rvm: ['1.8.7'] }
       end
     end
 

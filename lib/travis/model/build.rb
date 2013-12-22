@@ -47,7 +47,6 @@ class Build < Travis::Model
   require 'travis/model/env_helpers'
 
   include Matrix, States, SimpleStates
-  include Travis::Model::EnvHelpers
 
   belongs_to :commit
   belongs_to :request
@@ -184,17 +183,7 @@ class Build < Travis::Model
   end
 
   def obfuscated_config
-    config.dup.tap do |config|
-      config.delete(:source_key)
-      next unless config[:env]
-      config[:env] = [config[:env]] unless config[:env].is_a?(Array)
-      if config[:env]
-        config[:env] = config[:env].map do |env|
-          # env = normalize_env_hashes(env)
-          obfuscate_env(env).join(' ')
-        end
-      end
-    end
+    Config.new(config, key: repository.key).obfuscate
   end
 
   def cancelable?

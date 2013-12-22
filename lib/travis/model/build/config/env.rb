@@ -2,8 +2,8 @@ require 'core_ext/hash/compact'
 
 class Build
   class Config
-    class Env < Struct.new(:config, :options)
-      def normalize(config)
+    class Env < Struct.new(:options)
+      def run(config)
         case config[:env]
         when Hash
           config.merge(normalize_hash(config[:env])).compact
