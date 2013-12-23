@@ -647,20 +647,20 @@ describe Build, 'matrix' do
     end
   end
 
-  describe 'matrix_for' do
+  describe 'filter_matrix' do
     it 'selects matching builds' do
-      build = Factory(:build, config: { 'rvm' => ['1.8.7', '1.9.2'], 'env' => ['DB=sqlite3', 'DB=postgresql'] })
-      build.matrix_for({ 'rvm' => '1.8.7', 'env' => 'DB=sqlite3' }).should == [build.matrix[0]]
+      build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'], env: ['DB=sqlite3', 'DB=postgresql'] })
+      build.filter_matrix({ rvm: '1.8.7', env: 'DB=sqlite3' }).should == [build.matrix[0]]
     end
 
     it 'does not select builds with non-matching values' do
-      build = Factory(:build, config: { 'rvm' => ['1.8.7', '1.9.2'], 'env' => ['DB=sqlite3', 'DB=postgresql'] })
-      build.matrix_for({ 'rvm' => 'nomatch', 'env' => 'DB=sqlite3' }).should be_empty
+      build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'], env: ['DB=sqlite3', 'DB=postgresql'] })
+      build.filter_matrix({ rvm: 'nomatch', env: 'DB=sqlite3' }).should be_empty
     end
 
     it 'does not select builds with non-matching keys' do
-      build = Factory(:build, config: { 'rvm' => ['1.8.7', '1.9.2'], 'env' => ['DB=sqlite3', 'DB=postgresql'] })
-      build.matrix_for({ 'rvm' => '1.8.7', 'nomatch' => 'DB=sqlite3' }).should == [build.matrix[0], build.matrix[1]]
+      build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'], env: ['DB=sqlite3', 'DB=postgresql'] })
+      build.filter_matrix({ rvm: '1.8.7', nomatch: 'DB=sqlite3' }).should == [build.matrix[0], build.matrix[1]]
     end
   end
 

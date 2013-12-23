@@ -4,7 +4,7 @@ class Build
   class Config
     class Language < Struct.new(:config, :options)
       def run
-        config[:language] = Array.wrap(config[:language]).first || Build::DEFAULT_LANG
+        config[:language] = Array.wrap(config[:language]).first || DEFAULT_LANG
         config.select { |key, value| include_key?(key) }
       end
 
@@ -15,13 +15,12 @@ class Build
         end
 
         def matrix_keys
-          Build.matrix_keys(config, options)
+          Config.matrix_keys(config, options)
         end
 
         def known_env_key?(key)
-          (Build::ENV_KEYS | Build::EXPANSION_KEYS_FEATURE).include?(key)
+          (ENV_KEYS | EXPANSION_KEYS_FEATURE).include?(key)
         end
-
     end
   end
 end

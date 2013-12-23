@@ -20,55 +20,8 @@ class Build
   module Matrix
     extend ActiveSupport::Concern
 
-    DEFAULT_LANG = 'ruby'
-
-    ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl, :compiler, :go, :xcode_sdk, :xcode_scheme, :ghc]
-
-    EXPANSION_KEYS_FEATURE = [:os]
-
-    EXPANSION_KEYS_LANGUAGE = {
-      'c'           => [:compiler],
-      'clojure'     => [:lein, :jdk],
-      'cpp'         => [:compiler],
-      'erlang'      => [:otp_release],
-      'go'          => [:go],
-      'groovy'      => [:jdk],
-      'haskell'     => [:ghc],
-      'java'        => [:jdk],
-      'node_js'     => [:node_js],
-      'objective-c' => [:rvm, :gemfile, :xcode_sdk, :xcode_scheme],
-      'perl'        => [:perl],
-      'php'         => [:php],
-      'python'      => [:python],
-      'ruby'        => [:rvm, :gemfile, :jdk],
-      'scala'       => [:scala, :jdk]
-    }
-
-    EXPANSION_KEYS_UNIVERSAL = [:env, :branch]
-
-    module ClassMethods
-      def matrix_keys_for(config, options = {})
-        keys = matrix_keys(config, options)
-        keys & config.keys.map(&:to_sym)
-      end
-
-      def matrix_keys(config, options = {})
-        lang = Array(config.symbolize_keys[:language]).first
-        keys = ENV_KEYS
-        keys &= EXPANSION_KEYS_LANGUAGE.fetch(lang, EXPANSION_KEYS_LANGUAGE[DEFAULT_LANG])
-        keys << :os if options[:multi_os]
-        keys | EXPANSION_KEYS_UNIVERSAL
-      end
-    end
-
-    # Return only the child builds whose config matches against as passed hash
-    # e.g. build.matrix_for(rvm: '1.8.7', env: 'DB=postgresql')
-    def matrix_for(config)
-      config.blank? ? matrix : matrix.select { |job| job.matrix_config?(config) }
-    end
-
     def matrix_finished?
-      if matrix_config.matrix_settings[:fast_finish]
+      if matrix_config.fast_finish?
         matrix.all?(&:waiting_for_result?) || matrix.any?(&:finished_unsuccessfully?)
       else
         matrix.all?(&:waiting_for_result?)
@@ -117,6 +70,12 @@ class Build
       save!
     end
 
+    # Return only the child builds whose config matches against as passed hash
+    # e.g. build.filter_matrix(rvm: '1.8.7', env: 'DB=postgresql')
+    def filter_matrix(config)
+      config.blank? ? matrix : matrix.select { |job| job.matches_config?(config) }
+    end
+
     private
 
       def matrix_config
@@ -124,11 +83,9 @@ class Build
       end
 
       def matrix_allow_failures
-        allow_configs = matrix_config.matrix_settings[:allow_failures] || []
-        allow_configs.each do |config|
-          cfg = config.merge(language: matrix_config.config.fetch(:language, DEFAULT_LANG))
-          matrix_for(cfg).each { |m| m.allow_failure = true }
-        end
+        configs = matrix_config.allow_failure_configs
+        jobs = configs.map { |config| filter_matrix(config) }.flatten
+        jobs.each { |job| job.allow_failure = true }
       end
   end
 end
