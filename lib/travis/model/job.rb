@@ -130,7 +130,7 @@ class Job < Travis::Model
   def matrix_config?(config)
     return false unless config.respond_to?(:to_hash)
     config = config.to_hash.symbolize_keys
-    Build.matrix_keys_for(config).map do |key|
+    Build.matrix_keys_for(config, multi_os: multi_os_enabled?).map do |key|
       self.config[key.to_sym] == config[key] || commit.branch == config[key]
     end.inject(:&)
   end
@@ -141,6 +141,10 @@ class Job < Travis::Model
   end
 
   private
+
+    def multi_os_enabled?
+      Travis::Features.enabled_for_all?(:multi_os) || Travis::Features.active?(:multi_os, repository)
+    end
 
     def whitelisted_addons
       [:firefox, :hosts, :postgresql]

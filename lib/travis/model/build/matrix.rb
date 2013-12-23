@@ -24,8 +24,8 @@ class Build
     ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl, :compiler, :go, :xcode_sdk, :xcode_scheme, :ghc]
 
     module ClassMethods
-      def matrix_keys_for(config)
-        keys = Config.matrix_lang_keys(config)
+      def matrix_keys_for(config, options = {})
+        keys = Config.matrix_lang_keys(config, options = {})
         keys & config.keys.map(&:to_sym)
       end
     end
@@ -89,7 +89,11 @@ class Build
     private
 
       def matrix_config
-        @matrix_config ||= Config.new(self)
+        @matrix_config ||= Config.new(config, multi_os: multi_os_enabled?)
+      end
+
+      def multi_os_enabled?
+        Travis::Features.enabled_for_all?(:multi_os) || Travis::Features.active?(:multi_os, repository)
       end
 
       def matrix_allow_failures

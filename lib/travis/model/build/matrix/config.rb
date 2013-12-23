@@ -28,18 +28,19 @@ class Build
 
       EXPANSION_KEYS_UNIVERSAL = [:env, :branch]
 
-      def self.matrix_lang_keys(config)
+      def self.matrix_lang_keys(config, options = {})
         keys = ENV_KEYS
         lang = Array(config.symbolize_keys[:language]).first
         keys &= EXPANSION_KEYS_LANGUAGE.fetch(lang, EXPANSION_KEYS_LANGUAGE[DEFAULT_LANG])
+        keys << :os if options[:multi_os]
         keys | EXPANSION_KEYS_UNIVERSAL
       end
 
-      attr_reader :build, :config
+      attr_reader :config, :options
 
-      def initialize(build)
-        @build  = build
-        @config = build.config ? build.config.dup : {}
+      def initialize(config, options = {})
+        @config = config ? config.dup : {}
+        @options = options
       end
 
       def matrix_settings
@@ -63,18 +64,14 @@ class Build
 
         def expand_row(row)
           row = Hash[row] unless row.is_a?(Hash)
-          config = build.config.merge(row)
-          config.delete_if { |key, value| !lang_expands_key?(key) }
-        end
-
-        def multi_os_enabled?
-          Travis::Features.enabled_for_all?(:multi_os) || Travis::Features.active?(:multi_os, build.repository)
+          row = config.merge(row)
+          row.select { |key, value| include_key?(key) }
         end
 
         def expand_keys
           @expand_keys ||= begin
-            keys = Build::ENV_KEYS & config.keys.map(&:to_sym) & self.class.matrix_lang_keys(config)
-            keys << :os if multi_os_enabled?
+            keys = Build::ENV_KEYS & config.keys.map(&:to_sym) & self.class.matrix_lang_keys(config, multi_os: options[:multi_os])
+            keys << :os if options[:multi_os]
             keys
           end
         end
@@ -111,12 +108,12 @@ class Build
           matrix + include_configs
         end
 
-        def lang_expands_key?(key)
-          (expand_keys | language_expansion_keys).include?(key) ||
+        def include_key?(key)
+          (expand_keys | language_keys).include?(key) ||
           !(Build::ENV_KEYS | EXPANSION_KEYS_FEATURE).include?(key)
         end
 
-        def language_expansion_keys
+        def language_keys
           EXPANSION_KEYS_LANGUAGE.fetch(language, EXPANSION_KEYS_LANGUAGE[DEFAULT_LANG])
         end
 
