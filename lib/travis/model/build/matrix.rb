@@ -20,9 +20,10 @@ class Build
   module Matrix
     require 'travis/model/build/matrix/config'
     extend ActiveSupport::Concern
+
     ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl, :compiler, :go, :xcode_sdk, :xcode_scheme, :ghc]
 
-    EXPANSION_KEYS_FEATURE   = [:os]
+    EXPANSION_KEYS_FEATURE = [:os]
 
     EXPANSION_KEYS_LANGUAGE = {
       'c'           => [:compiler],
@@ -98,10 +99,10 @@ class Build
       matrix_config.expand.each_with_index do |row, ix|
         attributes = self.attributes.slice(*Job.column_names - ['status', 'result']).symbolize_keys
         attributes.merge!(
-          :owner => owner,
-          :number => "#{number}.#{ix + 1}",
-          :config => expand_config(row),
-          :log => Log.new
+          owner: owner,
+          number: "#{number}.#{ix + 1}",
+          config: row,
+          log: Log.new
         )
         matrix.build(attributes)
       end
@@ -114,18 +115,7 @@ class Build
       save!
     end
 
-    protected
-
-      def expand_config(row)
-        hash = {}
-        row.each do |key, values|
-          hash[key] = values
-        end
-
-        c = config.merge(hash)
-        lang = Array(c.symbolize_keys[:language]).first
-        c.delete_if { |k,v| !lang_expands_key? lang, k, v }
-      end
+    private
 
       def matrix_config
         @matrix_config ||= Config.new(self)
@@ -138,12 +128,5 @@ class Build
           matrix_for(cfg).each { |m| m.allow_failure = true }
         end
       end
-
-    private
-    def lang_expands_key?(lang, key, value)
-      ! (ENV_KEYS | EXPANSION_KEYS_FEATURE).include?(key) ||
-      EXPANSION_KEYS_UNIVERSAL.include?(key) ||
-      EXPANSION_KEYS_LANGUAGE.fetch(lang, EXPANSION_KEYS_LANGUAGE[Build::Matrix::Config::DEFAULT_LANG]).include?(key)
-    end
   end
 end

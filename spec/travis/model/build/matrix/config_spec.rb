@@ -20,10 +20,11 @@ class Build
       }
 
       it 'can handle nil values in exclude matrix' do
-        build = stub("Build", :config => nil)
+        repo    = Factory(:repository)
+        request = Factory(:request, repository: repo)
+        build   = Factory(:build, config: { matrix: { exclude: [nil] } }, request: request)
         config = Config.new(build)
-        config.expects(:matrix_settings).returns(:exclude => [nil])
-        config.exclude_config?({})
+        -> { config.expand }.should_not raise_error
       end
 
       context 'multi_os feature is active for all repos' do
@@ -37,10 +38,10 @@ class Build
 
         it 'expands on :os' do
           @config.expand.should == [
-            [[:os, 'osx'], [:rvm, '2.0.0'], [:gemfile, 'gemfiles/rails-4']],
-            [[:os, 'osx'], [:rvm, '1.9.3'], [:gemfile, 'gemfiles/rails-4']],
-            [[:os, 'linux'], [:rvm, '2.0.0'], [:gemfile, 'gemfiles/rails-4']],
-            [[:os, 'linux'], [:rvm, '1.9.3'], [:gemfile, 'gemfiles/rails-4']]
+            { language: 'ruby', os: 'osx',   rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
+            { language: 'ruby', os: 'linux', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
+            { language: 'ruby', os: 'osx',   rvm: '1.9.3', gemfile: 'gemfiles/rails-4' },
+            { language: 'ruby', os: 'linux', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' }
           ]
         end
       end
@@ -57,10 +58,10 @@ class Build
 
         it 'expands on :os' do
           @config.expand.should == [
-            [[:os, 'osx'], [:rvm, '2.0.0'], [:gemfile, 'gemfiles/rails-4']],
-            [[:os, 'osx'], [:rvm, '1.9.3'], [:gemfile, 'gemfiles/rails-4']],
-            [[:os, 'linux'], [:rvm, '2.0.0'], [:gemfile, 'gemfiles/rails-4']],
-            [[:os, 'linux'], [:rvm, '1.9.3'], [:gemfile, 'gemfiles/rails-4']]
+            { language: 'ruby', os: 'osx',   rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
+            { language: 'ruby', os: 'linux', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
+            { language: 'ruby', os: 'osx',   rvm: '1.9.3', gemfile: 'gemfiles/rails-4' },
+            { language: 'ruby', os: 'linux', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' }
           ]
         end
       end
@@ -77,8 +78,8 @@ class Build
 
         it 'does not expand on :os' do
           @config.expand.should == [
-            [[:rvm, '2.0.0'], [:gemfile, 'gemfiles/rails-4']],
-            [[:rvm, '1.9.3'], [:gemfile, 'gemfiles/rails-4']],
+            { language: 'ruby', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
+            { language: 'ruby', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' }
           ]
         end
       end

@@ -1,96 +1,99 @@
+require 'active_support/core_ext/hash/except'
+require 'active_support/core_ext/array/wrap'
+
 class Build
   module Matrix
     class Config
       attr_reader :build, :config
+
       DEFAULT_LANG = 'ruby'
 
       def initialize(build)
         @build  = build
-        if build.config
-          @config = build.config.dup
-        else
-          @config = {}
-        end
-      end
-
-      def keys
-        unless @keys
-          var = Build::ENV_KEYS & config.keys.map(&:to_sym) & Build.matrix_lang_keys(config)
-          if Travis::Features.enabled_for_all?(:multi_os) || Travis::Features.active?(:multi_os, build.repository)
-            var = [:os] | var
-          end
-          @keys = var
-        end
-        @keys
-      end
-
-      def size
-        @size ||= config.slice(*keys).values.select { |value| value.is_a?(Array) }.max { |lft, rgt| lft.size <=> rgt.size }.try(:size) || 1
-      end
-
-      def to_a
-        @as_array ||= begin
-          keys.inject([]) do |result, key|
-            values = config[key]
-            values = [values] unless values.is_a?(Array)
-
-            if values
-              values += [values.last] * (size - values.size) if values.size < size
-              result << values.map { |value| [key, value] }
-            end
-
-            result
-          end
-        end
-      end
-      alias to_ary to_a
-
-      # TODO: I'm lazy and I don't want to change tests for now,
-      #       it can be removed later, especially when some tests
-      #       that actually test Matrix::Config stop using Build
-      def ==(other)
-        to_a == other
-      end
-
-      def expand
-        remove_superfluous_config_keys
-
-        # recursively builds up permutations of values in the rows of a nested array
-        matrix = lambda do |*args|
-          base, result = args.shift, args.shift || []
-          base = base.dup
-          base.empty? ? [result] : base.shift.map { |value| matrix.call(base, result + [value]) }.flatten(1)
-        end
-        expanded = matrix.call(to_a).uniq
-        include_matrix_configs(exclude_matrix_configs(expanded))
+        @config = build.config ? build.config.dup : {}
       end
 
       def matrix_settings
         config[:matrix] || {}
       end
 
-      def exclude_matrix_configs(matrix)
-        matrix.reject { |config| exclude_config?(config) }
-      end
+      def expand
+        # recursively builds up permutations of values in the rows of a nested array
+        matrix = lambda do |*args|
+          base, result = args.shift, args.shift || []
+          base = base.dup
+          base.empty? ? [result] : base.shift.map { |value| matrix.call(base, result + [value]) }.flatten(1)
+        end
 
-      def exclude_config?(config)
-        # gotta make the first key a string for 1.8 :/
-        exclude_configs = matrix_settings[:exclude] || []
-        exclude_configs = exclude_configs.compact.map(&:stringify_keys).map(&:to_a).map(&:sort)
-        config = config.map { |config| [config[0].to_s, *config[1..-1]] }.sort
-        exclude_configs.to_a.any? { |excluded| excluded == config }
-      end
-
-      def include_matrix_configs(matrix)
-        include_configs = matrix_settings[:include] || []
-        include_configs = include_configs.map(&:to_a).map(&:sort)
-        matrix + include_configs
+        expanded = matrix.call(to_a).uniq
+        expanded = include_matrix_configs(exclude_matrix_configs(expanded))
+        expanded.map { |row| expand_row(row) }
       end
 
       private
-      def remove_superfluous_config_keys
-        @config = config.delete_if {|k,v| Build::ENV_KEYS.include?(k) && !keys.include?(k)}
-      end
+
+        def expand_row(row)
+          row = Hash[row] unless row.is_a?(Hash)
+          config = build.config.merge(row)
+          config.delete_if { |key, value| !lang_expands_key?(key) }
+        end
+
+        def multi_os_enabled?
+          Travis::Features.enabled_for_all?(:multi_os) || Travis::Features.active?(:multi_os, build.repository)
+        end
+
+        def expand_keys
+          @expand_keys ||= begin
+            keys = Build::ENV_KEYS & config.keys.map(&:to_sym) & Build.matrix_lang_keys(config)
+            keys << :os if multi_os_enabled?
+            keys
+          end
+        end
+
+        def to_a
+          @as_array ||= expand_keys.inject([]) do |result, key|
+            values = Array.wrap(config[key])
+            values += [values.last] * (size - values.size) if values.size < size
+            result << values.map { |value| [key, value] }
+          end
+        end
+
+        def size
+          @size ||= begin
+            rows = config.slice(*expand_keys).values.select { |value| value.is_a?(Array) }
+            rows.max_by(&:size).try(:size) || 1
+          end
+        end
+
+        def exclude_matrix_configs(matrix)
+          matrix.reject { |config| exclude_config?(config) }
+        end
+
+        def exclude_config?(config)
+          exclude_configs = matrix_settings[:exclude] || []
+          exclude_configs = exclude_configs.compact.map(&:stringify_keys).map(&:to_a).map(&:sort)
+          config = config.map { |config| [config[0].to_s, *config[1..-1]] }.sort
+          exclude_configs.to_a.any? { |excluded| excluded == config }
+        end
+
+        def include_matrix_configs(matrix)
+          include_configs = matrix_settings[:include] || []
+          include_configs = include_configs.map(&:to_a).map(&:sort)
+          matrix + include_configs
+        end
+
+        def lang_expands_key?(key)
+          (expand_keys | language_expansion_keys).include?(key) ||
+          !(Build::ENV_KEYS | Build::EXPANSION_KEYS_FEATURE).include?(key)
+        end
+
+        def language_expansion_keys
+          Build::EXPANSION_KEYS_LANGUAGE.fetch(language, Build::EXPANSION_KEYS_LANGUAGE[DEFAULT_LANG])
+        end
+
+        def language
+          @language ||= Array(config.symbolize_keys[:language]).first || DEFAULT_LANG
+        end
     end
   end
 end
