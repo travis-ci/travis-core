@@ -17,6 +17,7 @@ module Travis
         require 'travis/api/v2/http/permissions'
         require 'travis/api/v2/http/repositories'
         require 'travis/api/v2/http/repository'
+        require 'travis/api/v2/http/requests'
         require 'travis/api/v2/http/ssl_key'
         require 'travis/api/v2/http/user'
       end

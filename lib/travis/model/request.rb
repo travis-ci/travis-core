@@ -20,6 +20,14 @@ class Request < Travis::Model
     def last_by_head_commit(head_commit)
       where(head_commit: head_commit).order(:id).last
     end
+
+    def older_than(id)
+      recent.where('id < ?', id)
+    end
+
+    def recent
+      order('id DESC').limit(25)
+    end
   end
 
   belongs_to :commit
