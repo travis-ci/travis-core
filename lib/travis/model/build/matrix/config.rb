@@ -4,9 +4,38 @@ require 'active_support/core_ext/array/wrap'
 class Build
   module Matrix
     class Config
-      attr_reader :build, :config
-
       DEFAULT_LANG = 'ruby'
+
+      EXPANSION_KEYS_FEATURE = [:os]
+
+      EXPANSION_KEYS_LANGUAGE = {
+        'c'           => [:compiler],
+        'clojure'     => [:lein, :jdk],
+        'cpp'         => [:compiler],
+        'erlang'      => [:otp_release],
+        'go'          => [:go],
+        'groovy'      => [:jdk],
+        'haskell'     => [:ghc],
+        'java'        => [:jdk],
+        'node_js'     => [:node_js],
+        'objective-c' => [:rvm, :gemfile, :xcode_sdk, :xcode_scheme],
+        'perl'        => [:perl],
+        'php'         => [:php],
+        'python'      => [:python],
+        'ruby'        => [:rvm, :gemfile, :jdk],
+        'scala'       => [:scala, :jdk]
+      }
+
+      EXPANSION_KEYS_UNIVERSAL = [:env, :branch]
+
+      def self.matrix_lang_keys(config)
+        keys = ENV_KEYS
+        lang = Array(config.symbolize_keys[:language]).first
+        keys &= EXPANSION_KEYS_LANGUAGE.fetch(lang, EXPANSION_KEYS_LANGUAGE[DEFAULT_LANG])
+        keys | EXPANSION_KEYS_UNIVERSAL
+      end
+
+      attr_reader :build, :config
 
       def initialize(build)
         @build  = build
@@ -44,7 +73,7 @@ class Build
 
         def expand_keys
           @expand_keys ||= begin
-            keys = Build::ENV_KEYS & config.keys.map(&:to_sym) & Build.matrix_lang_keys(config)
+            keys = Build::ENV_KEYS & config.keys.map(&:to_sym) & self.class.matrix_lang_keys(config)
             keys << :os if multi_os_enabled?
             keys
           end
@@ -84,11 +113,11 @@ class Build
 
         def lang_expands_key?(key)
           (expand_keys | language_expansion_keys).include?(key) ||
-          !(Build::ENV_KEYS | Build::EXPANSION_KEYS_FEATURE).include?(key)
+          !(Build::ENV_KEYS | EXPANSION_KEYS_FEATURE).include?(key)
         end
 
         def language_expansion_keys
-          Build::EXPANSION_KEYS_LANGUAGE.fetch(language, Build::EXPANSION_KEYS_LANGUAGE[DEFAULT_LANG])
+          EXPANSION_KEYS_LANGUAGE.fetch(language, EXPANSION_KEYS_LANGUAGE[DEFAULT_LANG])
         end
 
         def language
