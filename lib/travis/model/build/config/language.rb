@@ -1,15 +1,14 @@
+require 'active_support/core_ext/array/wrap'
+
 class Build
   class Config
     class Language < Struct.new(:config, :options)
       def run
+        config[:language] = Array.wrap(config[:language]).first || Build::DEFAULT_LANG
         config.select { |key, value| include_key?(key) }
       end
 
       private
-
-        def language
-          @language ||= Array(config.symbolize_keys[:language]).first || Build::DEFAULT_LANG
-        end
 
         def include_key?(key)
           matrix_keys.include?(key) || !known_env_key?(key)

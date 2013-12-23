@@ -10,11 +10,6 @@ describe Build do
     build.cached_matrix_ids.should == build.matrix_ids
   end
 
-  it 'does not expand on :os' do
-    build = Factory.create(:build, config: { rvm: ['1.9.3', '2.0.0'], os: ['osx', 'linux']})
-    build.matrix.map(&:config).should == [{ rvm: '1.9.3' }, { rvm: '2.0.0' }]
-  end
-
   it 'returns nil if cached_matrix_ids are not set' do
     build = Factory.create(:build)
     build.update_column(:cached_matrix_ids, nil)
@@ -227,8 +222,8 @@ describe Build do
     end
 
     describe 'config' do
-      it 'defaults to an empty hash' do
-        Build.new.config.should == {}
+      it 'defaults to a hash with language set' do
+        Build.new.config.should == { language: 'ruby' }
       end
 
       it 'deep_symbolizes keys on write' do

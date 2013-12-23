@@ -9,8 +9,7 @@ describe Build::Config do
         - FOO=foo
         - BAR=bar
     )
-    config = Build::Config.new(config).normalize
-    config.should == {
+    Build::Config.new(config).normalize.slice(:env, :global_env).should == {
       env: [
         'FOO=foo',
         'BAR=bar'
@@ -25,7 +24,7 @@ describe Build::Config do
         FOO: foo
         BAR: bar
     )
-    Build::Config.new(config).normalize.should == {
+    Build::Config.new(config).normalize.slice(:env, :global_env).should == {
       env: [
         'FOO=foo BAR=bar'
       ]
@@ -42,7 +41,7 @@ describe Build::Config do
           - BAZ=baz
           - BUZ=buz
     )
-    Build::Config.new(config).normalize.should == {
+    Build::Config.new(config).normalize.slice(:env, :global_env).should == {
       global_env: [
         'FOO=foo',
         'BAR=bar'
@@ -65,7 +64,7 @@ describe Build::Config do
           BAZ: baz
           BUZ: buz
     )
-    Build::Config.new(config).normalize.should == {
+    Build::Config.new(config).normalize.slice(:env, :global_env).should == {
       global_env: [
         'FOO=foo BAR=bar'
       ],
@@ -80,7 +79,7 @@ describe Build::Config do
       env:
         global: FOO=foo
     )
-    Build::Config.new(config).normalize.should == {
+    Build::Config.new(config).normalize.slice(:env, :global_env).should == {
       global_env: [
         'FOO=foo'
       ]
@@ -92,7 +91,7 @@ describe Build::Config do
       env:
         matrix: FOO=foo
     )
-    Build::Config.new(config).normalize.should == {
+    Build::Config.new(config).normalize.slice(:env, :global_env).should == {
       env: [
         'FOO=foo'
       ]
@@ -110,7 +109,7 @@ describe Build::Config do
             - BAZ=baz
           - BUZ=buz
     )
-    Build::Config.new(config).normalize.should == {
+    Build::Config.new(config).normalize.slice(:env, :global_env).should == {
       global_env: [
         'FOO=foo'
       ],
@@ -134,7 +133,7 @@ describe Build::Config do
             BAR: bar
             BAZ: baz
     )
-    Build::Config.new(config).normalize.should == {
+    Build::Config.new(config).normalize.slice(:env, :global_env).should == {
       env: [
         [{ secure: 'encrypted-value' }, 'FOO=foo'],
         ['BAR=bar BAZ=baz']
