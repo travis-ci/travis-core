@@ -21,12 +21,44 @@ class Build
     require 'travis/model/build/matrix/config'
     extend ActiveSupport::Concern
 
+    DEFAULT_LANG = 'ruby'
+
     ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl, :compiler, :go, :xcode_sdk, :xcode_scheme, :ghc]
+
+    EXPANSION_KEYS_FEATURE = [:os]
+
+    EXPANSION_KEYS_LANGUAGE = {
+      'c'           => [:compiler],
+      'clojure'     => [:lein, :jdk],
+      'cpp'         => [:compiler],
+      'erlang'      => [:otp_release],
+      'go'          => [:go],
+      'groovy'      => [:jdk],
+      'haskell'     => [:ghc],
+      'java'        => [:jdk],
+      'node_js'     => [:node_js],
+      'objective-c' => [:rvm, :gemfile, :xcode_sdk, :xcode_scheme],
+      'perl'        => [:perl],
+      'php'         => [:php],
+      'python'      => [:python],
+      'ruby'        => [:rvm, :gemfile, :jdk],
+      'scala'       => [:scala, :jdk]
+    }
+
+    EXPANSION_KEYS_UNIVERSAL = [:env, :branch]
 
     module ClassMethods
       def matrix_keys_for(config, options = {})
-        keys = Config.matrix_keys(config, options = {})
+        keys = matrix_keys(config, options)
         keys & config.keys.map(&:to_sym)
+      end
+
+      def matrix_keys(config, options = {})
+        lang = Array(config.symbolize_keys[:language]).first
+        keys = ENV_KEYS
+        keys &= EXPANSION_KEYS_LANGUAGE.fetch(lang, EXPANSION_KEYS_LANGUAGE[DEFAULT_LANG])
+        keys << :os if options[:multi_os]
+        keys | EXPANSION_KEYS_UNIVERSAL
       end
     end
 
@@ -92,14 +124,10 @@ class Build
         @matrix_config ||= Config.new(config, multi_os: multi_os_enabled?)
       end
 
-      def multi_os_enabled?
-        Travis::Features.enabled_for_all?(:multi_os) || Travis::Features.active?(:multi_os, repository)
-      end
-
       def matrix_allow_failures
         allow_configs = matrix_config.matrix_settings[:allow_failures] || []
         allow_configs.each do |config|
-          cfg = config.merge(language: matrix_config.config.fetch(:language, Build::Matrix::Config::DEFAULT_LANG))
+          cfg = config.merge(language: matrix_config.config.fetch(:language, DEFAULT_LANG))
           matrix_for(cfg).each { |m| m.allow_failure = true }
         end
       end

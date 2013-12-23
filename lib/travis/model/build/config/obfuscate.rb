@@ -4,11 +4,11 @@ require 'travis/secure_config'
 
 class Build
   class Config
-    class Obfuscate < Struct.new(:options)
+    class Obfuscate < Struct.new(:config, :options)
       ENV_VAR_PATTERN = /(?<=\=)(?:(?<q>['"]).*?[^\\]\k<q>|(.*?)(?= \w+=|$))/
 
-      def run(config)
-        config = config.except(:source_key)
+      def run
+        config = self.config.except(:source_key)
         config[:env] = obfuscate(config[:env]) if config[:env]
         config
       end

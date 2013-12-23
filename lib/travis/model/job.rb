@@ -1,5 +1,6 @@
 require 'active_record'
 require 'active_support/core_ext/hash/deep_dup'
+require 'travis/model/build/config/language'
 
 # Job models a unit of work that is run on a remote worker.
 #

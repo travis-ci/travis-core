@@ -1,9 +1,10 @@
 require 'travis/model/build/config/env'
+require 'travis/model/build/config/language'
 require 'travis/model/build/config/obfuscate'
 
 class Build
   class Config
-    NORMALIZERS = [Env]
+    NORMALIZERS = [Env, Language]
 
     attr_reader :config, :options
 
@@ -13,19 +14,13 @@ class Build
     end
 
     def normalize
-      normalizers.inject(config) do |config, normalizer|
-        normalizer.run(config)
+      NORMALIZERS.inject(config) do |config, normalizer|
+        normalizer.new(config, options).run
       end
     end
 
     def obfuscate
-      Obfuscate.new(options).run(config.dup)
+      Obfuscate.new(config, options).run
     end
-
-    private
-
-      def normalizers
-        NORMALIZERS.map { |const| const.new(options) }
-      end
   end
 end
