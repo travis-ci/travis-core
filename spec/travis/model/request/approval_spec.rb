@@ -5,6 +5,11 @@ describe Request::Approval do
 
   let(:approval) { Request::Approval.new(request) }
 
+  before do
+    approval.stubs(:build_pull_requests?).returns(true)
+    approval.stubs(:build_pushes?).returns(true)
+  end
+
   describe 'config_accepted?' do
     it 'approves the build when .travis.yml is missing, but builds with .travis.yml are allowed' do
       request.config['.result'] = 'not_found'
@@ -44,7 +49,7 @@ describe Request::Approval do
     end
 
     it 'does not accept a request that does not have a commit' do
-      request.stubs(:commit).returns(nil)
+      approval.stubs(:commit).returns(nil)
       approval.should_not be_accepted
     end
 
@@ -74,6 +79,11 @@ describe Request::Approval do
       request.stubs(:config).returns('branches' => { 'only' => ['gh_pages'] })
       approval.should be_accepted
     end
+
+    it 'does not accept a request when it is disabled in settings' do
+      approval.stubs(:enabled_in_settings?).returns(false)
+      approval.should_not be_accepted
+    end
   end
 
   describe 'approved?' do
@@ -81,8 +91,20 @@ describe Request::Approval do
   end
 
   describe 'message' do
+    it 'returns "pull requests disabled" if pull requests are disabled' do
+      approval.stubs(:enabled_in_settings?).returns(false)
+      request.stubs(:pull_request?).returns(true)
+      approval.message.should == 'pull requests disabled'
+    end
+
+    it 'returns "pushes disabled" if pushes are disabled' do
+      approval.stubs(:enabled_in_settings?).returns(false)
+      request.stubs(:pull_request?).returns(false)
+      approval.message.should == 'pushes disabled'
+    end
+
     it 'returns "missing commit" if the commit is missing' do
-      request.stubs(:commit).returns(nil)
+      approval.stubs(:commit).returns(nil)
       approval.message.should == 'missing commit'
     end
 
@@ -195,6 +217,32 @@ describe Request::Approval do
       Travis.config.repository_filter.stubs(:exclude).returns(["\\/rails$"])
       request.repository.stubs(:slug).returns 'josh/completeness-fu'
       approval.send(:excluded_repository?).should be_false
+    end
+  end
+
+  describe 'enabled_in_settings?' do
+    it 'returns true if pull requests are enabled and a request is a pull request' do
+      request.stubs(:pull_request?).returns(true)
+      approval.stubs(:build_pull_requests?).returns(true)
+      approval.enabled_in_settings?.should be_true
+    end
+
+    it 'returns true if pushes are enabled and a request is a push' do
+      request.stubs(:pull_request?).returns(false)
+      approval.stubs(:build_pushes?).returns(true)
+      approval.enabled_in_settings?.should be_true
+    end
+
+    it 'returns false if pull requests are disabled and a request is a pull request' do
+      request.stubs(:pull_request?).returns(true)
+      approval.stubs(:build_pull_requests?).returns(false)
+      approval.enabled_in_settings?.should be_false
+    end
+
+    it 'returns false if pushes are disabled and a request is a push' do
+      request.stubs(:pull_request?).returns(false)
+      approval.stubs(:build_pushes?).returns(false)
+      approval.enabled_in_settings?.should be_false
     end
   end
 end

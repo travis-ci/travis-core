@@ -8,11 +8,26 @@ class Request
       @commit = request.commit
     end
 
+    def settings
+      repository.settings
+    end
+
+    delegate :build_pushes?, :build_pull_requests?, to: :settings
+
     def accepted?
       commit.present? &&
         !repository.private? &&
         (!excluded_repository? || included_repository?) &&
-        !skipped?
+        !skipped? &&
+        enabled_in_settings?
+    end
+
+    def enabled_in_settings?
+      request.pull_request? ? build_pull_requests? : build_pushes?
+    end
+
+    def disabled_in_settings?
+      !enabled_in_settings?
     end
 
     def branch_accepted?
@@ -46,6 +61,8 @@ class Request
         'excluded repository'
       elsif skipped?
         'skipped through commit message'
+      elsif disabled_in_settings?
+        request.pull_request? ? 'pull requests disabled' : 'pushes disabled'
       elsif github_pages?
         'github pages branch'
       elsif request.config.blank?
