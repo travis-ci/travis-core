@@ -343,20 +343,16 @@ describe Build, 'matrix' do
     }
 
     describe :expand_matrix do
-      # it 'does not add global entries to a matrix, but leaves them in job config' do
-      #   build = Factory(:build, config: env_global_config)
+      it 'does not add global entries to a matrix, but leaves them in job config' do
+        build = Factory(:build, config: env_global_config)
 
-      #   build.matrix.map(&:config).should == [
-      #     { language: 'ruby', rvm: '1.9.2', gemfile: 'gemfiles/rails-4.0.0', env: 'FOO=bar' },
-      #     { language: 'ruby', rvm: '1.9.2', gemfile: 'gemfiles/rails-4.0.0', env: 'BAR=baz' },
-      #     { language: 'ruby', rvm: '1.9.3', gemfile: 'gemfiles/rails-4.0.0', env: 'FOO=bar' },
-      #     { language: 'ruby', rvm: '1.9.3', gemfile: 'gemfiles/rails-4.0.0', env: 'BAR=baz' }
-      #   ]
-
-      #   build.matrix.map do |job|
-      #     job.config[:global_env].should == ["TOKEN=abcdef"]
-      #   end
-      # end
+        build.matrix.map(&:config).should == [
+          { script: 'rake ci', rvm: '1.9.2', gemfile: 'gemfiles/rails-4.0.0', env: 'FOO=bar', global_env: ['TOKEN=abcdef'] },
+          { script: 'rake ci', rvm: '1.9.2', gemfile: 'gemfiles/rails-4.0.0', env: 'BAR=baz', global_env: ['TOKEN=abcdef'] },
+          { script: 'rake ci', rvm: '1.9.3', gemfile: 'gemfiles/rails-4.0.0', env: 'FOO=bar', global_env: ['TOKEN=abcdef'] },
+          { script: 'rake ci', rvm: '1.9.3', gemfile: 'gemfiles/rails-4.0.0', env: 'BAR=baz', global_env: ['TOKEN=abcdef'] }
+        ]
+      end
 
       it 'sets the config to the jobs (no config)' do
         build = Factory(:build, config: {})
