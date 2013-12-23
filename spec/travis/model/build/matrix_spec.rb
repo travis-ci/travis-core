@@ -3,9 +3,6 @@ require 'spec_helper'
 describe Build, 'matrix' do
   include Support::ActiveRecord
 
-  before { Build.send :public,    :matrix_config }
-  after  { Build.send :protected, :matrix_config }
-
   describe :matrix_finished? do
     context 'if config[:matrix][:finish_fast] is not set' do
       context 'if at least one job has not finished and is not allowed to fail' do
@@ -524,12 +521,12 @@ describe Build, 'matrix' do
         end
     end
 
-    describe :matrix_config do
+    describe 'matrix expansion' do
       let(:repository) { Factory(:repository) }
 
       it 'with string values' do
         build = Factory(:build, config: { rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x', env: 'FOO=bar' })
-        build.matrix_config.expand.should == [
+        build.matrix.map(&:config).should == [
           { rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x', env: 'FOO=bar' }
         ]
       end
@@ -538,25 +535,24 @@ describe Build, 'matrix' do
         env = repository.key.secure.encrypt('FOO=bar').symbolize_keys
         config = { rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x', env: env }
         build = Factory(:build, repository: repository, config: config)
-        build.matrix_config.expand.should == [
+        build.matrix.map(&:config).should == [
           { rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x', env: env }
         ]
       end
 
       it 'with two Rubies and Gemfiles' do
         build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'], gemfile: ['gemfiles/rails-2.3.x', 'gemfiles/rails-3.0.x'] })
-        expected = [
+        build.matrix.map(&:config).should == [
           { rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x' },
           { rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x' },
           { rvm: '1.9.2', gemfile: 'gemfiles/rails-2.3.x' },
           { rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.x' }
         ]
-        build.matrix_config.expand.should == expected
       end
 
       it 'with unequal number of Rubies, env variables and Gemfiles' do
         build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2', 'ree'], gemfile: ['gemfiles/rails-3.0.x'], env: ['DB=postgresql', 'DB=mysql'] })
-        build.matrix_config.expand.should == [
+        build.matrix.map(&:config).should == [
           { rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x', env: 'DB=postgresql' },
           { rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x', env: 'DB=mysql' },
           { rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.x', env: 'DB=postgresql' },
@@ -568,7 +564,7 @@ describe Build, 'matrix' do
 
       it 'with an array of Rubies and a single Gemfile' do
         build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'], gemfile: 'gemfiles/rails-2.3.x' })
-        build.matrix_config.expand.should == [
+        build.matrix.map(&:config).should == [
           { rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x' },
           { rvm: '1.9.2', gemfile: 'gemfiles/rails-2.3.x' }
         ]
@@ -579,14 +575,14 @@ describe Build, 'matrix' do
   describe 'for Scala projects' do
     it 'with a single Scala version given as a string' do
       build = Factory(:build, config: { language: 'scala', scala: '2.8.2', env: 'NETWORK=false' })
-      build.matrix_config.expand.should == [
+        build.matrix.map(&:config).should == [
         { language: 'scala', scala: '2.8.2', env: 'NETWORK=false' }
       ]
     end
 
     it 'with multiple Scala versions and no env variables' do
       build = Factory(:build, config: { language: 'scala', scala: ['2.8.2', '2.9.1']})
-      build.matrix_config.expand.should == [
+        build.matrix.map(&:config).should == [
         { language: 'scala', scala: '2.8.2' },
         { language: 'scala', scala: '2.9.1' }
        ]
@@ -594,7 +590,7 @@ describe Build, 'matrix' do
 
     it 'with a single Scala version passed in as array and two env variables' do
       build = Factory(:build, config: { language: 'scala', scala: ['2.8.2'], env: ['STORE=postgresql', 'STORE=redis'] })
-      build.matrix_config.expand.should == [
+        build.matrix.map(&:config).should == [
         { language: 'scala', scala: '2.8.2', env: 'STORE=postgresql' },
         { language: 'scala', scala: '2.8.2', env: 'STORE=redis' }
       ]
