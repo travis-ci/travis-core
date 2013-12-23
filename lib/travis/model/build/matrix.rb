@@ -18,7 +18,6 @@ class Build
   #  * an arbitrary env key that can be used from within the test suite in
   #    order to branch out specific variations of the test run
   module Matrix
-    require 'travis/model/build/matrix/config'
     extend ActiveSupport::Concern
 
     DEFAULT_LANG = 'ruby'
@@ -99,6 +98,7 @@ class Build
 
     # expand the matrix (i.e. create test jobs) and update the config for each job
     def expand_matrix
+      # matrix_config.expand.each_with_index do |row, ix|
       matrix_config.expand.each_with_index do |row, ix|
         attributes = self.attributes.slice(*Job.column_names - ['status', 'result']).symbolize_keys
         attributes.merge!(
@@ -121,7 +121,7 @@ class Build
     private
 
       def matrix_config
-        @matrix_config ||= Config.new(config, multi_os: multi_os_enabled?)
+        @matrix_config ||= Config::Matrix.new(config, multi_os: multi_os_enabled?)
       end
 
       def matrix_allow_failures

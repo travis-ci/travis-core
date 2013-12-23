@@ -2,12 +2,12 @@ require 'active_support/core_ext/hash/except'
 require 'active_support/core_ext/array/wrap'
 
 class Build
-  module Matrix
-    class Config
+  class Config
+    class Matrix
       attr_reader :config, :options
 
       def initialize(config, options = {})
-        @config = config ? config.dup : {}
+        @config = config || {}
         @options = options
       end
 

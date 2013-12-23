@@ -1,5 +1,6 @@
 require 'travis/model/build/config/env'
 require 'travis/model/build/config/language'
+require 'travis/model/build/config/matrix'
 require 'travis/model/build/config/obfuscate'
 
 class Build
