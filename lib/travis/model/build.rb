@@ -183,7 +183,7 @@ class Build < Travis::Model
   end
 
   def obfuscated_config
-    Config.new(config, key: repository.key).obfuscate
+    Config.new(config, key_fetcher: lambda { self.repository.key }).obfuscate
   end
 
   def cancelable?

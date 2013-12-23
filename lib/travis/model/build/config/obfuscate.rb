@@ -46,7 +46,7 @@ class Build
         end
 
         def key
-          options[:key]
+          @key ||= options[:key_fetcher].call
         end
     end
   end
