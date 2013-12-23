@@ -29,9 +29,9 @@ class Build
           config = Config.new(matrix_with_os_ruby, multi_os: true)
           config.expand.should == [
             { language: 'ruby', os: 'osx',   rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
-            { language: 'ruby', os: 'linux', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
             { language: 'ruby', os: 'osx',   rvm: '1.9.3', gemfile: 'gemfiles/rails-4' },
-            { language: 'ruby', os: 'linux', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' }
+            { language: 'ruby', os: 'linux', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
+            { language: 'ruby', os: 'linux', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' },
           ]
         end
       end

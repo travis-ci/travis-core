@@ -25,7 +25,7 @@ class Build
 
     module ClassMethods
       def matrix_keys_for(config, options = {})
-        keys = Config.matrix_lang_keys(config, options = {})
+        keys = Config.matrix_keys(config, options = {})
         keys & config.keys.map(&:to_sym)
       end
     end

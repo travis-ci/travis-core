@@ -28,12 +28,14 @@ class Build
 
       EXPANSION_KEYS_UNIVERSAL = [:env, :branch]
 
-      def self.matrix_lang_keys(config, options = {})
-        keys = ENV_KEYS
-        lang = Array(config.symbolize_keys[:language]).first
-        keys &= EXPANSION_KEYS_LANGUAGE.fetch(lang, EXPANSION_KEYS_LANGUAGE[DEFAULT_LANG])
-        keys << :os if options[:multi_os]
-        keys | EXPANSION_KEYS_UNIVERSAL
+      class << self
+        def matrix_keys(config, options = {})
+          lang = Array(config.symbolize_keys[:language]).first
+          keys = ENV_KEYS
+          keys &= EXPANSION_KEYS_LANGUAGE.fetch(lang, EXPANSION_KEYS_LANGUAGE[DEFAULT_LANG])
+          keys << :os if options[:multi_os]
+          keys | EXPANSION_KEYS_UNIVERSAL
+        end
       end
 
       attr_reader :config, :options
@@ -48,73 +50,63 @@ class Build
       end
 
       def expand
-        # recursively builds up permutations of values in the rows of a nested array
-        matrix = lambda do |*args|
-          base, result = args.shift, args.shift || []
-          base = base.dup
-          base.empty? ? [result] : base.shift.map { |value| matrix.call(base, result + [value]) }.flatten(1)
-        end
-
-        expanded = matrix.call(to_a).uniq
-        expanded = include_matrix_configs(exclude_matrix_configs(expanded))
-        expanded.map { |row| expand_row(row) }
+        configs = expand_matrix
+        configs = include_matrix_configs(exclude_matrix_configs(configs))
+        configs.map { |config| merge_config(Hash[config]) }
       end
 
       private
 
-        def expand_row(row)
-          row = Hash[row] unless row.is_a?(Hash)
-          row = config.merge(row)
-          row.select { |key, value| include_key?(key) }
+        def expand_matrix
+          rows = config.slice(*expand_keys).values.select { |value| value.is_a?(Array) }
+          max_size = rows.max_by(&:size).try(:size) || 1
+
+          array = expand_keys.inject([]) do |result, key|
+            values = Array.wrap(config[key])
+            values += [values.last] * (max_size - values.size)
+            result << values.map { |value| [key, value] }
+          end
+
+          permutations(array).uniq
+        end
+
+        # recursively builds up permutations of values in the rows of a nested array
+        def permutations(base, result = [])
+          base = base.dup
+          base.empty? ? [result] : base.shift.map { |value| permutations(base, result + [value]) }.flatten(1)
+        end
+
+        def merge_config(row)
+          config.select { |key, value| include_key?(key) }.merge(row)
         end
 
         def expand_keys
-          @expand_keys ||= begin
-            keys = Build::ENV_KEYS & config.keys.map(&:to_sym) & self.class.matrix_lang_keys(config, multi_os: options[:multi_os])
-            keys << :os if options[:multi_os]
-            keys
-          end
+          @expand_keys ||= config.keys.map(&:to_sym) & self.class.matrix_keys(config, multi_os: options[:multi_os])
         end
 
-        def to_a
-          @as_array ||= expand_keys.inject([]) do |result, key|
-            values = Array.wrap(config[key])
-            values += [values.last] * (size - values.size) if values.size < size
-            result << values.map { |value| [key, value] }
-          end
-        end
-
-        def size
-          @size ||= begin
-            rows = config.slice(*expand_keys).values.select { |value| value.is_a?(Array) }
-            rows.max_by(&:size).try(:size) || 1
-          end
-        end
-
-        def exclude_matrix_configs(matrix)
-          matrix.reject { |config| exclude_config?(config) }
+        def exclude_matrix_configs(configs)
+          configs.reject { |config| exclude_config?(config) }
         end
 
         def exclude_config?(config)
           exclude_configs = matrix_settings[:exclude] || []
           exclude_configs = exclude_configs.compact.map(&:stringify_keys).map(&:to_a).map(&:sort)
           config = config.map { |config| [config[0].to_s, *config[1..-1]] }.sort
-          exclude_configs.to_a.any? { |excluded| excluded == config }
+          exclude_configs.any? { |excluded| excluded == config }
         end
 
-        def include_matrix_configs(matrix)
+        def include_matrix_configs(configs)
           include_configs = matrix_settings[:include] || []
           include_configs = include_configs.map(&:to_a).map(&:sort)
-          matrix + include_configs
+          configs + include_configs
         end
 
         def include_key?(key)
-          (expand_keys | language_keys).include?(key) ||
-          !(Build::ENV_KEYS | EXPANSION_KEYS_FEATURE).include?(key)
+          self.class.matrix_keys(config, options).include?(key) || !known_env_key?(key)
         end
 
-        def language_keys
-          EXPANSION_KEYS_LANGUAGE.fetch(language, EXPANSION_KEYS_LANGUAGE[DEFAULT_LANG])
+        def known_env_key?(key)
+          (Build::ENV_KEYS | EXPANSION_KEYS_FEATURE).include?(key)
         end
 
         def language
