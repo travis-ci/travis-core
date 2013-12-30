@@ -77,6 +77,24 @@ describe Build do
       end
     end
 
+    describe 'last_build_on_default_branch?' do
+      it 'returns the most recently created build on the default branch' do
+        build1 = Factory(:build, state: 'passed', started_at: 3.minutes.ago, finished_at: 2.minutes.ago)
+        build2 = Factory(:build, state: 'failed', started_at: 10.minutes.ago, finished_at: 9.minutes.ago)
+
+        build1.last_build_on_default_branch?.should be_false
+        build2.last_build_on_default_branch?.should be_true
+      end
+
+      it 'ignores builds not on the default branch' do
+        build1 = Factory(:build, state: 'failed')
+        build2 = Factory(:build, state: 'passed', commit: Factory(:commit, branch: 'blah'))
+
+        build1.last_build_on_default_branch?.should be_true
+        build2.last_build_on_default_branch?.should be_false
+      end
+    end
+
     describe 'on_branch' do
       it 'returns builds that are on any of the given branches' do
         Factory(:build, commit: Factory(:commit, branch: 'master'))

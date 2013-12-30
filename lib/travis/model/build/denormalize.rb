@@ -22,7 +22,7 @@ class Build
     }
 
     def denormalize?(event)
-      DENORMALIZE.key?(event)
+      DENORMALIZE.key?(event) && last_build_on_default_branch?
     end
 
     def denormalize_attributes_for(event)

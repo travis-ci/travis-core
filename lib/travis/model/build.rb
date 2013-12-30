@@ -194,6 +194,10 @@ class Build < Travis::Model
     event_type == 'pull_request'
   end
 
+  def last_build_on_default_branch?
+    repository.last_build_on_default_branch == self
+  end
+
   # COMPAT: used in http api v1, deprecate as soon as v1 gets retired
   def result
     state.try(:to_sym) == :passed ? 0 : 1
