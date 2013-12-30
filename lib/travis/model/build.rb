@@ -54,6 +54,10 @@ class Build < Travis::Model
   belongs_to :owner, polymorphic: true
   has_many   :matrix, as: :source, order: :id, class_name: 'Job::Test', dependent: :destroy
   has_many   :events, as: :source
+  has_many   :builds_branches
+  has_many   :branches, through: :builds_branches
+  has_many   :builds_tags
+  has_many   :tags, through: :builds_tags
 
   validates :repository_id, :commit_id, :request_id, presence: true
 

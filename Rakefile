@@ -2,8 +2,13 @@
 
 require 'rspec/core/rake_task'
 require 'bundler/setup'
+require 'foreigner'
 require 'micro_migrations'
 require 'travis'
+
+task :environment do
+  Foreigner.load
+end
 
 desc 'Run specs'
 RSpec::Core::RakeTask.new do |t|

@@ -3,7 +3,6 @@
 --
 
 SET statement_timeout = 0;
-SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -190,6 +189,39 @@ ALTER SEQUENCE annotations_id_seq OWNED BY annotations.id;
 
 
 --
+-- Name: branches; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE branches (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    repository_id integer NOT NULL,
+    last_build_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: branches_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE branches_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: branches_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE branches_id_seq OWNED BY branches.id;
+
+
+--
 -- Name: broadcasts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -266,6 +298,38 @@ CREATE TABLE builds (
 
 
 --
+-- Name: builds_branches; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE builds_branches (
+    id integer NOT NULL,
+    build_id integer NOT NULL,
+    branch_id integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: builds_branches_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE builds_branches_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: builds_branches_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE builds_branches_id_seq OWNED BY builds_branches.id;
+
+
+--
 -- Name: builds_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -282,6 +346,38 @@ CREATE SEQUENCE builds_id_seq
 --
 
 ALTER SEQUENCE builds_id_seq OWNED BY builds.id;
+
+
+--
+-- Name: builds_tags; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE builds_tags (
+    id integer NOT NULL,
+    build_id integer NOT NULL,
+    tag_id integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: builds_tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE builds_tags_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: builds_tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE builds_tags_id_seq OWNED BY builds_tags.id;
 
 
 --
@@ -307,6 +403,39 @@ CREATE TABLE commits (
 
 
 --
+-- Name: commits_branches; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE commits_branches (
+    id integer NOT NULL,
+    commit_id integer,
+    branch_id integer,
+    request_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: commits_branches_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE commits_branches_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: commits_branches_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE commits_branches_id_seq OWNED BY commits_branches.id;
+
+
+--
 -- Name: commits_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -323,6 +452,39 @@ CREATE SEQUENCE commits_id_seq
 --
 
 ALTER SEQUENCE commits_id_seq OWNED BY commits.id;
+
+
+--
+-- Name: commits_tags; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE commits_tags (
+    id integer NOT NULL,
+    commit_id integer,
+    tag_id integer,
+    request_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: commits_tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE commits_tags_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: commits_tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE commits_tags_id_seq OWNED BY commits_tags.id;
 
 
 --
@@ -716,6 +878,39 @@ ALTER SEQUENCE ssl_keys_id_seq OWNED BY ssl_keys.id;
 
 
 --
+-- Name: tags; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE tags (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    last_build_id integer,
+    repository_id integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE tags_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE tags_id_seq OWNED BY tags.id;
+
+
+--
 -- Name: tokens; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -838,6 +1033,13 @@ ALTER TABLE ONLY annotations ALTER COLUMN id SET DEFAULT nextval('annotations_id
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY branches ALTER COLUMN id SET DEFAULT nextval('branches_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY broadcasts ALTER COLUMN id SET DEFAULT nextval('broadcasts_id_seq'::regclass);
 
 
@@ -845,7 +1047,35 @@ ALTER TABLE ONLY broadcasts ALTER COLUMN id SET DEFAULT nextval('broadcasts_id_s
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY builds_branches ALTER COLUMN id SET DEFAULT nextval('builds_branches_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY builds_tags ALTER COLUMN id SET DEFAULT nextval('builds_tags_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY commits ALTER COLUMN id SET DEFAULT nextval('commits_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY commits_branches ALTER COLUMN id SET DEFAULT nextval('commits_branches_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY commits_tags ALTER COLUMN id SET DEFAULT nextval('commits_tags_id_seq'::regclass);
 
 
 --
@@ -915,6 +1145,13 @@ ALTER TABLE ONLY ssl_keys ALTER COLUMN id SET DEFAULT nextval('ssl_keys_id_seq':
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY tags ALTER COLUMN id SET DEFAULT nextval('tags_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY tokens ALTER COLUMN id SET DEFAULT nextval('tokens_id_seq'::regclass);
 
 
@@ -949,11 +1186,27 @@ ALTER TABLE ONLY annotations
 
 
 --
+-- Name: branches_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY branches
+    ADD CONSTRAINT branches_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: broadcasts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY broadcasts
     ADD CONSTRAINT broadcasts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: builds_branches_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY builds_branches
+    ADD CONSTRAINT builds_branches_pkey PRIMARY KEY (id);
 
 
 --
@@ -965,11 +1218,35 @@ ALTER TABLE ONLY builds
 
 
 --
+-- Name: builds_tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY builds_tags
+    ADD CONSTRAINT builds_tags_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: commits_branches_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY commits_branches
+    ADD CONSTRAINT commits_branches_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: commits_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY commits
     ADD CONSTRAINT commits_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: commits_tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY commits_tags
+    ADD CONSTRAINT commits_tags_pkey PRIMARY KEY (id);
 
 
 --
@@ -1045,6 +1322,14 @@ ALTER TABLE ONLY ssl_keys
 
 
 --
+-- Name: tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY tags
+    ADD CONSTRAINT tags_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: tasks_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1074,6 +1359,41 @@ ALTER TABLE ONLY urls
 
 ALTER TABLE ONLY users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: index_branches_on_name_and_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_branches_on_name_and_repository_id ON branches USING btree (name, repository_id);
+
+
+--
+-- Name: index_branches_on_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_branches_on_repository_id ON branches USING btree (repository_id);
+
+
+--
+-- Name: index_builds_branches_on_branch_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_builds_branches_on_branch_id ON builds_branches USING btree (branch_id);
+
+
+--
+-- Name: index_builds_branches_on_build_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_builds_branches_on_build_id ON builds_branches USING btree (build_id);
+
+
+--
+-- Name: index_builds_branches_on_build_id_and_branch_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_builds_branches_on_build_id_and_branch_id ON builds_branches USING btree (build_id, branch_id);
 
 
 --
@@ -1109,6 +1429,41 @@ CREATE INDEX index_builds_on_repository_id_and_state ON builds USING btree (repo
 --
 
 CREATE INDEX index_builds_on_request_id ON builds USING btree (request_id);
+
+
+--
+-- Name: index_builds_tags_on_build_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_builds_tags_on_build_id ON builds_tags USING btree (build_id);
+
+
+--
+-- Name: index_builds_tags_on_build_id_and_tag_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_builds_tags_on_build_id_and_tag_id ON builds_tags USING btree (build_id, tag_id);
+
+
+--
+-- Name: index_builds_tags_on_tag_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_builds_tags_on_tag_id ON builds_tags USING btree (tag_id);
+
+
+--
+-- Name: index_commits_branches_on_commit_id_and_branch_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_commits_branches_on_commit_id_and_branch_id ON commits_branches USING btree (commit_id, branch_id);
+
+
+--
+-- Name: index_commits_tags_on_commit_id_and_tag_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_commits_tags_on_commit_id_and_tag_id ON commits_tags USING btree (commit_id, tag_id);
 
 
 --
@@ -1259,6 +1614,20 @@ CREATE INDEX index_ssl_key_on_repository_id ON ssl_keys USING btree (repository_
 
 
 --
+-- Name: index_tags_on_name_and_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_tags_on_name_and_repository_id ON tags USING btree (name, repository_id);
+
+
+--
+-- Name: index_tags_on_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_tags_on_repository_id ON tags USING btree (repository_id);
+
+
+--
 -- Name: index_users_on_github_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1280,11 +1649,123 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 
 
 --
+-- Name: branches_last_build_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY branches
+    ADD CONSTRAINT branches_last_build_id_fk FOREIGN KEY (last_build_id) REFERENCES builds(id);
+
+
+--
+-- Name: branches_repository_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY branches
+    ADD CONSTRAINT branches_repository_id_fk FOREIGN KEY (repository_id) REFERENCES repositories(id);
+
+
+--
+-- Name: builds_branches_branch_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY builds_branches
+    ADD CONSTRAINT builds_branches_branch_id_fk FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE CASCADE;
+
+
+--
+-- Name: builds_branches_build_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY builds_branches
+    ADD CONSTRAINT builds_branches_build_id_fk FOREIGN KEY (build_id) REFERENCES builds(id) ON DELETE CASCADE;
+
+
+--
+-- Name: builds_tags_build_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY builds_tags
+    ADD CONSTRAINT builds_tags_build_id_fk FOREIGN KEY (build_id) REFERENCES builds(id) ON DELETE CASCADE;
+
+
+--
+-- Name: builds_tags_tag_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY builds_tags
+    ADD CONSTRAINT builds_tags_tag_id_fk FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE;
+
+
+--
+-- Name: commits_branches_branch_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY commits_branches
+    ADD CONSTRAINT commits_branches_branch_id_fk FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE CASCADE;
+
+
+--
+-- Name: commits_branches_commit_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY commits_branches
+    ADD CONSTRAINT commits_branches_commit_id_fk FOREIGN KEY (commit_id) REFERENCES commits(id) ON DELETE CASCADE;
+
+
+--
+-- Name: commits_branches_request_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY commits_branches
+    ADD CONSTRAINT commits_branches_request_id_fk FOREIGN KEY (request_id) REFERENCES requests(id) ON DELETE CASCADE;
+
+
+--
+-- Name: commits_tags_commit_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY commits_tags
+    ADD CONSTRAINT commits_tags_commit_id_fk FOREIGN KEY (commit_id) REFERENCES commits(id) ON DELETE CASCADE;
+
+
+--
+-- Name: commits_tags_request_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY commits_tags
+    ADD CONSTRAINT commits_tags_request_id_fk FOREIGN KEY (request_id) REFERENCES requests(id) ON DELETE CASCADE;
+
+
+--
+-- Name: commits_tags_tag_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY commits_tags
+    ADD CONSTRAINT commits_tags_tag_id_fk FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE;
+
+
+--
 -- Name: log_parts_log_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY log_parts
     ADD CONSTRAINT log_parts_log_id_fk FOREIGN KEY (log_id) REFERENCES logs(id);
+
+
+--
+-- Name: tags_last_build_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY tags
+    ADD CONSTRAINT tags_last_build_id_fk FOREIGN KEY (last_build_id) REFERENCES builds(id);
+
+
+--
+-- Name: tags_repository_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY tags
+    ADD CONSTRAINT tags_repository_id_fk FOREIGN KEY (repository_id) REFERENCES repositories(id);
 
 
 --
@@ -1544,6 +2025,18 @@ INSERT INTO schema_migrations (version) VALUES ('20130920135744');
 INSERT INTO schema_migrations (version) VALUES ('20131104101056');
 
 INSERT INTO schema_migrations (version) VALUES ('20131109101056');
+
+INSERT INTO schema_migrations (version) VALUES ('20131227155535');
+
+INSERT INTO schema_migrations (version) VALUES ('20131227160256');
+
+INSERT INTO schema_migrations (version) VALUES ('20131230093907');
+
+INSERT INTO schema_migrations (version) VALUES ('20131230094201');
+
+INSERT INTO schema_migrations (version) VALUES ('20140116125536');
+
+INSERT INTO schema_migrations (version) VALUES ('20140116125602');
 
 INSERT INTO schema_migrations (version) VALUES ('20140120225125');
 

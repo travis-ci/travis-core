@@ -1,6 +1,16 @@
 require 'factory_girl'
 
 FactoryGirl.define do
+  factory :tag do
+    name 'deploy.1'
+    repository { Repository.first || Factory(:repository) }
+  end
+
+  factory :branch do
+    name 'master'
+    repository { Repository.first || Factory(:repository) }
+  end
+
   factory :build do
     owner { User.first || Factory(:user) }
     repository { Repository.first || Factory(:repository) }

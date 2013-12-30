@@ -20,6 +20,8 @@ class Repository < Travis::Model
   has_many :events
   has_many :permissions
   has_many :users, through: :permissions
+  has_many :branches
+  has_many :tags
 
   has_one :last_build, class_name: 'Build', order: 'id DESC'
   has_one :key, class_name: 'SslKey'
