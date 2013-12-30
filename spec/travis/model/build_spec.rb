@@ -144,7 +144,7 @@ describe Build do
         3.times { |i| Factory(:build) }
         Build.stubs(:per_page).returns(1)
 
-        builds = Build.paged({page: 2})
+        builds = Build.order('id DESC').paged({page: 2})
         builds.should have(1).item
         builds.first.number.should == '2'
       end
@@ -200,6 +200,26 @@ describe Build do
         Factory(:build, state: 'passed', commit: Factory(:commit, branch: 'something'))
         Factory(:build).reload.previous_state.should == 'failed'
       end
+    end
+
+    it 'adds branch' do
+      build = Factory(:build, commit: Factory(:commit, branch: 'something'))
+      build2 = Factory(:build, commit: Factory(:commit, branch: 'something'), repository: build.repository)
+
+      build.branches.map(&:name).should == ['something']
+      branch = Branch.where(name: 'something', repository_id: build.repository_id).first
+      branch.builds.should == [build, build2]
+    end
+
+    it 'adds tag' do
+      build = Factory(:build, commit: Factory(:commit, ref: 'refs/tags/something'))
+      build2 = Factory(:build, commit: Factory(:commit, ref: 'refs/tags/something'), repository: build.repository)
+
+      build.tags.map(&:name).should == ['something']
+      tag = Tag.where(name: 'something', repository_id: build.repository_id).first
+      tag.builds.should == [build, build2]
+
+      Branch.count.should == 0
     end
   end
 
@@ -290,6 +310,113 @@ describe Build do
     it 'saves branch before create' do
       build = Factory(:build,  commit: Factory(:commit, branch: 'development'))
       build.branch.should == 'development'
+    end
+
+    describe '#add_branch' do
+      it 'adds branch to a build' do
+        build = Factory(:build)
+
+        build.add_branch('foo')
+
+        build.branches.map(&:name).should include('foo')
+        build.branches.where(name: 'foo').first.builds.should == [build]
+      end
+
+      it 'adds build to a branch if a branch aleady exists' do
+        branch = Factory(:branch, name: 'foo')
+        build = Factory(:build, repository: branch.repository)
+
+        lambda {
+          build.add_branch('foo')
+        }.should_not change { Branch.count }
+
+        build.branches.map(&:name).should include('foo')
+        branch.builds.should == [build]
+      end
+
+      it 'does not add a branch if it is already added' do
+        build = Factory(:build)
+
+        build.add_branch('foo')
+        build.add_branch('foo')
+
+        build.branches.map(&:name).should include('foo')
+        build.branches.where(name: 'foo').first.builds.should == [build]
+      end
+
+      it 'retries on ActiveRecord::RecordNotUnique' do
+        branch = Factory(:branch)
+        build = Factory(:build, repository: branch.repository)
+
+        build.branches.stubs(:create!).raises(ActiveRecord::RecordNotUnique).
+          then.returns(branch)
+
+        build.add_branch('master').should == branch
+      end
+
+      it 'retries on ActiveRecord::RecordInvalid' do
+        branch = Factory(:branch)
+        build = Factory(:build, repository: branch.repository)
+
+        build.branches.stubs(:create!).raises(ActiveRecord::RecordInvalid).
+          then.returns(branch)
+
+        build.add_branch('master').should == branch
+      end
+    end
+
+    describe '#add_tag' do
+      it 'adds tag to a build' do
+        build = Factory(:build)
+
+        build.add_tag('foo')
+
+        build.tags.map(&:name).should == ['foo']
+        build.tags.where(name: 'foo').first.builds.should == [build]
+      end
+
+      it 'adds build to a tag if a tag aleady exists' do
+        tag = Factory(:tag, name: 'foo')
+        build = Factory(:build, repository: tag.repository)
+
+        lambda {
+          build.add_tag('foo')
+        }.should_not change { Tag.count }
+
+        build.tags.map(&:name).should == ['foo']
+        tag.builds.should == [build]
+      end
+
+      it 'does not add a tag if it is already added' do
+        build = Factory(:build)
+        build.tags.should be_empty
+
+        build.add_tag('foo')
+        build.add_tag('foo')
+
+        build.tags.map(&:name).should == ['foo']
+        build.tags.first.builds.should == [build]
+      end
+
+      it 'retries on ActiveRecord::RecordNotUnique' do
+        tag = Factory(:tag, name: 'deploy.1')
+        build = Factory(:build, repository: tag.repository)
+
+        build.tags.stubs(:create!).raises(ActiveRecord::RecordNotUnique).
+          then.returns(tag)
+
+        build.add_tag('deploy.1').should == tag
+      end
+
+      it 'retries on ActiveRecord::RecordInvalid' do
+        tag = Factory(:tag, name: 'deploy.1')
+        build = Factory(:build, repository: tag.repository)
+
+        build.tags.stubs(:create!).raises(ActiveRecord::RecordInvalid).
+          then.returns(tag)
+
+        build.add_tag('deploy.1').should == tag
+      end
     end
 
     describe 'reset' do

@@ -5,6 +5,24 @@ describe Commit do
 
   let(:commit) { Commit.new(:commit => '12345678') }
 
+  describe '#tag_name' do
+    describe 'with tag name available' do
+      before { commit.ref = 'refs/tags/foobar' }
+
+      it 'returns tag name' do
+        commit.tag_name.should == 'foobar'
+      end
+    end
+
+    describe 'with tag name unavailable' do
+      before { commit.ref = 'refs/heads/foobar' }
+
+      it 'returns nil' do
+        commit.tag_name.should be_nil
+      end
+    end
+  end
+
   describe 'pull_request_number' do
     context 'when commit is from pull request' do
       before { commit.ref = 'refs/pull/180/merge' }

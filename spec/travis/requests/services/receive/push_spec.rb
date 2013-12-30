@@ -51,17 +51,17 @@ describe Travis::Requests::Services::Receive::Push do
         payload.commit[:commit].should == '586374eac43853e5542a2e2faafd48047127e4be'
       end
 
-      it 'returns master when ref is ref/heads/master' do
+      it 'returns master when ref is refs/heads/master' do
         payload.commit[:branch].should == 'master'
       end
 
-      it 'returns travis when ref is ref/heads/travis' do
-        payload.event.data['ref'] = "ref/heads/travis"
+      it 'returns travis when ref is refs/heads/travis' do
+        payload.event.data['ref'] = "refs/heads/travis"
         payload.commit[:branch].should == 'travis'
       end
 
-      it 'returns features/travis-ci when ref is ref/heads/features/travis-ci' do
-        payload.event.data['ref'] = "ref/heads/features/travis-ci"
+      it 'returns features/travis-ci when ref is refs/heads/features/travis-ci' do
+        payload.event.data['ref'] = "refs/heads/features/travis-ci"
         payload.commit[:branch].should == 'features/travis-ci'
       end
     end

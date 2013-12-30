@@ -116,7 +116,7 @@ class Repository < Travis::Model
     private? ? "git@github.com:#{slug}.git": "git://github.com/#{slug}.git"
   end
 
-  def branches
+  def branch_names
     self.class.connection.select_values %(
       SELECT DISTINCT ON (branch) branch
       FROM   builds

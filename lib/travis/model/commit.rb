@@ -8,6 +8,12 @@ class Commit < Travis::Model
 
   validates :commit, :branch, :committed_at, :presence => true
 
+  def tag_name
+    if ref
+      ref.scan(%r{refs/tags/(.*?)$}).flatten.first
+    end
+  end
+
   def pull_request?
     ref =~ %r(^refs/pull/\d+/merge$)
   end

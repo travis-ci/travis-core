@@ -203,18 +203,18 @@ describe Repository do
     end
   end
 
-  describe 'branches' do
+  describe 'branch_names' do
     let(:repo) { Factory(:repository) }
 
     it 'returns branches for the given repository' do
       %w(master production).each do |branch|
         2.times { Factory(:build, repository: repo, commit: Factory(:commit, branch: branch)) }
       end
-      repo.branches.sort.should == %w(master production)
+      repo.branch_names.sort.should == %w(master production)
     end
 
     it 'is empty for empty repository' do
-      repo.branches.should eql []
+      repo.branch_names.should eql []
     end
   end
 
