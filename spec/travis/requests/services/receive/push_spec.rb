@@ -28,15 +28,6 @@ describe Travis::Requests::Services::Receive::Push do
     end
   end
 
-  it 'does not accept the request if pushes are disabled in the settings' do
-    id = payload.event['repository']['id']
-    settings = mock('settings')
-    repo = stub('repository', settings: settings)
-    payload.expects(:run_service).with(:find_repo, github_id: id).returns(repo)
-    settings.expects(:build_pushes?).returns(false)
-    payload.accept?.should be_false
-  end
-
   describe 'commit' do
     it 'returns all attributes required for a Commit' do
       payload.commit.should == {
