@@ -98,6 +98,36 @@ describe Build, 'matrix' do
       build.matrix_state.should == :errored
     end
 
+    it 'returns :created if one job has been created' do
+      build.matrix[0].update_attributes!(state: "passed")
+      build.matrix[1].update_attributes!(state: "created")
+      build.matrix_state.should == :created
+    end
+
+    it 'returns :created if one job has been created, and the other been queued' do
+      build.matrix[0].update_attributes!(state: "queued")
+      build.matrix[1].update_attributes!(state: "created")
+      build.matrix_state.should == :created
+    end
+
+    it 'returns :queued if one job has been queued' do
+      build.matrix[0].update_attributes!(state: "passed")
+      build.matrix[1].update_attributes!(state: "queued")
+      build.matrix_state.should == :queued
+    end
+
+    it 'returns :queued if one job has been queued, and the other started' do
+      build.matrix[0].update_attributes!(state: "started")
+      build.matrix[1].update_attributes!(state: "queued")
+      build.matrix_state.should == :queued
+    end
+
+    it 'returns :started if one job has started' do
+      build.matrix[0].update_attributes!(state: "passed")
+      build.matrix[1].update_attributes!(state: "started")
+      build.matrix_state.should == :started
+    end
+
     it 'returns :passed if a errored job is allowed to fail' do
       build.matrix[0].update_attributes!(state: "passed")
       build.matrix[1].update_attributes!(state: "errored", allow_failure: true)
