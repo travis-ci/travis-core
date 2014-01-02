@@ -2,8 +2,8 @@
 
 ## Testing
 ### Prerequisites
-* PostgreSQL
-* Redis
+* PostgreSQL  >= 9.2
+* Redis       >= 2.4
 
 ### Initial Setup
 ```
