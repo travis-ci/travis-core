@@ -42,6 +42,12 @@ class Build
         :errored
       elsif tests.any?(&:failed?)
         :failed
+      elsif tests.any?(&:created?)
+        :created
+      elsif tests.any?(&:queued?)
+        :queued
+      elsif tests.any?(&:started?)
+        :started
       elsif tests.all?(&:passed?)
         :passed
       else
