@@ -17,11 +17,7 @@ describe Build do
   end
 
   it 'is cancelable if at least one job is cancelable' do
-    jobs = [
-      Factory.build(:test),
-      Factory.build(:test)
-    ]
-
+    jobs = [Factory.build(:test), Factory.build(:test)]
     jobs.first.stubs(:cancelable?).returns(true)
     jobs.second.stubs(:cancelable?).returns(false)
 
@@ -30,11 +26,7 @@ describe Build do
   end
 
   it 'is not cancelable if none of the jobs are cancelable' do
-    jobs = [
-      Factory.build(:test),
-      Factory.build(:test)
-    ]
-
+    jobs = [Factory.build(:test), Factory.build(:test)]
     jobs.first.stubs(:cancelable?).returns(false)
     jobs.second.stubs(:cancelable?).returns(false)
 
@@ -230,147 +222,13 @@ describe Build do
     end
 
     describe 'config' do
-      it 'defaults to an empty hash' do
-        Build.new.config.should == {}
+      it 'defaults to a hash with language set' do
+        Build.new.config.should == { language: 'ruby' }
       end
 
       it 'deep_symbolizes keys on write' do
         build = Factory(:build, config: { 'foo' => { 'bar' => 'bar' } })
         build.config[:foo][:bar].should == 'bar'
-      end
-
-      it 'normalizes env vars global and matrix which are hashes to strings' do
-        env = {
-          'global' => [{FOO: 'bar', BAR: 'baz'}],
-          'matrix' => [{ONE: 1, TWO: '2'}]
-        }
-
-        config = { 'env' => env }
-        build = Factory(:build, config: config)
-
-        build.config.should == {
-          env: ["ONE=1 TWO=2"],
-          global_env: ["FOO=bar BAR=baz"]
-        }
-      end
-
-      it 'works fine even if matrix part of env is undefined' do
-        env = {
-          'global' => ['FOO=bar']
-        }
-        config = { 'env' => env }
-        build = Factory(:build, config: config)
-
-        build.config.should == {
-          global_env: ["FOO=bar"]
-        }
-      end
-
-      it 'works fine even if global part of env is undefined' do
-        env = {
-          'matrix' => ['FOO=bar']
-        }
-        config = { 'env' => env }
-        build = Factory(:build, config: config)
-
-        build.config.should == {
-          env: ["FOO=bar"]
-        }
-      end
-
-      it 'squashes matrix and global keys to save config as an array, not as a hash' do
-        env = {
-          'global' => ['FOO=bar'],
-          'matrix' => [['BAR=baz', 'BAZ=qux'], 'QUX=foo']
-        }
-        config = { 'env' => env }
-        build = Factory(:build, config: config)
-
-        build.config.should == {
-          env: [
-            ["BAR=baz", "BAZ=qux"],
-            "QUX=foo"
-          ],
-          global_env: ["FOO=bar"]
-        }
-      end
-
-      it 'tries to deserialize the config itself if a String is returned' do
-        build = Factory(:build)
-        build.stubs(:read_attribute).returns("---\n:foo:\n  :bar: bar")
-        Build.logger.expects(:warn)
-        build.config[:foo][:bar].should == 'bar'
-      end
-    end
-
-    describe 'obfuscated config' do
-      it 'normalizes env vars which are hashes to strings' do
-        build  = Build.new(repository: Factory(:repository))
-        config = {
-          env: [[build.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo'], [{ONE: 1, TWO: '2'}]]
-        }
-        build.config = config
-
-        build.obfuscated_config.should == {
-          env: ['BAR=[secure] FOO=foo', 'ONE=1 TWO=2']
-        }
-      end
-
-      it 'leaves regular vars untouched' do
-        build = Build.new(repository: Factory(:repository))
-        build.config = { rvm: ['1.8.7'], env: ['FOO=foo'] }
-
-        build.obfuscated_config.should == {
-          rvm: ['1.8.7'],
-          env: ['FOO=foo']
-        }
-      end
-
-      it 'obfuscates env vars' do
-        build  = Build.new(repository: Factory(:repository))
-        config = {
-          rvm: ['1.8.7'],
-          env: [[build.repository.key.secure.encrypt('BAR=barbaz'), 'FOO=foo'], 'BAR=baz']
-        }
-        build.config = config
-
-        build.obfuscated_config.should == {
-          rvm: ['1.8.7'],
-          env: ['BAR=[secure] FOO=foo', 'BAR=baz']
-        }
-      end
-
-      it 'obfuscates env vars which are not in nested array' do
-        build  = Build.new(repository: Factory(:repository))
-        config = {
-          rvm: ['1.8.7'],
-          env: [build.repository.key.secure.encrypt('BAR=barbaz')]
-        }
-        build.config = config
-
-        build.obfuscated_config.should == {
-          rvm: ['1.8.7'],
-          env: ['BAR=[secure]']
-        }
-      end
-
-      it 'works with nil values' do
-        build  = Build.new(repository: Factory(:repository))
-        build.config = { rvm: ['1.8.7'] }
-        build.config[:env] = [[nil, {secure: ''}]]
-        build.obfuscated_config.should == { rvm: ['1.8.7'], env:  [''] }
-      end
-
-      it 'does not make an empty env key an array but leaves it empty' do
-        build  = Build.new(repository: Factory(:repository))
-        build.config = { rvm: ['1.8.7'], env:  nil }
-        build.obfuscated_config.should == { rvm: ['1.8.7'], env:  nil }
-      end
-
-      it 'removes source key' do
-        build  = Build.new(repository: Factory(:repository))
-        build.config = { rvm: ['1.8.7'], source_key: '1234' }
-        build.obfuscated_config.should == { rvm: ['1.8.7'] }
       end
     end
 

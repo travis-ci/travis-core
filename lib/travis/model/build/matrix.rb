@@ -18,52 +18,10 @@ class Build
   #  * an arbitrary env key that can be used from within the test suite in
   #    order to branch out specific variations of the test run
   module Matrix
-    require 'travis/model/build/matrix/config'
     extend ActiveSupport::Concern
-    ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl, :compiler, :go, :xcode_sdk, :xcode_scheme, :ghc]
-
-    EXPANSION_KEYS_LANGUAGE = {
-      'c'           => [:compiler],
-      'clojure'     => [:lein, :jdk],
-      'cpp'         => [:compiler],
-      'erlang'      => [:otp_release],
-      'go'          => [:go],
-      'groovy'      => [:jdk],
-      'haskell'     => [:ghc],
-      'java'        => [:jdk],
-      'node_js'     => [:node_js],
-      'objective-c' => [:rvm, :gemfile, :xcode_sdk, :xcode_scheme],
-      'perl'        => [:perl],
-      'php'         => [:php],
-      'python'      => [:python],
-      'ruby'        => [:rvm, :gemfile, :jdk],
-      'scala'       => [:scala, :jdk]
-    }
-
-    EXPANSION_KEYS_UNIVERSAL = [:env, :branch]
-
-    module ClassMethods
-      def matrix_keys_for(config)
-        keys = matrix_lang_keys(config)
-        keys & config.keys.map(&:to_sym)
-      end
-
-      def matrix_lang_keys(config)
-        env_keys = ENV_KEYS
-        lang = Array(config.symbolize_keys[:language]).first
-        env_keys &= EXPANSION_KEYS_LANGUAGE.fetch(lang, EXPANSION_KEYS_LANGUAGE[Build::Matrix::Config::DEFAULT_LANG])
-        env_keys | EXPANSION_KEYS_UNIVERSAL
-      end
-    end
-
-    # Return only the child builds whose config matches against as passed hash
-    # e.g. build.matrix_for(rvm: '1.8.7', env: 'DB=postgresql')
-    def matrix_for(config)
-      config.blank? ? matrix : matrix.select { |job| job.matrix_config?(config) }
-    end
 
     def matrix_finished?
-      if matrix_config.matrix_settings[:fast_finish]
+      if matrix_config.fast_finish?
         matrix.all?(&:waiting_for_result?) || matrix.any?(&:finished_unsuccessfully?)
       else
         matrix.all?(&:waiting_for_result?)
@@ -96,10 +54,10 @@ class Build
       matrix_config.expand.each_with_index do |row, ix|
         attributes = self.attributes.slice(*Job.column_names - ['status', 'result']).symbolize_keys
         attributes.merge!(
-          :owner => owner,
-          :number => "#{number}.#{ix + 1}",
-          :config => expand_config(row),
-          :log => Log.new
+          owner: owner,
+          number: "#{number}.#{ix + 1}",
+          config: row,
+          log: Log.new
         )
         matrix.build(attributes)
       end
@@ -112,36 +70,22 @@ class Build
       save!
     end
 
-    protected
+    # Return only the child builds whose config matches against as passed hash
+    # e.g. build.filter_matrix(rvm: '1.8.7', env: 'DB=postgresql')
+    def filter_matrix(config)
+      config.blank? ? matrix : matrix.select { |job| job.matches_config?(config) }
+    end
 
-      def expand_config(row)
-        hash = {}
-        row.each do |key, values|
-          hash[key] = values
-        end
-
-        c = config.merge(hash)
-        lang = Array(c.symbolize_keys[:language]).first
-        c.delete_if { |k,v| !lang_expands_key? lang, k }
-      end
+    private
 
       def matrix_config
-        @matrix_config ||= Config.new(self)
+        @matrix_config ||= Config::Matrix.new(config, multi_os: multi_os_enabled?)
       end
 
       def matrix_allow_failures
-        allow_configs = matrix_config.matrix_settings[:allow_failures] || []
-        allow_configs.each do |config|
-          cfg = config.merge(language: matrix_config.config.fetch(:language, Build::Matrix::Config::DEFAULT_LANG))
-          matrix_for(cfg).each { |m| m.allow_failure = true }
-        end
+        configs = matrix_config.allow_failure_configs
+        jobs = configs.map { |config| filter_matrix(config) }.flatten
+        jobs.each { |job| job.allow_failure = true }
       end
-
-    private
-    def lang_expands_key?(lang, key)
-      !ENV_KEYS.include?(key) ||
-      EXPANSION_KEYS_UNIVERSAL.include?(key) ||
-      EXPANSION_KEYS_LANGUAGE.fetch(lang, EXPANSION_KEYS_LANGUAGE[Build::Matrix::Config::DEFAULT_LANG]).include?(key)
-    end
   end
 end

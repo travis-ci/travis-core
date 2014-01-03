@@ -1,5 +1,6 @@
 require 'active_record'
 require 'active_support/core_ext/hash/deep_dup'
+require 'travis/model/build/config/language'
 
 # Job models a unit of work that is run on a remote worker.
 #
@@ -127,12 +128,10 @@ class Job < Travis::Model
     {}
   end
 
-  def matrix_config?(config)
-    return false unless config.respond_to?(:to_hash)
-    config = config.to_hash.symbolize_keys
-    Build.matrix_keys_for(config).map do |key|
-      self.config[key.to_sym] == config[key] || commit.branch == config[key]
-    end.inject(:&)
+  def matches_config?(other)
+    config = self.config.slice(*other.keys)
+    config = config.merge(branch: commit.branch) if other.key?(:branch) # TODO test this
+    config.all? { |key, value| value == other[key] || commit.branch == other[key] }
   end
 
   def log_content=(content)
@@ -141,6 +140,10 @@ class Job < Travis::Model
   end
 
   private
+
+    def multi_os_enabled?
+      Travis::Features.enabled_for_all?(:multi_os) || Travis::Features.active?(:multi_os, repository)
+    end
 
     def whitelisted_addons
       [:firefox, :hosts, :postgresql]

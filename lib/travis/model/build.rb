@@ -38,6 +38,7 @@ require 'simple_states'
 #                  TODO probably should be cleaned up and moved to
 #                  travis/notification)
 class Build < Travis::Model
+  require 'travis/model/build/config'
   require 'travis/model/build/denormalize'
   require 'travis/model/build/matrix'
   require 'travis/model/build/metrics'
@@ -46,7 +47,6 @@ class Build < Travis::Model
   require 'travis/model/env_helpers'
 
   include Matrix, States, SimpleStates
-  include Travis::Model::EnvHelpers
 
   belongs_to :commit
   belongs_to :request
@@ -178,64 +178,12 @@ class Build < Travis::Model
   end
   alias addons_enabled? secure_env_enabled?
 
-  # sometimes the config is not deserialized and is returned
-  # as a string, this is a work around for now :(
-  def config
-    deserialized = self['config']
-    if deserialized.is_a?(String)
-      logger.warn "Attribute config isn't YAML. Current serialized attributes: #{Build.serialized_attributes}"
-      deserialized = YAML.load(deserialized)
-    end
-    deserialized
-  rescue Psych::SyntaxError => e
-    logger.warn "[build id:#{id}] Config could not be deserialized due to #{e.message}"
-    {}
-  end
-
   def config=(config)
-    super(config ? normalize_config(config) : {})
+    super(Config.new(config, multi_os: multi_os_enabled?).normalize)
   end
 
   def obfuscated_config
-    config.dup.tap do |config|
-      config.delete(:source_key)
-      next unless config[:env]
-      config[:env] = [config[:env]] unless config[:env].is_a?(Array)
-      if config[:env]
-        config[:env] = config[:env].map do |env|
-          env = normalize_env_hashes(env)
-          obfuscate_env(env).join(' ')
-        end
-      end
-    end
-  end
-
-  def normalize_env_hashes(lines)
-    process_line = ->(line) do
-      if line.is_a?(Hash)
-        env_hash_to_string(line)
-      elsif line.is_a?(Array)
-        line.map do |line|
-          env_hash_to_string(line)
-        end
-      else
-        line
-      end
-    end
-
-
-    if lines.is_a?(Array)
-      lines.map { |env| process_line.(env) }
-    else
-      process_line.(lines)
-    end
-  end
-
-  def env_hash_to_string(hash)
-    return hash unless hash.is_a?(Hash)
-    return hash if hash.has_key?(:secure)
-
-    hash.map { |k,v| "#{k}=#{v}" }.join(' ')
+    Config.new(config, key_fetcher: lambda { self.repository.key }).obfuscate
   end
 
   def cancelable?
@@ -257,42 +205,8 @@ class Build < Travis::Model
 
   private
 
-    def normalize_env_values(values)
-      env = values
-      global = nil
-
-      if env.is_a?(Hash) && (env[:global] || env[:matrix])
-        global = env[:global]
-        env    = env[:matrix]
-      end
-
-      if env
-        env = [env] unless env.is_a?(Array)
-        env = normalize_env_hashes(env)
-      end
-
-      if global
-        global = [global] unless global.is_a?(Array)
-        global = normalize_env_hashes(global)
-      end
-
-      { env: env, global: global }
-    end
-
-
-    def normalize_config(config)
-      config = config.deep_symbolize_keys
-      if config[:env]
-        result = normalize_env_values(config[:env])
-        if result[:env]
-          config[:env] = result[:env]
-        else
-          config.delete(:env)
-        end
-
-        config[:global_env] = result[:global] if result[:global]
-      end
-      config
+    def multi_os_enabled?
+      Travis::Features.enabled_for_all?(:multi_os) || repository && Travis::Features.active?(:multi_os, repository)
     end
 
     def last_finished_state_on_branch
@@ -301,8 +215,6 @@ class Build < Travis::Model
 
     def to_postgres_array(ids)
       ids = ids.compact.uniq
-      unless ids.empty?
-        "{#{ids.map { |id| id.to_i.to_s }.join(',')}}"
-      end
+      "{#{ids.map { |id| id.to_i.to_s }.join(',')}}" unless ids.empty?
     end
 end

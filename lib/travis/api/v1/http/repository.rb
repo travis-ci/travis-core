@@ -9,7 +9,6 @@ module Travis
 
           def initialize(repository, options = {})
             @repository = repository
-            @options = options.symbolize_keys.slice(*::Build.matrix_keys_for(options))
           end
 
           def data
