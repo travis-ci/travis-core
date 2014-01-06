@@ -12,7 +12,6 @@ rvm:
   - jruby-head
 jdk:
   - oraclejdk7
-  - openjdk6
 matrix:
   include:
     - rvm: 1.9.3
@@ -30,8 +29,6 @@ matrix:
       jdk:
     - rvm: jruby-head
       jdk: oraclejdk7
-    - rvm: jruby-head
-      jdk: openjdk6
 before_script:
   - sudo service mysql stop
   - redis-cli config set save ""
