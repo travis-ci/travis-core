@@ -372,6 +372,21 @@ describe Build, 'matrix' do
     yml
     }
 
+    let(:ruby_matrix_with_incorrect_allow_failures) {
+      YAML.load <<-yml
+      language: ruby
+
+      rvm:
+        - "1.9.3"
+        - "2.1.0"
+
+      matrix:
+        fast_finish: true
+        allow_failures:
+          - what: "ever"
+    yml
+    }
+
     describe :expand_matrix do
       it 'does not expand on :os' do
         build = Factory.create(:build, config: { rvm: ['1.9.3', '2.0.0'], os: ['osx', 'linux']})
@@ -439,6 +454,16 @@ describe Build, 'matrix' do
       it 'ignores global env config when setting allow failures' do
         build = Factory(:build, config: allow_failures_with_global_env)
         build.matrix.map(&:allow_failure).should == [true, false, false, false]
+      end
+
+      context 'when matrix specifies incorrect allow_failures' do
+        before :each do
+          @build = Factory(:build, config: ruby_matrix_with_incorrect_allow_failures)
+        end
+
+        it 'excludes matrices correctly' do
+          @build.matrix.map(&:allow_failure).should == [false, false]
+        end
       end
 
       context 'when ruby project contains unwanted key' do
