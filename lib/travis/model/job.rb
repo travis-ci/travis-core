@@ -131,6 +131,7 @@ class Job < Travis::Model
   def matches_config?(other)
     config = self.config.slice(*other.keys)
     config = config.merge(branch: commit.branch) if other.key?(:branch) # TODO test this
+    return false if config.size == 0
     config.all? { |key, value| value == other[key] || commit.branch == other[key] }
   end
 
