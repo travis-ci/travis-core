@@ -82,7 +82,7 @@ describe 'Travis::Api::V2::Http::Build using Travis::Services::Builds::FindOne' 
   let(:data)    { Travis::Api::V2::Http::Build.new(build).data }
 
   it 'queries' do
-    lambda { data }.should issue_queries(5)
+    lambda { data }.should issue_queries(6)
   end
 end
 

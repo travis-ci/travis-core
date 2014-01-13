@@ -20,7 +20,7 @@ RSpec::Matchers.define :issue_queries do |count|
   def call(code)
     queries = []
     ActiveSupport::Notifications.subscribe 'sql.active_record' do |name, start, finish, id, payload|
-      queries << payload[:sql] unless payload[:sql] =~ /ROLLBACK/
+      queries << payload[:sql] unless payload[:sql] =~ /(?:ROLLBACK|pg_attribute|pg_namespace)/
     end
     code.call
     queries

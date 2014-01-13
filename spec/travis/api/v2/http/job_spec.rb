@@ -20,7 +20,8 @@ describe Travis::Api::V2::Http::Job do
       'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
       'queue' => 'builds.linux',
       'allow_failure' => false,
-      'tags' => 'tag-a,tag-b'
+      'tags' => 'tag-a,tag-b',
+      'annotation_ids' => [1],
     }
   end
 
@@ -38,6 +39,17 @@ describe Travis::Api::V2::Http::Job do
       'author_email' => 'svenfuchs@artweb-design.de',
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
     }
+  end
+
+  it 'annotations' do
+    data['annotations'].should eq([{
+      'id' => 1,
+      'job_id' => 1,
+      'description' => 'The job passed.',
+      'url' => 'https://travis-ci.org/travis-ci/travis-ci/12345',
+      'image' => nil,
+      'provider_name' => 'Travis CI',
+    }])
   end
 
   context 'with encrypted env vars' do
@@ -59,6 +71,6 @@ describe 'Travis::Api::V2::Http::Job using Travis::Services::Jobs::FindOne' do
   let(:data)    { Travis::Api::V2::Http::Job.new(job).data }
 
   it 'queries' do
-    lambda { data }.should issue_queries(4)
+    lambda { data }.should issue_queries(5)
   end
 end

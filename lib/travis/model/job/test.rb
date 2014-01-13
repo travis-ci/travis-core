@@ -47,6 +47,7 @@ class Job
       else
         build_log
       end
+      annotations.destroy_all
     end
 
     def cancel

@@ -17,7 +17,8 @@ module Travis
                 'result' => legacy_job_result(job),
                 'started_at' => format_date(job.started_at),
                 'finished_at' => format_date(job.finished_at),
-                'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4'
+                'worker' => 'ruby3.worker.travis-ci.org:travis-ruby-4',
+                'annotation_ids' => job.annotation_ids,
               }
             end
           end

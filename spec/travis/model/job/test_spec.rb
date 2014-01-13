@@ -147,6 +147,13 @@ describe Job::Test do
       xit 'clears log parts' do
       end
 
+      it 'destroys annotations' do
+        job.annotations << Factory(:annotation)
+        job.reload
+        job.reset!
+        job.reload.annotations.should be_empty
+      end
+
       it 'triggers a :created event' do
         job.expects(:notify).with(:reset)
         job.reset

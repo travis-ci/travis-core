@@ -15,7 +15,8 @@ module Travis
           def data
             {
               'job' => job_data(job),
-              'commit' => commit_data(job.commit)
+              'commit' => commit_data(job.commit),
+              'annotations' => Annotations.new(job.annotations, @options).data["annotations"],
             }
           end
 
@@ -36,7 +37,8 @@ module Travis
                 'finished_at' => format_date(job.finished_at),
                 'queue' => job.queue,
                 'allow_failure' => job.allow_failure,
-                'tags' => job.tags
+                'tags' => job.tags,
+                'annotation_ids' => job.annotation_ids,
               }
             end
 

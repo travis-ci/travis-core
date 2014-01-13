@@ -50,6 +50,16 @@ describe Travis::Addons::Pusher::EventHandler do
       subject.expects(:notify)
       Travis::Event.dispatch('worker:added', worker)
     end
+
+    it 'annotation:created' do
+      subject.expects(:notify)
+      Travis::Event.dispatch('annotation:created', annotation)
+    end
+
+    it 'annotation:updated' do
+      subject.expects(:notify)
+      Travis::Event.dispatch('annotation:updated', annotation)
+    end
   end
 
   # describe 'instrumentation' do
