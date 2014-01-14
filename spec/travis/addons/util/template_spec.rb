@@ -10,6 +10,7 @@ describe Travis::Addons::Util::Template do
     branch
     commit
     author
+    duration
     message
     compare_url
     build_url
@@ -41,6 +42,10 @@ describe Travis::Addons::Util::Template do
 
     it 'replaces the author' do
       result.should =~ /author=Sven Fuchs/
+    end
+    
+    it 'replaces the duration' do
+      result.should =~ /duration=1 min 0 sec/
     end
 
     it 'replaces the message' do
