@@ -42,16 +42,10 @@ class Build
         :errored
       elsif tests.any?(&:failed?)
         :failed
-      elsif tests.any?(&:created?)
-        :created
-      elsif tests.any?(&:queued?)
-        :queued
-      elsif tests.any?(&:started?)
-        :started
       elsif tests.all?(&:passed?)
         :passed
       else
-        raise StandardError, "Invalid job state (#{tests.map(&:state)})"
+        raise InvalidMatrixStateException.new(tests)
       end
     end
 
@@ -93,5 +87,25 @@ class Build
         jobs = configs.map { |config| filter_matrix(config) }.flatten
         jobs.each { |job| job.allow_failure = true }
       end
+  end
+
+  class InvalidMatrixStateException < StandardError
+    attr_reader :matrix
+
+    def initialize(matrix)
+      @matrix = matrix
+    end
+
+    def to_s
+      sanitized = matrix.map do |job|
+        "\n\tid: #{job.id}, repository: #{job.repository.slug}, state: #{job.state}, " +
+        "allow_failure: #{job.allow_failure}, " +
+        "created_at: #{job.created_at.inspect}, queued_at: #{job.queued_at.inspect}, " +
+        "started_at: #{job.started_at.inspect}, finished_at: #{job.finished_at.inspect}, " +
+        "canceled_at: #{job.canceled_at.inspect}, updated_at: #{job.updated_at.inspect}"
+      end.join
+
+      "Invalid build matrix state detected.\nMatrix: #{sanitized}"
+    end
   end
 end
