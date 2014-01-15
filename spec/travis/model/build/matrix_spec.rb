@@ -280,6 +280,20 @@ describe Build, 'matrix' do
     yml
     }
 
+    let(:matrix_with_inclusion_only) {
+      YAML.load <<-yml
+      language: ruby
+      matrix:
+        include:
+          - rvm: "2.1.0"
+            env: FOO=true
+          - rvm: "2.1.0"
+            env: BAR=true
+          - rvm: "1.9.3"
+            env: BAZ=true
+    yml
+    }
+
     let(:multiple_tests_config_with_allow_failures) {
       YAML.load <<-yml
       language: objective-c
@@ -552,6 +566,24 @@ describe Build, 'matrix' do
             { language: 'ruby', rvm: '1.9.2', env: 'BAR=xyzzy', matrix: matrix_inclusion },
           ]
         end
+
+      it 'does not include "empty" matrix config' do
+        build = Factory(:build, config: matrix_with_inclusion_only)
+
+        matrix_inclusion = {
+          include: [
+            { rvm: '2.1.0', env: 'FOO=true' },
+            { rvm: '2.1.0', env: 'BAR=true' },
+            { rvm: '1.9.3', env: 'BAZ=true' }
+          ]
+        }
+
+        build.matrix.map(&:config).should == [
+          { language: 'ruby', rvm: '2.1.0', env: 'FOO=true', matrix: matrix_inclusion},
+          { language: 'ruby', rvm: '2.1.0', env: 'BAR=true', matrix: matrix_inclusion},
+          { language: 'ruby', rvm: '1.9.3', env: 'BAZ=true', matrix: matrix_inclusion}
+        ]
+      end
     end
 
     describe 'matrix expansion' do

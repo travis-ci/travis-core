@@ -71,7 +71,11 @@ class Build
         def include_matrix_configs(configs)
           include_configs = settings[:include] || []
           include_configs = include_configs.map(&:to_a).map(&:sort)
-          configs + include_configs
+          if configs.flatten.empty? && settings.has_key?(:include)
+            include_configs
+          else
+            configs + include_configs
+          end
         end
 
         def merge_config(row)
