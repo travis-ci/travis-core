@@ -26,6 +26,7 @@ module Travis
             author:         data[:commit][:author_name],
             commit_message: data[:commit][:message],
             result:         data[:build][:state].to_s,
+            duration:       seconds_to_duration(data[:build][:duration]),
             message:        message,
             compare_url:    compare_url,
             build_url:      build_url
@@ -57,6 +58,10 @@ module Travis
 
           def shorten_url(url)
             Url.shorten(url).short_url
+          end
+
+          def seconds_to_duration(seconds)
+            (seconds / 60).floor.to_s + ' min ' + seconds.modulo(60).to_s + ' sec'
           end
       end
     end
