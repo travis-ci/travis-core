@@ -9,7 +9,7 @@ module Travis
             include Formats
 
             def data
-              {
+              data = {
                 'id' => build.id,
                 'repository' => repository_data,
                 'number' => build.number,
@@ -34,6 +34,12 @@ module Travis
                 'matrix' => build.matrix.map { |job| Job.new(job, options).data },
                 'type'  => build.event_type
               }
+
+              if commit.pull_request?
+                data['pull_request_number'] = commit.pull_request_number
+              end
+
+              data
             end
 
             def repository_data

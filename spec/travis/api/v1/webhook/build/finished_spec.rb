@@ -80,5 +80,12 @@ describe Travis::Api::V1::Webhook::Build::Finished do
       build.stubs(:event_type).returns('pull_request')
       data['type'].should == 'pull_request'
     end
+
+    it 'includes the pull request number for pull requests' do
+      build.stubs(:event_type).returns('pull_request')
+      build.commit.stubs(:pull_request?).returns(true)
+      build.commit.stubs(:pull_request_number).returns 1
+      data['pull_request_number'].should == 1
+    end
   end
 end
