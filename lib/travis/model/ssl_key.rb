@@ -1,6 +1,7 @@
 require 'openssl'
 require 'base64'
 require 'travis/secure_config'
+require 'travis/model/encrypted_column'
 
 # A Repository has an SSL key pair that is used to encrypt/decrypt sensitive
 # data so it can be added to a public `.travis.yml` file (e.g. Campfire

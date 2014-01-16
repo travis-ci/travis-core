@@ -1,5 +1,6 @@
 require 'active_record'
 require 'gh'
+require 'travis/model/encrypted_column'
 
 class User < Travis::Model
   require 'travis/model/user/oauth'

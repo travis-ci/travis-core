@@ -6,7 +6,6 @@ require 'core_ext/active_record/base'
 
 module Travis
   class Model < ActiveRecord::Base
-    require 'travis/model/encrypted_column'
     require 'travis/model/account'
     require 'travis/model/annotation'
     require 'travis/model/annotation_provider'

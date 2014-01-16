@@ -1,4 +1,5 @@
 require 'active_record'
+require 'travis/model/encrypted_column'
 
 class AnnotationProvider < ActiveRecord::Base
   has_many :annotations
