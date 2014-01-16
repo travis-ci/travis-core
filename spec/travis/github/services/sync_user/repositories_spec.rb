@@ -10,7 +10,6 @@ describe Travis::Github::Services::SyncUser::Repositories do
   let(:removed_repo) { stub_repository(:slug => 'sven/removed') }
 
   let(:user) { stub_user(:organizations => [org], :github_oauth_token => 'token', :repositories => [public_repo, removed_repo]) }
-  let(:org)  { stub('org', :login => 'the-org') }
   let(:sync) { described_class.new(user) }
 
   let(:repos) { [
@@ -35,7 +34,7 @@ describe Travis::Github::Services::SyncUser::Repositories do
   end
 
   it "fetches the user's orgs' repositories" do
-    GH.expects(:[]).with('orgs/the-org/repos') # should be: ?type=public
+    GH.expects(:[]).with('orgs/travis-ci/repos') # should be: ?type=public
     sync.run
   end
 
@@ -97,14 +96,14 @@ describe Travis::Github::Services::SyncUser::Repositories do
     it "should not sync the organization's duplicate" do
       repository.expects(:new).once.returns(stub('repository', :run => public_repo))
       GH.expects(:[]).with('user/repos').returns(user_repositories).in_sequence(order)
-      GH.expects(:[]).with('orgs/the-org/repos').returns(duplicate_org_repositories).in_sequence(order)
+      GH.expects(:[]).with('orgs/travis-ci/repos').returns(duplicate_org_repositories).in_sequence(order)
       sync.run
     end
 
     it "should sync the organization's repository when it's not a duplicate" do
       repository.expects(:new).twice.returns(stub('repository', :run => public_repo))
       GH.expects(:[]).with('user/repos').returns(user_repositories).in_sequence(order)
-      GH.expects(:[]).with('orgs/the-org/repos').returns(org_repositories).in_sequence(order)
+      GH.expects(:[]).with('orgs/travis-ci/repos').returns(org_repositories).in_sequence(order)
       sync.run
     end
 
@@ -112,7 +111,7 @@ describe Travis::Github::Services::SyncUser::Repositories do
       # this is an unlikely scenario, but as the code checks for it, a test is in order
       repository.expects(:new).twice.returns(stub('repository', :run => public_repo))
       GH.expects(:[]).with('user/repos').returns(duplicate_org_repositories).in_sequence(order)
-      GH.expects(:[]).with('orgs/the-org/repos').returns(user_repositories).in_sequence(order)
+      GH.expects(:[]).with('orgs/travis-ci/repos').returns(user_repositories).in_sequence(order)
       sync.run
     end
   end
