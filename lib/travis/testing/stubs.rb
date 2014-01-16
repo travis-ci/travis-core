@@ -220,9 +220,6 @@ module Travis
         Stubs.stub 'user', attributes.reverse_merge(
           id: 1,
           organizations: [org],
-          organization_ids: [org.id],
-          repository_ids: [],
-          repositories: [],
           name: 'Sven Fuchs',
           login: 'svenfuchs',
           email: 'svenfuchs@artweb-design.de',
@@ -231,14 +228,11 @@ module Travis
           github_oauth_token: 'token',
           syncing?: false,
           is_syncing: false,
-          is_syncing?: false,
           synced_at: Time.now.utc - 3600,
           tokens: [stub('token', token: 'token')],
           github_scopes: Travis.config.oauth2.try(:scopes).to_s.split(','),
           correct_scopes?: true,
-          created_at: Time.now.utc - 7200,
-          emails: [],
-          github_id: 2208
+          created_at: Time.now.utc - 7200
         )
       end
 
@@ -247,8 +241,7 @@ module Travis
           id: 1,
           login: 'travis-ci',
           name: 'Travis CI',
-          email: 'contact@travis-ci.org',
-          avatar_url: nil
+          email: 'contact@travis-ci.org'
         )
       end
 
