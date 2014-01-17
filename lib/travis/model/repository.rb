@@ -144,7 +144,7 @@ class Repository < Travis::Model
     self.class.connection.select_values %(
       SELECT DISTINCT ON (branch) builds.id
       FROM   builds
-      WHERE  builds.repository_id = #{id}
+      WHERE  builds.repository_id = #{id} AND builds.event_type = 'push'
       ORDER  BY branch, finished_at DESC
       LIMIT  25
     )
