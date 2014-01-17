@@ -136,18 +136,15 @@ class Repository < Travis::Model
     builds.pushes.last_state_on(state: [:passed, :failed, :errored], branch: branch)
   end
 
-  def last_finished_builds_by_branches
-    builds.where(id: last_finished_builds_by_branches_ids).order(:finished_at)
-  end
-
-  def last_finished_builds_by_branches_ids
-    self.class.connection.select_values %(
-      SELECT DISTINCT ON (branch) builds.id
-      FROM   builds
-      WHERE  builds.repository_id = #{id} AND builds.event_type = 'push'
-      ORDER  BY branch, finished_at DESC
-      LIMIT  25
-    )
+  def last_finished_builds_by_branches(limit = 50)
+    Build.joins(%(
+      inner join (
+        select distinct on (branch) builds.id
+        from   builds
+        where  builds.repository_id = #{id} and builds.event_type = 'push'
+        order  by branch, finished_at desc
+      ) as last_builds on builds.id = last_builds.id
+    )).limit(limit).order('finished_at DESC')
   end
 
   def regenerate_key!

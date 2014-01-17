@@ -255,6 +255,15 @@ describe Repository do
   describe 'last_finished_builds_by_branches' do
     let(:repo) { Factory(:repository) }
 
+    it 'properly orders branches by last build' do
+      Build.delete_all
+      one = Factory(:build, repository: repo, finished_at: 2.hours.ago, state: 'finished', commit: Factory(:commit, branch: '1one'))
+      two = Factory(:build, repository: repo, finished_at: 1.hours.ago, state: 'finished', commit: Factory(:commit, branch: '2two'))
+
+      builds = repo.last_finished_builds_by_branches(1)
+      builds.should == [two]
+    end
+
     it 'retrieves last builds on all branches' do
       Build.delete_all
       old = Factory(:build, repository: repo, finished_at: 1.hour.ago,      state: 'finished', commit: Factory(:commit, branch: 'one'))
