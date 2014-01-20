@@ -15,14 +15,10 @@ describe Travis::Services::UpdateAnnotation do
       key: annotation_provider.api_key,
       job_id: job.id,
       description: 'Foo bar baz',
-      image_url: 'https://example.com/image.png',
-      image_alt: 'An image',
     }
 
     annotation = service.run
     annotation.description.should eq(params[:description])
-    annotation.image_url.should eq(params[:image_url])
-    annotation.image_alt.should eq(params[:image_alt])
   end
 
   it 'updates an existing annotation if one exists' do

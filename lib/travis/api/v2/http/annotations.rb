@@ -23,13 +23,8 @@ module Travis
               "job_id" => annotation.job_id,
               "description" => annotation.description,
               "url" => annotation.url,
-              "image" => build_image(annotation),
               "provider_name" => annotation.annotation_provider.name,
             }
-          end
-
-          def build_image(annotation)
-            { "url" => annotation.image_url, "alt" => annotation.image_alt } if annotation.image_url
           end
         end
       end

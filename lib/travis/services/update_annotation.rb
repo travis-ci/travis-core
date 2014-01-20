@@ -4,7 +4,7 @@ module Travis
       register :update_annotation
 
       def run
-        if annotation_provider 
+        if annotation_provider
           annotation.update_attributes!(attributes)
 
           annotation
@@ -22,7 +22,7 @@ module Travis
       end
 
       def attributes
-        params.slice(:description, :image_url, :image_alt, :url)
+        params.slice(:description, :url)
       end
     end
   end

@@ -11,7 +11,6 @@ describe Travis::Api::V0::Pusher::Annotation::Updated do
       'job_id' => annotation.job_id,
       'description' => annotation.description,
       'url' => annotation.url,
-      'image' => nil,
       'provider_name' => 'Travis CI',
     }
   end

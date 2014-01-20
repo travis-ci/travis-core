@@ -3,6 +3,7 @@
 --
 
 SET statement_timeout = 0;
+SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -162,8 +163,6 @@ CREATE TABLE annotations (
     job_id integer NOT NULL,
     url character varying(255),
     description text NOT NULL,
-    image_url character varying(255),
-    image_alt character varying(255),
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     annotation_provider_id integer NOT NULL
@@ -1572,3 +1571,5 @@ INSERT INTO schema_migrations (version) VALUES ('20130920135744');
 INSERT INTO schema_migrations (version) VALUES ('20131104101056');
 
 INSERT INTO schema_migrations (version) VALUES ('20131109101056');
+
+INSERT INTO schema_migrations (version) VALUES ('20140120225125');

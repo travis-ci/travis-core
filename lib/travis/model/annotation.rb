@@ -7,7 +7,7 @@ class Annotation < ActiveRecord::Base
   belongs_to :job
   belongs_to :annotation_provider
 
-  attr_accessible :description, :url, :job_id, :image_url, :image_alt
+  attr_accessible :description, :url, :job_id
 
   validates :job_id, presence: true
   validates :description, presence: true
