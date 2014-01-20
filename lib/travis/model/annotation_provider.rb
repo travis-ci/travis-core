@@ -9,7 +9,9 @@ class AnnotationProvider < ActiveRecord::Base
   def self.authenticate_provider(username, key)
     provider = where(api_username: username).first
 
-    provider && provider.api_key == key ? provider : nil
+    return unless provider && provider.api_key == key
+
+    provider
   end
 
   def annotation_for_job(job_id)
