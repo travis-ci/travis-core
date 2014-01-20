@@ -142,6 +142,7 @@ class Repository < Travis::Model
         select distinct on (branch) builds.id
         from   builds
         where  builds.repository_id = #{id} and builds.event_type = 'push'
+        order  by branch, finished_at desc
       ) as last_builds on builds.id = last_builds.id
     )).limit(limit).order('finished_at DESC')
   end
