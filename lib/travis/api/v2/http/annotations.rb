@@ -23,6 +23,7 @@ module Travis
               "job_id" => annotation.job_id,
               "description" => annotation.description,
               "url" => annotation.url,
+              "status" => annotation.status,
               "provider_name" => annotation.annotation_provider.name,
             }
           end

@@ -12,6 +12,7 @@ describe Travis::Api::V0::Pusher::Annotation::Created do
       'description' => annotation.description,
       'url' => annotation.url,
       'provider_name' => 'Travis CI',
+      'status' => '',
     }
   end
 end

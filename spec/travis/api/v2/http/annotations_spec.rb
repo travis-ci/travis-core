@@ -12,6 +12,7 @@ describe Travis::Api::V2::Http::Annotations do
       'description' => annotation.description,
       'url' => annotation.url,
       'provider_name' => 'Travis CI',
+      'status' => '',
     }])
   end
 end

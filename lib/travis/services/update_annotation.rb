@@ -22,7 +22,7 @@ module Travis
       end
 
       def attributes
-        params.slice(:description, :url)
+        params.slice(:description, :status, :url)
       end
     end
   end
