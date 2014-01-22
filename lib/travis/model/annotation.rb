@@ -13,9 +13,6 @@ class Annotation < ActiveRecord::Base
   validates :description, presence: true
   validate :validate_url_scheme
 
-  after_create :update_annotations
-  after_update :update_annotations
-
   def validate_url_scheme
     return unless self.url
 
@@ -25,10 +22,5 @@ class Annotation < ActiveRecord::Base
     end
   rescue Addressable::URI::InvalidURIError
     errors.add(:url, 'URL is invalid')
-  end
-
-  private
-  def update_annotations
-    Travis::Services::UpdateAnnotation.new(attributes).run
   end
 end
