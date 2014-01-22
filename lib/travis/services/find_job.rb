@@ -14,10 +14,7 @@ module Travis
       end
 
       def updated_at
-        if result
-          job_updates = result.annotations.unshift(result)
-          job_updates.map(&:updated_at).max
-        end
+        [result, result.annotations].flatten.map(&:updated_at).max if result
       end
 
       private
