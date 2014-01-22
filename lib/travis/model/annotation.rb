@@ -13,6 +13,7 @@ class Annotation < ActiveRecord::Base
   validates :description, presence: true
   validate :validate_url_scheme
 
+  private
   def validate_url_scheme
     return unless self.url
 
