@@ -5,9 +5,10 @@ module Travis
 
       def run
         if annotation_provider
-          annotation.update_attributes!(attributes)
+          cached_annotation = annotation
+          cached_annotation.update_attributes!(attributes)
 
-          annotation
+          cached_annotation
         end
       end
 

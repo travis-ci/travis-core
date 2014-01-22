@@ -17,8 +17,8 @@ describe Travis::Services::UpdateAnnotation do
       description: 'Foo bar baz',
     }
 
-    annotation = service.run
-    annotation.description.should eq(params[:description])
+    lambda { @annotation = service.run }.should issue_queries(6)
+    @annotation.description.should eq(params[:description])
   end
 
   it 'updates an existing annotation if one exists' do
