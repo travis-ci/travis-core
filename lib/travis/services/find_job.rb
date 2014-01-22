@@ -14,7 +14,7 @@ module Travis
       end
 
       def updated_at
-        [result, result.annotations].flatten.map(&:updated_at).max if result
+        [result].concat(result.annotations).map(&:updated_at) if result
       end
 
       private
