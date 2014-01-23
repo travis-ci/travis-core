@@ -211,4 +211,11 @@ describe User do
       user.should be_correct_scopes
     end
   end
+
+  describe 'inspect' do
+    it 'does not include the user\'s GitHub OAuth token' do
+      user.github_oauth_token = 'foobarbaz'
+      user.inspect.should_not include('foobarbaz')
+    end
+  end
 end

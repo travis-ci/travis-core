@@ -122,6 +122,10 @@ class User < Travis::Model
     "https://0.gravatar.com/avatar/#{profile_image_hash}"
   end
 
+  def inspect
+    super.gsub(github_oauth_token, '[REDACTED]')
+  end
+
   protected
 
     def track_github_scopes
