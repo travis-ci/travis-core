@@ -2,10 +2,10 @@ module Travis
   module Addons
     module Sqwiggle
 
-      # Publishes a build notification to hipchat rooms as defined in the
+      # Publishes a build notification to sqwiggle rooms as defined in the
       # configuration (`.travis.yml`).
       #
-      # Hipchat credentials are encrypted using the repository's ssl key.
+      # sqwiggle credentials are encrypted using the repository's ssl key.
       class EventHandler < Event::Handler
 
         EVENTS = /build:finished/
@@ -15,7 +15,7 @@ module Travis
         end
 
         def handle
-          Travis::Addons::Hipchat::Task.run(:sqwiggle, payload, targets: targets)
+          Travis::Addons::Sqwiggle::Task.run(:sqwiggle, payload, targets: targets)
         end
 
         def targets
