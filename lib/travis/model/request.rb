@@ -1,5 +1,6 @@
 require 'active_record'
 require 'simple_states'
+require 'travis/model/encrypted_column'
 
 # Models an incoming request. The only supported source for requests currently is Github.
 #

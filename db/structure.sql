@@ -3,6 +3,7 @@
 --
 
 SET statement_timeout = 0;
+SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -119,6 +120,74 @@ CREATE FUNCTION update_log_part() RETURNS trigger
 SET default_tablespace = '';
 
 SET default_with_oids = false;
+
+--
+-- Name: annotation_providers; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE annotation_providers (
+    id integer NOT NULL,
+    name character varying(255),
+    api_username character varying(255),
+    api_key character varying(255),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: annotation_providers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE annotation_providers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: annotation_providers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE annotation_providers_id_seq OWNED BY annotation_providers.id;
+
+
+--
+-- Name: annotations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE annotations (
+    id integer NOT NULL,
+    job_id integer NOT NULL,
+    url character varying(255),
+    description text NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    annotation_provider_id integer NOT NULL,
+    status character varying(255)
+);
+
+
+--
+-- Name: annotations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE annotations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: annotations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE annotations_id_seq OWNED BY annotations.id;
+
 
 --
 -- Name: broadcasts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
@@ -755,6 +824,20 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY annotation_providers ALTER COLUMN id SET DEFAULT nextval('annotation_providers_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY annotations ALTER COLUMN id SET DEFAULT nextval('annotations_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY broadcasts ALTER COLUMN id SET DEFAULT nextval('broadcasts_id_seq'::regclass);
 
 
@@ -847,6 +930,22 @@ ALTER TABLE ONLY urls ALTER COLUMN id SET DEFAULT nextval('urls_id_seq'::regclas
 --
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+
+--
+-- Name: annotation_providers_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY annotation_providers
+    ADD CONSTRAINT annotation_providers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: annotations_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY annotations
+    ADD CONSTRAINT annotations_pkey PRIMARY KEY (id);
 
 
 --
@@ -1452,6 +1551,12 @@ INSERT INTO schema_migrations (version) VALUES ('20130705123456');
 
 INSERT INTO schema_migrations (version) VALUES ('20130707164854');
 
+INSERT INTO schema_migrations (version) VALUES ('20130709185200');
+
+INSERT INTO schema_migrations (version) VALUES ('20130709233500');
+
+INSERT INTO schema_migrations (version) VALUES ('20130710000745');
+
 INSERT INTO schema_migrations (version) VALUES ('20130726101124');
 
 INSERT INTO schema_migrations (version) VALUES ('20130901183019');
@@ -1467,3 +1572,7 @@ INSERT INTO schema_migrations (version) VALUES ('20130920135744');
 INSERT INTO schema_migrations (version) VALUES ('20131104101056');
 
 INSERT INTO schema_migrations (version) VALUES ('20131109101056');
+
+INSERT INTO schema_migrations (version) VALUES ('20140120225125');
+
+INSERT INTO schema_migrations (version) VALUES ('20140121003026');

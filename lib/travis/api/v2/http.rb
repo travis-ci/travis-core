@@ -3,6 +3,7 @@ module Travis
     module V2
       module Http
         require 'travis/api/v2/http/accounts'
+        require 'travis/api/v2/http/annotations'
         require 'travis/api/v2/http/broadcasts'
         require 'travis/api/v2/http/branch'
         require 'travis/api/v2/http/branches'

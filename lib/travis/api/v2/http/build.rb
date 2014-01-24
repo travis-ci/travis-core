@@ -18,7 +18,8 @@ module Travis
             {
               'build'  => build_data(build),
               'commit' => commit_data(build.commit),
-              'jobs'   => options[:include_jobs] ? build.matrix.map { |job| job_data(job) } : []
+              'jobs'   => options[:include_jobs] ? build.matrix.map { |job| job_data(job) } : [],
+              'annotations' => options[:include_jobs] ? Annotations.new(annotations(build), @options).data["annotations"] : [],
             }
           end
 
@@ -71,8 +72,13 @@ module Travis
                 'finished_at' => format_date(job.finished_at),
                 'queue' => job.queue,
                 'allow_failure' => job.allow_failure,
-                'tags' => job.tags
+                'tags' => job.tags,
+                'annotation_ids' => job.annotation_ids,
               }
+            end
+
+            def annotations(build)
+              build.matrix.map(&:annotations).flatten
             end
         end
       end

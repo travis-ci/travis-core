@@ -50,6 +50,7 @@ class Job < Travis::Model
 
   has_one    :log, dependent: :destroy
   has_many   :events, as: :source
+  has_many   :annotations, dependent: :destroy
 
   belongs_to :repository
   belongs_to :commit
