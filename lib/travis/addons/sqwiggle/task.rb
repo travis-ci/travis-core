@@ -17,50 +17,61 @@ module Travis
         end
 
         def message
-          @message ||= Util::Template.new(template, payload).interpolate 
+          @message ||= Util::Template.new(template, payload).interpolate.squish
         end
 
         private
 
-          def template
-            (config[:template] rescue nil) || DEFAULT_TEMPLATE
-          end
+        def template
+          (config[:template] rescue nil) || DEFAULT_TEMPLATE
+        end
 
-          def process
-            targets.each do |target|
-              send_message(*parse(target))
-            end
+        def process
+          targets.each do |target|
+            send_message(*parse(target))
           end
+        end
 
-          def send_message(url, room_id)
-            http.post(url) do |r|
-              r.body = { room_id: room_id, text: message, format: 'html', parse:false, color: color }
-            end
+        def send_message(url, room_id)
+          http.post(url) do |r|
+            r.body = MultiJson.encode(sqwiggle_payload(room_id))
+            r.headers['Content-Type'] = 'application/json'
           end
+        end
 
-          def parse(target)
-            target =~ /^([\w]+)@([\S ]+)$/
-            ["https://api.sqwiggle.com/messages?auth_token=#{$1}", $2]
-          end
+        def sqwiggle_payload(room_id)
+          {
+            text: message,
+            format: 'html',
+            color: color,
+            parse: false,
+            room_id: room_id.to_i
+          }
+        end
 
-          def color
-            {
-              "passed" => "green",
-              "failed" => "red",
-              "errored" => "gray",
-              "canceled" => "gray",
-            }.fetch(build[:state], "yellow")
-          end
+        def parse(target)
+          target =~ /^([\w]+)@([\S ]+)$/
+          ["https://api.sqwiggle.com/messages?auth_token=#{$1}", $2]
+        end
 
-          def message_format
-            (config[:format] rescue nil) || 'text'
-          end
+        def color
+          {
+            "passed" => "green",
+            "failed" => "red",
+            "errored" => "gray",
+            "canceled" => "gray",
+          }.fetch(build[:state], "yellow")
+        end
 
-          def config
-            build[:config][:notifications][:sqwiggle] rescue {}
-          end
+        def message_format
+          (config[:format] rescue nil) || 'text'
+        end
 
-          Instruments::Task.attach_to(self)
+        def config
+          build[:config][:notifications][:sqwiggle] rescue {}
+        end
+
+        Instruments::Task.attach_to(self)
       end
     end
   end

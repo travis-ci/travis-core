@@ -18,79 +18,97 @@ describe Travis::Addons::Sqwiggle::Task do
   end
 
   it "sends sqwiggle messages to the given targets" do
-    targets = ['12345@room_1', '23456@room_2']
+    targets = ['12345@2', '23456@3']
+
     message = %Q[svenfuchs/minimal - build number: 2 (master - 62aae5f : Sven Fuchs) -
-          <a href="http://github.com/somerepo/somecomparison" target="_blank">build</a> has 
+          <a href="http://travis-ci.org/svenfuchs/minimal/builds/1" target="_blank">build</a> has 
           <strong>passed</strong>
     ].squish
 
-    expect_sqwiggle('12345', message)
-    expect_sqwiggle('23456', message)
+    sqwiggle_payload = {
+      text: message,
+      format: 'html',
+      color: 'green',
+      parse: false
+    }
+
+    expect_sqwiggle('12345', sqwiggle_payload, 2)
+    expect_sqwiggle('23456', sqwiggle_payload, 3)
 
     run(targets)
     http.verify_stubbed_calls
   end
 
-  # it 'using a custom template' do
-  #   targets  = ['12345@room_1']
-  #   template = ['%{repository}', '%{commit}']
-  #   messages = ['svenfuchs/minimal', '62aae5f']
+  it 'using a custom template' do
+    targets  = ['12345@1']
+    template = '%{repository} %{commit}'
+    message = 'svenfuchs/minimal 62aae5f'
 
-  #   payload['build']['config']['notifications'] = { hipchat: { template: template } }
-  #   expect_hipchat('room_1', '12345', messages)
+    payload['build']['config']['notifications'] = { sqwiggle: { template: template } }
 
-  #   run(targets)
-  #   http.verify_stubbed_calls
-  # end
+    sqwiggle_payload = {
+      text: message,
+      format: 'html',
+      color: 'green',
+      parse: false
+    }
 
-  # it "sends HTML notifications if requested" do
-  #   targets = ['12345@room_1']
-  #   template = ['<a href="%{build_url}">Details</a>']
-  #   messages = ['<a href="http://travis-ci.org/svenfuchs/minimal/builds/1">Details</a>']
+    expect_sqwiggle('12345', sqwiggle_payload, 1)
 
-  #   payload['build']['config']['notifications'] = { hipchat: { template: template, format: 'html' } }
-  #   expect_hipchat('room_1', '12345', messages, 'message_format' => 'html')
+    run(targets)
+    http.verify_stubbed_calls
+  end
 
-  #   run(targets)
-  #   http.verify_stubbed_calls
-  # end
+  it "sends red messages for failed builds" do
+    targets = ["12345@1"]
 
-  # it 'works with a list as HipChat configuration' do
-  #   targets  = ['12345@room_1']
-  #   template = ['%{repository}', '%{commit}']
-  #   messages = [
-  #     'svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): the build has passed',
-  #     'Change view: https://github.com/svenfuchs/minimal/compare/master...develop',
-  #     'Build details: http://travis-ci.org/svenfuchs/minimal/builds/1'
-  #   ]
+    message = %Q[svenfuchs/minimal - build number: 2 (master - 62aae5f : Sven Fuchs) -
+          <a href="http://travis-ci.org/svenfuchs/minimal/builds/1" target="_blank">build</a> has 
+          <strong>failed</strong>
+    ].squish
 
-  #   payload['build']['config']['notifications'] = { hipchat: [] }
-  #   expect_hipchat('room_1', '12345', messages)
+    sqwiggle_payload = {
+      text: message,
+      format: 'html',
+      color: 'red',
+      parse: false
+    }
+    payload["build"]["state"] = "failed"
 
-  #   run(targets)
-  #   http.verify_stubbed_calls
-  # end
+    expect_sqwiggle("12345", sqwiggle_payload, 1, color:"red")
 
-  # it "sends gray messages for errored builds" do
-  #   targets = ["12345@room_1"]
-  #   messages = [
-  #     "svenfuchs/minimal#2 (master - 62aae5f : Sven Fuchs): the build has errored",
-  #     "Change view: https://github.com/svenfuchs/minimal/compare/master...develop",
-  #     "Build details: http://travis-ci.org/svenfuchs/minimal/builds/1"
-  #   ]
+    run(targets)
+    http.verify_stubbed_calls
+  end
+  
+  it "sends gray messages for errored builds" do
+    targets = ["12345@1"]
 
-  #   payload["build"]["state"] = "errored"
-  #   expect_hipchat("room_1", "12345", messages, "color" => "gray")
+    message = %Q[svenfuchs/minimal - build number: 2 (master - 62aae5f : Sven Fuchs) -
+          <a href="http://travis-ci.org/svenfuchs/minimal/builds/1" target="_blank">build</a> has 
+          <strong>errored</strong>
+    ].squish
 
-  #   run(targets)
-  #   http.verify_stubbed_calls
-  # end
+    sqwiggle_payload = {
+      text: message,
+      format: 'html',
+      color: 'gray',
+      parse: false
+    }
 
-  def expect_sqwiggle(token, payload)
-    body = { 'room_id' => room_id, 'message' => message, 'color' => 'green', 'format' => 'text' }
+    payload["build"]["state"] = "errored"
+    expect_sqwiggle("12345", sqwiggle_payload, 1, color:"grey")
+
+    run(targets)
+    http.verify_stubbed_calls
+  end
+
+  def expect_sqwiggle(token, payload, room_id, extras={})
+    fp = payload.merge({room_id:room_id})
+    fp.merge extras
     http.post("messages?auth_token=#{token}") do |env|
       env[:url].host.should == 'api.sqwiggle.com'
-      env[:body].should == MultiJson.encode(payload)
+      env[:body].should == MultiJson.encode(fp)
     end
   end
 end
