@@ -10,12 +10,10 @@ addons:
 rvm:
   - jruby-19mode
   - jruby-head
-  - 1.9.3
   - 2.0.0
   - 2.1.0
   - rbx-2.1.1
-jdk:
-  - oraclejdk7
+jdk: oraclejdk7
 matrix:
   fast_finish: true
   allow_failures:
