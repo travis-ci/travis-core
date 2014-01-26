@@ -17,6 +17,7 @@ rvm:
 jdk:
   - oraclejdk7
 matrix:
+  fast_finish: true
   allow_failures:
     - rvm: 2.1.0
     - rvm: rbx-2.1.1
