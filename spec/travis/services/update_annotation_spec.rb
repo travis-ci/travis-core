@@ -6,31 +6,57 @@ describe Travis::Services::UpdateAnnotation do
   let(:annotation_provider) { Factory(:annotation_provider) }
   let(:job) { Factory(:test) }
   let(:service) { described_class.new(params) }
+  let(:repository) { Factory(:repository) }
 
   attr_reader :params
 
-  it 'creates the annotation if it doesn\'t exist already' do
-    @params = {
-      username: annotation_provider.api_username,
-      key: annotation_provider.api_key,
-      job_id: job.id,
-      description: 'Foo bar baz',
-    }
+  context 'when annotation is enabled' do
+    before :each do
+      job.stubs(:repository).returns(repository)
+      Travis::Features.stubs(:active?).returns(true)
+    end
 
-    lambda { @annotation = service.run }.should issue_queries(6)
-    @annotation.description.should eq(params[:description])
+    it 'creates the annotation if it doesn\'t exist already' do
+      @params = {
+        username: annotation_provider.api_username,
+        key: annotation_provider.api_key,
+        job_id: job.id,
+        description: 'Foo bar baz',
+      }
+
+      lambda { @annotation = service.run }.should issue_queries(7)
+      @annotation.description.should eq(params[:description])
+    end
+
+    it 'updates an existing annotation if one exists' do
+      @params = {
+        username: annotation_provider.api_username,
+        key: annotation_provider.api_key,
+        job_id: job.id,
+        description: 'Foo bar baz',
+      }
+
+      annotation = Factory(:annotation, annotation_provider: annotation_provider, job: job)
+      service.run.id.should eq(annotation.id)
+    end
   end
 
-  it 'updates an existing annotation if one exists' do
-    @params = {
-      username: annotation_provider.api_username,
-      key: annotation_provider.api_key,
-      job_id: job.id,
-      description: 'Foo bar baz',
-    }
+  context 'when annotation is disabled' do
+    before :each do
+      job.stubs(:repository).returns(repository)
+      Travis::Features.stubs(:active?).returns(false)
+    end
 
-    annotation = Factory(:annotation, annotation_provider: annotation_provider, job: job)
-    service.run.id.should eq(annotation.id)
+    it 'returns nil' do
+      @params = {
+        username: annotation_provider.api_username,
+        key: annotation_provider.api_key,
+        job_id: job.id,
+        description: 'Foo bar baz',
+      }
+
+      service.run.should be_nil
+    end
   end
 
   it 'returns nil when given invalid provider credentials' do

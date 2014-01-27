@@ -4,7 +4,7 @@ module Travis
       register :update_annotation
 
       def run
-        if annotation_provider
+        if annotations_enabled? && annotation_provider
           cached_annotation = annotation
           cached_annotation.update_attributes!(attributes)
 
@@ -14,12 +14,18 @@ module Travis
 
       private
 
+      def annotations_enabled?
+        job  = Job.find(params[:job_id])
+        repo = job.repository
+        Travis::Features.enabled_for_all?(:annotations) || Travis::Features.active?(:annotations, repo)
+      end
+
       def annotation
         annotation_provider.annotation_for_job(params[:job_id])
       end
 
       def annotation_provider
-        AnnotationProvider.authenticate_provider(params[:username], params[:key])
+        @annotation_provider ||= AnnotationProvider.authenticate_provider(params[:username], params[:key])
       end
 
       def attributes
