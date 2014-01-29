@@ -5,8 +5,7 @@ describe Repository::StatusImage do
 
   let(:cache)    { stub('states cache', fetch: nil, write: nil, fetch_state: nil) }
   let!(:request) { Factory(:request, event_type: 'push', repository: repo) }
-  let!(:build)   { Factory(:build, repository: repo, request: request, state: :failed) }
-  let!(:build2)  { Factory(:build, repository: repo, request: request, state: :passed) }
+  let!(:build)   { Factory(:build, repository: repo, request: request, state: :passed) }
   let(:repo)     { Factory(:repository) }
 
   before do
@@ -25,7 +24,7 @@ describe Repository::StatusImage do
     it 'saves state to the cache if it needs to be fetched from the db' do
       image = described_class.new(repo, 'master')
       cache.expects(:fetch_state).with(repo.id, 'master').returns(nil)
-      cache.expects(:write).with(repo.id, 'master', build2)
+      cache.expects(:write).with(repo.id, 'master', build)
 
       image.result.should == :passing
     end
@@ -33,53 +32,52 @@ describe Repository::StatusImage do
     it 'saves state of the build to the cache with its branch even if brianch is not given' do
       image = described_class.new(repo, nil)
       cache.expects(:fetch_state).with(repo.id, nil).returns(nil)
-      cache.expects(:write).with(repo.id, 'master', build2)
+      cache.expects(:write).with(repo.id, 'master', build)
 
       image.result.should == :passing
     end
   end
 
   describe 'given no branch' do
-    it 'returns the status of the last created build' do
+    it 'returns the status of the last finished build' do
       image = described_class.new(repo, nil)
       image.result.should == :passing
     end
 
-    it 'returns :failing if the status of the last created build is failed' do
-      build2.update_attributes(state: :failed)
+    it 'returns :failing if the status of the last finished build is failed' do
+      build.update_attributes(state: :failed)
       image = described_class.new(repo, nil)
       image.result.should == :failing
     end
 
-    it 'returns :error if the status of the last created build is errored' do
-      build2.update_attributes(state: :errored)
+    it 'returns :error if the status of the last finished build is errored' do
+      build.update_attributes(state: :errored)
       image = described_class.new(repo, nil)
       image.result.should == :error
     end
 
-    it 'returns :unknown if the status of the last created build is unknown' do
+    it 'returns :unknown if the status of the last finished build is unknown' do
       build.update_attributes(state: :created)
-      build2.update_attributes(state: :created)
       image = described_class.new(repo, nil)
       image.result.should == :unknown
     end
   end
 
   describe 'given a branch' do
-    it 'returns :passed if the last created build on that branch has passed' do
-      build2.update_attributes(state: :passed, branch: 'master')
+    it 'returns :passed if the last build on that branch has passed' do
+      build.update_attributes(state: :passed, branch: 'master')
       image = described_class.new(repo, 'master')
       image.result.should == :passing
     end
 
-    it 'returns :failed if the last created build on that branch has failed' do
-      build2.update_attributes(state: :failed, branch: 'develop')
+    it 'returns :failed if the last build on that branch has failed' do
+      build.update_attributes(state: :failed, branch: 'develop')
       image = described_class.new(repo, 'develop')
       image.result.should == :failing
     end
 
-    it 'returns :error if the last created build on that branch has errored' do
-      build2.update_attributes(state: :errored, branch: 'develop')
+    it 'returns :error if the last build on that branch has errored' do
+      build.update_attributes(state: :errored, branch: 'develop')
       image = described_class.new(repo, 'develop')
       image.result.should == :error
     end
