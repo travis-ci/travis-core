@@ -154,18 +154,6 @@ describe Repository do
     end
   end
 
-  describe 'last_build_on_default_branch' do
-    let(:repo) { Factory(:repository) }
-
-    it 'returns the last created build for the repostiory on the default branch' do
-      build1 = Factory(:build, repository: repo, commit: Factory(:commit, branch: 'blah'))
-      build2 = Factory(:build, repository: repo)
-      build3 = Factory(:build, repository: repo, started_at: 20.minutes.ago, finished_at: 11.minutes.ago)
-
-      repo.last_build_on_default_branch.should == build3
-    end
-  end
-
   describe 'api_url' do
     let(:repo) { Repository.new(owner_name: 'travis-ci', name: 'travis-ci') }
 
