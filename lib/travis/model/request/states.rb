@@ -1,11 +1,10 @@
 require 'active_support/concern'
 require 'simple_states'
-require 'travis/retry_on'
 
 class Request
   module States
     extend ActiveSupport::Concern
-    include Travis::Event, Travis::RetryOn
+    include Travis::Event
 
     included do
       include SimpleStates
@@ -68,12 +67,7 @@ class Request
       end
 
       def add_build
-        retry_on ActiveRecord::StatementInvalid, sleep: 0.1, max_tries: 5 do
-          ActiveRecord::Base.transaction do
-            ActiveRecord::Base.connection.execute 'SET TRANSACTION ISOLATION LEVEL SERIALIZABLE'
-            builds.create!(:repository => repository, :commit => commit, :config => config, :owner => owner)
-          end
-        end
+        builds.create!(:repository => repository, :commit => commit, :config => config, :owner => owner)
       end
 
       def add_parse_error_build
