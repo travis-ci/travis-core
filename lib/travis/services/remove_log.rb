@@ -13,7 +13,6 @@ module Travis
           message << "\n\n#{params[:reason]}"
         end
 
-        log = job.log
         log.content = message
         log.archive_verified = false
         log.archived_at = nil
