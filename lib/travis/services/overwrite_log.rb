@@ -3,7 +3,7 @@ module Travis
     class OverwriteLog < Base
       register :overwrite_log
 
-      FORMAT = "Log removed by %s at %s Reason: %s"
+      FORMAT = "Log removed by %s at %s\n%s"
 
       def run(params)
         return nil unless job
