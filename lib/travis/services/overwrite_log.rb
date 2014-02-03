@@ -6,7 +6,7 @@ module Travis
       FORMAT = "Log removed by %s at %s Reason: %s"
 
       def run(params)
-        return false unless job
+        return nil unless job
 
         log = job.log
         log.content = FORMAT % [current_user.name, DateTime.now.iso8601, params[:reason]]
@@ -17,6 +17,14 @@ module Travis
 
       def log
         @log ||= job.log
+      end
+
+      def can_overwrite?
+        authorized? && job.finished?
+      end
+
+      def authorized?
+        current_user.permission?(:push, job.respository_id)
       end
 
       private
