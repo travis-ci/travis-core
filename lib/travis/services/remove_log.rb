@@ -3,13 +3,18 @@ module Travis
     class RemoveLog < Base
       register :remove_log
 
-      FORMAT = "Log removed by %s at %s\n%s"
+      FORMAT = "Log removed by %s at %s"
 
       def run(params)
         return nil unless job
 
+        message = FORMAT % [current_user.name, DateTime.now.iso8601]
+        if params[:reason]
+          message << "\n\n#{params[:reason]}"
+        end
+
         log = job.log
-        log.content = FORMAT % [current_user.name, DateTime.now.iso8601, params[:reason]]
+        log.content = message
         log.archive_verified = false
         log.archived_at = nil
         log.save!
