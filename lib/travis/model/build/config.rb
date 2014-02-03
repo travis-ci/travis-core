@@ -15,6 +15,7 @@ class Build
 
     EXPANSION_KEYS_LANGUAGE = {
       'c'           => [:compiler],
+      'c++'         => [:compiler],
       'clojure'     => [:lein, :jdk],
       'cpp'         => [:compiler],
       'erlang'      => [:otp_release],
