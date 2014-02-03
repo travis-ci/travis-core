@@ -1,7 +1,7 @@
 module Travis
   module Services
-    class OverwriteLog < Base
-      register :overwrite_log
+    class RemoveLog < Base
+      register :remove_log
 
       FORMAT = "Log removed by %s at %s\n%s"
 
@@ -19,7 +19,7 @@ module Travis
         @log ||= job.log
       end
 
-      def can_overwrite?
+      def can_remove?
         authorized? && job.finished?
       end
 
@@ -32,7 +32,7 @@ module Travis
       def job
         @job ||= scope(:job).find_by_id(params[:id])
       rescue ActiveRecord::SubclassNotFound => e
-        Travis.logger.warn "[services:overwrite-log] #{e.message}"
+        Travis.logger.warn "[services:remove-log] #{e.message}"
         raise ActiveRecord::RecordNotFound
       end
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::Services::OverwriteLog do
+describe Travis::Services::RemoveLog do
   include Support::ActiveRecord
   include Travis::Testing::Stubs
 
