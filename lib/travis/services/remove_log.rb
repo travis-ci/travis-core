@@ -6,7 +6,7 @@ module Travis
       FORMAT = "Log removed by %s at %s"
 
       def run(params)
-        return nil unless job
+        return nil unless job && can_remove?
 
         message = FORMAT % [current_user.name, DateTime.now.iso8601]
         if params[:reason]
@@ -28,7 +28,7 @@ module Travis
       end
 
       def authorized?
-        current_user.permission?(:push, job.respository_id)
+        current_user.permission?(:push, repository_id: job.repository.id)
       end
 
       private
