@@ -18,7 +18,7 @@ describe Travis::Services::RemoveLog do
 
     it 'does not change log' do
       expect {
-        service.run(params)
+        service.run
       }.to_not change { service.log.reload.content }
     end
   end
@@ -30,7 +30,7 @@ describe Travis::Services::RemoveLog do
 
     it 'does not change log' do
       expect {
-        service.run(params)
+        service.run
       }.to_not change { service.log.reload.content }
     end
   end
@@ -45,7 +45,7 @@ describe Travis::Services::RemoveLog do
     end
 
     before :each do
-      @result = service.run(params)
+      @result = service.run
     end
 
     it 'runs successfully' do
@@ -67,7 +67,7 @@ describe Travis::Services::RemoveLog do
     end
 
     it 'raises ActiveRecord::RecordNotFound exception' do
-      lambda { service.run(params) }.should raise_error(ActiveRecord::RecordNotFound)
+      lambda { service.run }.should raise_error(ActiveRecord::RecordNotFound)
     end
   end
 

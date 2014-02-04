@@ -5,7 +5,7 @@ module Travis
 
       FORMAT = "Log removed by %s at %s"
 
-      def run(params)
+      def run
         return nil unless job && can_remove?
 
         message = FORMAT % [current_user.name, DateTime.now.iso8601]
