@@ -6,6 +6,7 @@ describe Travis::Services::RemoveLog do
 
   let(:repo)    { Factory(:repository) }
   let(:job)     { Factory(:test, repository: repo, state: :created) }
+  let(:user)    { Factory(:user) }
   let(:service) { described_class.new(user, params) }
   let(:params)  { { id: job.id, reason: 'Because reason!'} }
 
@@ -23,7 +24,7 @@ describe Travis::Services::RemoveLog do
 
   context 'when user does not have push permissions' do
     before :each do
-      user.stubs(:permission?).with(:push, job.repository_id).returns false
+      user.stubs(:permission?).with(:push, anything).returns false
     end
 
     it 'does not change log' do
@@ -38,6 +39,7 @@ describe Travis::Services::RemoveLog do
       find_by_id = stub
       find_by_id.stubs(:find_by_id).returns job
       service.stubs(:scope).returns find_by_id
+      user.stubs(:permission?).with(:push, anything).returns true
     end
 
     before :each do
