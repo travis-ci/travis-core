@@ -44,6 +44,8 @@ module Travis
             nullify_logins(user.github_id, user.login)
 
             user
+          rescue ActiveRecord::RecordNotUnique
+            find
           end
 
           def data
