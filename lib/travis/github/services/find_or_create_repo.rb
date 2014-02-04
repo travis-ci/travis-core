@@ -35,6 +35,8 @@ module Travis
               Travis.logger.info(message)
             end
             Repository.create!(:owner_name => params[:owner_name], :name => params[:name], github_id: params[:github_id])
+          rescue ActiveRecord::RecordNotUnique
+            find
           end
       end
     end

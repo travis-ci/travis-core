@@ -58,6 +58,8 @@ module Travis
             nullify_logins(organization.github_id, organization.login)
 
             organization
+          rescue ActiveRecord::RecordNotUnique
+            find
           end
 
           def avatar_url(github_data)
