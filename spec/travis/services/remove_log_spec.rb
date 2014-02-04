@@ -13,12 +13,13 @@ describe Travis::Services::RemoveLog do
   context 'when job is not finished' do
     before :each do
       job.stubs(:finished?).returns false
+      user.stubs(:permission?).with(:push, anything).returns true
     end
 
     it 'does not change log' do
       expect {
         service.run(params)
-      }.to_not change { service.log }
+      }.to_not change { service.log.reload.content }
     end
   end
 
@@ -30,7 +31,7 @@ describe Travis::Services::RemoveLog do
     it 'does not change log' do
       expect {
         service.run(params)
-      }.to_not change { service.log }
+      }.to_not change { service.log.reload.content }
     end
   end
 
@@ -38,6 +39,7 @@ describe Travis::Services::RemoveLog do
     before :all do
       find_by_id = stub
       find_by_id.stubs(:find_by_id).returns job
+      job.stubs(:finished?).returns true
       service.stubs(:scope).returns find_by_id
       user.stubs(:permission?).with(:push, anything).returns true
     end
