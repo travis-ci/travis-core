@@ -16,7 +16,7 @@ module Travis
         log.content = message
         log.archive_verified = false
         log.archived_at = nil
-        log.save!
+        log.save! && log
       end
 
       def log
