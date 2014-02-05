@@ -1266,10 +1266,24 @@ CREATE INDEX index_repositories_on_owner_name_and_name ON repositories USING btr
 
 
 --
+-- Name: index_requests_on_commit_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_requests_on_commit_id ON requests USING btree (commit_id);
+
+
+--
 -- Name: index_requests_on_head_commit; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_requests_on_head_commit ON requests USING btree (head_commit);
+
+
+--
+-- Name: index_requests_on_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_requests_on_repository_id ON requests USING btree (repository_id);
 
 
 --
@@ -1576,3 +1590,5 @@ INSERT INTO schema_migrations (version) VALUES ('20131109101056');
 INSERT INTO schema_migrations (version) VALUES ('20140120225125');
 
 INSERT INTO schema_migrations (version) VALUES ('20140121003026');
+
+INSERT INTO schema_migrations (version) VALUES ('20140204220926');
