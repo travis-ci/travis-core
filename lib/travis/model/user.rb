@@ -5,12 +5,12 @@ require 'travis/model/encrypted_column'
 class User < Travis::Model
   require 'travis/model/user/oauth'
 
-  has_many :tokens
-  has_many :memberships
-  has_many :organizations, :through => :memberships
-  has_many :permissions
-  has_many :repositories, :through => :permissions
-  has_many :emails
+  has_many :tokens, dependent: :destroy
+  has_many :memberships, dependent: :destroy
+  has_many :organizations, through: :memberships
+  has_many :permissions, dependent: :destroy
+  has_many :repositories, through: :permissions
+  has_many :emails, dependent: :destroy
 
   attr_accessible :name, :login, :email, :github_id, :github_oauth_token, :gravatar_id, :locale
 
