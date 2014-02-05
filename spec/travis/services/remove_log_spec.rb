@@ -21,6 +21,11 @@ describe Travis::Services::RemoveLog do
         service.run
       }.to_not change { service.log.reload.content }
     end
+
+    it 'sets error message' do
+      error = service.run.fetch(:error)
+      error.fetch(:message).should =~ /not finished/
+    end
   end
 
   context 'when user does not have push permissions' do
@@ -32,6 +37,11 @@ describe Travis::Services::RemoveLog do
       expect {
         service.run
       }.to_not change { service.log.reload.content }
+    end
+
+    it 'sets error message' do
+      error = service.run.fetch(:error)
+      error.fetch(:message).should =~ /(?i:unauthorized)/
     end
   end
 
@@ -69,4 +79,30 @@ describe Travis::Services::RemoveLog do
     end
   end
 
+end
+
+describe Travis::Services::RemoveLog::Instrument do
+  include Travis::Testing::Stubs
+
+  let(:service)   { Travis::Services::RemoveLog.new(user, params) }
+  let(:repo)      { Factory(:repository) }
+  let(:job)       { Factory(:test, repository: repo, state: :passed) }
+  let(:params)    { { id: job.id, reason: 'Because Science!' } }
+  let(:publisher) { Travis::Notification::Publisher::Memory.new }
+  let(:event)     { publisher.events.last }
+
+  before :each do
+    Travis::Notification.publishers.replace([publisher])
+    service.stubs(:run_service)
+    user.stubs(:permission?).with(:push, anything).returns true
+end
+
+  it 'publishes a event' do
+    service.run
+    event.should publish_instrumentation_event(
+      event: 'travis.services.remove_log.run:completed',
+      message: "Travis::Services::RemoveLog#run:completed for <Job id=#{job.id}> (svenfuchs)",
+      result: job.log
+    )
+  end
 end
