@@ -124,7 +124,11 @@ class User < Travis::Model
   end
 
   def inspect
-    super.gsub(github_oauth_token, '[REDACTED]')
+    if github_oauth_token
+      super.gsub(github_oauth_token, '[REDACTED]')
+    else
+      super
+    end
   end
 
   protected
