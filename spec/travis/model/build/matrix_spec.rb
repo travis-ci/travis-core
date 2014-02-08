@@ -529,7 +529,7 @@ describe Build, 'matrix' do
           ])
         end
 
-        it 'does not exclude a matrix config when the matrix exclusion definition is incomplete' do
+        it 'excludes jobs from a matrix config when the matrix exclusion definition is incomplete' do
           build = Factory(:build, config: multiple_tests_config_with_invalid_exculsion)
 
           matrix_exclusion = { exclude: [{ rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.x' }] }
@@ -539,8 +539,6 @@ describe Build, 'matrix' do
             { language: 'ruby', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x', env: 'BAR=baz', matrix: matrix_exclusion },
             { language: 'ruby', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.1.x', env: 'FOO=bar', matrix: matrix_exclusion },
             { language: 'ruby', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.1.x', env: 'BAR=baz', matrix: matrix_exclusion },
-            { language: 'ruby', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.x', env: 'FOO=bar', matrix: matrix_exclusion },
-            { language: 'ruby', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.x', env: 'BAR=baz', matrix: matrix_exclusion },
             { language: 'ruby', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.1.x', env: 'FOO=bar', matrix: matrix_exclusion },
             { language: 'ruby', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.1.x', env: 'BAR=baz', matrix: matrix_exclusion }
           ]

@@ -65,7 +65,9 @@ class Build
           exclude_configs = settings[:exclude] || []
           exclude_configs = exclude_configs.compact.map(&:stringify_keys).map(&:to_a).map(&:sort)
           config = config.map { |config| [config[0].to_s, *config[1..-1]] }.sort
-          exclude_configs.any? { |excluded| excluded == config }
+          exclude_configs.any? do |excluded|
+            excluded.all? { |matrix_key| config.include? matrix_key }
+          end
         end
 
         def include_matrix_configs(configs)
