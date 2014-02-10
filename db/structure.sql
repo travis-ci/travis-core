@@ -1224,6 +1224,13 @@ CREATE INDEX index_logs_on_job_id ON logs USING btree (job_id);
 
 
 --
+-- Name: index_memberships_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_memberships_on_user_id ON memberships USING btree (user_id);
+
+
+--
 -- Name: index_organizations_on_github_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1592,3 +1599,5 @@ INSERT INTO schema_migrations (version) VALUES ('20140120225125');
 INSERT INTO schema_migrations (version) VALUES ('20140121003026');
 
 INSERT INTO schema_migrations (version) VALUES ('20140204220926');
+
+INSERT INTO schema_migrations (version) VALUES ('20140210003014');
