@@ -7,6 +7,8 @@ module Travis
       #
       # Hipchat credentials can be encrypted using the repository's ssl key.
       class Task < Travis::Task
+        require 'travis/addons/hipchat/http_helper'
+
         DEFAULT_TEMPLATE = [
           "%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): the build has %{result}",
           "Change view: %{compare_url}",
@@ -24,28 +26,20 @@ module Travis
         private
 
           def process
-            targets.each { |target| send_lines(target, message) }
-          end
-
-          def send_lines(target, lines)
-            url, room_id = parse(target)
-            lines.each { |line| send_line(url, room_id, line) }
+            targets.each do |target|
+              helper = HttpHelper.new(target)
+              message.each do |line|
+                http.post(helper.url) do |r|
+                  r.body = helper.body(line: line, color: color, message_format: message_format)
+                  helper.add_content_type!(r.headers)
+                end
+              end
+            end
           end
 
           def template
             template = config[:template] rescue nil
             Array(template || DEFAULT_TEMPLATE)
-          end
-
-          def send_line(url, room_id, line)
-            http.post(url) do |r|
-              r.body = { room_id: room_id, message: line, color: color, from: 'Travis CI', message_format: message_format }
-            end
-          end
-
-          def parse(target)
-            target =~ /^([\w]+)@([\S ]+)$/
-            ["https://api.hipchat.com/v1/rooms/message?format=json&auth_token=#{$1}", $2]
           end
 
           def color
