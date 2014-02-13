@@ -21,6 +21,7 @@ module Travis
           when API_V1_TOKEN_LENGTH
             @api_version = 'v1'
             @url = 'https://api.hipchat.com/v1/rooms/message?format=json&auth_token=%s' % [token]
+            @headers = {}
           when API_V2_TOKEN_LENGTH
             @api_version = 'v2'
             @url = 'https://api.hipchat.com/v2/room/%s/notification?auth_token=%s' % [ encode(room_id), token]
@@ -29,12 +30,7 @@ module Travis
         end
 
         def add_content_type!(base_headers)
-          case api_version
-          when 'v1'
-            base_headers
-          when 'v2'
-            base_headers.merge!(headers)
-          end
+          base_headers.merge! headers
         end
 
         def body(info)
