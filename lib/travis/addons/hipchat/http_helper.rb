@@ -33,7 +33,7 @@ module Travis
           when 'v1'
             base_headers
           when 'v2'
-            base_headers.merge!({'Content-type' => 'application/json'})
+            base_headers.merge!(headers)
           end
         end
 
