@@ -13,9 +13,7 @@ module Travis
 
         def initialize(specification)
           # specification will be in the form "API_TOKEN@HIPCHAT_ROOM_NAME_OR_ID"
-          match = /^(?<token>[\w]+)@(?<room_id>[\S ]+)$/.match specification
-          @token = match['token']
-          @room_id = match['room_id']
+          @token, @room_id = specification.split('@', 2)
 
           case token.length
           when API_V1_TOKEN_LENGTH
