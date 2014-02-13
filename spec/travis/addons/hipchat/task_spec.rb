@@ -105,7 +105,7 @@ describe Travis::Addons::Hipchat::Task do
 
   def expect_hipchat_v2(room_id, token, lines, extra_body={})
     Array(lines).each do |line|
-      body = { 'room_id' => room_id, 'message' => line, 'color' => 'green', 'message_format' => 'text' }.merge(extra_body).to_json
+      body = { 'message' => line, 'color' => 'green', 'message_format' => 'text' }.merge(extra_body).to_json
       http.post("https://api.hipchat.com/v2/room/#{URI::encode(room_id, Travis::Addons::Hipchat::HttpHelper::UNSAFE_URL_CHARS)}/notification?auth_token=#{token}") do |env|
         env[:request_headers]['Content-Type'].should == 'application/json'
         env[:body].should == body

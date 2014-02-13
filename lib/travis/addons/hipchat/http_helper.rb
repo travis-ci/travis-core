@@ -36,7 +36,7 @@ module Travis
           when 'v1'
             { room_id: room_id, message: info[:line], color: info[:color], from: 'Travis CI', message_format: info[:message_format] }
           when 'v2'
-            { room_id: room_id, message: info[:line], color: info[:color], message_format: info[:message_format] }.to_json
+            { message: info[:line], color: info[:color], message_format: info[:message_format] }.to_json
           end
         end
 
