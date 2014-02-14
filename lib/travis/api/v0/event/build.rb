@@ -49,6 +49,7 @@ module Travis
                 'id' => repository.id,
                 'key' => repository.key.try(:public_key),
                 'slug' => repository.slug,
+                'name' => repository.name,
                 'owner_email' => repository.owner_email,
                 'owner_avatar_url' => repository.owner.try(:avatar_url)
               }

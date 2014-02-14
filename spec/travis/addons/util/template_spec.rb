@@ -5,6 +5,8 @@ describe Travis::Addons::Util::Template do
 
   VAR_NAMES = %w(
     repository
+    repository_slug
+    repository_name
     build_number
     build_id
     branch
@@ -28,6 +30,14 @@ describe Travis::Addons::Util::Template do
       result.should =~ %r(repository=svenfuchs/minimal)
     end
 
+    it 'replaces the repository slug' do
+      result.should =~ %r(repository_slug=svenfuchs/minimal)
+    end
+
+    it 'replaces the repository name' do
+      result.should =~ %r(repository_name=minimal)
+    end
+
     it 'replaces the build_number' do
       result.should =~ /build_number=#{build.number}/
     end
@@ -43,7 +53,7 @@ describe Travis::Addons::Util::Template do
     it 'replaces the author' do
       result.should =~ /author=Sven Fuchs/
     end
-    
+
     it 'replaces the duration' do
       result.should =~ /duration=1 min 0 sec/
     end

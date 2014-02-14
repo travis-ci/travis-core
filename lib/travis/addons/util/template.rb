@@ -18,18 +18,20 @@ module Travis
 
         def args
           @args ||= {
-            repository:     data[:repository][:slug],
-            build_number:   data[:build][:number].to_s,
-            build_id:       data[:build][:id].to_s,
-            branch:         data[:commit][:branch],
-            commit:         data[:commit][:sha][0..6],
-            author:         data[:commit][:author_name],
-            commit_message: data[:commit][:message],
-            result:         data[:build][:state].to_s,
-            duration:       seconds_to_duration(data[:build][:duration]),
-            message:        message,
-            compare_url:    compare_url,
-            build_url:      build_url
+            repository:            data[:repository][:slug],
+            repository_slug:       data[:repository][:slug],
+            repository_name:       data[:repository][:name],
+            build_number:          data[:build][:number].to_s,
+            build_id:              data[:build][:id].to_s,
+            branch:                data[:commit][:branch],
+            commit:                data[:commit][:sha][0..6],
+            author:                data[:commit][:author_name],
+            commit_message:        data[:commit][:message],
+            result:                data[:build][:state].to_s,
+            duration:              seconds_to_duration(data[:build][:duration]),
+            message:               message,
+            compare_url:           compare_url,
+            build_url:             build_url
           }
         end
 
