@@ -25,8 +25,8 @@ class Request < Travis::Model
       recent.where('id < ?', id)
     end
 
-    def recent
-      order('id DESC').limit(25)
+    def recent(limit = 25)
+      order('id DESC').limit(limit)
     end
   end
 

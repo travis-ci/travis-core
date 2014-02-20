@@ -18,8 +18,6 @@ module Travis
 
           private
 
-
-
             def request_data(request)
               {
                 'id' => request.id,
