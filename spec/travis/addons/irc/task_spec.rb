@@ -211,7 +211,7 @@ describe Travis::Addons::Irc::Task do
   end
 
   it 'allows setting a channel key' do
-    payload['build']['config']['notifications'] = { irc: { use_notice: true, channel_key: 'pass' } }
+    payload['build']['config']['notifications'] = { irc: { use_notice: true } }
 
     expect_irc 'irc.freenode.net', 1234, 'travis', [
       'NICK travis-ci',
@@ -223,7 +223,7 @@ describe Travis::Addons::Irc::Task do
       'PART #travis',
       'QUIT'
     ]
-    run
+    run(['irc.freenode.net:1234#travis,pass'])
   end
 
 
