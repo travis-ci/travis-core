@@ -21,9 +21,11 @@ describe Travis::Services::FindRequests do
       service.run.should == [request]
     end
 
-    it 'does not find anything if repository_id is missing' do
+    it 'raises an error if repository params are missing' do
       @params = { }
-      service.run.should == Request.none
+      expect {
+        service.run
+      }.to raise_error(Travis::RepositoryNotFoundError, "Repository could not be found")
     end
 
     it 'scopes to the given repository_id' do
@@ -32,9 +34,11 @@ describe Travis::Services::FindRequests do
       service.run.should == [newer_request, request]
     end
 
-    it 'returns an empty request scope when the repository could not be found' do
+    it 'raises when the repository could not be found' do
       @params = { :repository_id => repo.id + 1 }
-      service.run.should == Request.none
+      expect {
+        service.run
+      }.to raise_error(Travis::RepositoryNotFoundError, "Repository could not be found")
     end
   end
 end

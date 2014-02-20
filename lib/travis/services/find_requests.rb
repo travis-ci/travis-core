@@ -20,7 +20,7 @@ module Travis
               requests.recent
             end
           else
-            scope(:request).none
+            raise Travis::RepositoryNotFoundError.new
           end
         end
 
