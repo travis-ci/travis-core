@@ -3,6 +3,7 @@ module Travis
     module V2
       module Http
         class Requests
+          include Formats
           attr_reader :requests, :options
 
           def initialize(requests, options = {})
@@ -23,7 +24,7 @@ module Travis
                 'id' => request.id,
                 'repository_id' => request.repository_id,
                 'commit_id' => request.commit_id,
-                'created_at' => request.created_at,
+                'created_at' => format_date(request.created_at),
                 'owner_id' => request.owner_id,
                 'owner_type' => request.owner_type,
                 'event_type' => request.event_type,

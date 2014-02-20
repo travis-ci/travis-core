@@ -13,7 +13,7 @@ describe Travis::Api::V2::Http::Requests do
         'id' => 1,
         'repository_id' => 1,
         'commit_id' => 1,
-        'created_at' => 'Tue, 01 Jan 2013 00:00:00 +0000',
+        'created_at' => '2013-01-01T00:00:00Z',
         'owner_id' => 1,
         'owner_type' => 'User',
         'event_type' => 'push',
