@@ -9,7 +9,6 @@ class RemoveUnusedIndices < ActiveRecord::Migration
     execute "DROP INDEX CONCURRENTLY index_builds_on_finished_at"
     execute "DROP INDEX CONCURRENTLY index_jobs_on_queue_and_state"
     execute "DROP INDEX CONCURRENTLY index_jobs_on_created_at"
-    execute "DROP INDEX CONCURRENTLY index_jobs_on_repository_id"
   end
 
   def down
@@ -20,6 +19,5 @@ class RemoveUnusedIndices < ActiveRecord::Migration
     execute "CREATE INDEX CONCURRENTLY index_builds_on_finshed_at ON builds(finished_at)"
     execute "CREATE INDEX CONCURRENTLY index_jobs_on_queue_and_state ON jobs(queue, state)"
     execute "CREATE INDEX CONCURRENTLY index_jobs_on_created_at ON jobs(created_at)"
-    execute "CREATE INDEX CONCURRENTLY index_jobs_on_repository_id ON jobs(repository_id)"
   end
 end
