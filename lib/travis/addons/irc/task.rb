@@ -52,7 +52,7 @@ module Travis
 
           def send_message(client, channel)
             channel, key = channel.split ',', 2
-            client.join(channel, key) if join?
+            client.join(channel, key || try_config(:channel_key) || nil) if join?
             messages.each { |message| client.say("[travis-ci] #{message}", channel, notice?) }
             client.leave(channel) if join?
           end
