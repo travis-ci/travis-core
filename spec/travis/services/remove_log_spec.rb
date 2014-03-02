@@ -36,15 +36,13 @@ describe Travis::Services::RemoveLog do
   end
 
   context 'when a job is found' do
-    before :all do
+    before :each do
       find_by_id = stub
       find_by_id.stubs(:find_by_id).returns job
       job.stubs(:finished?).returns true
       service.stubs(:scope).returns find_by_id
       user.stubs(:permission?).with(:push, anything).returns true
-    end
 
-    before :each do
       @result = service.run
     end
 
@@ -60,7 +58,7 @@ describe Travis::Services::RemoveLog do
   end
 
   context 'when a job is not found' do
-    before :all do
+    before :each do
       find_by_id = stub
       find_by_id.stubs(:find_by_id).raises(ActiveRecord::SubclassNotFound)
       service.stubs(:scope).returns(find_by_id)
