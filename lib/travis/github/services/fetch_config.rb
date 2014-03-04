@@ -11,7 +11,7 @@ module Travis
         register :github_fetch_config
 
         def run
-          config = retrying(3) { parse(fetch) }
+          config = retrying(3) { filter(parse(fetch)) }
           config || Travis.logger.warn("[request:fetch_config] Empty config for request id=#{request.id} config_url=#{config_url.inspect}")
         rescue GH::Error => e
           if e.info[:response_status] == 404
@@ -51,6 +51,14 @@ module Travis
               '.result' => 'parse_error',
               '.result_message' => e.is_a?(Psych::SyntaxError) ? e.message.split(": ").last : e.message
             }
+          end
+
+          def filter(config)
+            unless Travis::Features.active?(:osx_alt_image, request.repository)
+              config = config.except('osx_image')
+            end
+
+            config
           end
 
           def retrying(times)

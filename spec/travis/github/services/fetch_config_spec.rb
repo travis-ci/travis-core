@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Github::Services::FetchConfig do
-  include Travis::Testing::Stubs
+  include Travis::Testing::Stubs, Support::Redis
 
   let(:body)      { { 'content' => ['foo: Foo'].pack('m') } }
   let(:service)   { described_class.new(nil, request: request) }
@@ -50,6 +50,24 @@ describe Travis::Github::Services::FetchConfig do
     it "converts non-breaking spaces to normal spaces" do
       GH.stubs(:[]).returns({ "content" => ["foo:\n\xC2\xA0\xC2\xA0bar: Foobar"].pack("m") })
       result["foo"].should eql({ "bar" => "Foobar" })
+    end
+
+    context "when the repository has the osx_alt_image feature enabled" do
+      before do
+        Travis::Features.activate_repository(:osx_alt_image, request.repository)
+      end
+
+      it "passes the 'osx_image' config key through" do
+        GH.stubs(:[]).returns({ "content" => ["osx_image: latest"].pack("m") })
+        result["osx_image"].should eql("latest")
+      end
+    end
+
+    context "when the repository doesn't have the osx_alt_image feature enabled" do
+      it "doesn't pass the 'osx_image' config key through" do
+        GH.stubs(:[]).returns({ "content" => ["osx_image: latest"].pack("m") })
+        result.has_key?("osx_image").should be false
+      end
     end
   end
 end
