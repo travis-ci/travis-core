@@ -5,8 +5,10 @@ module Travis
         # Fetches the GitHub hook status for all repositories the user has
         # admin access to.
         class Hooks
-          def initialize(user, gh = Github.authenticated(user))
-            @user, @gh = user, gh
+          def initialize(user, force = false, gh = Github.authenticated(user))
+            @user = user
+            @force = force
+            @gh = gh
           end
 
           def run
@@ -21,12 +23,18 @@ module Travis
             end
           end
 
+          def should_sync?(repository)
+            @force || repository.last_sync.nil? || repository.last_sync < 24.hours.ago
+          end
+
           def repositories
             @user.repositories.merge(Permission.where(admin: true))
           end
 
           def sync_hook(repository)
-            repository.update_attributes!(active: hook_active?(repository))
+            return unless should_sync?(repository)
+
+            repository.update_attributes!(active: hook_active?(repository), last_sync: Time.now)
           end
 
           def hook_active?(repository)

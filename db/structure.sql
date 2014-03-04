@@ -603,7 +603,8 @@ CREATE TABLE repositories (
     github_id integer,
     default_branch character varying(255),
     github_language character varying(255),
-    settings json
+    settings json,
+    last_sync timestamp without time zone
 );
 
 
@@ -1554,3 +1555,5 @@ INSERT INTO schema_migrations (version) VALUES ('20140204220926');
 INSERT INTO schema_migrations (version) VALUES ('20140210003014');
 
 INSERT INTO schema_migrations (version) VALUES ('20140210012509');
+
+INSERT INTO schema_migrations (version) VALUES ('20140301072543');

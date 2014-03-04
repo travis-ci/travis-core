@@ -9,7 +9,7 @@ describe Travis::Github::Services::SyncUser::Hooks do
   let(:user) { Factory(:user) }
   let(:repository) { Factory(:repository) }
   let(:gh) { Hash.new }
-  let(:run) { -> { described_class.new(user, gh).run } }
+  let(:run) { -> { described_class.new(user, false, gh).run } }
 
   context 'user is marked as admin on one repository' do
     before do
@@ -37,6 +37,30 @@ describe Travis::Github::Services::SyncUser::Hooks do
       it 'marks repository as inactive' do
         run.should change { repository.reload.active }
         repository.active.should be_false
+      end
+    end
+
+    context 'hook was synced < 24 hours ago' do
+      before do
+        repository.update_attributes!(last_sync: Time.now)
+      end
+
+      it 'doesn\'t sync' do
+        repository.update_attributes!(active: false)
+        gh["/repositories/#{repository.github_id}/hooks"] = [ACTIVE_HOOK]
+
+        run.should_not change { repository.reload.active }
+      end
+
+      context 'for a forced sync' do
+        it 'does sync' do
+          repository.update_attributes!(active: false)
+          gh["/repositories/#{repository.github_id}/hooks"] = [ACTIVE_HOOK]
+
+          expect { described_class.new(user, true, gh).run }
+            .to change { repository.reload.active }
+            .from(false).to(true)
+        end
       end
     end
   end

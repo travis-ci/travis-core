@@ -18,7 +18,7 @@ module Travis
               UserInfo.new(user).run
               Organizations.new(user).run
               Repositories.new(user).run
-              Hooks.new(user).run
+              Hooks.new(user, params[:force]).run
             end
           end
         end
