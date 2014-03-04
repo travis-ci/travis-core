@@ -1077,13 +1077,6 @@ ALTER TABLE ONLY users
 
 
 --
--- Name: index_builds_on_finished_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_builds_on_finished_at ON builds USING btree (finished_at);
-
-
---
 -- Name: index_builds_on_id_repository_id_and_event_type_desc; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1133,24 +1126,10 @@ CREATE INDEX index_emails_on_user_id ON emails USING btree (user_id);
 
 
 --
--- Name: index_jobs_on_created_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_jobs_on_created_at ON jobs USING btree (created_at);
-
-
---
 -- Name: index_jobs_on_owner_id_and_owner_type_and_state; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_jobs_on_owner_id_and_owner_type_and_state ON jobs USING btree (owner_id, owner_type, state);
-
-
---
--- Name: index_jobs_on_queue_and_state; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_jobs_on_queue_and_state ON jobs USING btree (queue, state);
 
 
 --
