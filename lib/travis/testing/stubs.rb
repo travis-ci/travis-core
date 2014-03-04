@@ -34,6 +34,7 @@ module Travis
       def stub_repo(attributes = {})
         Stubs.stub 'repository', attributes.reverse_merge(
           id: 1,
+          owner: stub_user(id: 1, login: 'svenfuchs'),
           owner_type: 'User',
           owner_id: 1,
           owner_name: 'svenfuchs',
@@ -55,7 +56,6 @@ module Travis
           last_build_finished_at: Time.now.utc,
           last_build_state: :passed,
           last_build_duration: 60,
-          owner: nil,
           github_language: 'ruby',
           github_id: 549743,
           builds_only_with_travis_yml?: false
@@ -252,6 +252,7 @@ module Travis
           login: 'svenfuchs',
           email: 'svenfuchs@artweb-design.de',
           gravatar_id: '402602a60e500e85f2f5dc1ff3648ecb',
+          avatar_url: 'https://0.gravatar.com/avatar/402602a60e500e85f2f5dc1ff3648ecb',
           locale: 'de',
           github_oauth_token: 'token',
           syncing?: false,
