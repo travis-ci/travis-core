@@ -1119,27 +1119,6 @@ CREATE INDEX index_builds_on_request_id ON builds USING btree (request_id);
 
 
 --
--- Name: index_builds_on_state; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_builds_on_state ON builds USING btree (state);
-
-
---
--- Name: index_commits_on_branch; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_commits_on_branch ON commits USING btree (branch);
-
-
---
--- Name: index_commits_on_commit; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_commits_on_commit ON commits USING btree (commit);
-
-
---
 -- Name: index_emails_on_email; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1305,13 +1284,6 @@ CREATE INDEX index_ssl_key_on_repository_id ON ssl_keys USING btree (repository_
 --
 
 CREATE UNIQUE INDEX index_users_on_github_id ON users USING btree (github_id);
-
-
---
--- Name: index_users_on_github_oauth_token; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_users_on_github_oauth_token ON users USING btree (github_oauth_token);
 
 
 --
@@ -1601,3 +1573,5 @@ INSERT INTO schema_migrations (version) VALUES ('20140121003026');
 INSERT INTO schema_migrations (version) VALUES ('20140204220926');
 
 INSERT INTO schema_migrations (version) VALUES ('20140210003014');
+
+INSERT INTO schema_migrations (version) VALUES ('20140210012509');
