@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Api::V2::Http::Requests do
-  include Travis::Testing::Stubs
+  include Travis::Testing::Stubs, Support::Formats
 
   let(:data) {
     Travis::Api::V2::Http::Requests.new([request]).data
@@ -24,4 +24,23 @@ describe Travis::Api::V2::Http::Requests do
       }
     ]
   end
+
+  it 'commit' do
+    data['commits'].first.should == {
+      'id' => commit.id,
+      'sha' => '62aae5f70ceee39123ef',
+      'branch' => 'master',
+      'message' => 'the commit message',
+      'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
+      'committed_at' => json_format_time(Time.now.utc - 1.hour),
+      'committer_email' => 'svenfuchs@artweb-design.de',
+      'committer_name' => 'Sven Fuchs',
+      'author_name' => 'Sven Fuchs',
+      'author_email' => 'svenfuchs@artweb-design.de',
+      'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
+      'pull_request_number' => nil,
+    }
+  end
+
+
 end

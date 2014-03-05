@@ -6,10 +6,14 @@ module Travis
       register :find_requests
 
       def run
-        result
+        preload(result)
       end
 
       private
+
+        def preload(requests)
+          requests.includes(:commit)
+        end
 
         def result
           if repo

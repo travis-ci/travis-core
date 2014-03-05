@@ -4,16 +4,18 @@ module Travis
       module Http
         class Requests
           include Formats
-          attr_reader :requests, :options
+          attr_reader :requests, :commits, :options
 
           def initialize(requests, options = {})
             @requests = requests
+            @commits = requests.map(&:commit)
             @options = options
           end
 
           def data
             {
               'requests' => requests.map { |request| request_data(request) },
+              'commits' => commits.map { |commit| commit_data(commit) }
             }
           end
 
@@ -34,6 +36,23 @@ module Travis
                 'message' => request.message
               }
             end
+
+            def commit_data(commit)
+              {
+                'id' => commit.id,
+                'sha' => commit.commit,
+                'branch' => commit.branch,
+                'message' => commit.message,
+                'committed_at' => format_date(commit.committed_at),
+                'author_name' => commit.author_name,
+                'author_email' => commit.author_email,
+                'committer_name' => commit.committer_name,
+                'committer_email' => commit.committer_email,
+                'compare_url' => commit.compare_url,
+                'pull_request_number' => commit.pull_request_number
+              }
+            end
+
         end
       end
     end
