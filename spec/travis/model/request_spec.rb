@@ -29,6 +29,34 @@ describe Request do
     end
   end
 
+  describe 'tag_name' do
+    it 'returns a tag name if available' do
+      request.payload = { 'ref' => 'refs/tags/foo' }
+
+      request.tag_name.should == 'foo'
+    end
+
+    it 'returns nil if a tag name is not available' do
+      request.payload = { 'ref' => 'refs/heads/foo' }
+
+      request.tag_name.should be_nil
+    end
+  end
+
+  describe 'branch_name' do
+    it 'returns a branch name if available' do
+      request.payload = { 'ref' => 'refs/heads/foo' }
+
+      request.branch_name.should == 'foo'
+    end
+
+    it 'returns nil if a branch name is not available' do
+      request.payload = { 'ref' => 'refs/tags/foo' }
+
+      request.branch_name.should be_nil
+    end
+  end
+
   describe 'same_repo_pull_request?' do
     it 'returns true if the base and head repos match' do
       request.payload = {

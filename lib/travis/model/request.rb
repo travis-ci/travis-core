@@ -61,6 +61,18 @@ class Request < Travis::Model
     end
   end
 
+  def branch_name
+    if payload && payload['ref']
+      payload['ref'].scan(%r{refs/heads/(.*?)$}).flatten.first
+    end
+  end
+
+  def tag_name
+    if payload && payload['ref']
+      payload['ref'].scan(%r{refs/tags/(.*?)$}).flatten.first
+    end
+  end
+
   def config_url
     "https://api.github.com/repos/#{repository.slug}/contents/.travis.yml?ref=#{commit.commit}"
   end
