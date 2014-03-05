@@ -33,7 +33,12 @@ module Travis
                 'base_commit' => request.base_commit,
                 'head_commit' => request.head_commit,
                 'result' => request.result,
-                'message' => request.message
+                'message' => request.message,
+                'pull_request' => request.pull_request?,
+                'pull_request_number' => request.pull_request_number,
+                'pull_request_title' => request.pull_request_title,
+                'branch' => request.branch_name,
+                'tag' => request.tag_name
               }
             end
 

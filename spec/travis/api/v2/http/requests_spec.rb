@@ -20,7 +20,12 @@ describe Travis::Api::V2::Http::Requests do
         'base_commit' => 'base-commit',
         'head_commit' => 'head-commit',
         'result' => :accepted,
-        'message'=>'a message'
+        'message' => 'a message',
+        'branch' => 'master',
+        'tag' => nil,
+        'pull_request' => false,
+        'pull_request_title' => nil,
+        'pull_request_number' => nil
       }
     ]
   end

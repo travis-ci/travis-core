@@ -93,8 +93,12 @@ module Travis
           owner_id: 1,
           owner_name: 'svenfuchs',
           owner_email: 'svenfuchs@artweb-design.de',
-          message: 'a message'
-
+          message: 'a message',
+          branch_name: 'master',
+          tag_name: nil,
+          pull_request: false,
+          pull_request_title: nil,
+          pull_request_number: nil
         )
       end
 
