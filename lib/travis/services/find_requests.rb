@@ -24,7 +24,7 @@ module Travis
               requests.recent(requests_limit)
             end
           else
-            raise Travis::RepositoryNotFoundError.new
+            raise Travis::RepositoryNotFoundError.new(params)
           end
         end
 
