@@ -20,6 +20,14 @@ class Request < Travis::Model
     def last_by_head_commit(head_commit)
       where(head_commit: head_commit).order(:id).last
     end
+
+    def older_than(id)
+      recent.where('id < ?', id)
+    end
+
+    def recent(limit = 25)
+      order('id DESC').limit(limit)
+    end
   end
 
   belongs_to :commit
@@ -50,6 +58,18 @@ class Request < Travis::Model
   def pull_request_number
     if pull_request? && payload
       payload['pull_request'] && payload['pull_request']['number']
+    end
+  end
+
+  def branch_name
+    if payload && payload['ref']
+      payload['ref'].scan(%r{refs/heads/(.*?)$}).flatten.first
+    end
+  end
+
+  def tag_name
+    if payload && payload['ref']
+      payload['ref'].scan(%r{refs/tags/(.*?)$}).flatten.first
     end
   end
 

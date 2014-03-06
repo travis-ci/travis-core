@@ -3,6 +3,7 @@ require 'travis_core/version'
 require 'gh'
 require 'pusher'
 require 'travis/redis_pool'
+require 'travis/errors'
 
 # travis-core holds the central parts of the model layer used in both travis-ci
 # (i.e. the web application) as well as travis-hub (a non-rails ui-less JRuby

@@ -71,10 +71,14 @@ module Travis
       end
 
       def stub_request(attributes = {})
+        repo = stub_repository
+        commit = stub_commit
         Stubs.stub 'request', attributes.reverse_merge(
           id: 1,
-          repository: stub_repository,
-          commit: stub_commit,
+          repository: repo,
+          repository_id: repo.id,
+          commit: commit,
+          commit_id: commit.id,
           config: {},
           event_type: 'push',
           head_commit: 'head-commit',
@@ -83,7 +87,18 @@ module Travis
           pull_request?: false,
           comments_url: 'http://github.com/path/to/comments',
           config_url: 'https://api.github.com/repos/svenfuchs/minimal/contents/.travis.yml?ref=62aae5f70ceee39123ef',
-          result: :accepted
+          result: :accepted,
+          created_at: DateTime.new(2013, 01, 01, 0, 0, 0),
+          owner_type: 'User',
+          owner_id: 1,
+          owner_name: 'svenfuchs',
+          owner_email: 'svenfuchs@artweb-design.de',
+          message: 'a message',
+          branch_name: 'master',
+          tag_name: nil,
+          pull_request: false,
+          pull_request_title: nil,
+          pull_request_number: nil
         )
       end
 
