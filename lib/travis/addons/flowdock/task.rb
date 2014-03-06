@@ -49,6 +49,8 @@ module Travis
               r.body = MultiJson.encode(flowdock_payload)
               r.headers['Content-Type'] = 'application/json'
             end
+          rescue URI::InvalidURIError => e
+            error "Invalid Flowdock URL for #{repository[:slug]}##{build[:id]}: #{e.message}"
           end
 
           def build_url

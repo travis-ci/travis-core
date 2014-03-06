@@ -46,6 +46,14 @@ describe Travis::Addons::Flowdock::Task do
     http.verify_stubbed_calls
   end
 
+  describe "handling errors" do
+    it "doesn't raise on an invalid URI" do
+      expect {
+        subject.new(payload, targets: ["https://api.flowdock.com/v1/messages/team_inbox/pfd/oCT/ra Qgk/Q9/ttf/ sRFQ="]).run
+      }.to_not raise_error(URI::InvalidURIError)
+    end
+  end
+
   def expect_flowdock(token, payload)
     http.post("v1/messages/team_inbox/#{token}") do |env|
       env[:url].host.should == 'api.flowdock.com'

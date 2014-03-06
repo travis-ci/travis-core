@@ -31,7 +31,6 @@ module Travis
             end
             response.success? ? log_success(response) : log_error(response)
           rescue URI::InvalidURIError => e
-            puts payload[:id]
             error "Invalid webhook URI for build #{repo_slug}##{payload[:id]}: #{target}"
           end
 
