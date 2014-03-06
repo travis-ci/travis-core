@@ -36,7 +36,12 @@ module Travis
           rescue GH::Error => e
             message = "Could not update the PR status on #{GH.api_host + url} (#{e.message})."
             error message
-            raise message
+            response_message =  e.info[:response_body].try(:[], 'message')
+            case response_message
+            when "Bad credentials"
+            else
+              raise message
+            end
           end
 
           def target_url

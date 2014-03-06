@@ -61,6 +61,14 @@ describe Travis::Addons::GithubStatus::Task do
       io.string.should include('[task]')
       io.string.should include('Could not update')
     end
+
+    it "doesn't raise an error with bad credentials" do
+      error = {response_body: {'message' => 'Bad credentials'}}
+      GH.stubs(:post).raises(GH::Error.new('failed', nil, error))
+      expect {
+        run
+      }.to_not raise_error
+    end
   end
 end
 
