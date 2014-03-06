@@ -28,6 +28,11 @@ module Travis
           def process
             targets.each do |target|
               helper = HttpHelper.new(target)
+              if helper.url.nil?
+                error "Empty HipChat URL for #{repository[:slug]}##{build[:id]}, decryption probably failed."
+                next
+              end
+
               message.each do |line|
                 http.post(helper.url) do |r|
                   r.body = helper.body(line: line, color: color, message_format: message_format)

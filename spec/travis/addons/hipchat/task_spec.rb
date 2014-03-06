@@ -93,6 +93,14 @@ describe Travis::Addons::Hipchat::Task do
     http.verify_stubbed_calls
   end
 
+  describe "handling errors" do
+    it "ignores an empty targets list" do
+      expect {
+        run(["#{SecureRandom.hex 50}@room_1"])
+      }.to_not raise_error
+    end
+  end
+
   def expect_hipchat(room_id, token, lines, extra_body={})
     Array(lines).each do |line|
       body = { 'room_id' => room_id, 'from' => 'Travis CI', 'message' => line, 'color' => 'green', 'message_format' => 'text' }.merge(extra_body)
