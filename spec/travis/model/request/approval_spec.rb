@@ -41,6 +41,11 @@ describe Request::Approval do
       request.config['branches'] = { 'only' => ['gh-pages'] }
       approval.branch_accepted?.should be_true
     end
+
+    it "doesn't fail when the branch configuration is an array" do
+      request.config['branches'] = [{ 'only' => ['gh-pages'] }]
+      approval.branch_accepted?.should be_true
+    end
   end
 
   describe 'accepted?' do

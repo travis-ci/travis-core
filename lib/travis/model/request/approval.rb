@@ -85,6 +85,7 @@ class Request
       def github_pages_explicitly_enabled?
         request.config &&
           request.config['branches'] &&
+          request.config['branches'].is_a?(Hash) &&
           request.config['branches']['only'] &&
           Array(request.config['branches']['only']).grep(/gh[-_]pages/i)
       end
