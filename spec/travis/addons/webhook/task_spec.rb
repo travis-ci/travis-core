@@ -64,6 +64,14 @@ describe Travis::Addons::Webhook::Task do
     http.verify_stubbed_calls
   end
 
+  describe "handling errors" do
+    it "doesn't raise on an invalid URI" do
+      expect {
+        subject.new(payload, targets: ["https://s3-eu-west-1.amazonaws.com/wunderlist-api-test-results/results/%{branch}/%{build_number}/rspec.html"]).run
+      }.to_not raise_error(URI::InvalidURIError)
+    end
+  end
+
   def payload_from(env)
     JSON.parse(Rack::Utils.parse_query(env[:body])['payload'])
   end
