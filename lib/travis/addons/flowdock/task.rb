@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 module Travis
   module Addons
     module Flowdock
