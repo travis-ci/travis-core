@@ -12,6 +12,10 @@ describe Travis::SecureConfig do
     secure.decrypt('hello world').should == 'hello world'
   end
 
+  it 'returns nil if secure is nil' do
+    secure.decrypt(secure: nil).should == nil
+  end
+
   it 'decrypts a string' do
     secure.decrypt(secure: crypted).should == 'hello world'
   end
