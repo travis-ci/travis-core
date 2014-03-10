@@ -38,7 +38,7 @@ module Travis
             error message
             response_status = e.info[:response_status]
             case response_status
-            when 401, 422
+            when 401, 422, 404
             else
               raise message
             end
