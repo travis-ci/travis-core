@@ -22,16 +22,23 @@ module Travis
         def parse(target)
           account, appendix = target.split(":")
           token, channel = appendix.split("#")
-          channel = "##{channel}"
+          if channel.present?
+            channel = "##{channel}"
+          end
           url = "https://#{account}.slack.com/services/hooks/incoming-webhook?token=#{token}"
           [url, channel]
         end
 
         def message(channel)
-          {
-            channel: "#{channel}",
+          message = {
             text: message_text
           }
+
+          if channel.present?
+            message[:channel] = "#{channel}"
+          end
+
+          message
         end
 
         def message_text

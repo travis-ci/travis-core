@@ -23,14 +23,25 @@ describe Travis::Addons::Slack::Task do
       channel: '#channel1',
       text: '[travis-ci] Build #2 (<https://github.com/svenfuchs/minimal/compare/master...develop|Changes>) by Sven Fuchs <http://travis-ci.org/svenfuchs/minimal/builds/1|passed>'
     }.stringify_keys
-    expect_slack('team-1', 'token-1', 'channel-1', message)
-    expect_slack('team-2', 'token-2', 'channel-1', message)
+    expect_slack('team-1', 'token-1', message)
+    expect_slack('team-2', 'token-2', message)
 
     run(targets)
     http.verify_stubbed_calls
   end
 
-  def expect_slack(account, token, channel, body)
+  it "doesn't include a channel in the body when none is specified" do
+    targets = ['team-1:token-1']
+    message = {
+      text: '[travis-ci] Build #2 (<https://github.com/svenfuchs/minimal/compare/master...develop|Changes>) by Sven Fuchs <http://travis-ci.org/svenfuchs/minimal/builds/1|passed>'
+    }.stringify_keys
+    expect_slack('team-1', 'token-1', message)
+
+    run(targets)
+    http.verify_stubbed_calls
+  end
+  
+  def expect_slack(account, token, body)
     host = "#{account}.slack.com"
     path = "/services/hooks/incoming-webhook?token=#{token}"
 
