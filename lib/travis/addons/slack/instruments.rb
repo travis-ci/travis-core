@@ -15,8 +15,7 @@ module Travis
               :repository => payload[:repository][:slug],
               :object_type => 'Build',
               :object_id => payload[:build][:id],
-              :targets => task.targets,
-              :message => task.message
+              :targets => task.targets
             )
           end
         end
