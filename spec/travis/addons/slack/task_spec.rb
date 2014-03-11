@@ -21,7 +21,7 @@ describe Travis::Addons::Slack::Task do
     targets = ['team-1:token-1#channel1', 'team-2:token-2#channel1']
     message = {
       channel: '#channel1',
-      text: 'A build' 
+      text: '[travis-ci] Build #2 (<https://github.com/svenfuchs/minimal/compare/master...develop|Changes>) by Sven Fuchs <http://travis-ci.org/svenfuchs/minimal/builds/1|passed>'
     }.stringify_keys
     expect_slack('team-1', 'token-1', 'channel-1', message)
     expect_slack('team-2', 'token-2', 'channel-1', message)

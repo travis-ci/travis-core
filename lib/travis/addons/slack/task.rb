@@ -30,8 +30,13 @@ module Travis
         def message(channel)
           {
             channel: "#{channel}",
-            text: "A build"
+            text: message_text
           }
+        end
+
+        def message_text
+          line = "[travis-ci] Build #%{build_number} (<%{compare_url}|Changes>) by %{author} <%{build_url}|%{result}>"
+          Util::Template.new(line, payload).interpolate
         end
 
         Instruments::Task.attach_to(self)
