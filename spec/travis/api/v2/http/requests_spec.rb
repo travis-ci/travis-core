@@ -30,7 +30,7 @@ describe Travis::Api::V2::Http::Requests do
     ]
   end
 
-  it 'commit' do
+  it 'returns commits data' do
     data['commits'].first.should == {
       'id' => commit.id,
       'sha' => '62aae5f70ceee39123ef',
@@ -47,5 +47,15 @@ describe Travis::Api::V2::Http::Requests do
     }
   end
 
+  context "without commits" do
+    let(:data) {
+      request = stub_request
+      request.stubs(:commit).returns(nil)
+      Travis::Api::V2::Http::Requests.new([request]).data
+    }
 
+    it "doesn't fail if there is no commit data for a given request" do
+      data['commits'].should == []
+    end
+  end
 end

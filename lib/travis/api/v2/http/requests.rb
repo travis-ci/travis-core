@@ -15,7 +15,7 @@ module Travis
           def data
             {
               'requests' => requests.map { |request| request_data(request) },
-              'commits' => commits.map { |commit| commit_data(commit) }
+              'commits' => commits.compact.map { |commit| commit_data(commit) }
             }
           end
 
@@ -57,7 +57,6 @@ module Travis
                 'pull_request_number' => commit.pull_request_number
               }
             end
-
         end
       end
     end
