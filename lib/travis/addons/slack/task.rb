@@ -33,6 +33,8 @@ module Travis
             text: "A build"
           }
         end
+
+        Instruments::Task.attach_to(self)
       end
     end
   end
