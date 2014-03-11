@@ -28,6 +28,13 @@ describe Travis::Enqueue::Services::EnqueueJobs do
       service.expects(:enqueue_all).never
       service.run
     end
+
+    describe "with a timeout" do
+      it "returns false when the timeout is hit" do
+        Travis::Features.stubs(:feature_deactivated?).raises(Timeout::Error)
+        service.disabled?.should == false  
+      end
+    end
   end
 
   describe 'run' do

@@ -7,6 +7,8 @@ module Travis
       #   * finds the oldest N queueable jobs and
       #   * enqueues them
       class EnqueueJobs < Travis::Services::Base
+        TIMEOUT = 2
+
         extend Travis::Instrumentation, Travis::Exceptions::Handling
 
         require 'travis/enqueue/services/enqueue_jobs/limit'
@@ -28,7 +30,12 @@ module Travis
         rescues :run, from: Exception
 
         def disabled?
-          Travis::Features.feature_deactivated?(:job_queueing)
+          Timeout.timeout(TIMEOUT) do
+            Travis::Features.feature_deactivated?(:job_queueing)
+          end
+        rescue Timeout::Error => e
+          Travis.logger.error("[enqueue] Timeout trying to check enqueuing feature flag.")
+          return false
         end
 
         private
