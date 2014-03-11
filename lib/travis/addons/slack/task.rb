@@ -42,7 +42,7 @@ module Travis
         end
 
         def message_text
-          line = "[travis-ci] Build #%{build_number} (<%{compare_url}|Changes>) by %{author} <%{build_url}|%{result}>"
+          line = "[travis-ci] Build #%{build_number} (<%{compare_url}|%{commit}>) of %{repository}@%{branch} by %{author} <%{build_url}|%{result}>"
           Util::Template.new(line, payload).interpolate
         end
 
