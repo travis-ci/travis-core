@@ -21,7 +21,7 @@ describe Travis::Addons::Slack::Task do
     targets = ['team-1:token-1#channel1', 'team-2:token-2#channel1']
     message = {
       channel: '#channel1',
-      text: '[travis-ci] Build #2 (<https://github.com/svenfuchs/minimal/compare/master...develop|62aae5f>) of svenfuchs/minimal@master by Sven Fuchs <http://travis-ci.org/svenfuchs/minimal/builds/1|passed>'
+      text: '[travis-ci] Build #2 (<https://github.com/svenfuchs/minimal/compare/master...develop|62aae5f>) of svenfuchs/minimal@master by Sven Fuchs <http://travis-ci.org/svenfuchs/minimal/builds/1|passed> in 1 min 0 sec'
     }.stringify_keys
     expect_slack('team-1', 'token-1', message)
     expect_slack('team-2', 'token-2', message)
@@ -33,7 +33,7 @@ describe Travis::Addons::Slack::Task do
   it "doesn't include a channel in the body when none is specified" do
     targets = ['team-1:token-1']
     message = {
-      text: '[travis-ci] Build #2 (<https://github.com/svenfuchs/minimal/compare/master...develop|62aae5f>) of svenfuchs/minimal@master by Sven Fuchs <http://travis-ci.org/svenfuchs/minimal/builds/1|passed>'
+      text: '[travis-ci] Build #2 (<https://github.com/svenfuchs/minimal/compare/master...develop|62aae5f>) of svenfuchs/minimal@master by Sven Fuchs <http://travis-ci.org/svenfuchs/minimal/builds/1|passed> in 1 min 0 sec'
     }.stringify_keys
     expect_slack('team-1', 'token-1', message)
 
