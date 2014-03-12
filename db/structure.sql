@@ -453,7 +453,9 @@ CREATE TABLE logs (
     archiving boolean,
     archived_at timestamp without time zone,
     archive_verified boolean,
-    purged_at timestamp without time zone
+    purged_at timestamp without time zone,
+    removed_by integer,
+    removed_at timestamp without time zone
 );
 
 
@@ -1288,6 +1290,14 @@ ALTER TABLE ONLY log_parts
 
 
 --
+-- Name: logs_users_removed_by_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY logs
+    ADD CONSTRAINT logs_users_removed_by_fk FOREIGN KEY (removed_by) REFERENCES users(id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -1554,3 +1564,5 @@ INSERT INTO schema_migrations (version) VALUES ('20140204220926');
 INSERT INTO schema_migrations (version) VALUES ('20140210003014');
 
 INSERT INTO schema_migrations (version) VALUES ('20140210012509');
+
+INSERT INTO schema_migrations (version) VALUES ('20140215014905');

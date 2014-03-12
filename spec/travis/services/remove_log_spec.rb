@@ -57,6 +57,8 @@ describe Travis::Services::RemoveLog do
     end
 
     it 'runs successfully' do
+      @result.removed_by.should == user
+      @result.removed_at.should be_true
       @result.should be_true
     end
 
@@ -86,6 +88,7 @@ describe Travis::Services::RemoveLog::Instrument do
 
   let(:service)   { Travis::Services::RemoveLog.new(user, params) }
   let(:repo)      { Factory(:repository) }
+  let(:user)      { Factory(:user) }
   let(:job)       { Factory(:test, repository: repo, state: :passed) }
   let(:params)    { { id: job.id, reason: 'Because Science!' } }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }

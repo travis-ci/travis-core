@@ -10,6 +10,10 @@ module Travis
       def run
         return nil unless job
 
+        if log.removed_at || log.removed_by
+          return { error: { message: "Log has already been removed by #{log.removed_by} at #{log.removed_at}" } }
+        end
+
         unless authorized?
           return { error: { message: "Unauthorized" } }
         end
@@ -18,7 +22,9 @@ module Travis
           return { error: { message: "<Job id=#{job.id}> is not finished" } }
         end
 
-        message = FORMAT % [current_user.name, DateTime.now.iso8601]
+        t = Time.now
+
+        message = FORMAT % [current_user.name, t.iso8601]
         if params[:reason]
           message << "\n\n#{params[:reason]}"
         end
@@ -26,6 +32,8 @@ module Travis
         log.content = message
         log.archive_verified = false
         log.archived_at = nil
+        log.removed_at = t
+        log.removed_by = current_user
         log.save! && log
       end
 
