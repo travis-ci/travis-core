@@ -63,7 +63,7 @@ module Travis
 
           def retrying(times)
             count, result = 0, nil
-            until result || count > 3
+            until result || count > times
               result = yield
               count += 1
               Travis.logger.warn("[request:fetch_config] Retrying to fetch config for #{config_url}") unless result
