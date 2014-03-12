@@ -2,26 +2,29 @@ module Travis
   module Api
     module V2
       module Http
-        class Requests
+        class Request
           include Formats
-          attr_reader :requests, :commits, :options
+          attr_reader :request, :commit, :options
 
-          def initialize(requests, options = {})
-            @requests = requests
-            @commits = requests.map(&:commit)
+          def initialize(request, options = {})
+            @request = request
+            @commit = request.commit
             @options = options
           end
 
           def data
-            {
-              'requests' => requests.map { |request| request_data(request) },
-              'commits' => commits.compact.map { |commit| commit_data(commit) }
+            data = {
+              'request' => request_data
             }
+            if commit
+              data['commit'] = commit_data
+            end
+            data
           end
 
           private
 
-            def request_data(request)
+            def request_data
               {
                 'id' => request.id,
                 'repository_id' => request.repository_id,
@@ -42,7 +45,7 @@ module Travis
               }
             end
 
-            def commit_data(commit)
+            def commit_data
               {
                 'id' => commit.id,
                 'sha' => commit.commit,
