@@ -12,7 +12,9 @@ module Travis
         EVENTS = /build:finished/
 
         def handle?
-          targets.present? && config.send_on_finished_for?(:slack)
+          handle = targets.present? && config.send_on_finished_for?(:slack)
+          Travis.logger.info("Handle Slack request? #{handle}")
+          handle
         end
 
         def handle
@@ -21,6 +23,8 @@ module Travis
 
         def targets
           @targets ||= config.notification_values(:slack, :rooms)
+          Travis.logger.info("Targets for Slack: #{@targets}")
+          @targets
         end
 
         Instruments::EventHandler.attach_to(self)
