@@ -105,7 +105,6 @@ end
     event.should publish_instrumentation_event(
       event: 'travis.services.remove_log.run:completed',
       message: "Travis::Services::RemoveLog#run:completed for <Job id=#{job.id}> (svenfuchs)",
-      result: job.log
     )
   end
 end
