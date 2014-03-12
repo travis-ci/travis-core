@@ -16,15 +16,10 @@ describe Travis::Services::RemoveLog do
       user.stubs(:permission?).with(:push, anything).returns true
     end
 
-    it 'does not change log' do
-      expect {
+    it 'raises JobUnfinished error' do
+      lambda {
         service.run
-      }.to_not change { service.log.reload.content }
-    end
-
-    it 'sets error message' do
-      error = service.run.fetch(:error)
-      error.fetch(:message).should =~ /not finished/
+      }.should raise_error Travis::JobUnfinished
     end
   end
 
@@ -33,39 +28,41 @@ describe Travis::Services::RemoveLog do
       user.stubs(:permission?).with(:push, anything).returns false
     end
 
-    it 'does not change log' do
-      expect {
+    it 'raises AuthorizationDenied' do
+      lambda {
         service.run
-      }.to_not change { service.log.reload.content }
-    end
-
-    it 'sets error message' do
-      error = service.run.fetch(:error)
-      error.fetch(:message).should =~ /(?i:unauthorized)/
+      }.should raise_error Travis::AuthorizationDenied
     end
   end
 
   context 'when a job is found' do
-    before :each do
+    before :all do
       find_by_id = stub
       find_by_id.stubs(:find_by_id).returns job
       job.stubs(:finished?).returns true
       service.stubs(:scope).returns find_by_id
       user.stubs(:permission?).with(:push, anything).returns true
-
-      @result = service.run
     end
 
     it 'runs successfully' do
-      @result.removed_by.should == user
-      @result.removed_at.should be_true
-      @result.should be_true
+      result = service.run
+      result.removed_by.should == user
+      result.removed_at.should be_true
+      result.should be_true
     end
 
 
     it "updates logs with desired information" do
       service.log.content.should =~ Regexp.new(user.name)
       service.log.content.should =~ Regexp.new(params[:reason])
+    end
+
+    context 'when log is already removed' do
+      it 'raises LogAlreadyRemoved error' do
+        lambda {
+          service.run
+        }.should raise_error Travis::LogAlreadyRemoved
+      end
     end
   end
 
@@ -98,7 +95,7 @@ describe Travis::Services::RemoveLog::Instrument do
     Travis::Notification.publishers.replace([publisher])
     service.stubs(:run_service)
     user.stubs(:permission?).with(:push, anything).returns true
-end
+  end
 
   it 'publishes a event' do
     service.run

@@ -2,6 +2,7 @@ module Travis
   module Services
     class RemoveLog < Base
       extend Travis::Instrumentation
+      include Travis::Logging
 
       register :remove_log
 
@@ -11,15 +12,18 @@ module Travis
         return nil unless job
 
         if log.removed_at || log.removed_by
-          return { error: { message: "Log has already been removed by #{log.removed_by} at #{log.removed_at}" } }
+          error "Log for job #{job.id} has already been removed by #{log.removed_by} at #{log.removed_at}"
+          raise LogAlreadyRemoved, "log already removed"
         end
 
         unless authorized?
-          return { error: { message: "Unauthorized" } }
+          error "Current user #{current_user} is unauthorized to remove log for job #{job.id}"
+          raise AuthorizationDenied, "insufficient permission to remove logs"
         end
 
         unless job.finished?
-          return { error: { message: "<Job id=#{job.id}> is not finished" } }
+          error "<Job id=#{job.id}> is not finished"
+          raise JobUnfinished, "Job is not finished"
         end
 
         t = Time.now
