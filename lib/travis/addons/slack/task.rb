@@ -25,7 +25,7 @@ module Travis
           if channel.present?
             channel = "##{channel}"
           end
-          url = "https://#{account}.slack.com/services/hooks/incoming-webhook?token=#{token}"
+          url = "https://#{account}.slack.com/services/hooks/travis?token=#{token}"
           [url, channel]
         end
 

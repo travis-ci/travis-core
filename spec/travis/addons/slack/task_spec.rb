@@ -45,7 +45,7 @@ describe Travis::Addons::Slack::Task do
   
   def expect_slack(account, token, body)
     host = "#{account}.slack.com"
-    path = "/services/hooks/incoming-webhook?token=#{token}"
+    path = "/services/hooks/travis?token=#{token}"
 
     http.post(path) do |env|
       env[:url].host.should == host
