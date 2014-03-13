@@ -62,7 +62,7 @@ module Travis
         end
 
         def template_from_config
-          slack_config[:template]
+          slack_config.is_a?(Hash) ? slack_config[:template] : nil
         end
 
         def slack_config
