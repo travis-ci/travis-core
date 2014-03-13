@@ -20,10 +20,14 @@ describe Travis::Addons::Slack::Task do
   it "sends slack notifications to the given targets" do
     targets = ['team-1:token-1#channel1', 'team-2:token-2#channel1']
     message = {
-      icon_url: "http://paperplanes-assets.s3.amazonaws.com/mascot-passed.png",
+      icon_url: "https://travis-ci.org/images/travis-mascot-150.png",
       channel: '#channel1',
-      text: '[travis-ci] Build #2 (<https://github.com/svenfuchs/minimal/compare/master...develop|62aae5f>) of svenfuchs/minimal@master by Sven Fuchs <http://travis-ci.org/svenfuchs/minimal/builds/1|passed> in 1 min 0 sec'
+      attachments: [{
+        text: 'Build #2 (<https://github.com/svenfuchs/minimal/compare/master...develop|62aae5f>) of svenfuchs/minimal@master by Sven Fuchs <http://travis-ci.org/svenfuchs/minimal/builds/1|passed> in 1 min 0 sec',
+        color: 'good'
+      }.stringify_keys]
     }.stringify_keys
+
     expect_slack('team-1', 'token-1', message)
     expect_slack('team-2', 'token-2', message)
 
@@ -34,9 +38,13 @@ describe Travis::Addons::Slack::Task do
   it "doesn't include a channel in the body when none is specified" do
     targets = ['team-1:token-1']
     message = {
-      icon_url: "http://paperplanes-assets.s3.amazonaws.com/mascot-passed.png",
-      text: '[travis-ci] Build #2 (<https://github.com/svenfuchs/minimal/compare/master...develop|62aae5f>) of svenfuchs/minimal@master by Sven Fuchs <http://travis-ci.org/svenfuchs/minimal/builds/1|passed> in 1 min 0 sec'
+      icon_url: "https://travis-ci.org/images/travis-mascot-150.png",
+      attachments: [{
+        text: 'Build #2 (<https://github.com/svenfuchs/minimal/compare/master...develop|62aae5f>) of svenfuchs/minimal@master by Sven Fuchs <http://travis-ci.org/svenfuchs/minimal/builds/1|passed> in 1 min 0 sec',
+        color: 'good'
+      }.stringify_keys]
     }.stringify_keys
+
     expect_slack('team-1', 'token-1', message)
 
     run(targets)
@@ -47,8 +55,11 @@ describe Travis::Addons::Slack::Task do
     targets = ['team-1:token-1']
     payload['build']['config']['notifications'] = { slack: { template: 'Custom: %{author}'}} 
     message = {
-      icon_url: "http://paperplanes-assets.s3.amazonaws.com/mascot-passed.png",
-      text: "Custom: Sven Fuchs"
+      icon_url: "https://travis-ci.org/images/travis-mascot-150.png",
+      attachments: [{
+        text: "Custom: Sven Fuchs",
+        color: 'good'
+      }.stringify_keys]
     }.stringify_keys
     expect_slack('team-1', 'token-1', message)
 
