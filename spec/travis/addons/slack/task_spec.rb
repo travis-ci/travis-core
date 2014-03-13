@@ -43,6 +43,19 @@ describe Travis::Addons::Slack::Task do
     http.verify_stubbed_calls
   end
   
+  it "allows specifying a custom template" do
+    targets = ['team-1:token-1']
+    payload['build']['config']['notifications'] = { slack: { template: 'Custom: %{author}'}} 
+    message = {
+      icon_url: "http://paperplanes-assets.s3.amazonaws.com/mascot-passed.png",
+      text: "Custom: Sven Fuchs"
+    }.stringify_keys
+    expect_slack('team-1', 'token-1', message)
+
+    run(targets)
+    http.verify_stubbed_calls
+  end
+
   def expect_slack(account, token, body)
     host = "#{account}.slack.com"
     path = "/services/hooks/travis?token=#{token}"

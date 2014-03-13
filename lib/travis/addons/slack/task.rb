@@ -44,8 +44,16 @@ module Travis
         end
 
         def message_text
-          line = "[travis-ci] Build #%{build_number} (<%{compare_url}|%{commit}>) of %{repository}@%{branch} by %{author} <%{build_url}|%{result}> in %{duration}"
+          line = template_from_config || "[travis-ci] Build #%{build_number} (<%{compare_url}|%{commit}>) of %{repository}@%{branch} by %{author} <%{build_url}|%{result}> in %{duration}"
           Util::Template.new(line, payload).interpolate
+        end
+
+        def template_from_config
+          slack_config[:template]
+        end
+
+        def slack_config
+          build[:config].try(:[], :notifications).try(:[], :slack) || {}
         end
 
         def add_custom_image(message)
