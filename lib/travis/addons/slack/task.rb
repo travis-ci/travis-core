@@ -46,7 +46,7 @@ module Travis
         end
 
         def message_text
-          line = template_from_config || "Build #%{build_number} (<%{compare_url}|%{commit}>) of %{repository}@%{branch} by %{author} <%{build_url}|%{result}> in %{duration}"
+          line = template_from_config || "Build <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) of %{repository}@%{branch} by %{author} %{result} in %{duration}"
           Util::Template.new(line, payload).interpolate
         end
 
