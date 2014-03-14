@@ -10,55 +10,46 @@ class Job
   class Queue
     class << self
       def for(job)
-        repo_name = job.repository.try(:name)
-        owner     = job.repository.try(:owner_name)
-        language  = Array(job.config[:language]).flatten.compact.first
-        os        = job.config[:os]
-        queues.detect { |queue| queue.send(:matches?, owner, repo_name, language, os) } || default
-      end
+        config = {
+          owner:    job.repository.try(:owner_name),
+          slug:     job.repository.try(:slug),
+          language: Array(job.config[:language]).flatten.compact.first,
+          os:       job.config[:os],
+          stack:    job.config[:stack]
+        }
 
-      def queues
-        @queues ||= Array(Travis.config.queues).compact.map do |queue|
-          Queue.new(*queue.values_at(*[:queue, :slug, :owner, :language, :os]))
-        end
+        queues.detect { |queue| queue.send(:matches?, config) } || default
       end
 
       def default
         @default ||= new(Travis.config.default_queue)
       end
+
+      def queues
+        @queues ||= Array(Travis.config.queues).compact.map do |queue|
+          Queue.new(*queue.values_at(:queue, *ATTRS))
+        end
+      end
     end
 
-    attr_reader :name, :slug, :owner, :language, :os
+    ATTRS = [:slug, :owner, :language, :os, :stack]
 
-    protected
+    attr_reader :name, *ATTRS
+
+    private
 
       def initialize(*args)
-        @name, @slug, @owner, @language, @os = *args
+        @name, @slug, @owner, @language, @os, @stack = *args
       end
 
-      def matches?(owner, repo_name, language, os = nil)
-        matches_slug?("#{owner}/#{repo_name}") || matches_owner?(owner) ||
-          matches_os?(os) || matches_language?(language)
+      def matches?(config)
+        config.inject(false) do |result, (name, value)|
+          result || matches_attr?(name, value)
+        end
       end
 
-      def queue
-        name
-      end
-
-      def matches_slug?(slug)
-        !!self.slug && (self.slug == slug)
-      end
-
-      def matches_owner?(owner)
-        !!self.owner && (self.owner == owner)
-      end
-
-      def matches_language?(language)
-        !!self.language && (self.language == language)
-      end
-
-      def matches_os?(os)
-        !!self.os && (self.os == os)
+      def matches_attr?(name, value)
+        !!send(name) && (send(name) == value)
       end
   end
 end
