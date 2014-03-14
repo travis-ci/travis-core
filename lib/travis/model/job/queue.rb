@@ -18,7 +18,7 @@ class Job
           stack:    job.config[:stack]
         }
 
-        queues.detect { |queue| queue.matches?(config) } || default
+        queues.detect(default) { |queue| queue.matches?(config) }
       end
 
       def default
@@ -49,7 +49,7 @@ class Job
     private
 
       def matches_attr?(name, value)
-        !!send(name) && (send(name) == value)
+        !send(name).nil? && (send(name) == value)
       end
   end
 end
