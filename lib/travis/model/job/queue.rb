@@ -18,7 +18,7 @@ class Job
           stack:    job.config[:stack]
         }
 
-        queues.detect { |queue| queue.send(:matches?, config) } || default
+        queues.detect { |queue| queue.matches?(config) } || default
       end
 
       def default
@@ -36,17 +36,17 @@ class Job
 
     attr_reader :name, *ATTRS
 
+    def initialize(*args)
+      @name, @slug, @owner, @language, @os, @stack = *args
+    end
+
+    def matches?(config)
+      config.inject(false) do |result, (name, value)|
+        result || matches_attr?(name, value)
+      end
+    end
+
     private
-
-      def initialize(*args)
-        @name, @slug, @owner, @language, @os, @stack = *args
-      end
-
-      def matches?(config)
-        config.inject(false) do |result, (name, value)|
-          result || matches_attr?(name, value)
-        end
-      end
 
       def matches_attr?(name, value)
         !!send(name) && (send(name) == value)
