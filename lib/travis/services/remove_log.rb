@@ -26,9 +26,9 @@ module Travis
           raise JobUnfinished, "Job is not finished"
         end
 
-        t = Time.now
+        removed_at = Time.now
 
-        message = FORMAT % [current_user.name, t.iso8601]
+        message = FORMAT % [current_user.name, removed_at.iso8601]
         if params[:reason]
           message << "\n\n#{params[:reason]}"
         end
@@ -36,7 +36,7 @@ module Travis
         log.content = message
         log.archive_verified = false
         log.archived_at = nil
-        log.removed_at = t
+        log.removed_at = removed_at
         log.removed_by = current_user
         log.save! && log
       end
