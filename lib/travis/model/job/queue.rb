@@ -10,15 +10,18 @@ class Job
   class Queue
     class << self
       def for(job)
-        config = {
+        config = config_for(job)
+        queues.detect { |queue| queue.matches?(config) } || default
+      end
+
+      def config_for(job)
+        {
           owner:    job.repository.try(:owner_name),
           slug:     job.repository.try(:slug),
           language: Array(job.config[:language]).flatten.compact.first,
           os:       job.config[:os],
           stack:    job.config[:stack]
         }
-
-        queues.detect(default) { |queue| queue.matches?(config) }
       end
 
       def default
