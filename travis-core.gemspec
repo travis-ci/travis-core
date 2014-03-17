@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'railties',          '~> 3.2.12'
   s.add_dependency 'rollout',           '~> 1.1.0'
   s.add_dependency 'coder',             '~> 0.4.0'
+  s.add_dependency 'coercible',         '~> 1.0.0'
 
   # db
   s.add_dependency 'data_migrations',   '~> 0.0.1'
