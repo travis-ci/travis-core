@@ -12,8 +12,7 @@ module Travis
           end
 
           def queueable
-            @queueable ||= filter_by_repository(jobs)
-            @queueable[0, max_queueable]
+            @queueable ||= filter_by_repository(jobs)[0, max_queueable]
           end
 
           def filter_by_repository(jobs)
