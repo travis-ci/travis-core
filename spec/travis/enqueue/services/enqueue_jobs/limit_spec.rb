@@ -67,5 +67,12 @@ describe Travis::Enqueue::Services::EnqueueJobs::Limit do
       limit.stubs(running_jobs: [OpenStruct.new(repository_id: test.repository_id)])
       limit.queueable.size.should == 3
     end
+
+    it "doesn't allow for a repository maximum higher than the total maximum" do
+      jobs.each do |job|
+        job.repository.stubs(:settings).returns OpenStruct.new({:restricts_number_of_builds? => true, :maximum_number_of_builds => 10})
+        limit.queueable.size.should == 5
+      end
+    end
   end
 end
