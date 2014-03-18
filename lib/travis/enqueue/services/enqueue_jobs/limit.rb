@@ -17,16 +17,18 @@ module Travis
           end
 
           def filter_by_repository(jobs)
-            running_by_repository = running_jobs.each_with_object({}) do |job, acc|
-              acc[job.repository_id] ||= 0
-              acc[job.repository_id] += 1
-            end
-            
-            queueable_by_repository = {}
+            queueable_by_repository_id = {}
             jobs.reject do |job|
               if job.repository.settings.restricts_number_of_builds?
-                queueable?(job, queueable_by_repository, running_by_repository)
+                queueable?(job, queueable_by_repository_id, running_by_repository_id)
               end
+            end
+          end
+
+          def running_by_repository_id
+            @running_by_repository ||= running_jobs.each_with_object({}) do |job, acc|
+              acc[job.repository_id] ||= 0
+              acc[job.repository_id] += 1
             end
           end
 
