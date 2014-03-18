@@ -25,17 +25,15 @@ module Travis
           end
 
           def running_by_repository_id
-            @running_by_repository ||= running_jobs.each_with_object({}) do |job, acc|
-              acc[job.repository_id] ||= 0
-              acc[job.repository_id] += 1
-            end
+            @running_by_repository ||= Hash[running_jobs.group_by(&:repository_id).map {|repository_id, jobs| [repository_id, jobs.size]}]
           end
 
           def queueable?(job, queueable, running)
             repository = job.repository_id
             queueable[repository] ||= 0
 
-            runnable_count = queueable[repository] + (running[repository] || 0)
+            runnable_count = queueable[repository] +
+                              (running[repository] || 0)
             if runnable_count < job.repository.settings.maximum_number_of_builds
               queueable[repository] += 1
               false
