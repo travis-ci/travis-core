@@ -39,6 +39,7 @@ module Travis
                 'state' => job.state.to_s,
                 'secure_env_enabled' => build.secure_env_enabled?
               }
+              data['tag'] = request.tag_name if request.tag_name.present?
               data['pull_request'] = commit.pull_request? ? commit.pull_request_number : false
               data
             end

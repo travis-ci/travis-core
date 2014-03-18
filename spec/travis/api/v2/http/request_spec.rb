@@ -21,7 +21,7 @@ describe Travis::Api::V2::Http::Request do
       'result' => :accepted,
       'message' => 'a message',
       'branch' => 'master',
-      'tag' => nil,
+      'tag' => '',
       'pull_request' => false,
       'pull_request_title' => nil,
       'pull_request_number' => nil

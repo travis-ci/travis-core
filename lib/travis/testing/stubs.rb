@@ -95,7 +95,7 @@ module Travis
           owner_email: 'svenfuchs@artweb-design.de',
           message: 'a message',
           branch_name: 'master',
-          tag_name: nil,
+          tag_name: '',
           pull_request: false,
           pull_request_title: nil,
           pull_request_number: nil
