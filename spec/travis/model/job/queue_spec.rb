@@ -34,51 +34,69 @@ describe 'Job::Queue' do
 
   describe 'Queue.for' do
     it 'returns the default build queue when neither slug or language match the given configuration hash' do
-      job = stub('job', config: {}, repository: stub('repository', owner_name: 'travis-ci', slug: 'travis-ci/travis-ci'))
+      job = stub('job', config: {}, repository: stub('repository', owner_name: 'travis-ci', slug: 'travis-ci/travis-ci', owner: stub))
       Job::Queue.for(job).name.should == 'builds.linux'
     end
 
     it 'returns the queue when slug matches the given configuration hash' do
-      job = stub('job', config: {}, repository: stub('repository', owner_name: 'rails', slug: 'rails/rails'))
+      job = stub('job', config: {}, repository: stub('repository', owner_name: 'rails', slug: 'rails/rails', owner: stub))
       Job::Queue.for(job).name.should == 'builds.rails'
     end
 
     it 'returns the queue when language matches the given configuration hash' do
-      job = stub('job', config: { language: 'clojure' }, repository: stub('repository', owner_name: 'travis-ci', slug: 'travis-ci/travis-ci'))
+      job = stub('job', config: { language: 'clojure' }, repository: stub('repository', owner_name: 'travis-ci', slug: 'travis-ci/travis-ci', owner: stub))
       Job::Queue.for(job).name.should == 'builds.clojure'
     end
 
     it 'returns the queue when the owner matches the given configuration hash' do
-      job = stub('job', config: {}, repository: stub('repository', owner_name: 'cloudfoundry', slug: 'cloudfoundry/bosh'))
+      job = stub('job', config: {}, repository: stub('repository', owner_name: 'cloudfoundry', slug: 'cloudfoundry/bosh', owner: stub))
       Job::Queue.for(job).name.should == 'builds.cloudfoundry'
     end
 
     it 'handles language being passed as an array gracefully' do
-      job = stub('job', config: { language: ['clojure'] }, repository: stub('repository', owner_name: 'travis-ci', slug: 'travis-ci/travis-ci'))
+      job = stub('job', config: { language: ['clojure'] }, repository: stub('repository', owner_name: 'travis-ci', slug: 'travis-ci/travis-ci', owner: stub))
       Job::Queue.for(job).name.should == 'builds.clojure'
     end
 
     context 'when :os value matches the given configuration hash' do
       it 'returns the matching queue' do
-        job = stub('job', config: { os: 'osx' }, repository: stub('travis-core', owner_name: 'travis-ci', slug: 'travis-ci/bosh'))
+        job = stub('job', config: { os: 'osx' }, repository: stub('travis-core', owner_name: 'travis-ci', slug: 'travis-ci/bosh', owner: stub))
         Job::Queue.for(job).name.should == 'builds.mac_osx'
       end
 
       it 'returns the matching queue when language is also given' do
-        job = stub('job', config: {language: 'clojure', os: 'osx' }, repository: stub('travis-core', owner_name: 'travis-ci', slug: 'travis-ci/bosh'))
+        job = stub('job', config: {language: 'clojure', os: 'osx' }, repository: stub('travis-core', owner_name: 'travis-ci', slug: 'travis-ci/bosh', owner: stub))
         Job::Queue.for(job).name.should == 'builds.mac_osx'
       end
     end
 
     context 'when :stack value matches the given configuration hash' do
-      it 'returns the matching queue' do
-        job = stub('job', config: { stack: 'docker' }, repository: stub('travis-core', owner_name: 'travis-ci', slug: 'travis-ci/travis-core'))
-        Job::Queue.for(job).name.should == 'builds.docker'
+      context 'when the repository owner is feature flagged' do
+        it 'returns the matching queue' do
+          job = stub('job', config: { stack: 'docker' }, repository: stub('travis-core', owner_name: 'travis-ci', slug: 'travis-ci/travis-core', owner: stub))
+          Job::Queue.for(job).name.should == 'builds.docker'
+        end
+
+        it 'returns the matching queue when language is also given' do
+          job = stub('job', config: { language: 'clojure', stack: 'docker' }, repository: stub('travis-core', owner_name: 'travis-ci', slug: 'travis-ci/travis-core', owner: stub))
+          Job::Queue.for(job).name.should == 'builds.docker'
+        end
       end
 
-      it 'returns the matching queue when language is also given' do
-        job = stub('job', config: { language: 'clojure', stack: 'docker' }, repository: stub('travis-core', owner_name: 'travis-ci', slug: 'travis-ci/travis-core'))
-        Job::Queue.for(job).name.should == 'builds.docker'
+      context 'when the repository owner is not feature flagged' do
+        before :each do
+          Travis::Features.stubs(:owner_active?).returns(false)
+        end
+
+        it 'returns the matching queue' do
+          job = stub('job', config: { stack: 'docker' }, repository: stub('travis-core', owner_name: 'travis-ci', slug: 'travis-ci/travis-core', owner: stub))
+          Job::Queue.for(job).name.should == 'builds.linux'
+        end
+
+        it 'returns the matching queue when language is also given' do
+          job = stub('job', config: { language: 'clojure', stack: 'docker' }, repository: stub('travis-core', owner_name: 'travis-ci', slug: 'travis-ci/travis-core', owner: stub))
+          Job::Queue.for(job).name.should == 'builds.clojure'
+        end
       end
     end
   end

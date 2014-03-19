@@ -11,6 +11,7 @@ class Job
     class << self
       def for(job)
         config = config_for(job)
+        config.delete(:stack) unless allow_stack?(job.repository)
         queues.detect { |queue| queue.matches?(config) } || default
       end
 
@@ -32,6 +33,10 @@ class Job
         @queues ||= Array(Travis.config.queues).compact.map do |queue|
           Queue.new(*queue.values_at(:queue, *ATTRS))
         end
+      end
+
+      def allow_stack?(repository)
+        Travis::Features.owner_active?(:queue_stack, repository.owner)
       end
     end
 
