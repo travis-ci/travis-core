@@ -8,6 +8,7 @@ describe Travis::Enqueue::Services::EnqueueJobs::Limit do
   let(:limit)   { described_class.new(org, jobs) }
 
   before do
+    Travis.config.limit_per_repo_enabled = true
     jobs.each do |job|
       job.repository.stubs(:settings).returns OpenStruct.new({:restricts_number_of_builds? => false})
     end
@@ -73,6 +74,12 @@ describe Travis::Enqueue::Services::EnqueueJobs::Limit do
         job.repository.stubs(:settings).returns OpenStruct.new({:restricts_number_of_builds? => true, :maximum_number_of_builds => 10})
         limit.queueable.size.should == 5
       end
+    end
+
+    it "doesn't add the filter with limit per repo disabled" do
+      Travis.config.limit_per_repo_enabled = false
+      limit.stubs(running: 0)
+      limit.queueable.size.should == 5
     end
   end
 end

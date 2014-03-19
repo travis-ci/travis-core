@@ -16,6 +16,7 @@ module Travis
           end
 
           def filter_by_repository(jobs)
+            return jobs unless Travis.config.limit_per_repo_enabled?
             queueable_by_repository_id = {}
             jobs.reject do |job|
               if job.repository.settings.restricts_number_of_builds?
