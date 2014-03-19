@@ -16,6 +16,7 @@ describe 'Job::Queue' do
     ]
     Job::Queue.instance_variable_set(:@queues, nil)
     Job::Queue.instance_variable_set(:@default, nil)
+    Travis::Features.stubs(:owner_active?).returns(true)
   end
 
   after do
@@ -57,15 +58,27 @@ describe 'Job::Queue' do
       Job::Queue.for(job).name.should == 'builds.clojure'
     end
 
-    context 'when "os" value matches the given configuration hash' do
+    context 'when :os value matches the given configuration hash' do
       it 'returns the matching queue' do
-        job = stub('job', config: { os: 'osx'}, repository: stub('travis-core', owner_name: 'travis-ci', slug: 'travis-ci/bosh'))
+        job = stub('job', config: { os: 'osx' }, repository: stub('travis-core', owner_name: 'travis-ci', slug: 'travis-ci/bosh'))
         Job::Queue.for(job).name.should == 'builds.mac_osx'
       end
 
       it 'returns the matching queue when language is also given' do
-        job = stub('job', config: {language: 'clojure', os: 'osx'}, repository: stub('travis-core', owner_name: 'travis-ci', slug: 'travis-ci/bosh'))
+        job = stub('job', config: {language: 'clojure', os: 'osx' }, repository: stub('travis-core', owner_name: 'travis-ci', slug: 'travis-ci/bosh'))
         Job::Queue.for(job).name.should == 'builds.mac_osx'
+      end
+    end
+
+    context 'when :stack value matches the given configuration hash' do
+      it 'returns the matching queue' do
+        job = stub('job', config: { stack: 'docker' }, repository: stub('travis-core', owner_name: 'travis-ci', slug: 'travis-ci/travis-core'))
+        Job::Queue.for(job).name.should == 'builds.docker'
+      end
+
+      it 'returns the matching queue when language is also given' do
+        job = stub('job', config: { language: 'clojure', stack: 'docker' }, repository: stub('travis-core', owner_name: 'travis-ci', slug: 'travis-ci/travis-core'))
+        Job::Queue.for(job).name.should == 'builds.docker'
       end
     end
   end
