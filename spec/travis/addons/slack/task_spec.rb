@@ -67,6 +67,13 @@ describe Travis::Addons::Slack::Task do
     http.verify_stubbed_calls
   end
 
+  it "ignores garbage configurations" do
+    targets = ['3109euaofjelw;arj;gfer//asfg=adfaf4lk3rj']
+    expect {
+      run(targets)
+    }.to_not raise_error
+  end
+
   def expect_slack(account, token, body)
     host = "#{account}.slack.com"
     path = "/services/hooks/travis?token=#{token}"

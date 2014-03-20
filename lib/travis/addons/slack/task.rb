@@ -4,12 +4,20 @@ module Travis
       class Task < Travis::Task
         def process
           targets.each do |target|
-            send_message(target)
+            if illegal_format?(target)
+              Travis.logger.warn "Ignoring invalid Slack target #{target}"
+            else
+              send_message(target)
+            end
           end
         end
 
         def targets
           params[:targets]
+        end
+
+        def illegal_format?(target)
+          !target.match(/^[a-zA-Z0-9-]+:[a-zA-Z0-9_-]+(#.+)?$/)
         end
 
         def send_message(target)
