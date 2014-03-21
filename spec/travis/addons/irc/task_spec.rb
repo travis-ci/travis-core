@@ -91,6 +91,35 @@ describe Travis::Addons::Irc::Task do
     run
   end
 
+  it 'with a custom message template_success' do
+    payload['build']['config']['notifications'] = { irc: { template_success: '%{repository} %{commit}' } }
+
+    expect_irc 'irc.freenode.net', 1234, 'travis', [
+      'NICK travis-ci',
+      'USER travis-ci travis-ci travis-ci :travis-ci',
+      'JOIN #travis',
+      'PRIVMSG #travis :[travis-ci] svenfuchs/minimal 62aae5f',
+      'PART #travis',
+      'QUIT'
+    ]
+    run
+  end
+
+  it 'with a custom message template_failure for a failed build' do
+    payload['build']['config']['notifications'] = { irc: { template_failure: '%{repository} %{commit}' } }
+    payload['build']['state'] = 'failed'
+
+    expect_irc 'irc.freenode.net', 1234, 'travis', [
+      'NICK travis-ci',
+      'USER travis-ci travis-ci travis-ci :travis-ci',
+      'JOIN #travis',
+      'PRIVMSG #travis :[travis-ci] svenfuchs/minimal 62aae5f',
+      'PART #travis',
+      'QUIT'
+    ]
+    run
+  end
+
   it 'with multiple custom message templates' do
     payload['build']['config']['notifications'] = { irc: { template: ['%{repository} %{commit}', '%{message}'] } }
 
@@ -100,6 +129,37 @@ describe Travis::Addons::Irc::Task do
       'JOIN #travis',
       'PRIVMSG #travis :[travis-ci] svenfuchs/minimal 62aae5f',
       'PRIVMSG #travis :[travis-ci] The build passed.',
+      'PART #travis',
+      'QUIT'
+    ]
+    run
+  end
+
+  it 'with multiple custom message templates for successful build' do
+    payload['build']['config']['notifications'] = { irc: { template_success: ['%{repository} %{commit}', '%{message}'] } }
+
+    expect_irc 'irc.freenode.net', 1234, 'travis', [
+      'NICK travis-ci',
+      'USER travis-ci travis-ci travis-ci :travis-ci',
+      'JOIN #travis',
+      'PRIVMSG #travis :[travis-ci] svenfuchs/minimal 62aae5f',
+      'PRIVMSG #travis :[travis-ci] The build passed.',
+      'PART #travis',
+      'QUIT'
+    ]
+    run
+  end
+
+  it 'with multiple custom message templates for failed build' do
+    payload['build']['config']['notifications'] = { irc: { template_failure: ['%{repository} %{commit}', '%{message}'] } }
+    payload['build']['state'] = 'failed'
+
+    expect_irc 'irc.freenode.net', 1234, 'travis', [
+      'NICK travis-ci',
+      'USER travis-ci travis-ci travis-ci :travis-ci',
+      'JOIN #travis',
+      'PRIVMSG #travis :[travis-ci] svenfuchs/minimal 62aae5f',
+      'PRIVMSG #travis :[travis-ci] The build was broken.',
       'PART #travis',
       'QUIT'
     ]

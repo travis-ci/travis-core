@@ -76,7 +76,19 @@ module Travis
           end
 
           def template
-            Array(try_config(:template) || DEFAULT_TEMPLATE)
+            Array(template_for(build[:state]) || DEFAULT_TEMPLATE)
+          end
+
+          def template_for(state = nil)
+            if state == 'passed' && config[:template_success]
+              config[:template_success]
+            elsif state == 'failed' && config[:template_failure]
+              config[:template_failure]
+            else
+              config[:template]
+            end
+          rescue
+            nil
           end
 
           def client_options(port, ssl)
