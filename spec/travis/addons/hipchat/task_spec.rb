@@ -50,13 +50,38 @@ describe Travis::Addons::Hipchat::Task do
     http.verify_stubbed_calls
   end
 
+  it 'uses template_success if defined' do
+    targets  = ["#{room_1_token}@room_1"]
+    template = ['%{repository}', '%{commit}']
+    messages = ['svenfuchs/minimal', '62aae5f']
+
+    payload['build']['config']['notifications'] = { hipchat: { template_success: template } }
+    expect_hipchat('room_1', room_1_token, messages)
+
+    run(targets)
+    http.verify_stubbed_calls
+  end
+
+  it 'uses template_failure if defined for failed build' do
+    targets  = ["#{room_1_token}@room_1"]
+    template = ['%{repository}', '%{commit}']
+    messages = ['svenfuchs/minimal', '62aae5f']
+
+    payload['build']['config']['notifications'] = { hipchat: { template_failure: template } }
+    payload['build']['state'] = 'failed'
+    expect_hipchat('room_1', room_1_token, messages, message_color: 'red')
+
+    run(targets)
+    http.verify_stubbed_calls
+  end
+
   it "sends HTML notifications if requested" do
     targets = ["#{room_1_token}@room_1"]
     template = ['<a href="%{build_url}">Details</a>']
     messages = ['<a href="http://travis-ci.org/svenfuchs/minimal/builds/1">Details</a>']
 
     payload['build']['config']['notifications'] = { hipchat: { template: template, format: 'html' } }
-    expect_hipchat('room_1', room_1_token, messages, 'message_format' => 'html')
+    expect_hipchat('room_1', room_1_token, messages, extra_body: {'message_format' => 'html'})
 
     run(targets)
     http.verify_stubbed_calls
@@ -87,7 +112,7 @@ describe Travis::Addons::Hipchat::Task do
     ]
 
     payload["build"]["state"] = "errored"
-    expect_hipchat("room_1", room_1_token, messages, "color" => "gray")
+    expect_hipchat("room_1", room_1_token, messages, extra_body: {"color" => "gray"})
 
     run(targets)
     http.verify_stubbed_calls
@@ -101,9 +126,11 @@ describe Travis::Addons::Hipchat::Task do
     end
   end
 
-  def expect_hipchat(room_id, token, lines, extra_body={})
+  def expect_hipchat(room_id, token, lines, opts={})
+    extra_body = opts[:extra_body] || {}
+    message_color = opts[:message_color] || 'green'
     Array(lines).each do |line|
-      body = { 'room_id' => room_id, 'from' => 'Travis CI', 'message' => line, 'color' => 'green', 'message_format' => 'text' }.merge(extra_body)
+      body = { 'room_id' => room_id, 'from' => 'Travis CI', 'message' => line, 'color' => message_color, 'message_format' => 'text' }.merge(extra_body)
       http.post("v1/rooms/message?format=json&auth_token=#{token}") do |env|
         env[:url].host.should == 'api.hipchat.com'
         Rack::Utils.parse_query(env[:body]).should == body
@@ -111,9 +138,11 @@ describe Travis::Addons::Hipchat::Task do
     end
   end
 
-  def expect_hipchat_v2(room_id, token, lines, extra_body={})
+  def expect_hipchat_v2(room_id, token, lines, opts={})
+    extra_body = opts[:extra_body] || {}
+    message_color = opts[:message_color] || 'green'
     Array(lines).each do |line|
-      body = { 'message' => line, 'color' => 'green', 'message_format' => 'text' }.merge(extra_body).to_json
+      body = { 'message' => line, 'color' => message_color, 'message_format' => 'text' }.merge(extra_body).to_json
       http.post("https://api.hipchat.com/v2/room/#{URI::encode(room_id, Travis::Addons::Hipchat::HttpHelper::UNSAFE_URL_CHARS)}/notification?auth_token=#{token}") do |env|
         env[:request_headers]['Content-Type'].should == 'application/json'
         env[:body].should == body
