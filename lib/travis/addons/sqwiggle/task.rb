@@ -6,9 +6,9 @@ module Travis
       # configuration (`.travis.yml`).
       #
       class Task < Travis::Task
-        DEFAULT_TEMPLATE = %Q[ 
+        DEFAULT_TEMPLATE = %Q[
           %{repository} - build number: %{build_number} (%{branch} - %{commit} : %{author}) -
-          <a href="%{build_url}" target="_blank">build</a> has 
+          <a href="%{build_url}" target="_blank">build</a> has
           <strong>%{result}</strong>
         ]
 
@@ -23,7 +23,19 @@ module Travis
         private
 
         def template
-          (config[:template] rescue nil) || DEFAULT_TEMPLATE
+          template_for(build[:state]) || DEFAULT_TEMPLATE
+        end
+
+        def template_for(state = nil)
+          if build[:state] == 'passed' && config[:template_success]
+            config[:template_success]
+          elsif build[:state] == 'failed' && config[:template_failure]
+            config[:template_failure]
+          else
+            config[:template]
+          end
+        rescue
+          nil
         end
 
         def process
