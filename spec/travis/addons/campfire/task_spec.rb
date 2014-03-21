@@ -44,6 +44,31 @@ describe Travis::Addons::Campfire::Task do
     http.verify_stubbed_calls
   end
 
+  it 'using a custom template_success' do
+    targets  = ['account-1:token-1@1234']
+    template = ['%{repository}', '%{commit}']
+    messages = ['svenfuchs/minimal', '62aae5f']
+
+    payload['build']['config']['notifications'] = { campfire: { template_success: template } }
+    expect_campfire('account-1', '1234', 'token-1', messages)
+
+    run(targets)
+    http.verify_stubbed_calls
+  end
+
+  it 'using a custom template_failure' do
+    targets  = ['account-1:token-1@1234']
+    template = ['%{repository}', '%{commit}']
+    messages = ['svenfuchs/minimal', '62aae5f']
+
+    payload['build']['config']['notifications'] = { campfire: { template_failure: template } }
+    payload['build']['state'] = 'failed'
+    expect_campfire('account-1', '1234', 'token-1', messages)
+
+    run(targets)
+    http.verify_stubbed_calls
+  end
+
   def expect_campfire(account, room, token, body)
     host = "#{account}.campfirenow.com"
     path = "room/#{room}/speak.json"
