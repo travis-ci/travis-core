@@ -50,15 +50,48 @@ describe Travis::Addons::Slack::Task do
     run(targets)
     http.verify_stubbed_calls
   end
-  
+
   it "allows specifying a custom template" do
     targets = ['team-1:token-1']
-    payload['build']['config']['notifications'] = { slack: { template: 'Custom: %{author}'}} 
+    payload['build']['config']['notifications'] = { slack: { template: 'Custom: %{author}'}}
     message = {
       icon_url: "https://travis-ci.org/images/travis-mascot-150.png",
       attachments: [{
         text: "Custom: Sven Fuchs",
         color: 'good'
+      }.stringify_keys]
+    }.stringify_keys
+    expect_slack('team-1', 'token-1', message)
+
+    run(targets)
+    http.verify_stubbed_calls
+  end
+
+  it "uses template_success for successful build" do
+    targets = ['team-1:token-1']
+    payload['build']['config']['notifications'] = { slack: { template_success: 'Custom: %{author}'}}
+    message = {
+      icon_url: "https://travis-ci.org/images/travis-mascot-150.png",
+      attachments: [{
+        text: "Custom: Sven Fuchs",
+        color: 'good'
+      }.stringify_keys]
+    }.stringify_keys
+    expect_slack('team-1', 'token-1', message)
+
+    run(targets)
+    http.verify_stubbed_calls
+  end
+
+  it "uses template_failure for failed build" do
+    targets = ['team-1:token-1']
+    payload['build']['config']['notifications'] = { slack: { template_failure: 'Custom: %{author}'}}
+    payload['build']['state'] = 'failed'
+    message = {
+      icon_url: "https://travis-ci.org/images/travis-mascot-150.png",
+      attachments: [{
+        text: "Custom: Sven Fuchs",
+        color: 'danger'
       }.stringify_keys]
     }.stringify_keys
     expect_slack('team-1', 'token-1', message)
