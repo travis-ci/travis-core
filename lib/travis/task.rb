@@ -103,5 +103,9 @@ module Travis
       rescue
         nil
       end
+
+      def config
+        raise NotImplementedError, "#config must be implemented by the subclass"
+      end
   end
 end
