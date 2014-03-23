@@ -46,18 +46,6 @@ module Travis
             Array(template_for(build[:state]) || DEFAULT_TEMPLATE)
           end
 
-          def template_for(state = nil)
-            if state == 'passed' && config[:template_success]
-              config[:template_success]
-            elsif state == 'failed' && config[:template_failure]
-              config[:template_failure]
-            else
-              config[:template]
-            end
-          rescue
-            nil
-          end
-
           def parse(target)
             target =~ /([\w-]+):([\w-]+)@(\d+)/
             ["https://#{$1}.campfirenow.com/room/#{$3}/speak.json", $2]

@@ -70,20 +70,10 @@ module Travis
         end
 
         def template_from_config
-          slack_config.is_a?(Hash) ? template_for(build[:state]) : nil
+          config.is_a?(Hash) ? template_for(build[:state]) : nil
         end
 
-        def template_for(state = nil)
-          if build[:state].to_s == 'passed' && slack_config[:template_success]
-            slack_config[:template_success]
-          elsif build[:state].to_s == 'failed' && slack_config[:template_failure]
-            slack_config[:template_failure]
-          else
-            slack_config[:template]
-          end
-        end
-
-        def slack_config
+        def config
           build[:config].try(:[], :notifications).try(:[], :slack) || {}
         end
 

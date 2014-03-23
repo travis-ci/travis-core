@@ -89,5 +89,17 @@ module Travis
       def timeout(options = { after: 60 }, &block)
         Timeout::timeout(options[:after], &block)
       end
+
+      def template_for(state = nil)
+        if state == 'passed' && config[:template_success]
+          config[:template_success]
+        elsif state == 'failed' && config[:template_failure]
+          config[:template_failure]
+        else
+          config[:template]
+        end
+      rescue
+        nil
+      end
   end
 end
