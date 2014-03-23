@@ -95,6 +95,8 @@ module Travis
           config[:template_success]
         elsif state == 'failed' && config[:template_failure]
           config[:template_failure]
+        elsif state == 'errored' && config[:template_error]
+          config[:template_error]
         else
           config[:template]
         end

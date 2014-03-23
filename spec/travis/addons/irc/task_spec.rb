@@ -120,6 +120,21 @@ describe Travis::Addons::Irc::Task do
     run
   end
 
+  it 'with a custom message template_error for a errored build' do
+    payload['build']['config']['notifications'] = { irc: { template_error: '%{repository} %{commit}' } }
+    payload['build']['state'] = 'errored'
+
+    expect_irc 'irc.freenode.net', 1234, 'travis', [
+      'NICK travis-ci',
+      'USER travis-ci travis-ci travis-ci :travis-ci',
+      'JOIN #travis',
+      'PRIVMSG #travis :[travis-ci] svenfuchs/minimal 62aae5f',
+      'PART #travis',
+      'QUIT'
+    ]
+    run
+  end
+
   it 'with multiple custom message templates' do
     payload['build']['config']['notifications'] = { irc: { template: ['%{repository} %{commit}', '%{message}'] } }
 
@@ -160,6 +175,22 @@ describe Travis::Addons::Irc::Task do
       'JOIN #travis',
       'PRIVMSG #travis :[travis-ci] svenfuchs/minimal 62aae5f',
       'PRIVMSG #travis :[travis-ci] The build was broken.',
+      'PART #travis',
+      'QUIT'
+    ]
+    run
+  end
+
+  it 'with multiple custom message templates for errored build' do
+    payload['build']['config']['notifications'] = { irc: { template_error: ['%{repository} %{commit}', '%{message}'] } }
+    payload['build']['state'] = 'errored'
+
+    expect_irc 'irc.freenode.net', 1234, 'travis', [
+      'NICK travis-ci',
+      'USER travis-ci travis-ci travis-ci :travis-ci',
+      'JOIN #travis',
+      'PRIVMSG #travis :[travis-ci] svenfuchs/minimal 62aae5f',
+      'PRIVMSG #travis :[travis-ci] The build has errored.',
       'PART #travis',
       'QUIT'
     ]

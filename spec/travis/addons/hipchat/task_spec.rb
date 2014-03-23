@@ -75,6 +75,19 @@ describe Travis::Addons::Hipchat::Task do
     http.verify_stubbed_calls
   end
 
+  it 'uses template_error if defined for errored build' do
+    targets  = ["#{room_1_token}@room_1"]
+    template = ['%{repository}', '%{commit}']
+    messages = ['svenfuchs/minimal', '62aae5f']
+
+    payload['build']['config']['notifications'] = { hipchat: { template_error: template } }
+    payload['build']['state'] = 'errored'
+    expect_hipchat('room_1', room_1_token, messages, message_color: 'gray')
+
+    run(targets)
+    http.verify_stubbed_calls
+  end
+
   it "sends HTML notifications if requested" do
     targets = ["#{room_1_token}@room_1"]
     template = ['<a href="%{build_url}">Details</a>']

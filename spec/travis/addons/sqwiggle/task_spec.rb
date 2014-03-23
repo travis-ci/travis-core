@@ -79,6 +79,27 @@ describe Travis::Addons::Sqwiggle::Task do
     http.verify_stubbed_calls
   end
 
+  it 'uses template_error for errored build if defined' do
+    targets  = ['12345@1']
+    template = '%{repository} %{commit}'
+    message = 'svenfuchs/minimal 62aae5f'
+
+    payload['build']['config']['notifications'] = { sqwiggle: { template_error: template } }
+    payload['build']['state'] = 'errored'
+
+    sqwiggle_payload = {
+      text: message,
+      format: 'html',
+      color: 'gray',
+      parse: false
+    }
+
+    expect_sqwiggle('12345', sqwiggle_payload, 1)
+
+    run(targets)
+    http.verify_stubbed_calls
+  end
+
   it 'uses template_failure for failed build if defined' do
     targets  = ['12345@1']
     template = '%{repository} %{commit}'
