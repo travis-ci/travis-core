@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'coercible'
+require 'travis/overwritable_method_definitions'
 
 class Repository::Settings
   class Errors < ActiveModel::Errors
@@ -86,17 +87,12 @@ class Repository::Settings
 
   class Model
     include ActiveModel::Validations
+    include Travis::OverwritableMethodDefinitions
 
     class << self
       def inherited(child_class)
-        child_class.initialize_attributes_module
         child_class.initialize_fields(fields)
         super
-      end
-
-      def initialize_attributes_module
-        @generated_attribute_methods = Module.new
-        include @generated_attribute_methods
       end
 
       def initialize_fields(fields)
@@ -124,11 +120,11 @@ class Repository::Settings
       end
 
       def create_field(field)
-        @generated_attribute_methods.send :define_method, "#{field.name}" do
+        define_overwritable_method "#{field.name}" do
           field.get(self.instance_variable_get("@#{field.name}"), key: key)
         end
 
-        @generated_attribute_methods.send :define_method, "#{field.name}=" do |value|
+        define_overwritable_method "#{field.name}=" do |value|
           self.instance_variable_set("@#{field.name}", field.set(value, key: key))
         end
       end
@@ -139,8 +135,6 @@ class Repository::Settings
     end
 
     delegate :field?, to: 'self.class'
-
-    initialize_attributes_module
     field :id, :uuid
 
     attr_reader :options
@@ -235,6 +229,8 @@ class Repository::Settings
     model SshKey
   end
 
+  include Travis::OverwritableMethodDefinitions
+
   class << self
     def load(repository, json_string)
       new(repository, json_string ? JSON.parse(json_string) : {})
@@ -254,24 +250,13 @@ class Repository::Settings
 
       @collections[path] = klass
 
-      @generated_collections_methods.send :define_method, "#{path}" do
+      define_overwritable_method "#{path}" do
         instance_variable_get("@#{path}")
       end
     end
     attr_reader :collections
-
-    def inherited(child_class)
-      child_class.initialize_collections_methods_module
-      super
-    end
-
-    def initialize_collections_methods_module
-      @generated_collections_methods = Module.new
-      include @generated_collections_methods
-    end
   end
 
-  initialize_collections_methods_module
   register :ssh_keys
 
   attr_accessor :collections
