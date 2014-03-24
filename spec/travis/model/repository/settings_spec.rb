@@ -4,6 +4,42 @@ require 'spec_helper'
 describe Repository::Settings do
   let(:repo) { stub('repository') }
 
+  describe 'registering a collection' do
+    before do
+      model_class = Class.new(Repository::Settings::Model) {
+        field :name
+      }
+      collection_class = Class.new(Repository::Settings::Collection) {
+        model model_class
+      }
+      Repository::Settings.const_set('Items', collection_class)
+    end
+
+    after do
+      Repository::Settings.send(:remove_const, 'Items')
+    end
+
+
+    it 'allows to register a collection' do
+      settings_class = Class.new(Repository::Settings) {
+        register :items
+      }
+      settings = settings_class.new repo, {}
+
+      settings.items.to_a.should == []
+      settings.items.class.should == Repository::Settings::Items
+    end
+
+    it 'populates registered collections from raw settings' do
+      settings_class = Class.new(Repository::Settings) {
+        register :items
+      }
+
+      settings = settings_class.new repo, 'items' => [{ 'name' => 'one' }, { 'name' => 'two' }]
+      settings.items.map(&:name).should == ['one', 'two']
+    end
+  end
+
   describe '#get' do
     it 'fetches a given path' do
       json = { 'foo' => { 'bar' => { 'baz' => 'qux' } } }
@@ -28,6 +64,32 @@ describe Repository::Settings do
       repo.expects('save')
 
       settings = Repository::Settings.new(repo, 'foo' => 'bar')
+      settings.save
+    end
+
+    it 'saves registered collections' do
+      model_class = Class.new(Repository::Settings::Model) {
+        field :name
+        field :content, encrypted: true
+      }
+      collection_class = Class.new(Repository::Settings::Collection) {
+        model model_class
+      }
+      settings_class = Class.new(Repository::Settings) {
+        register :items, collection_class
+      }
+
+      settings = settings_class.new(repo, {})
+
+      item = settings.items.create(name: 'foo', content: 'bar')
+
+      repo.expects('settings=').with() { |json|
+        hash = JSON.parse(json)
+        column = Travis::Model::EncryptedColumn.new(use_prefix: false)
+        decrypted = column.load(hash['items'].first['content'])
+        decrypted == 'bar'
+      }
+      repo.expects('save')
       settings.save
     end
   end

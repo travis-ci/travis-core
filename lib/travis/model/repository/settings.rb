@@ -2,7 +2,34 @@
 require 'coercible'
 
 class Repository::Settings
+  class Errors < ActiveModel::Errors
+    # Default behavior of Errors in Active Model is to
+    # translate symbolized message into full text message,
+    # using i18n if available. I don't want such a behavior,
+    # as I want to return error "codes" like :blank, not
+    # full text like "can't be blank"
+    def normalize_message(attribute, message, options)
+      message || :invalid
+    end
+  end
+
   class Field < Struct.new(:name, :type, :options)
+    attr_reader :encrypted
+    alias encrypted? encrypted
+
+    def initialize(name, type, options)
+      super
+      @encrypted = true if options[:encrypted] || options['encrypted']
+    end
+
+    def set(value, options)
+      encrypt(coerce(value), options[:key])
+    end
+
+    def get(value, options)
+      wrap_as_encrypted(value, options[:key])
+    end
+
     def coerce(value)
       coercer = Coercible::Coercer.new
       coercer[value.class].send(coercer_method, value)
@@ -15,18 +42,65 @@ class Repository::Settings
         "to_#{type}"
       end
     end
+
+    def wrap_as_encrypted(value, key)
+      encrypted? ? EncryptedValue.new(value, key) : value
+    end
+
+    def encrypt(value, key)
+      if encrypted?
+        Travis::Model::EncryptedColumn.new(key: key, use_prefix: false).dump(value)
+      else
+        value
+      end
+    end
+  end
+
+  class EncryptedValue
+    attr_reader :value, :key
+    def initialize(value, key)
+      @value = value
+      @key = key
+    end
+
+    def to_s
+      value
+    end
+
+    def to_str
+      value
+    end
+
+    def to_json
+      value.to_json
+    end
+
+    def as_json(*)
+      value
+    end
+
+    def decrypt
+      Travis::Model::EncryptedColumn.new(key: key, use_prefix: false).load(value)
+    end
   end
 
   class Model
+    include ActiveModel::Validations
+
     class << self
       def inherited(child_class)
         child_class.initialize_attributes_module
+        child_class.initialize_fields(fields)
         super
       end
 
       def initialize_attributes_module
         @generated_attribute_methods = Module.new
         include @generated_attribute_methods
+      end
+
+      def initialize_fields(fields)
+        @fields = fields.dup
       end
 
       def fields
@@ -45,13 +119,17 @@ class Repository::Settings
         create_field(field)
       end
 
+      def field_by_name(name)
+        fields.detect { |f| f.name.to_s == name.to_s }
+      end
+
       def create_field(field)
         @generated_attribute_methods.send :define_method, "#{field.name}" do
-          self.instance_variable_get("@#{field.name}")
+          field.get(self.instance_variable_get("@#{field.name}"), key: key)
         end
 
         @generated_attribute_methods.send :define_method, "#{field.name}=" do |value|
-          self.instance_variable_set("@#{field.name}", field.coerce(value))
+          self.instance_variable_set("@#{field.name}", field.set(value, key: key))
         end
       end
 
@@ -60,14 +138,46 @@ class Repository::Settings
       end
     end
 
-    def initialize(attributes = {})
+    delegate :field?, to: 'self.class'
+
+    initialize_attributes_module
+    field :id, :uuid
+
+    attr_reader :options
+
+    def initialize(attributes = {}, options = {})
+      @options = options
+      # TODO: figure out if we want to use different key here
+      @options[:key] ||= Travis.config.encryption.key
       attributes.each do |attribute, value|
-        self.send("#{attribute}=", value) if self.class.field?(attribute)
+        self.send("#{attribute}=", value) if field?(attribute)
       end
+    end
+
+    def errors
+      @errors ||= Errors.new(self)
+    end
+
+    def key
+      options[:key]
+    end
+
+    def to_hash
+      hash = {}
+      self.class.fields.each do |field|
+        hash[field.name] = self.send(field.name)
+      end
+      hash
+    end
+
+    def to_json
+      to_hash.to_json
     end
   end
 
   class Collection
+    include Enumerable
+
     class << self
       def model(model_name_or_class = nil)
         if model_name_or_class
@@ -78,33 +188,125 @@ class Repository::Settings
             model_name_or_class
           end
 
-          @model = klass
+          @model_class = klass
         else
-          @model
+          @model_class
         end
       end
+      attr_reader :model_class
+    end
+
+    attr_reader :collection
+    attr_accessor :registered_at
+    delegate :model_class, to: 'self.class'
+    delegate :each, :length, :empty?, to: :collection
+
+    def initialize
+      @collection = []
+    end
+
+    def create(attributes)
+      model = model_class.new(attributes)
+      model.id = SecureRandom.uuid unless model.id
+      collection.push model
+      model
+    end
+
+    def load(array)
+      array.each do |attributes|
+        model = model_class.new(attributes)
+        collection.push model
+      end
+    end
+
+    def to_hashes
+      collection.map(&:to_hash)
     end
   end
 
   class SshKey < Model
     field :name
     field :content, encyrpt: true
+
+    validates :name, presence: true
   end
 
   class SshKeys < Collection
     model SshKey
   end
 
-  def self.load(repository, json_string)
-    self.new(repository, json_string ? JSON.parse(json_string) : {})
+  class << self
+    def load(repository, json_string)
+      new(repository, json_string ? JSON.parse(json_string) : {})
+    end
+
+    def register(path, collection_class_or_name = nil)
+      path = path.to_s
+      @collections ||= {}
+
+      collection_class_or_name ||= path
+      klass = if collection_class_or_name.is_a?(String) || collection_class_or_name.is_a?(Symbol)
+        name = collection_class_or_name.to_s.camelize
+        Repository::Settings.const_get(name)
+      else
+        collection_class_or_name
+      end
+
+      @collections[path] = klass
+
+      @generated_collections_methods.send :define_method, "#{path}" do
+        instance_variable_get("@#{path}")
+      end
+    end
+    attr_reader :collections
+
+    def inherited(child_class)
+      child_class.initialize_collections_methods_module
+      super
+    end
+
+    def initialize_collections_methods_module
+      @generated_collections_methods = Module.new
+      include @generated_collections_methods
+    end
   end
+
+  initialize_collections_methods_module
+  register :ssh_keys
+
+  attr_accessor :collections
 
   def initialize(repository, settings)
     self.repository = repository
     self.settings = settings || {}
+    initialize_collections
   end
 
-  attr_accessor :settings, :repository
+  def settings
+    # TODO: this class started as a thin wrapper over hash,
+    #       this part could be refactored to not rely on the
+    #       hash, but rather on the structured data like collections
+    #       and fields
+    collections.each do |collection|
+      @settings[collection.registered_at] = collection.to_hashes unless collection.empty?
+    end
+
+    @settings
+  end
+
+  def initialize_collections
+    self.collections = []
+    self.class.collections.each do |path, klass|
+      collection = klass.new
+      collection.registered_at = path
+      collection.load(settings[path]) if settings[path]
+      instance_variable_set("@#{path}", collection)
+      collections.push(collection)
+    end
+  end
+
+  attr_writer :settings
+  attr_accessor :repository
 
   delegate :to_json, :[], to: :settings
   delegate :defaults, :defaults=, to: 'self.class'
@@ -213,6 +415,7 @@ end
 class Repository::DefaultSettings < Repository::Settings
   def initialize
     self.settings = {}
+    self.collections = []
   end
 
   def merge(*)
