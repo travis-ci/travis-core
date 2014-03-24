@@ -1,6 +1,8 @@
 # encoding: utf-8
 require 'coercible'
 require 'travis/overwritable_method_definitions'
+require 'travis/model/repository/settings/collection'
+require 'travis/model/repository/settings/model'
 
 class Repository::Settings
   class SshKey < Model

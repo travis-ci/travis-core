@@ -11,6 +11,14 @@ describe Repository::Settings::Model do
     end
   end
 
+  it 'allows to update attributes' do
+    model = model_class.new
+    model.update(name: 'Piotr', loves_travis: true, height: 178)
+    model.name.should == 'Piotr'
+    model.loves_travis.should be_true
+    model.height.should == 178
+  end
+
   it 'creates an instance with attributes' do
     model = model_class.new(name: 'Piotr', loves_travis: true, height: 178)
     model.name.should == 'Piotr'
