@@ -44,7 +44,14 @@ describe Travis::Addons::Hipchat::EventHandler do
       notify
     end
 
-    it 'does not trigger a task if the build is a pull request' do
+    it 'triggers a task if the build is a pull request' do
+      build.stubs(:pull_request?).returns(true)
+      task.expects(:run).with(:hipchat, payload, targets: ['room'])
+      notify
+    end
+
+    it "doesn't trigger when pull request notifications are disabled" do
+      build.stubs(:config => { :notifications => { :hipchat => { on_pull_requests: false } } })
       build.stubs(:pull_request?).returns(true)
       task.expects(:run).never
       notify
