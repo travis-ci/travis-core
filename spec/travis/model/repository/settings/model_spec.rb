@@ -13,6 +13,22 @@ describe Repository::Settings::Model do
     end
   end
 
+  it 'validates encrypted fields properly' do
+    model_class = Class.new(described_class) do
+      field :secret, encrypted: true
+      validates :secret, presence: true
+    end
+
+    model = model_class.new
+    model.should_not be_valid
+    model.errors[:secret].should == [:blank]
+  end
+
+  it 'implements read_attribute_for_serialization method' do
+    model = model_class.new(name: 'foo')
+    model.read_attribute_for_serialization(:name).should == 'foo'
+  end
+
   it 'does not coerce nil' do
     model = model_class.new(name: nil)
     model.name.should be_nil

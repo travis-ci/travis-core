@@ -4,6 +4,7 @@ require 'travis/model/repository/settings/encrypted_value'
 class Repository::Settings
   class Model
     include ActiveModel::Validations
+    include ActiveModel::Serialization
     include Travis::OverwritableMethodDefinitions
 
     class << self
@@ -82,6 +83,17 @@ class Repository::Settings
       attributes.each do |attribute, value|
         self.send("#{attribute}=", value) if field?(attribute)
       end
+    end
+
+    def read_attribute_for_serialization(name)
+      self.send(name) if field?(name)
+    end
+
+    def read_attribute_for_validation(name)
+      return unless field?(name)
+
+      value = self.send(name)
+      value.is_a?(EncryptedValue) ? value.to_s : value
     end
 
     def errors
