@@ -30,6 +30,7 @@ class Repository::Settings
     end
 
     def coerce(value)
+      return unless value
       coercer = Coercible::Coercer.new
       coercer[value.class].send(coercer_method, value)
     end

@@ -13,6 +13,11 @@ describe Repository::Settings::Model do
     end
   end
 
+  it 'does not coerce nil' do
+    model = model_class.new(name: nil)
+    model.name.should be_nil
+  end
+
   it 'can be loaded from json' do
     key = 'foo' * 16
     encrypted = Travis::Model::EncryptedColumn.new(key: key, use_prefix: false).dump('foo')

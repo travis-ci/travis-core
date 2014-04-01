@@ -22,6 +22,10 @@ class Repository::Settings
       value
     end
 
+    def inspect
+      "<Repository::Settings::EncryptedValue##{object_id}>"
+    end
+
     def decrypt
       Travis::Model::EncryptedColumn.new(key: key, use_prefix: false).load(value)
     end
