@@ -138,7 +138,9 @@ class Repository::Settings
     #       hash, but rather on the structured data like collections
     #       and fields
     collections.each do |collection|
-      @settings[collection.registered_at] = collection.to_hashes
+      if @settings[collection.registered_at] || !collection.empty?
+        @settings[collection.registered_at] = collection.to_hashes
+      end
     end
 
     repository.settings = settings.to_json

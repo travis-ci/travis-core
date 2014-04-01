@@ -61,7 +61,7 @@ describe Repository::Settings do
   describe 'save' do
     it 'saves settings to the repository' do
       repo.expects('settings=').with({'foo' => 'bar'}.to_json)
-      repo.expects('save')
+      repo.expects('save!')
 
       settings = Repository::Settings.new(repo, 'foo' => 'bar')
       settings.save
@@ -89,7 +89,7 @@ describe Repository::Settings do
         decrypted = column.load(hash['items'].first['content'])
         decrypted == 'bar'
       }
-      repo.expects('save')
+      repo.expects('save!')
       settings.save
     end
   end
