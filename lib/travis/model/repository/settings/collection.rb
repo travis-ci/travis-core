@@ -38,7 +38,7 @@ class Repository::Settings
 
     def load(array)
       array.each do |attributes|
-        model = model_class.new(attributes)
+        model = model_class.new(attributes, load: true)
         collection.push model
       end
     end

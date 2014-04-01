@@ -8,7 +8,16 @@ describe Repository::Settings::Model do
       field :name
       field :loves_travis, :boolean
       field :height, :integer
+
+      field :secret, encrypted: true
     end
+  end
+
+  it 'can be loaded from json' do
+    key = 'foo' * 16
+    encrypted = Travis::Model::EncryptedColumn.new(key: key, use_prefix: false).dump('foo')
+    model = model_class.new({ secret: encrypted }, load: true, key: key)
+    model.secret.decrypt.should == 'foo'
   end
 
   it 'allows to update attributes' do

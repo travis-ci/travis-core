@@ -38,11 +38,11 @@ class Repository::Settings
 
       def create_field(field)
         define_overwritable_method "#{field.name}" do
-          field.get(self.instance_variable_get("@#{field.name}"), key: key)
+          field.get(@_attributes[field.name.to_s], key: key)
         end
 
         define_overwritable_method "#{field.name}=" do |value|
-          self.instance_variable_set("@#{field.name}", field.set(value, key: key))
+          @_attributes[field.name.to_s] = field.set(value, key: key)
         end
       end
 
@@ -60,10 +60,25 @@ class Repository::Settings
       @options = options
       # TODO: figure out if we want to use different key here
       @options[:key] ||= Travis.config.encryption.key
-      update(attributes)
+      @_attributes = {}
+      if @options[:load]
+        load_from_json(attributes)
+      else
+        update(attributes)
+      end
     end
 
-    def update(attributes = {})
+    def load_from_json(attributes)
+      return unless attributes
+
+      attributes.each do |attribute, value|
+        @_attributes[attribute.to_s] = value if field?(attribute)
+      end
+    end
+
+    def update(attributes)
+      return unless attributes
+
       attributes.each do |attribute, value|
         self.send("#{attribute}=", value) if field?(attribute)
       end
