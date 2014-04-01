@@ -58,10 +58,15 @@ module Travis
           last_build_duration: 60,
           github_language: 'ruby',
           github_id: 549743,
-          builds_only_with_travis_yml?: false
+          builds_only_with_travis_yml?: false,
+          settings: stub_settings
         )
       end
       alias stub_repository stub_repo
+
+      def stub_settings
+        Stubs.stub 'settings', 'ssh_keys' => []
+      end
 
       def stub_key(attributes = {})
         Stubs.stub 'key', attributes.reverse_merge(

@@ -6,9 +6,9 @@ describe Repository::DefaultSettings do
     it 'fetches a given path from default settings' do
       settings = Repository::DefaultSettings.new
       Repository::DefaultSettings.stubs(:defaults).returns(
-        'foo' => { 'bar' => 'baz' }
+        'build_pushes' => false
       )
-      settings.get('foo.bar').should == 'baz'
+      settings.get('build_pushes').should == false
     end
 
     it 'returns nil when path is not available' do
