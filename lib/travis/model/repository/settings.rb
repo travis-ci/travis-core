@@ -46,24 +46,12 @@ class Repository::Settings
 
   register :ssh_keys
 
-  attr_accessor :collections
+  attr_accessor :collections, :settings
 
   def initialize(repository, settings)
     self.repository = repository
     self.settings = settings || {}
     initialize_collections
-  end
-
-  def settings
-    # TODO: this class started as a thin wrapper over hash,
-    #       this part could be refactored to not rely on the
-    #       hash, but rather on the structured data like collections
-    #       and fields
-    collections.each do |collection|
-      @settings[collection.registered_at] = collection.to_hashes unless collection.empty?
-    end
-
-    @settings
   end
 
   def initialize_collections
@@ -145,8 +133,16 @@ class Repository::Settings
   end
 
   def save
+    # TODO: this class started as a thin wrapper over hash,
+    #       this part could be refactored to not rely on the
+    #       hash, but rather on the structured data like collections
+    #       and fields
+    collections.each do |collection|
+      @settings[collection.registered_at] = collection.to_hashes
+    end
+
     repository.settings = settings.to_json
-    repository.save
+    repository.save!
   end
 
   private
