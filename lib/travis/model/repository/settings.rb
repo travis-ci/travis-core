@@ -7,7 +7,7 @@ require 'travis/model/repository/settings/model'
 class Repository::Settings
   class SshKey < Model
     field :name
-    field :content, encyrpt: true
+    field :content, encrypted: true
 
     validates :name, presence: true
   end
