@@ -31,7 +31,7 @@ module Travis
           def process
             info("Update commit status on #{url} to #{state}")
             authenticated do
-              GH.post(url, :state => state, :description => description, :target_url => target_url)
+              GH.post(url, :state => state, :description => description, :target_url => target_url, context: 'continuous-integration/travis-ci')
             end
           rescue GH::Error => e
             message = "Could not update the PR status on #{GH.api_host + url} (#{e.message})."
