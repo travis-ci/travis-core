@@ -38,9 +38,11 @@ module Travis
         end
 
         def message(channel)
+          text = message_text
           message = {
             attachments: [{
-              text: message_text,
+              fallback: text,
+              text: text,
               color: color
             }],
             icon_url: "https://travis-ci.org/images/travis-mascot-150.png"

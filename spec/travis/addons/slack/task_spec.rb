@@ -23,6 +23,7 @@ describe Travis::Addons::Slack::Task do
       icon_url: "https://travis-ci.org/images/travis-mascot-150.png",
       channel: '#channel1',
       attachments: [{
+        fallback: 'Build <http://travis-ci.org/svenfuchs/minimal/builds/1|#2> (<https://github.com/svenfuchs/minimal/compare/master...develop|62aae5f>) of svenfuchs/minimal@master by Sven Fuchs passed in 1 min 0 sec',
         text: 'Build <http://travis-ci.org/svenfuchs/minimal/builds/1|#2> (<https://github.com/svenfuchs/minimal/compare/master...develop|62aae5f>) of svenfuchs/minimal@master by Sven Fuchs passed in 1 min 0 sec',
         color: 'good'
       }.stringify_keys]
@@ -40,6 +41,7 @@ describe Travis::Addons::Slack::Task do
     message = {
       icon_url: "https://travis-ci.org/images/travis-mascot-150.png",
       attachments: [{
+        fallback: 'Build <http://travis-ci.org/svenfuchs/minimal/builds/1|#2> (<https://github.com/svenfuchs/minimal/compare/master...develop|62aae5f>) of svenfuchs/minimal@master by Sven Fuchs passed in 1 min 0 sec',
         text: 'Build <http://travis-ci.org/svenfuchs/minimal/builds/1|#2> (<https://github.com/svenfuchs/minimal/compare/master...develop|62aae5f>) of svenfuchs/minimal@master by Sven Fuchs passed in 1 min 0 sec',
         color: 'good'
       }.stringify_keys]
@@ -57,6 +59,7 @@ describe Travis::Addons::Slack::Task do
     message = {
       icon_url: "https://travis-ci.org/images/travis-mascot-150.png",
       attachments: [{
+        fallback: "Custom: Sven Fuchs",
         text: "Custom: Sven Fuchs",
         color: 'good'
       }.stringify_keys]
