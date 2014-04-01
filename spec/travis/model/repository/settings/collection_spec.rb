@@ -41,4 +41,29 @@ describe Repository::Settings::Collection do
     collection.to_a.should == [model]
     model.id.should == 'uuid'
   end
+
+  describe '#destroy' do
+    it 'removes an item from collection' do
+      collection = @collection_class.new
+      item = collection.create(description: 'foo')
+
+      collection.should have(1).item
+
+      collection.destroy(item.id)
+
+      collection.should have(0).items
+    end
+  end
+
+  describe '#find' do
+    it 'finds an item' do
+      collection = @collection_class.new
+      item = collection.create(description: 'foo')
+
+      collection.should have(1).item
+
+      collection.find(item.id).should == item
+      collection.find('foobarbaz').should be_nil
+    end
+  end
 end

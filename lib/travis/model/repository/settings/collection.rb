@@ -46,5 +46,17 @@ class Repository::Settings
     def to_hashes
       collection.map(&:to_hash)
     end
+
+    def find(id)
+      collection.detect { |model| model.id == id.to_s }
+    end
+
+    def destroy(id)
+      record = find(id)
+      if record
+        collection.delete record
+        record
+      end
+    end
   end
 end
