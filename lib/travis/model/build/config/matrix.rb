@@ -31,7 +31,9 @@ class Build
       private
 
         def settings
-          config[:matrix] || {}
+          @_settings ||= config[:matrix] || {}
+          @_settings = {} if @_settings.is_a?(Array)
+          @_settings
         end
 
         def expand_matrix
