@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Travis::Github::Services::SyncUser::Hooks do
   include Support::ActiveRecord
 
-  ACTIVE_HOOK = { 'name' => 'travis', 'domain' => '', 'active' => true }
-  INACTIVE_HOOK = { 'name' => 'travis', 'domain' => '', 'active' => false }
+  ACTIVE_HOOK = { 'name' => 'travis', 'config' => { 'domain' => '' }, 'active' => true }
+  INACTIVE_HOOK = { 'name' => 'travis', 'config' => { 'domain' => '' }, 'active' => false }
 
   let(:user) { Factory(:user) }
   let(:repository) { Factory(:repository) }

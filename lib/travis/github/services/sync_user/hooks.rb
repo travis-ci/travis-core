@@ -39,7 +39,7 @@ module Travis
 
           def hook_active?(repository)
             hooks(repository)
-              .select { |hook| hook['name'] == 'travis' && hook['domain'] == hook_domain }
+              .select { |hook| hook['name'] == 'travis' && hook['config']['domain'] == hook_domain }
               .any?   { |hook| hook['active'] }
           end
 
