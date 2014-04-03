@@ -70,10 +70,7 @@ module Travis
 
           def headers
             {
-              "Accept"    => "application/vnd.github.v3+json," \
-                             "application/vnd.github.she-hulk-preview+json," \
-                             "application/vnd.github.beta+json;q=0.5," \
-                             "application/json;q=0.1"
+              "Accept"    => "application/vnd.github.she-hulk-preview+json
             }
           end
           Instruments::Task.attach_to(self)
