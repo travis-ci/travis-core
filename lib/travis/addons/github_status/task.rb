@@ -65,9 +65,17 @@ module Travis
           end
 
           def http_options
-            super.merge(token: params[:token])
+            super.merge(token: params[:token], headers: headers)
           end
 
+          def headers
+            {
+              "Accept"    => "application/vnd.github.v3+json," \
+                             "application/vnd.github.she-hulk-preview+json," \
+                             "application/vnd.github.beta+json;q=0.5," \
+                             "application/json;q=0.1"
+            }
+          end
           Instruments::Task.attach_to(self)
       end
     end
