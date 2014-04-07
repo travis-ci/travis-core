@@ -22,9 +22,9 @@ class Build
 
     def matrix_finished?
       if matrix_config.fast_finish?
-        required_jobs.all?(&:waiting_for_result?) || required_jobs.any?(&:finished_unsuccessfully?)
+        required_jobs.all?(&:finished?) || required_jobs.any?(&:finished_unsuccessfully?)
       else
-        matrix.all?(&:waiting_for_result?)
+        matrix.all?(&:finished?)
       end
     end
 
