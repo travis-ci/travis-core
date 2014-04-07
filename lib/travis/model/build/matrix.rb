@@ -88,7 +88,7 @@ class Build
       end
 
       def required_jobs
-        matrix.reject { |test| test.allow_failure? }
+        @required_jobs ||= matrix.reject { |test| test.allow_failure? }
       end
   end
 
