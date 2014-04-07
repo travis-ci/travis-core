@@ -44,7 +44,7 @@ class Build
       elsif required_jobs.all?(&:passed?)
         :passed
       else
-        raise InvalidMatrixStateException.new(required_jobs)
+        raise InvalidMatrixStateException.new(matrix)
       end
     end
 
