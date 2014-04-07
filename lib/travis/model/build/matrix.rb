@@ -22,9 +22,9 @@ class Build
 
     def matrix_finished?
       if matrix_config.fast_finish?
-        matrix.all?(&:waiting_for_result?) || matrix.any?(&:finished_unsuccessfully?)
+        required_jobs.all?(&:finished?) || required_jobs.any?(&:finished_unsuccessfully?)
       else
-        matrix.all?(&:waiting_for_result?)
+        matrix.all?(&:finished?)
       end
     end
 
@@ -33,19 +33,18 @@ class Build
     end
 
     def matrix_state
-      tests = matrix.reject { |test| test.allow_failure? }
-      if tests.blank?
+      if required_jobs.blank?
         :passed
-      elsif tests.any?(&:canceled?)
+      elsif required_jobs.any?(&:canceled?)
         :canceled
-      elsif tests.any?(&:errored?)
+      elsif required_jobs.any?(&:errored?)
         :errored
-      elsif tests.any?(&:failed?)
+      elsif required_jobs.any?(&:failed?)
         :failed
-      elsif tests.all?(&:passed?)
+      elsif required_jobs.all?(&:passed?)
         :passed
       else
-        raise InvalidMatrixStateException.new(tests)
+        raise InvalidMatrixStateException.new(matrix)
       end
     end
 
@@ -86,6 +85,10 @@ class Build
         configs = matrix_config.allow_failure_configs
         jobs = configs.map { |config| filter_matrix(config) }.flatten
         jobs.each { |job| job.allow_failure = true }
+      end
+
+      def required_jobs
+        @required_jobs ||= matrix.reject { |test| test.allow_failure? }
       end
   end
 
