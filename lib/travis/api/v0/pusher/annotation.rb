@@ -8,13 +8,22 @@ module Travis
 
           include Formats
 
+          attr_reader :annotation
+
           def initialize(annotation, options = {})
             @annotation = annotation
           end
 
           def data
             {
-              'annotation' => V2::Http::Annotations.new([@annotation]).data['annotations'].first,
+              "annotation" => {
+                "id" => annotation.id,
+                "job_id" => annotation.job_id,
+                "description" => annotation.description,
+                "url" => annotation.url,
+                "status" => annotation.status,
+                "provider_name" => annotation.annotation_provider.name,
+              }
             }
           end
         end
