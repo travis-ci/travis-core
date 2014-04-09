@@ -3,13 +3,14 @@ require 'ostruct'
 
 describe Travis::Github::Services::SyncUser::UserInfo do
   let(:old_user_info) {{
-    'login'         => 'rkh',
-    'name'          => 'Konstantin Haase',
-    'gravatar_id'   => '5c2b452f6eea4a6d84c105ebd971d2a4',
-    'email'         => 'konstantin.haase@gmail.com',
-    'github_scopes' => ['user:email'],
-    'id'            => '100',
-    'github_id'     => '500'
+    'login'              => 'rkh',
+    'name'               => 'Konstantin Haase',
+    'gravatar_id'        => '5c2b452f6eea4a6d84c105ebd971d2a4',
+    'email'              => 'konstantin.haase@gmail.com',
+    'github_scopes'      => ['user:email'],
+    'id'                 => '100',
+    'github_id'          => '500',
+    'github_oauth_token' => 'old_token'
   }}
 
   let(:emails) {[
@@ -33,6 +34,8 @@ describe Travis::Github::Services::SyncUser::UserInfo do
     "konstantin.mailinglists@gmail.com",
     "konstantin.mailinglists@googlemail.com"
   ]}
+
+  before { GH.stubs(:with).returns(stub(:[] => {}, :post => { 'token' => 'new_token' })) }
 
   describe 'no public email' do
     before { user_info.delete 'email' }
@@ -76,6 +79,7 @@ describe Travis::Github::Services::SyncUser::UserInfo do
     user.stubs(:github_id).returns(100)
     user.stubs(:id).returns(1)
     user.expects(:update_attributes!).with(args).once
+    user.expects(:update_attributes!).with(github_oauth_token: 'new_token').once
     emails.expects(:find_or_create_by_email!).with("konstantin.mailinglists@gmail.com").once
     emails.expects(:find_or_create_by_email!).with("konstantin.mailinglists@googlemail.com").once
     emails.expects(:find_or_create_by_email!).with("konstantin.haase@gmail.com").once

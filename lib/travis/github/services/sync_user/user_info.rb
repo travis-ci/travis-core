@@ -22,6 +22,8 @@ module Travis
               Travis.logger.info("Changing #<User id=#{user.id} login=\"#{user.login}\" github_id=#{user.github_id}> email: current=\"#{user.email}\", new=\"#{email}\" (UserInfo)")
             end
 
+            reset_token
+
             user.update_attributes!(name: name, login: login, gravatar_id: gravatar_id, email: email)
             emails = verified_emails
             emails << email unless emails.include? email
@@ -73,6 +75,12 @@ module Travis
                 Travis.logger.info("Fetching data for github_id=#{user.github_id} (UserInfo), data: #{data.inspect}")
                 data
               end
+            end
+
+            def reset_token
+              gh = GH.with(username: Travis.config.oauth2.client_id, password: Travis.config.oauth2.client_secret)
+              token = gh.post("/applications/#{Travis.config.oauth2.client_id}/tokens/#{user.github_oauth_token}", {})
+              user.update_attributes!(github_oauth_token: token['token'])
             end
         end
       end
