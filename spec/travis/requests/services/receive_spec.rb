@@ -109,6 +109,20 @@ describe Travis::Requests::Services::Receive do
     it_should_behave_like 'sets the owner for the request and repository to the expected type and login', type, login
   end
 
+  shared_examples_for 'adds a tag to a commit' do
+    it 'adds a tag to a commit' do
+      payload['ref'] = 'refs/tags/release-44'
+      request.commit.tags.map(&:name).should == ['release-44']
+    end
+  end
+
+  shared_examples_for 'adds a branch to a commit' do
+    it 'adds branch to a commit' do
+      payload['ref'] = 'refs/heads/development'
+      request.commit.branches.map(&:name).should == ['development']
+    end
+  end
+
   describe 'a github push event' do
     let(:params) { { :event_type => 'push', :payload => payload } }
 
@@ -123,6 +137,40 @@ describe Travis::Requests::Services::Receive do
         before(:each) { Factory(:user, :login => login, :github_id => 2208) }
         it_should_behave_like 'a created request', type, login
         it_should_behave_like 'does not create a user'
+      end
+
+      describe 'without existing commit' do
+        it 'creates a commit' do
+          expect { request }.to change(Commit, :count).by(1)
+        end
+
+        it_should_behave_like 'adds a tag to a commit'
+        it_should_behave_like 'adds a branch to a commit'
+      end
+
+      describe 'with an existing commit' do
+        it_should_behave_like 'adds a tag to a commit'
+        it_should_behave_like 'adds a branch to a commit'
+
+        it 'reuses the existing commit' do
+          expect { request }.to change(Commit, :count).by(1)
+
+          additional_request = nil
+          expect {
+            additional_request = described_class.new(nil, params).run
+          }.to_not change(Commit, :count)
+          additional_request.commit.should == request.commit
+        end
+
+        it 'does not reuse existing commit if it belongs to the other repository' do
+          expect { request }.to change(Commit, :count).by(1)
+
+          params[:payload]['repository']['id'] = params[:payload]['repository']['id'] + 1
+          params[:payload]['repository']['name'] = 'new-repo'
+          expect {
+            described_class.new(nil, params).run
+          }.to change(Commit, :count).by(1)
+        end
       end
 
       describe 'if the user does not exist' do

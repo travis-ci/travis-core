@@ -68,6 +68,14 @@ module Travis
             end
           end
 
+          def branch_name
+            event['ref'].scan(%r{refs/heads/(.*?)$}).flatten.first
+          end
+
+          def tag_name
+            event['ref'].scan(%r{refs/tags/(.*?)$}).flatten.first
+          end
+
           private
 
           def last_unskipped_commit(commits)

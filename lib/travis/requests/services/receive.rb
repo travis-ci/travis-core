@@ -63,6 +63,11 @@ module Travis
               :owner => owner,
               :token => params[:token]
             ))
+
+            commit.add_branch(payload.branch_name, @request) if payload.branch_name
+            commit.add_tag(payload.tag_name, @request) if payload.tag_name
+
+            @request
           end
 
           def start
@@ -93,7 +98,12 @@ module Travis
           end
 
           def commit
-            @commit ||= repo.commits.create!(payload.commit) if payload.commit
+            @commit ||= find_or_create_commit(payload.commit) if payload.commit
+          end
+
+          def find_or_create_commit(commit_data)
+            scope = repo.commits
+            scope.find_by_commit(commit_data[:commit]) || scope.create!(commit_data)
           end
 
           class Instrument < Notification::Instrument

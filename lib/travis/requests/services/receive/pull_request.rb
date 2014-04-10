@@ -112,6 +112,14 @@ module Travis
           def repo_owner
             @repo_owner ||= repo['owner']
           end
+
+          def branch_name
+            nil
+          end
+
+          def tag_name
+            nil
+          end
         end
       end
     end

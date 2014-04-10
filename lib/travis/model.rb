@@ -15,6 +15,8 @@ module Travis
     require 'travis/model/builds_branch'
     require 'travis/model/builds_tag'
     require 'travis/model/commit'
+    require 'travis/model/commits_branch'
+    require 'travis/model/commits_tag'
     require 'travis/model/email'
     require 'travis/model/env_helpers'
     require 'travis/model/job'
