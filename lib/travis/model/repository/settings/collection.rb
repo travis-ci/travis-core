@@ -7,7 +7,7 @@ class Repository::Settings
         if model_name_or_class
           klass = if model_name_or_class.is_a?(String) || model_name_or_class.is_a?(Symbol)
             name = model_name_or_class.to_s.classify
-            Repository::Settings.const_get(name)
+            Repository::Settings.const_get(name, false)
           else
             model_name_or_class
           end

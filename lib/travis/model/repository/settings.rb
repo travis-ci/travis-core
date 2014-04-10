@@ -30,7 +30,7 @@ class Repository::Settings
       collection_class_or_name ||= path
       klass = if collection_class_or_name.is_a?(String) || collection_class_or_name.is_a?(Symbol)
         name = collection_class_or_name.to_s.camelize
-        Repository::Settings.const_get(name)
+        Repository::Settings.const_get(name, false)
       else
         collection_class_or_name
       end
