@@ -91,7 +91,7 @@ class Request
       end
 
       def github_pages?
-        commit.branch =~ /gh[-_]pages/i
+        request.branch_name =~ /gh[-_]pages/i
       end
 
       def excluded_repository?
@@ -111,7 +111,7 @@ class Request
       end
 
       def branch_approved?
-        branches.included?(commit.branch) && !branches.excluded?(commit.branch)
+        branches.included?(request.branch_name) && !branches.excluded?(request.branch_name)
       end
 
       def branches

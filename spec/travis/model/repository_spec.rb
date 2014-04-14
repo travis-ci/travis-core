@@ -3,14 +3,28 @@ require 'spec_helper'
 describe Repository do
   include Support::ActiveRecord
 
+  def create_request(attrs = {})
+    branch_name = attrs.fetch(:branch_name)
+    attrs.delete(:branch_name)
+    request = Factory.build(:request, attrs)
+    if branch_name
+      request.payload ||= {}
+      request.payload['ref'] = "refs/heads/#{branch_name}"
+    end
+    request.save!
+    request
+  end
+
   describe '#last_completed_build' do
     let(:repo) {  Factory(:repository, name: 'foobarbaz', builds: [build1, build2]) }
     let(:build1) { Factory(:build, finished_at: 1.hour.ago, state: :passed) }
     let(:build2) { Factory(:build, finished_at: Time.now, state: :failed) }
 
     before do
-      build1.update_attributes(branch: 'master')
-      build2.update_attributes(branch: 'development')
+      build1.branches.destroy_all
+      build1.add_branch('master')
+      build2.branches.destroy_all
+      build2.add_branch('development')
     end
 
     it 'returns last completed build' do
@@ -208,7 +222,10 @@ describe Repository do
 
     it 'returns branches for the given repository' do
       %w(master production).each do |branch|
-        2.times { Factory(:build, repository: repo, commit: Factory(:commit, branch: branch)) }
+        2.times {
+          build = Factory(:build, repository: repo)
+          build.add_branch(branch)
+        }
       end
       repo.branch_names.sort.should == %w(master production)
     end
@@ -257,8 +274,8 @@ describe Repository do
 
     it 'properly orders branches by last build' do
       Build.delete_all
-      one = Factory(:build, repository: repo, finished_at: 2.hours.ago, state: 'finished', commit: Factory(:commit, branch: '1one'))
-      two = Factory(:build, repository: repo, finished_at: 1.hours.ago, state: 'finished', commit: Factory(:commit, branch: '2two'))
+      one = Factory(:build, repository: repo, finished_at: 2.hours.ago, state: 'finished', request: create_request(branch_name: '1one'))
+      two = Factory(:build, repository: repo, finished_at: 1.hours.ago, state: 'finished', request: create_request(branch_name: '2two'))
 
       builds = repo.last_finished_builds_by_branches(1)
       builds.should == [two]
@@ -266,11 +283,18 @@ describe Repository do
 
     it 'retrieves last builds on all branches' do
       Build.delete_all
-      old = Factory(:build, repository: repo, finished_at: 1.hour.ago,      state: 'finished', commit: Factory(:commit, branch: 'one'))
-      one = Factory(:build, repository: repo, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'one'))
-      two = Factory(:build, repository: repo, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'two'))
-      three = Factory(:build, repository: repo, finished_at: 1.hour.from_now, state: 'finished', commit: Factory(:commit, branch: 'three'))
+      Branch.delete_all
+      old = Factory(:build, repository: repo, finished_at: 1.hour.ago,      state: 'finished')
+      old.add_branch('one')
+      one = Factory(:build, repository: repo, finished_at: 1.hour.from_now, state: 'finished')
+      one.add_branch('one')
+      two = Factory(:build, repository: repo, finished_at: 1.hour.from_now, state: 'finished')
+      two.add_branch('two')
+      three = Factory(:build, repository: repo, finished_at: 1.hour.from_now, state: 'finished')
+      three.add_branch('three')
       three.update_attribute(:event_type, 'pull_request')
+
+      repo.branches.where(name: 'master').destroy_all
 
       builds = repo.last_finished_builds_by_branches
       builds.size.should == 2

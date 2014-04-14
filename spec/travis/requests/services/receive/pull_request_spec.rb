@@ -102,6 +102,12 @@ describe Travis::Requests::Services::Receive::PullRequest do
     end
   end
 
+  describe '#branch_name' do
+    it 'returns branch name of a base' do
+      payload.branch_name.should == 'master'
+    end
+  end
+
   describe 'commit' do
     it 'returns all attributes required for a Commit' do
       payload.commit.should == {

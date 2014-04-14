@@ -11,7 +11,15 @@ class Build
   # These attributes are used in the repositories list and thus read frequently.
   module Denormalize
     def denormalize(event, *args)
-      repository.update_attributes!(denormalize_attributes_for(event)) if denormalize?(event)
+      if denormalize?(event)
+        repository.update_attributes!(denormalize_attributes_for(event))
+        branches.each { |branch|
+          branch.update_attributes!(denormalize_attributes_for(event))
+        }
+        tags.each { |tag|
+          tag.update_attributes!(denormalize_attributes_for(event))
+        }
+      end
     end
 
     DENORMALIZE = {

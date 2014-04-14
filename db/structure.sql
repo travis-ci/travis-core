@@ -198,7 +198,12 @@ CREATE TABLE branches (
     repository_id integer NOT NULL,
     last_build_id integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    last_build_number character varying(255),
+    last_build_state integer,
+    last_build_started_at timestamp without time zone,
+    last_build_finished_at timestamp without time zone,
+    last_build_duration integer
 );
 
 
@@ -887,7 +892,12 @@ CREATE TABLE tags (
     last_build_id integer,
     repository_id integer NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    last_build_number character varying(255),
+    last_build_state integer,
+    last_build_started_at timestamp without time zone,
+    last_build_finished_at timestamp without time zone,
+    last_build_duration integer
 );
 
 
@@ -1457,6 +1467,13 @@ CREATE INDEX index_builds_tags_on_tag_id ON builds_tags USING btree (tag_id);
 --
 
 CREATE UNIQUE INDEX index_commits_branches_on_commit_id_and_branch_id ON commits_branches USING btree (commit_id, branch_id);
+
+
+--
+-- Name: index_commits_on_commit; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_commits_on_commit ON commits USING btree (commit);
 
 
 --
@@ -2047,3 +2064,5 @@ INSERT INTO schema_migrations (version) VALUES ('20140204220926');
 INSERT INTO schema_migrations (version) VALUES ('20140210003014');
 
 INSERT INTO schema_migrations (version) VALUES ('20140210012509');
+
+INSERT INTO schema_migrations (version) VALUES ('20140414121001');

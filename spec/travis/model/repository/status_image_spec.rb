@@ -65,20 +65,32 @@ describe Repository::StatusImage do
 
   describe 'given a branch' do
     it 'returns :passed if the last build on that branch has passed' do
-      build.update_attributes(state: :passed, branch: 'master')
+      build.update_attributes(state: :passed)
+      build.add_branch('master')
+      build.add_branch('staging')
       image = described_class.new(repo, 'master')
+      image.result.should == :passing
+      image = described_class.new(repo, 'staging')
       image.result.should == :passing
     end
 
     it 'returns :failed if the last build on that branch has failed' do
-      build.update_attributes(state: :failed, branch: 'develop')
+      build.update_attributes(state: :failed)
+      build.add_branch('develop')
+      build.add_branch('staging')
       image = described_class.new(repo, 'develop')
+      image.result.should == :failing
+      image = described_class.new(repo, 'staging')
       image.result.should == :failing
     end
 
     it 'returns :error if the last build on that branch has errored' do
-      build.update_attributes(state: :errored, branch: 'develop')
+      build.update_attributes(state: :errored)
+      build.add_branch('develop')
+      build.add_branch('staging')
       image = described_class.new(repo, 'develop')
+      image.result.should == :error
+      image = described_class.new(repo, 'staging')
       image.result.should == :error
     end
   end

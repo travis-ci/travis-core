@@ -117,13 +117,7 @@ class Repository < Travis::Model
   end
 
   def branch_names
-    self.class.connection.select_values %(
-      SELECT DISTINCT ON (branch) branch
-      FROM   builds
-      WHERE  builds.repository_id = #{id}
-      ORDER  BY branch DESC
-      LIMIT  25
-    )
+    branches.map(&:name)
   end
 
   def last_completed_build(branch = nil)
@@ -139,14 +133,16 @@ class Repository < Travis::Model
   end
 
   def last_finished_builds_by_branches(limit = 50)
-    Build.joins(%(
-      inner join (
-        select distinct on (branch) builds.id
-        from   builds
-        where  builds.repository_id = #{id} and builds.event_type = 'push'
-        order  by branch, finished_at desc
-      ) as last_builds on builds.id = last_builds.id
-    )).limit(limit).order('finished_at DESC')
+    Build.pushes.joins("
+      INNER JOIN builds_branches ON builds_branches.build_id = builds.id
+      LEFT OUTER JOIN (
+        SELECT builds.finished_at, builds_branches.branch_id, builds.id FROM builds
+        INNER JOIN builds_branches ON builds_branches.build_id = builds.id
+        WHERE repository_id = #{id}
+      ) b1 ON b1.branch_id = builds_branches.branch_id AND (
+        (builds.finished_at < b1.finished_at OR (b1.finished_at = builds.finished_at AND builds.id < b1.id))
+      )
+    ").where("repository_id = #{id} AND b1.id IS NULL").limit(limit).order('finished_at DESC')
   end
 
   def regenerate_key!

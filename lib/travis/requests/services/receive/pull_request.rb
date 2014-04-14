@@ -114,7 +114,7 @@ module Travis
           end
 
           def branch_name
-            nil
+            pull_request['base']['ref']
           end
 
           def tag_name

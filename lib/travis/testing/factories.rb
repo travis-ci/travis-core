@@ -14,7 +14,7 @@ FactoryGirl.define do
   factory :build do
     owner { User.first || Factory(:user) }
     repository { Repository.first || Factory(:repository) }
-    association :request
+    request { Factory(:request, payload: { 'ref' => 'refs/heads/master' }) }
     association :commit
     started_at { Time.now.utc }
     finished_at { Time.now.utc }
@@ -24,7 +24,6 @@ FactoryGirl.define do
 
   factory :commit do
     commit '62aae5f70ceee39123ef'
-    branch 'master'
     message 'the commit message'
     committed_at '2011-11-11T11:11:11Z'
     committer_name 'Sven Fuchs'

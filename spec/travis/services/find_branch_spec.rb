@@ -4,7 +4,7 @@ describe Travis::Services::FindBranch do
   include Support::ActiveRecord
 
   let(:repo)    { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
-  let!(:build)  { Factory(:build, :repository => repo, :state => :finished) }
+  let!(:build)  { Factory.create(:build, :repository => repo, :state => :finished) }
   let(:service) { described_class.new(stub('user'), params) }
 
   attr_reader :params

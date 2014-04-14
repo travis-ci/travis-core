@@ -32,12 +32,12 @@ describe Request::Approval do
 
   describe 'branch_accepted?' do
     it 'does not accept a request that belongs to the github_pages branch' do
-      request.commit.stubs(:branch).returns('gh_pages')
+      request.stubs(:branch_name).returns('gh_pages')
       approval.branch_accepted?.should be_false
     end
 
     it 'accepts a request that belongs to the gh-pages branch if it\'s specified in branches:only' do
-      request.commit.stubs(:branch).returns('gh_pages')
+      request.stubs(:branch_name).returns('gh_pages')
       request.config['branches'] = { 'only' => ['gh-pages'] }
       approval.branch_accepted?.should be_true
     end
@@ -74,13 +74,13 @@ describe Request::Approval do
     end
 
     it 'accepts a request that belongs to the github_pages branch and is explicitly set to build that branch (String)' do
-      request.commit.stubs(:branch).returns('gh_pages')
+      request.stubs(:branch_name).returns('gh_pages')
       request.stubs(:config).returns('branches' => { 'only' => 'gh_pages' })
       approval.should be_accepted
     end
 
     it 'accepts a request that belongs to the github_pages branch and is explicitly set to build that branch (Array)' do
-      request.commit.stubs(:branch).returns('gh_pages')
+      request.stubs(:branch_name).returns('gh_pages')
       request.stubs(:config).returns('branches' => { 'only' => ['gh_pages'] })
       approval.should be_accepted
     end
@@ -131,7 +131,7 @@ describe Request::Approval do
     end
 
     it 'returns "github pages branch" if the branch is a github pages branch' do
-      request.commit.stubs(:branch).returns('gh-pages')
+      request.stubs(:branch_name).returns('gh-pages')
       approval.message.should == 'github pages branch'
     end
 
@@ -141,7 +141,7 @@ describe Request::Approval do
     end
 
     it 'returns "branch not included or excluded" if the branch was not approved' do
-      request.commit.stubs(:branch).returns('feature')
+      request.stubs(:branch_name).returns('feature')
       request.stubs(:config).returns('branches' => { 'only' => 'master' })
       approval.message.should == 'branch not included or excluded'
     end
@@ -156,23 +156,23 @@ describe Request::Approval do
 
   describe 'github_pages?' do
     it 'returns true for a branch named gh-pages' do
-      request.commit.stubs(:branch).returns 'gh-pages'
+      request.stubs(:branch_name).returns 'gh-pages'
       approval.send(:github_pages?).should be_true
     end
 
     it 'returns true for a branch named gh_pages' do
-      request.commit.stubs(:branch).returns 'gh_pages'
+      request.stubs(:branch_name).returns 'gh_pages'
       approval.send(:github_pages?).should be_true
     end
 
     it 'returns true when a PR is for gh_pages' do
       request.commit.stubs(:ref).returns 'refs/pulls/1/merge'
-      request.commit.stubs(:branch).returns 'gh_pages'
+      request.stubs(:branch_name).returns 'gh_pages'
       approval.send(:github_pages?).should be_true
     end
 
     it 'returns false for a branch named master' do
-      commit.stubs(:branch).returns 'master'
+      request.stubs(:branch_name).returns 'master'
       approval.send(:github_pages?).should be_false
     end
   end

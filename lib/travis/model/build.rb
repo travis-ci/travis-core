@@ -84,7 +84,7 @@ class Build < Travis::Model
     end
 
     def on_branch(branch)
-      pushes.where(branch.present? ? ['branch IN (?)', normalize_to_array(branch)] : [])
+      pushes.joins(:branches).where(branch.present? ? { branches: { name: normalize_to_array(branch) } } : [])
     end
 
     def by_event_type(event_type)
@@ -155,16 +155,16 @@ class Build < Travis::Model
     self.event_type = request.event_type
     self.pull_request_title = request.pull_request_title
     self.pull_request_number = request.pull_request_number
-    self.branch = commit.branch
+    self.branch = request.branch_name
     expand_matrix
   end
 
   after_create do
     if ActiveRecord::Base.connection.table_exists? 'branches'
-      add_branch(commit.branch) if commit.branch && !commit.tag_name
+      add_branch(request.branch_name) if request.branch_name && !request.tag_name
     end
     if ActiveRecord::Base.connection.table_exists? 'tags'
-      add_tag(commit.tag_name) if commit.tag_name
+      add_tag(request.tag_name) if request.tag_name
     end
   end
 
@@ -248,7 +248,7 @@ class Build < Travis::Model
     end
 
     def last_finished_state_on_branch
-      repository.builds.finished.last_state_on(branch: commit.branch)
+      repository.builds.finished.last_state_on(branch: request.branch_name)
     end
 
     def to_postgres_array(ids)

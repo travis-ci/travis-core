@@ -79,16 +79,16 @@ describe Build do
 
     describe 'on_branch' do
       it 'returns builds that are on any of the given branches' do
-        Factory(:build, commit: Factory(:commit, branch: 'master'))
-        Factory(:build, commit: Factory(:commit, branch: 'develop'))
-        Factory(:build, commit: Factory(:commit, branch: 'feature'))
+        master  = Factory(:build, request: create_request(branch_name: 'master'))
+        develop = Factory(:build, request: create_request(branch_name: 'develop'))
+        feature = Factory(:build, request: create_request(branch_name: 'feature'))
 
-        Build.on_branch('master,develop').map(&:commit).map(&:branch).sort.should == ['develop', 'master']
+        Build.on_branch('master,develop').order('id ASC').should == [master, develop]
       end
 
       it 'does not include pull requests' do
-        Factory(:build, commit: Factory(:commit, branch: 'no-pull'), request: Factory(:request, event_type: 'pull_request'))
-        Factory(:build, commit: Factory(:commit, branch: 'no-pull'), request: Factory(:request, event_type: 'push'))
+        Factory(:build, request: create_request(branch_name: 'no-pull', event_type: 'pull_request'))
+        Factory(:build, request: create_request(branch_name: 'no-pull', event_type: 'push'))
         Build.on_branch('no-pull').count.should be == 1
       end
     end
@@ -196,24 +196,24 @@ describe Build do
       end
 
       it 'is set to the last finished build state on the same branch (disregards other branches)' do
-        Factory(:build, state: 'failed')
-        Factory(:build, state: 'passed', commit: Factory(:commit, branch: 'something'))
-        Factory(:build).reload.previous_state.should == 'failed'
+        Factory(:build, state: 'failed', request: create_request(branch_name: 'master'))
+        Factory(:build, state: 'passed', request: create_request(branch_name: 'something'))
+        Factory(:build, request: create_request(branch_name: 'master')).reload.previous_state.should == 'failed'
       end
     end
 
     it 'adds branch' do
-      build = Factory(:build, commit: Factory(:commit, branch: 'something'))
-      build2 = Factory(:build, commit: Factory(:commit, branch: 'something'), repository: build.repository)
+      build = Factory(:build, request: create_request(branch_name: 'something'))
+      build2 = Factory(:build, request: create_request(branch_name: 'something'), repository: build.repository)
 
       build.branches.map(&:name).should == ['something']
       branch = Branch.where(name: 'something', repository_id: build.repository_id).first
-      branch.builds.should == [build, build2]
+      branch.builds.order('id ASC').should == [build, build2]
     end
 
     it 'adds tag' do
-      build = Factory(:build, commit: Factory(:commit, ref: 'refs/tags/something'))
-      build2 = Factory(:build, commit: Factory(:commit, ref: 'refs/tags/something'), repository: build.repository)
+      build = Factory(:build, request: Factory(:request, payload: { 'ref' => 'refs/tags/something' }))
+      build2 = Factory(:build, request: Factory(:request, payload: { 'ref' => 'refs/tags/something' }, repository: build.repository))
 
       build.tags.map(&:name).should == ['something']
       tag = Tag.where(name: 'something', repository_id: build.repository_id).first
@@ -305,11 +305,6 @@ describe Build do
       payload = { 'pull_request' => { 'title' => 'A pull request' } }
       build = Factory(:build,  request: Factory(:request, event_type: 'pull_request', payload: payload))
       build.pull_request_title.should == 'A pull request'
-    end
-
-    it 'saves branch before create' do
-      build = Factory(:build,  commit: Factory(:commit, branch: 'development'))
-      build.branch.should == 'development'
     end
 
     describe '#add_branch' do
