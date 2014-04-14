@@ -1,4 +1,5 @@
 require 'active_record'
+require 'travis/retry_on'
 
 # Encapsulates a commit that a Build belongs to (and that a Github Request
 # referred to).

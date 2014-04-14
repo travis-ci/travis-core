@@ -2,6 +2,7 @@ require 'active_record'
 require 'core_ext/active_record/base'
 require 'core_ext/hash/deep_symbolize_keys'
 require 'simple_states'
+require 'travis/retry_on'
 
 # Build currently models a central but rather abstract domain entity: the thing
 # that is triggered by a Github request (service hook ping).
@@ -46,7 +47,7 @@ class Build < Travis::Model
   require 'travis/model/build/states'
   require 'travis/model/env_helpers'
 
-  include Matrix, States, SimpleStates
+  include Matrix, States, SimpleStates, Travis::RetryOn
 
   belongs_to :commit
   belongs_to :request
@@ -253,15 +254,5 @@ class Build < Travis::Model
     def to_postgres_array(ids)
       ids = ids.compact.uniq
       "{#{ids.map { |id| id.to_i.to_s }.join(',')}}" unless ids.empty?
-    end
-
-    def retry_on(*errors)
-      times = 0
-      begin
-        yield
-      rescue *errors
-        times += 1
-        times < 3 ? retry : raise
-      end
     end
 end
