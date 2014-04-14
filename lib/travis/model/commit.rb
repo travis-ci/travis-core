@@ -17,12 +17,12 @@ class Commit < Travis::Model
   include Travis::RetryOn
 
   def branch
-    ActiveSupport::Deprecation.warn("Commit#branch should not be used as commit can contain multiple branches")
+    ActiveSupport::Deprecation.warn("Commit#branch should not be used as commit can contain multiple branches", caller)
     super
   end
 
   def tag_name
-    ActiveSupport::Deprecation.warn("Commit#tag_name should not be used as commit can contain multiple tags")
+    ActiveSupport::Deprecation.warn("Commit#tag_name should not be used as commit can contain multiple tags", caller)
     if ref
       ref.scan(%r{refs/tags/(.*?)$}).flatten.first
     end
