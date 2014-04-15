@@ -17,7 +17,16 @@ class Repository::Settings
           @model_class
         end
       end
-      attr_reader :model_class
+
+      def model_class(attributes = nil)
+        attributes ||= {}
+        type = attributes['type'] || attributes[:type]
+        if @model_class.polymorphic? && type
+          @model_class.subclasses.find { |klass| klass.name.split('::').last == type.classify }
+        else
+          @model_class
+        end
+      end
     end
 
     attr_reader :collection
@@ -30,7 +39,7 @@ class Repository::Settings
     end
 
     def create(attributes)
-      model = model_class.new(attributes)
+      model = model_class(attributes).new(attributes)
       model.id = SecureRandom.uuid unless model.id
       collection.push model
       model
@@ -38,7 +47,7 @@ class Repository::Settings
 
     def load(array)
       array.each do |attributes|
-        model = model_class.new(attributes, load: true)
+        model = model_class(attributes).new(attributes, load: true)
         collection.push model
       end
     end

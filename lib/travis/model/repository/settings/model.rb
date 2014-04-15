@@ -10,7 +10,12 @@ class Repository::Settings
     class << self
       def inherited(child_class)
         child_class.initialize_fields(fields)
+        subclasses << child_class
         super
+      end
+
+      def subclasses
+        @subclasses ||= []
       end
 
       def initialize_fields(fields)
@@ -50,6 +55,21 @@ class Repository::Settings
       def field?(name)
         fields.map(&:name).include? name.to_s
       end
+
+      def polymorphic
+        @abstract = true
+        @polymorphic = true
+
+        field :type
+      end
+
+      def abstract?
+        @abstract
+      end
+
+      def polymorphic?
+        @polymorphic
+      end
     end
 
     delegate :field?, to: 'self.class'
@@ -58,6 +78,7 @@ class Repository::Settings
     attr_reader :options
 
     def initialize(attributes = {}, options = {})
+      raise "can't instantiate abstract class" if self.class.abstract?
       @options = options
       # TODO: figure out if we want to use different key here
       @options[:key] ||= Travis.config.encryption.key

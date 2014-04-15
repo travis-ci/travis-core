@@ -16,6 +16,26 @@ class Repository::Settings
     model SshKey
   end
 
+  class Notification < Model
+    polymorphic
+
+    field :on_success
+    field :on_failure
+  end
+
+  class Campfire < Model
+    field :subdomain
+    field :api_token
+    field :room_id
+    field :template
+
+    validates :subdomain, :api_token, :room_id, presence: true
+  end
+
+  class Notifications < Collection
+    model Notification
+  end
+
   include Travis::OverwritableMethodDefinitions
 
   class << self

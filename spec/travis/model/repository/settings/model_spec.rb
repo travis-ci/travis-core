@@ -3,6 +3,35 @@ require 'spec_helper'
 describe Repository::Settings::Model do
   attr_reader :model_class
 
+  describe 'polymorphic model' do
+    before do
+      @entry_class = Class.new(Repository::Settings::Model) {
+        polymorphic
+
+        field :name
+      }
+
+      @movie_class = Class.new(@entry_class) {
+        field :director
+      }
+
+      @book_class = Class.new(@entry_class) {
+        field :author
+      }
+    end
+
+    it 'adds type field to the model automatically' do
+      movie = @movie_class.new(type: 'movie')
+      movie.type.should == 'movie'
+    end
+
+    it 'does not allow to instantiate polymorphic class parent' do
+      expect {
+        @entry_class.new
+      }.to raise_error("can't instantiate abstract class")
+    end
+  end
+
   before do
     @model_class = Class.new(described_class) do
       field :name
