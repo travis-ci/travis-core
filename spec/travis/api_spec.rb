@@ -31,5 +31,37 @@ describe Travis::Api do
       builder.expects(:data).returns('data')
       data_for(repo).should == 'data'
     end
+
+    describe '#builder' do
+      before do
+        Travis::Api.const_set :V5, Class.new
+        Travis::Api::V5.const_set :Http, Class.new
+        Travis::Api::V5::Http.const_set :Job, Class.new
+        Travis::Api::V5::Http::Job.const_set :Test, Class.new
+        Travis::Api.const_set :Foo, Class.new
+      end
+
+      after do
+        Travis::Api.send :remove_const, :V5
+        Travis::Api.send :remove_const, :Foo
+      end
+
+      it 'finds given constant' do
+        const = Travis::Api.builder('', for: :http, type: 'job/test', version: :v5)
+        const.should == Travis::Api::V5::Http::Job::Test
+      end
+
+      it 'returns nil if only part of the constant is matched' do
+        const = Travis::Api.builder('', for: :foo, type: 'job/test', version: :v5)
+        const.should be_nil
+      end
+
+      it 'does not raise an error if constant name is wrong' do
+        expect {
+          const = Travis::Api.builder('', for: :pusher, type: 'job/test', version: '5')
+          const.should be_nil
+        }.to_not raise_error
+      end
+    end
   end
 end
