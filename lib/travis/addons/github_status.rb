@@ -3,7 +3,7 @@ module Travis
     module GithubStatus
       require 'travis/addons/github_status/instruments'
       require 'travis/addons/github_status/event_handler'
-      require 'travis/addons/github_status/task'
+      class Task < ::Travis::Task; end
     end
   end
 end
