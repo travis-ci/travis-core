@@ -73,6 +73,19 @@ module Travis
         subject.fetch(1, 'development')['state'].should == 'failed'
         subject.fetch(1)['state'].should == 'failed'
       end
+
+      it 'handles connection errors gracefully' do
+        data = { finished_at: '2013-04-22T22:10:00', state: 'passed' }.stringify_keys
+        client = Dalli::Client.new('illegalserver:11211')
+        adapter = StatesCache::MemcachedAdapter.new(client: client)
+        adapter.jitter = 0.005
+        subject = StatesCache.new(adapter: adapter)
+        expect {
+          subject.write(1, 'master', data)
+        }.to_not raise_error
+
+        subject.fetch(1).should == nil
+      end
     end
 
     describe StatesCache::MemcachedAdapter do

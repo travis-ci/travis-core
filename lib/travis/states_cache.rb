@@ -52,6 +52,7 @@ module Travis
 
     class MemcachedAdapter
       attr_reader :pool
+      attr_accessor :jitter
 
       def initialize(options = {})
         @pool = ConnectionPool.new(:size => 10, :timeout => 3) do
@@ -61,6 +62,7 @@ module Travis
             new_dalli_connection
           end
         end
+        @jitter = 0.5
       end
 
       def fetch(id, branch = nil)
@@ -104,12 +106,20 @@ module Travis
         retry_ringerror do
           pool.with { |client| client.get(key) }
         end
+      rescue Dalli::RingError => e
+        Metriks.meter("memcached.connect-errors").mark
+        Travis.logger.warn("Couldn't connect to a memcached server: #{e.message}")
+        return nil
       end
 
       def set(key, data)
         retry_ringerror do
           pool.with { |client| client.set(key, data) }
         end
+      rescue Dalli::RingError => e
+        Metriks.meter("memcached.connect-errors").mark
+        Travis.logger.warn("Couldn't connect to a memcached server: #{e.message}")
+        return nil
       end
 
       def retry_ringerror
@@ -121,7 +131,7 @@ module Travis
           if retries <= 3
             # Sleep for up to 1/2 * (2^retries - 1) seconds
             # For retries <= 3, this means up to 3.5 seconds
-            sleep 0.5 * (rand(2 ** retries - 1) + 1)
+            sleep(jitter * (rand(2 ** retries - 1) + 1))
             retry
           else
             raise
