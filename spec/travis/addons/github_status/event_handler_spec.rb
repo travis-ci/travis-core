@@ -22,7 +22,7 @@ describe Travis::Addons::GithubStatus::EventHandler do
 
     it 'build:queued notifies' do
       handler.expects(:notify)
-      Travis::Event.dispatch('build:queued', build)
+      Travis::Event.dispatch('job:test:queued', test)
     end
 
     it 'build:started notifies' do
