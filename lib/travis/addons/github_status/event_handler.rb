@@ -6,7 +6,7 @@ module Travis
       # belongs to.
       class EventHandler < Event::Handler
         API_VERSION = 'v2'
-        EVENTS = /build:(started|finished)/
+        EVENTS = /build:(created|queued|started|finished)/
 
         def handle?
           token.present?
