@@ -7,6 +7,7 @@ module Travis
         require 'travis/github/services/sync_user/organizations'
         require 'travis/github/services/sync_user/repositories'
         require 'travis/github/services/sync_user/repository'
+        require 'travis/github/services/sync_user/reset_token'
         require 'travis/github/services/sync_user/user_info'
 
         register :github_sync_user
@@ -14,6 +15,7 @@ module Travis
         def run
           new_user? do
             syncing do
+              ResetToken.new(user).run
               UserInfo.new(user).run
               Organizations.new(user).run
               Repositories.new(user).run
