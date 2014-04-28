@@ -20,11 +20,6 @@ describe Travis::Addons::GithubStatus::EventHandler do
       Travis::Event.dispatch('build:started', build)
     end
 
-    it 'build:queued notifies' do
-      handler.expects(:notify)
-      Travis::Event.dispatch('job:test:queued', test)
-    end
-
     it 'build:started notifies' do
       handler.expects(:notify)
       Travis::Event.dispatch('build:started', build)
