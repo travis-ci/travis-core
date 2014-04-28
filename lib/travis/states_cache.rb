@@ -5,6 +5,8 @@ require 'travis/api'
 
 module Travis
   class StatesCache
+    class CacheError < StandardError; end
+
     include Travis::Api::Formats
 
     attr_reader :adapter
@@ -108,8 +110,7 @@ module Travis
         end
       rescue Dalli::RingError => e
         Metriks.meter("memcached.connect-errors").mark
-        Travis.logger.warn("Couldn't connect to a memcached server: #{e.message}")
-        return nil
+        raise CacheError, "Couldn't connect to a memcached server: #{e.message}"
       end
 
       def set(key, data)
@@ -118,8 +119,7 @@ module Travis
         end
       rescue Dalli::RingError => e
         Metriks.meter("memcached.connect-errors").mark
-        Travis.logger.warn("Couldn't connect to a memcached server: #{e.message}")
-        return nil
+        raise CacheError, "Couldn't connect to a memcached server: #{e.message}"
       end
 
       def retry_ringerror

@@ -82,9 +82,11 @@ module Travis
         subject = StatesCache.new(adapter: adapter)
         expect {
           subject.write(1, 'master', data)
-        }.to_not raise_error
+        }.to raise_error(Travis::StatesCache::CacheError)
 
-        subject.fetch(1).should == nil
+        expect {
+          subject.fetch(1)
+        }.to raise_error(Travis::StatesCache::CacheError)
       end
     end
 

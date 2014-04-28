@@ -31,7 +31,16 @@ class Repository
         return unless repo
         return unless cache_enabled?
 
-        cache.fetch_state(repo.id, branch)
+        cache.fetch_state(repo.id, branch).tap do |result|
+          if result
+            Metriks.meter('status-image.cache-hit').mark
+          else
+            Metriks.meter('status-image.cache-miss').mark
+          end
+        end
+      rescue Travis::StatesCache::CacheError => e
+        Travis.logger.error(e.message)
+        return nil
       end
 
       def state_from_database
