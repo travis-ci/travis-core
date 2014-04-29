@@ -15,7 +15,7 @@ module Travis
         def run
           new_user? do
             syncing do
-              ResetToken.new(user).run
+              ResetToken.new(user).run if Time.now.utc.sunday?
               UserInfo.new(user).run
               Organizations.new(user).run
               Repositories.new(user).run
