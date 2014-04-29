@@ -17,7 +17,7 @@ describe Travis::Addons::GithubStatus::EventHandler do
 
     it 'build:created notifies' do
       handler.expects(:notify)
-      Travis::Event.dispatch('build:started', build)
+      Travis::Event.dispatch('build:created', build)
     end
 
     it 'build:started notifies' do

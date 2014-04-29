@@ -33,13 +33,6 @@ describe Build::States do
       end
     end
 
-    describe 'create' do
-      xit 'notifies observers' do
-        Travis::Event.expects(:dispatch).with { |event| event == 'build:created' }
-        Factory(:build)
-      end
-    end
-
     describe 'reset' do
       before :each do
         build.stubs(:write_attribute)

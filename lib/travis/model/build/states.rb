@@ -28,10 +28,6 @@ class Build
       event :reset,  to: :created
       event :cancel, to: :canceled, if: :cancelable?
       event :all, after: [:denormalize, :notify]
-
-      # after_create do
-      #   notify(:create)
-      # end
     end
 
     def should_finish?
