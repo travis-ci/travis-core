@@ -18,7 +18,7 @@ class Repository < Travis::Model
   has_many :requests, dependent: :delete_all
   has_many :builds, dependent: :delete_all
   has_many :events
-  has_many :permissions
+  has_many :permissions, dependent: :delete_all
   has_many :users, through: :permissions
 
   has_one :last_build, class_name: 'Build', order: 'id DESC'
