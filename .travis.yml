@@ -1,8 +1,4 @@
 language: ruby
-env:
-  global:
-    - RUBY_GC_MALLOC_LIMIT=90000000
-    - RUBY_FREE_MIN=200000
 services:
   - redis
 addons:
@@ -10,12 +6,12 @@ addons:
 rvm:
   - jruby-19mode
   - 2.0.0
-  - 2.1.0
+  - 2.1
 jdk: oraclejdk7
 matrix:
   fast_finish: true
   allow_failures:
-    - rvm: 2.1.0
+    - rvm: 2.1
 before_script:
   - sudo service mysql stop
   - redis-cli config set save ""
