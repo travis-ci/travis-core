@@ -2,10 +2,11 @@ require 'travis/model/build/config/env'
 require 'travis/model/build/config/language'
 require 'travis/model/build/config/matrix'
 require 'travis/model/build/config/obfuscate'
+require 'travis/model/build/config/os'
 
 class Build
   class Config
-    NORMALIZERS = [Env, Language]
+    NORMALIZERS = [Env, Language, OS]
 
     DEFAULT_LANG = 'ruby'
 
