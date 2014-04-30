@@ -227,28 +227,28 @@ describe Repository do
     end
 
     it "allows to set settings as JSON string" do
-      repo.settings = '{"foo": "bar"}'
-      repo.settings.to_hash.should == Repository::Settings.defaults.merge({'foo' => 'bar'})
+      repo.settings = '{"build_pushes": false}'
+      repo.settings.to_hash.should == Repository::Settings.defaults.merge({'build_pushes' => false})
     end
 
     it "allows to set settings as a Hash" do
-      repo.settings = {'foo' => 'bar'}
-      repo.settings.to_hash.should == Repository::Settings.defaults.merge({'foo' => 'bar'})
+      repo.settings = {'build_pushes' => false}
+      repo.settings.to_hash.should == Repository::Settings.defaults.merge({'build_pushes' => false})
     end
 
     it 'updates settings in the DB' do
-      repo.settings = {'foo' => 'bar'}
+      repo.settings = {'build_pushes' => false}
       repo.save
 
-      repo.reload.settings['foo'].should == 'bar'
+      repo.reload.settings['build_pushes'].should == false
 
-      repo.settings.merge('foo' => 'baz')
+      repo.settings.merge('build_pushes' => true)
 
-      repo.reload.settings['foo'].should == 'baz'
+      repo.reload.settings['build_pushes'].should == true
 
-      repo.settings['bar'] = 'baz'
+      repo.settings['build_pushes'] = false
 
-      repo.reload.settings['bar'].should == 'baz'
+      repo.reload.settings['build_pushes'].should == false
     end
   end
 

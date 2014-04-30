@@ -6,11 +6,10 @@ class Travis::Model < ActiveRecord::Base
       Base64.strict_encode64 str
     end
 
-    let(:options){ nil }
+    let(:options){ { key: 'secret-key' } }
     let(:column) { EncryptedColumn.new(options) }
     let(:iv)     { 'a' * 16 }
     let(:aes)    { stub('aes', :final => '') }
-    before { column.stubs :key => 'secret-key' }
 
     describe '#encrypt?' do
       it 'does not encrypt if given data is empty' do
@@ -19,11 +18,11 @@ class Travis::Model < ActiveRecord::Base
       end
 
       context 'when disabled' do
-        let(:options) { { disabled: true } }
+        let(:options) { { disable: true, key: 'secret-key' } }
         it 'does not encrypt' do
           column.encrypt?('--ENCR--abc').should be_false
         end
-    end
+      end
     end
 
     describe '#decrypt?' do
@@ -41,6 +40,15 @@ class Travis::Model < ActiveRecord::Base
           column.dump('123qwe').should == '123qwe'
         end
       end
+    end
+
+    it 'allows to pass use_prefix as an option' do
+      EncryptedColumn.new(use_prefix: true).use_prefix?.should be_true
+    end
+
+    it 'allows to pass key as an option' do
+      EncryptedColumn.new(key: 'foobarbaz').key.should == 'foobarbaz'
+
     end
 
     context 'when encryption is enabled' do

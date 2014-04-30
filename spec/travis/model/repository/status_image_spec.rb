@@ -36,6 +36,14 @@ describe Repository::StatusImage do
 
       image.result.should == :passing
     end
+
+    it 'handles cache failures gracefully' do
+      image = described_class.new(repo, nil)
+      cache.expects(:fetch_state).raises(Travis::StatesCache::CacheError)
+      expect {
+        image.result.should == :passing
+      }.to_not raise_error
+    end
   end
 
   describe 'given no branch' do

@@ -3,7 +3,8 @@ module Travis
     module Sqwiggle
       require 'travis/addons/sqwiggle/instruments'
       require 'travis/addons/sqwiggle/event_handler'
-      require 'travis/addons/sqwiggle/task'
+
+      class Task < ::Travis::Task; end
     end
   end
 end

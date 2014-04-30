@@ -33,7 +33,7 @@ module Travis
           Timeout.timeout(TIMEOUT) do
             Travis::Features.feature_deactivated?(:job_queueing)
           end
-        rescue Timeout::Error => e
+        rescue Timeout::Error, Redis::TimeoutError => e
           Travis.logger.error("[enqueue] Timeout trying to check enqueuing feature flag.")
           return false
         end

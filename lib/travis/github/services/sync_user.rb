@@ -37,6 +37,7 @@ module Travis
         end
 
         def send_welcome_email
+          return unless user.email.present?
           UserMailer.welcome_email(user).deliver
           logger.info("Sent welcome email to #{user.login}")
           Metriks.meter('travis.welcome.email').mark

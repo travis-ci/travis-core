@@ -16,7 +16,8 @@ module Travis
                 'repository' => repository_data,
                 'config' => job.decrypted_config,
                 'queue' => job.queue,
-                'uuid' => Travis.uuid
+                'uuid' => Travis.uuid,
+                'ssh_keys' => ssh_keys
               }
             end
 
@@ -59,6 +60,12 @@ module Travis
                 'last_build_state' => repository.last_build_state.to_s,
                 'description' => repository.description
               }
+            end
+
+            def ssh_keys
+              repository.settings.ssh_keys.map do |key|
+                key.content.decrypt
+              end
             end
           end
         end

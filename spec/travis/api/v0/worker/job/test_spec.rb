@@ -3,6 +3,17 @@ require 'spec_helper'
 describe Travis::Api::V0::Worker::Job::Test do
   include Travis::Testing::Stubs, Support::Formats
 
+  let(:test) do
+    test = stub_test
+    settings = Repository::Settings.new(test.repository, {
+      'ssh_keys' => [
+        'name' => 'main-repo',
+        'content' => Travis::Model::EncryptedColumn.new(use_prefix: false).dump('key content')
+      ]
+    })
+    test.repository.stubs(:settings).returns(settings)
+    test
+  end
   let(:data) { Travis::Api::V0::Worker::Job::Test.new(test).data }
 
   describe 'for a push request' do
@@ -20,7 +31,8 @@ describe Travis::Api::V0::Worker::Job::Test do
         'source' => {
           'id' => 1,
           'number' => 2
-        }
+        },
+        'ssh_keys' => ['key content']
       }
     end
 
@@ -106,6 +118,7 @@ describe Travis::Api::V0::Worker::Job::Test do
           'id' => 1,
           'number' => 2
         },
+        'ssh_keys' => ['key content']
       }
     end
 

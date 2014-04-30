@@ -9,6 +9,7 @@ describe Travis::Github::Services::SyncUser do
   before do
     Travis.config.email.from = 'support@travis-ci.com'
   end
+
   describe 'syncing' do
     it 'returns the block value' do
       service.send(:syncing) { 42 }.should == 42
@@ -65,6 +66,14 @@ describe Travis::Github::Services::SyncUser do
 
     it "doesn't send an email if the user is older than 48 hours" do
       user.created_at = Time.now - 49.hours
+      Travis.config.welcome_email = true
+      expect {
+        service.new_user?
+      }.to_not change(ActionMailer::Base, :deliveries)
+    end
+
+    it "doesn't send an email if the user doesn't have a valid email" do
+      user.email = ""
       Travis.config.welcome_email = true
       expect {
         service.new_user?
