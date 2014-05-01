@@ -60,7 +60,7 @@ module Travis
         end
 
         def multi_token?
-          Travis::Features.active?(:github_status_multi_tokens, object.repository)
+          !Travis::Features.feature_deactivated?(:github_status_multi_tokens)
         end
 
         Instruments::EventHandler.attach_to(self)

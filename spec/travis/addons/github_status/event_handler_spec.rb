@@ -7,7 +7,7 @@ describe Travis::Addons::GithubStatus::EventHandler do
   let(:payload) { Travis::Api.data(build, for: 'event', version: 'v0') }
 
   before do
-    Travis::Features.stubs(active?: true)
+    Travis::Features.stubs(feature_deactivated?: false)
     User.stubs(:with_email).returns(nil)
   end
 
