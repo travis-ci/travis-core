@@ -35,7 +35,7 @@ describe Travis::Addons::GithubStatus::EventHandler do
     let(:build_url) { 'http://travis-ci.org/svenfuchs/minimal/builds/1' }
     let(:task)      { Travis::Addons::GithubStatus::Task }
 
-    attr_reader :url, :event
+    attr_reader :event
 
     before :each do
       Travis.stubs(:run_service).returns(user)
@@ -48,7 +48,6 @@ describe Travis::Addons::GithubStatus::EventHandler do
     it 'triggers a task if the build is a push request and has started' do
       build.stubs(:pull_request?).returns(false)
       @event = 'build:started'
-      @url = 'repos/svenfuchs/minimal/statuses/62aae5f70ceee39123ef'
       task.expects(:run).with(:github_status, payload, token: 'token')
       notify
     end
@@ -56,7 +55,6 @@ describe Travis::Addons::GithubStatus::EventHandler do
     it 'triggers a task if the build is a pull request and has started' do
       build.stubs(:pull_request?).returns(true)
       @event = 'build:started'
-      @url = 'repos/svenfuchs/minimal/statuses/head-commit'
       task.expects(:run).with(:github_status, payload, token: 'token')
       notify
     end
@@ -64,7 +62,6 @@ describe Travis::Addons::GithubStatus::EventHandler do
     it 'triggers a task if the build is a push request and has finished' do
       build.stubs(:pull_request?).returns(false)
       @event = 'build:finished'
-      @url = 'repos/svenfuchs/minimal/statuses/62aae5f70ceee39123ef'
       task.expects(:run).with(:github_status, payload, token: 'token')
       notify
     end
@@ -72,7 +69,6 @@ describe Travis::Addons::GithubStatus::EventHandler do
     it 'triggers a task if the build is a pull request and has finished' do
       build.stubs(:pull_request?).returns(true)
       @event = 'build:finished'
-      @url = 'repos/svenfuchs/minimal/statuses/head-commit'
       task.expects(:run).with(:github_status, payload, token: 'token')
       notify
     end
