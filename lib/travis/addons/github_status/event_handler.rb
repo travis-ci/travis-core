@@ -33,7 +33,7 @@ module Travis
         end
 
         def tokens
-          @tokens ||= users.map { |user| { user.login => user.github_oauth_token } }.inject(:merge)
+          @tokens ||= (users.map { |user| { user.login => user.github_oauth_token } }.inject(:merge) || [])
         end
 
         def users
