@@ -92,5 +92,13 @@ describe Travis::Addons::GithubStatus::EventHandler do
       task.expects(:run).with { |_, _, options| options[:tokens]['jdoe'] == 'push-token' }
       notify
     end
+
+    it 'does not trigger a task if no tokens are available' do
+      build.repository.stubs(users_with_permission: [])
+      Travis.stubs(:run_service).returns(nil)
+
+      task.expects(:run).never
+      notify
+    end
   end
 end
