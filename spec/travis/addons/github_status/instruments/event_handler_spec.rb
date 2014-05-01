@@ -10,6 +10,8 @@ describe Travis::Addons::GithubStatus::Instruments::EventHandler do
   before :each do
     Travis.stubs(:run_service).returns(user)
     Travis::Notification.publishers.replace([publisher])
+    Travis::Features.stubs(active?: true)
+    User.stubs(with_email: nil)
     subject.any_instance.stubs(:handle)
   end
 

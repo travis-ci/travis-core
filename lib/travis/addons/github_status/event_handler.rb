@@ -9,6 +9,8 @@ module Travis
         EVENTS = /build:(created|started|finished)/
 
         def handle?
+          return token.present? unless multi_token?
+
           unless tokens.any?
             error "No GitHub OAuth tokens found for #{object.repository.slug}"
           end
@@ -17,10 +19,18 @@ module Travis
         end
 
         def handle
-          Travis::Addons::GithubStatus::Task.run(:github_status, payload, tokens: tokens)
+          if multi_token?
+            Travis::Addons::GithubStatus::Task.run(:github_status, payload, tokens: tokens)
+          else
+            Travis::Addons::GithubStatus::Task.run(:github_status, payload, token: token)
+          end
         end
 
         private
+
+        def token
+          admin.try(:github_oauth_token)
+        end
 
         def tokens
           @tokens ||= users.map { |user| { user.login => user.github_oauth_token } }.inject(:merge)
@@ -47,6 +57,10 @@ module Travis
 
         def users_with_push_access
           object.repository.users_with_permission(:push)
+        end
+
+        def multi_token?
+          Travis::Features.active?(:github_status_multi_tokens, object.repository)
         end
 
         Instruments::EventHandler.attach_to(self)
