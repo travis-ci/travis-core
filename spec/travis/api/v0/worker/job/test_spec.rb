@@ -85,6 +85,7 @@ describe Travis::Api::V0::Worker::Job::Test do
     end
 
     it "includes the tag name" do
+      Travis.config.include_tag_name_in_worker_payload = true
       request.stubs(:tag_name).returns 'v1.2.3'
       data['job']['tag'].should == 'v1.2.3'
     end
