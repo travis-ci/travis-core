@@ -59,7 +59,8 @@ module Travis
           github_language: 'ruby',
           github_id: 549743,
           builds_only_with_travis_yml?: false,
-          settings: stub_settings
+          settings: stub_settings,
+          users_with_permission: []
         )
       end
       alias stub_repository stub_repo

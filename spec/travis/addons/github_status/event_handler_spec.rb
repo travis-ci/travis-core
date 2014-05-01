@@ -8,7 +8,6 @@ describe Travis::Addons::GithubStatus::EventHandler do
 
   before do
     User.stubs(:with_email).returns(nil)
-    build.repository.stubs(users_with_permission: [])
   end
 
   describe 'subscription' do
