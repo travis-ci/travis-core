@@ -168,6 +168,6 @@ class Repository < Travis::Model
   end
 
   def users_with_permission(permission)
-    users.includes(:permission).where(permission: { permission => true }).all
+    users.includes(:permissions).where(permissions: { permission => true }).all
   end
 end
