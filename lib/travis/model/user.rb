@@ -43,6 +43,10 @@ class User < Travis::Model
     def with_github_token
       where("github_oauth_token IS NOT NULL and github_oauth_token != ''")
     end
+
+    def with_email(email_address)
+      Email.where(email: email_address).first.try(:user)
+    end
   end
 
   def to_json
