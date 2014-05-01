@@ -93,21 +93,4 @@ describe Travis::Addons::GithubStatus::EventHandler do
       notify
     end
   end
-
-  # describe 'instrumentation' do
-  #   let(:handler) { Travis::Event::Handler::GithubStatus.any_instance }
-
-  #   it 'instruments with "travis.event.handler.github_commit_status.notify"' do
-  #     ActiveSupport::Notifications.stubs(:publish)
-  #     ActiveSupport::Notifications.expects(:publish).with do |event, data|
-  #       event =~ /travis.event.handler.github_commit_status.notify/ && data[:target].is_a?(Travis::Event::Handler::GithubStatus)
-  #     end
-  #     Travis::Event.dispatch('build:finished', build)
-  #   end
-
-  #   it 'meters on "travis.event.handler.github_commit_status.notify:complete"' do
-  #     Metriks.expects(:timer).with('v1.travis.event.handler.github_commit_status.notify:completed').returns(stub('timer', :update => true))
-  #     Travis::Event.dispatch('build:finished', build)
-  #   end
-  # end
 end
