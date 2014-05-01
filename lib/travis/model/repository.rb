@@ -166,4 +166,8 @@ class Repository < Travis::Model
       super(value.to_json)
     end
   end
+
+  def users_with_permission(permission)
+    users.includes(:permission).where(permission: { permission => true }).all
+  end
 end

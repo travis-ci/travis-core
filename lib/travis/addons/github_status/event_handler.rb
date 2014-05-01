@@ -9,27 +9,47 @@ module Travis
         EVENTS = /build:(created|started|finished)/
 
         def handle?
-          token.present?
+          unless tokens.any?
+            error "No GitHub OAuth tokens found for #{object.repository.slug}"
+          end
+
+          tokens.any?
         end
 
         def handle
-          Travis::Addons::GithubStatus::Task.run(:github_status, payload, token: token)
+          Travis::Addons::GithubStatus::Task.run(:github_status, payload, tokens: tokens)
         end
 
         private
 
-          def token
-            admin.try(:github_oauth_token)
-          rescue Travis::AdminMissing => error
-            Travis.logger.error error.message
-            nil
-          end
+        def tokens
+          @tokens ||= users.map { |user| { user.login => user.github_oauth_token } }.inject(:merge)
+        end
 
-          def admin
-            @admin ||= Travis.run_service(:find_admin, repository: object.repository)
-          end
+        def users
+          @users ||= [
+            build_committer,
+            admin,
+            users_with_push_access,
+          ].flatten.compact
+        end
 
-          Instruments::EventHandler.attach_to(self)
+        def build_committer
+          user = User.with_email(object.commit.committer_email)
+          user if user && user.permission?(repository_id: object.repository.id, push: true)
+        end
+
+        def admin
+          @admin ||= Travis.run_service(:find_admin, repository: object.repository)
+        rescue Travis::AdminMissing
+          nil
+        end
+
+        def users_with_push_access
+          object.repository.users_with_permission(:push)
+        end
+
+        Instruments::EventHandler.attach_to(self)
       end
     end
   end

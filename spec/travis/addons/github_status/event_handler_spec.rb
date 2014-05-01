@@ -6,6 +6,11 @@ describe Travis::Addons::GithubStatus::EventHandler do
   let(:subject) { Travis::Addons::GithubStatus::EventHandler }
   let(:payload) { Travis::Api.data(build, for: 'event', version: 'v0') }
 
+  before do
+    User.stubs(:with_email).returns(nil)
+    build.repository.stubs(users_with_permission: [])
+  end
+
   describe 'subscription' do
     let(:handler) { subject.any_instance }
 
@@ -48,28 +53,43 @@ describe Travis::Addons::GithubStatus::EventHandler do
     it 'triggers a task if the build is a push request and has started' do
       build.stubs(:pull_request?).returns(false)
       @event = 'build:started'
-      task.expects(:run).with(:github_status, payload, token: 'token')
+      task.expects(:run).with(:github_status, payload, tokens: { 'svenfuchs' => 'token' })
       notify
     end
 
     it 'triggers a task if the build is a pull request and has started' do
       build.stubs(:pull_request?).returns(true)
       @event = 'build:started'
-      task.expects(:run).with(:github_status, payload, token: 'token')
+      task.expects(:run).with(:github_status, payload, tokens: { 'svenfuchs' => 'token' })
       notify
     end
 
     it 'triggers a task if the build is a push request and has finished' do
       build.stubs(:pull_request?).returns(false)
       @event = 'build:finished'
-      task.expects(:run).with(:github_status, payload, token: 'token')
+      task.expects(:run).with(:github_status, payload, tokens: { 'svenfuchs' => 'token' })
       notify
     end
 
     it 'triggers a task if the build is a pull request and has finished' do
       build.stubs(:pull_request?).returns(true)
       @event = 'build:finished'
-      task.expects(:run).with(:github_status, payload, token: 'token')
+      task.expects(:run).with(:github_status, payload, tokens: { 'svenfuchs' => 'token' })
+      notify
+    end
+
+    it 'gets the token for the build committer' do
+      committer = stub_user(login: 'jdoe', github_oauth_token: 'commit-token')
+      committer.stubs(:permission?).with(repository_id: repository.id, push: true).returns(true)
+      User.stubs(:with_email).with(commit.committer_email).returns(committer)
+      task.expects(:run).with { |_, _, options| options[:tokens]['jdoe'] == 'commit-token' }
+      notify
+    end
+
+    it 'gets the token for someone with push access' do
+      push_user = stub_user(login: 'jdoe', github_oauth_token: 'push-token')
+      build.repository.stubs(users_with_permission: [push_user])
+      task.expects(:run).with { |_, _, options| options[:tokens]['jdoe'] == 'push-token' }
       notify
     end
   end
