@@ -3,7 +3,7 @@ module Travis
     module Hipchat
       require 'travis/addons/hipchat/instruments'
       require 'travis/addons/hipchat/event_handler'
-      require 'travis/addons/hipchat/task'
+      class Task < ::Travis::Task; end
     end
   end
 end

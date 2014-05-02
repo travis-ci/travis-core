@@ -14,7 +14,7 @@ describe Request::States do
   before :each do
     repository.save!
     Travis.stubs(:run_service).with(:github_fetch_config, is_a(Hash)).returns(config)
-    request.stubs(:add_build) # can't stub on the stupic association?
+    request.stubs(:add_build)
   end
 
   it 'has the state :created when just created' do
@@ -210,6 +210,38 @@ describe Request::States do
       request.save!
       request.start!
       request.reload.should be_finished
+    end
+  end
+
+  describe "adding a build" do
+    before do
+      request.unstub(:add_build)
+      Travis.config.notify_on_build_created = true
+    end
+
+    after do
+      request.stubs(:add_build)
+      Travis.config.notify_on_build_created = false
+    end
+
+    it "should create a build" do
+      request.save
+      request.add_build
+    end
+
+    it "should notify the build" do
+      request.save
+      Travis::Event.expects(:dispatch).with do |event, *args|
+        event.should == "build:created"
+      end
+      request.add_build
+    end
+
+    it "shouldn't notify the build when the flag is disabled" do
+      Travis.config.notify_on_build_created = false
+      request.save
+      Travis::Event.expects(:dispatch).never
+      request.add_build
     end
   end
 end

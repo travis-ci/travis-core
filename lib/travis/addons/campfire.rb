@@ -6,7 +6,8 @@ module Travis
       end
 
       require 'travis/addons/campfire/event_handler'
-      require 'travis/addons/campfire/task'
+
+      class Task < ::Travis::Task; end
     end
   end
 end

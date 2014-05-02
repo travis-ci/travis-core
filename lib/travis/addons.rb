@@ -11,7 +11,6 @@ module Travis
     require 'travis/addons/pusher'
     require 'travis/addons/states_cache'
     require 'travis/addons/sqwiggle'
-    require 'travis/addons/util'
     require 'travis/addons/webhook'
     require 'travis/addons/slack'
 

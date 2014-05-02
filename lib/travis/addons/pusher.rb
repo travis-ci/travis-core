@@ -3,7 +3,8 @@ module Travis
     module Pusher
       require 'travis/addons/pusher/instruments'
       require 'travis/addons/pusher/event_handler'
-      require 'travis/addons/pusher/task'
+
+      class Task < ::Travis::Task; end
     end
   end
 end

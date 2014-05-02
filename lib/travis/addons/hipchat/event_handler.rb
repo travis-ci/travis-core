@@ -12,11 +12,17 @@ module Travis
         EVENTS = /build:finished/
 
         def handle?
-          !pull_request? && targets.present? && config.send_on_finished_for?(:hipchat)
+          enabled? && targets.present? && config.send_on_finished_for?(:hipchat)
         end
 
         def handle
           Travis::Addons::Hipchat::Task.run(:hipchat, payload, targets: targets)
+        end
+
+        def enabled?
+          enabled = config.notification_values(:hipchat, :on_pull_requests)
+          enabled = true if enabled.nil?
+          pull_request? ? enabled : true
         end
 
         def targets

@@ -77,15 +77,6 @@ class Job
       FAILED_STATES.include?(state.to_sym)
     end
 
-    def waiting_for_result?
-      matrix = config.fetch(:matrix, {})
-      if matrix && matrix[:fast_finish]
-        finished? || allow_failure?
-      else
-        finished?
-      end
-    end
-
     def passed?
       state.to_s == "passed"
     end

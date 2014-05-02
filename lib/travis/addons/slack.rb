@@ -3,7 +3,8 @@ module Travis
     module Slack
       require 'travis/addons/slack/instruments'
       require 'travis/addons/slack/event_handler'
-      require 'travis/addons/slack/task'
+
+      class Task < ::Travis::Task; end
     end
   end
 end

@@ -8,8 +8,8 @@ module Travis
     class << self
       attr_accessor :publishers
 
-      def setup
-        Travis::Instrumentation.setup
+      def setup(options = {instrumentation: true})
+        Travis::Instrumentation.setup if options[:instrumentation]
         publishers << Publisher::Log.new
         publishers << Publisher::Redis.new if Travis::Features.feature_active?(:notifications_publisher_redis)
       end

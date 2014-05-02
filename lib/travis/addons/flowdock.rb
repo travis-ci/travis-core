@@ -3,7 +3,7 @@ module Travis
     module Flowdock
       require 'travis/addons/flowdock/instruments'
       require 'travis/addons/flowdock/event_handler'
-      require 'travis/addons/flowdock/task'
+      class Task < ::Travis::Task; end
     end
   end
 end

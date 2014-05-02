@@ -15,6 +15,7 @@ describe Build::Config::Obfuscate do
 
     build.obfuscated_config.should == {
       language: 'ruby',
+      os: 'linux',
       env: ['BAR=[secure] FOO=foo', 'ONE=1 TWO=2']
     }
   end
@@ -26,6 +27,7 @@ describe Build::Config::Obfuscate do
 
     build.obfuscated_config.should == {
       language: 'ruby',
+      os: 'linux',
       rvm: ['1.8.7'],
       env: ['FOO=foo']
     }
@@ -40,6 +42,7 @@ describe Build::Config::Obfuscate do
 
     build.obfuscated_config.should == {
       language: 'ruby',
+      os: 'linux',
       rvm: ['1.8.7'],
       env: ['BAR=[secure] FOO=foo', 'BAR=baz']
     }
@@ -53,6 +56,7 @@ describe Build::Config::Obfuscate do
 
     build.obfuscated_config.should == {
       language: 'ruby',
+      os: 'linux',
       rvm: ['1.8.7'],
       env: ['BAR=[secure]']
     }
@@ -65,6 +69,7 @@ describe Build::Config::Obfuscate do
     }
     build.obfuscated_config.should == {
       language: 'ruby',
+      os: 'linux',
       rvm: ['1.8.7'],
       env:  ['']
     }
@@ -77,6 +82,7 @@ describe Build::Config::Obfuscate do
     }
     build.obfuscated_config.should == {
       language: 'ruby',
+      os: 'linux',
       rvm: ['1.8.7'],
       env:  nil
     }
@@ -89,6 +95,7 @@ describe Build::Config::Obfuscate do
     }
     build.obfuscated_config.should == {
       language: 'ruby',
+      os: 'linux',
       rvm: ['1.8.7']
     }
   end

@@ -54,6 +54,11 @@ class Request
       Travis.logger.info("[request:finish] Request finished. result=#{result.inspect} message=#{message.inspect} commit=#{commit.try(:commit).inspect}")
     end
 
+    def add_build
+      build = builds.create!(:repository => repository, :commit => commit, :config => config, :owner => owner)
+      build.notify(:created) if Travis.config.notify_on_build_created
+    end
+
     protected
 
       delegate :accepted?, :approved?, :branch_accepted?, :config_accepted?, :to => :approval
@@ -64,10 +69,6 @@ class Request
 
       def fetch_config
         Travis.run_service(:github_fetch_config, request: self) # TODO move to a service, have it pass the config to configure
-      end
-
-      def add_build
-        builds.create!(:repository => repository, :commit => commit, :config => config, :owner => owner)
       end
 
       def add_parse_error_build
