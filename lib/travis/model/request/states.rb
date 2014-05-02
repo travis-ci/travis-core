@@ -46,7 +46,7 @@ class Request
         Travis.logger.info("[request:finish] Request created but Build and Job automatically errored due to a config server error. commit=#{commit.try(:commit).inspect}")
         add_server_error_build
       else
-        add_build
+        add_build_and_notify
         Travis.logger.info("[request:finish] Request created a build. commit=#{commit.try(:commit).inspect}")
       end
       self.result = approval.result
@@ -55,8 +55,13 @@ class Request
     end
 
     def add_build
-      build = builds.create!(:repository => repository, :commit => commit, :config => config, :owner => owner)
-      build.notify(:created) if Travis.config.notify_on_build_created
+      builds.create!(:repository => repository, :commit => commit, :config => config, :owner => owner)
+    end
+
+    def add_build_and_notify
+      add_build.tap do |build|
+        build.notify(:created) if Travis.config.notify_on_build_created
+      end
     end
 
     protected
