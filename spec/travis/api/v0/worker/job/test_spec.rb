@@ -83,6 +83,12 @@ describe Travis::Api::V0::Worker::Job::Test do
         'github_id' => 549743
       }
     end
+
+    it "includes the tag name" do
+      Travis.config.include_tag_name_in_worker_payload = true
+      request.stubs(:tag_name).returns 'v1.2.3'
+      data['job']['tag'].should == 'v1.2.3'
+    end
   end
 
   describe 'for a pull request' do
