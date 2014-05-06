@@ -222,8 +222,8 @@ describe Build do
     end
 
     describe 'config' do
-      it 'defaults to a hash with language set' do
-        Build.new.config.should == { language: 'ruby' }
+      it 'defaults to a hash with language and os set' do
+        Build.new.config.should == { language: 'ruby', os: 'linux' }
       end
 
       it 'deep_symbolizes keys on write' do

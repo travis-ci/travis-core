@@ -46,7 +46,7 @@ module Travis
           def parse(yaml)
             YAML.load(yaml).merge('.result' => 'configured')
           rescue StandardError, Psych::SyntaxError => e
-            log_exception(e)
+            error "[request:fetch_config] Error parsing .travis.yml for #{config_url}: #{e.message}"
             {
               '.result' => 'parse_error',
               '.result_message' => e.is_a?(Psych::SyntaxError) ? e.message.split(": ").last : e.message

@@ -279,4 +279,24 @@ describe Repository do
       builds.should_not include(old)
     end
   end
+
+  describe '#users_with_permission' do
+    it 'returns users with the given permission linked to that repository' do
+      repo = Factory(:repository)
+      other_repo = Factory(:repository)
+
+      user_with_permission = Factory(:user)
+      user_with_permission.permissions.create!(repository: repo, admin: true)
+
+      user_wrong_repo = Factory(:user)
+      user_wrong_repo.permissions.create!(repository: other_repo, admin: true)
+
+      user_wrong_permission = Factory(:user)
+      user_wrong_permission.permissions.create!(repository: repo, push: true)
+
+      repo.users_with_permission(:admin).should include(user_with_permission)
+      repo.users_with_permission(:admin).should_not include(user_wrong_repo)
+      repo.users_with_permission(:admin).should_not include(user_wrong_permission)
+    end
+  end
 end

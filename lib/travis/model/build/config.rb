@@ -2,14 +2,15 @@ require 'travis/model/build/config/env'
 require 'travis/model/build/config/language'
 require 'travis/model/build/config/matrix'
 require 'travis/model/build/config/obfuscate'
+require 'travis/model/build/config/os'
 
 class Build
   class Config
-    NORMALIZERS = [Env, Language]
+    NORMALIZERS = [Env, Language, OS]
 
     DEFAULT_LANG = 'ruby'
 
-    ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl, :compiler, :go, :xcode_sdk, :xcode_scheme, :ghc]
+    ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl, :compiler, :go, :xcode_sdk, :xcode_scheme, :ghc, :ruby]
 
     EXPANSION_KEYS_FEATURE = [:os]
 
@@ -28,7 +29,7 @@ class Build
       'perl'        => [:perl],
       'php'         => [:php],
       'python'      => [:python],
-      'ruby'        => [:rvm, :gemfile, :jdk],
+      'ruby'        => [:rvm, :gemfile, :jdk, :ruby],
       'scala'       => [:scala, :jdk]
     }
 

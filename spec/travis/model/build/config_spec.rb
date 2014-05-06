@@ -141,4 +141,16 @@ describe Build::Config do
     }
   end
 
+  it 'sets the os value to osx for objective-c builds' do
+    config = YAML.load %(
+      language: objective-c
+    )
+    Build::Config.new(config).normalize[:os].should == 'osx'
+  end
+
+  it 'sets the os value to linux for other builds' do
+    config = YAML.load %(
+    )
+    Build::Config.new(config).normalize[:os].should == 'linux'
+  end
 end

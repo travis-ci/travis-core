@@ -4,21 +4,7 @@ require 'active_support/deprecation'
 require 'active_support/core_ext/module'
 
 module Travis
-  # Wraps feature flips for Travis.
-  # This allows enabling/disabling certain features for users
-  # and repositories only.
-  #
-  # The start method needs to be called before using this module.
-  # You can then ask for features to be enabled for repositories:
-  #
-  # Repository.find_by_slug('rails/rails')
-  # if Travis::Features.active?(:pull_requests, repository)
-  #   ...
-  # end
-  #
-  # This wraps checking if a repository is enabled and then delegates
-  # to the rollout library, where features can be enabled for users,
-  # groups and based on percentages.
+  # Travis::Features contains methods to handle feature flags.
   module Features
     class << self
       methods = (Rollout.public_instance_methods(false) - [:active?, "active?"]) << {:to => :rollout}
@@ -33,6 +19,10 @@ module Travis
       @rollout ||= ::Rollout.new(redis)
     end
 
+    # Returns whether a given feature is enabled either globally or for a given
+    # repository.
+    #
+    # By default, this will return false.
     def active?(feature, repository)
       feature_active?(feature) or
         (rollout.active?(feature, repository.owner) or
@@ -47,10 +37,16 @@ module Travis
       redis.srem(repository_key(feature), repository.id)
     end
 
+    # Return whether a given feature is enabled for a repository.
+    #
+    # By default, this will return false.
     def repository_active?(feature, repository)
       redis.sismember(repository_key(feature), repository.id)
     end
 
+    # Return whether a given feature is enabled for a user.
+    #
+    # By default, this will return false.
     def user_active?(feature, user)
       rollout.active?(feature, user)
     end
@@ -59,14 +55,27 @@ module Travis
       redis.del(disabled_key(feature))
     end
 
+    # Return whether a feature is enabled globally.
+    #
+    # By default, this will return false.
     def feature_active?(feature)
       enabled_for_all?(feature) and !feature_inactive?(feature)
     end
 
+    # Return whether a feature has been disabled.
+    #
+    # This is similar to feature_deactivated?, but with the opposite default.
+    #
+    # By default this will return true (ie. disabled).
     def feature_inactive?(feature)
       redis.get(disabled_key(feature)) != "1"
     end
 
+    # Return whether a feature has been disabled.
+    #
+    # This is similar to feature_inactive?, but with the opposite default.
+    #
+    # By default this will return false (ie not disabled).
     def feature_deactivated?(feature)
       redis.get(disabled_key(feature)) == '0'
     end
@@ -75,6 +84,9 @@ module Travis
       redis.set(disabled_key(feature), 0)
     end
 
+    # Return whether a feature has been enabled globally.
+    #
+    # By default this will return false.
     def enabled_for_all?(feature)
       redis.get(enabled_for_all_key(feature)) == '1'
     end
@@ -95,6 +107,9 @@ module Travis
       redis.srem(owner_key(feature, owner), owner.id)
     end
 
+    # Return whether a feature has been enabled for a user.
+    #
+    # By default, this return false.
     def owner_active?(feature, owner)
       redis.sismember(owner_key(feature, owner), owner.id)
     end
