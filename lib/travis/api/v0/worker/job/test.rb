@@ -69,8 +69,6 @@ module Travis
             end
 
             def include_tag_name?
-              Travis.logger.info("Worker payload enabled: #{Travis.config.include_tag_name_in_worker_payload}")
-              Travis.logger.info("Tag name exists for job #{job.id}: #{request.tag_name.present?} (#{request.tag_name})")
               Travis.config.include_tag_name_in_worker_payload && request.tag_name.present?
             end
           end
