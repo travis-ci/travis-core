@@ -34,6 +34,11 @@ describe Travis::Addons::GithubStatus::EventHandler do
       handler.expects(:notify)
       Travis::Event.dispatch('build:finished', build)
     end
+
+    it 'build:canceled notifies' do
+      handler.expects(:notify)
+      Travis::Event.dispatch('build:canceled', build)
+    end
   end
 
   describe 'handler' do
