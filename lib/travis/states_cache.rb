@@ -55,6 +55,7 @@ module Travis
     class MemcachedAdapter
       attr_reader :pool
       attr_accessor :jitter
+      attr_accessor :ttl
 
       def initialize(options = {})
         @pool = ConnectionPool.new(:size => 10, :timeout => 3) do
@@ -65,6 +66,7 @@ module Travis
           end
         end
         @jitter = 0.5
+        @ttl = 7.days
       end
 
       def fetch(id, branch = nil)
