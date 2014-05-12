@@ -16,6 +16,17 @@ class Repository::Settings
     model SshKey
   end
 
+  class EnvVar < Model
+    field :name
+    field :value, encrypted: true
+
+    validates :name, presence: true
+  end
+
+  class EnvVars < Collection
+    model EnvVar
+  end
+
   include Travis::OverwritableMethodDefinitions
 
   class << self
@@ -45,6 +56,7 @@ class Repository::Settings
   end
 
   register :ssh_keys
+  register :env_vars
 
   attr_accessor :collections, :settings
 
