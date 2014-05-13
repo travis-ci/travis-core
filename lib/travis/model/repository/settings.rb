@@ -83,6 +83,14 @@ class Repository::Settings
     get('build_pull_requests')
   end
 
+  def restricts_number_of_builds?
+    maximum_number_of_builds > 0
+  end
+
+  def maximum_number_of_builds
+    get('maximum_number_of_builds').to_i
+  end
+
   class << self
     def defaults
       {
