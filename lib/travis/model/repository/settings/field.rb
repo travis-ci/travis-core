@@ -23,6 +23,7 @@ class Repository::Settings
     end
 
     def set(value, options = {})
+
       encrypt(coerce(value), options[:key])
     end
 
