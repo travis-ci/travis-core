@@ -32,7 +32,7 @@ describe Travis::Enqueue::Services::EnqueueJobs do
     describe "with a timeout" do
       it "returns false when the timeout is hit" do
         Travis::Features.stubs(:feature_deactivated?).raises(Timeout::Error)
-        service.disabled?.should == false  
+        service.disabled?.should == false
       end
     end
   end
