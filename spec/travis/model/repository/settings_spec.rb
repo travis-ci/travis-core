@@ -20,6 +20,26 @@ describe Repository::Settings do
       settings.get('foo').should be_nil
       settings.settings['foo'].should be_nil
     end
+
+    it 'allows to set a property' do
+      settings = settings_class.new(repo, {})
+
+      settings.get('an_integer_field').should be_nil
+
+      settings.set('an_integer_field', 1)
+      settings.get('an_integer_field').should == 1
+      settings.an_integer_field.should == 1
+    end
+
+    it 'allows to set a property using accessor' do
+      settings = settings_class.new(repo, {})
+
+      settings.get('an_integer_field').should be_nil
+
+      settings.an_integer_field = 1
+      settings.get('an_integer_field').should == 1
+      settings.an_integer_field.should == 1
+    end
   end
 
   describe 'registering a collection' do
