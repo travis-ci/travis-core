@@ -124,6 +124,7 @@ class Repository::Settings
     path.split('.').take_while { |key| current = current[key] }
     current
   end
+  private :get
 
   def set(key, value)
     if key[/\./]
@@ -134,6 +135,7 @@ class Repository::Settings
       settings[key] = value
     end
   end
+  private :set
 
   def to_hash
     only_allowed_settings(defaults.deep_merge(settings))

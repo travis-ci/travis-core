@@ -17,8 +17,25 @@ describe Repository::Settings do
       settings.expects(:save)
       settings.merge('foo' => 'bar')
 
-      settings.get('foo').should be_nil
       settings.settings['foo'].should be_nil
+    end
+
+    it 'sets false properly as boolean, not changing it to nil' do
+       settings = settings_class.new(repo, {})
+
+      settings.a_boolean_field?.should be_true
+
+      settings.a_boolean_field = false
+      settings.a_boolean_field?.should == false
+    end
+
+    it 'allows to set a property using accessor' do
+      settings = settings_class.new(repo, {})
+
+      settings.an_integer_field.should be_nil
+
+      settings.an_integer_field = 1
+      settings.an_integer_field.should == 1
     end
   end
 

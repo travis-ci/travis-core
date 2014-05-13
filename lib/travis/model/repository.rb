@@ -156,7 +156,7 @@ class Repository < Travis::Model
   end
 
   def settings
-    Settings.load(self, super)
+    @settings ||= Settings.load(self, super)
   end
 
   def settings=(value)

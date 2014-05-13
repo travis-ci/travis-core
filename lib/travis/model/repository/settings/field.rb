@@ -23,6 +23,7 @@ class Repository::Settings
     end
 
     def set(value, options = {})
+
       encrypt(coerce(value), options[:key])
     end
 
@@ -31,7 +32,7 @@ class Repository::Settings
     end
 
     def coerce(value)
-      return unless value
+      return value unless value
       coercer = Coercible::Coercer.new
       coercer[value.class].send(coercer_method, value)
     end
