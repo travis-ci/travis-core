@@ -6,12 +6,12 @@ addons:
 rvm:
   - jruby-19mode
   - 2.0.0
-  - 2.1
+  - 2.1.2
 jdk: oraclejdk7
 matrix:
   fast_finish: true
   allow_failures:
-    - rvm: 2.1
+    - rvm: 2.1.2
 before_script:
   - sudo service mysql stop
   - redis-cli config set save ""
