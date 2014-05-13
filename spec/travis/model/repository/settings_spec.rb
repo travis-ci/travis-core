@@ -21,6 +21,15 @@ describe Repository::Settings do
       settings.settings['foo'].should be_nil
     end
 
+    it 'sets false properly as boolean, not changing it to nil' do
+       settings = settings_class.new(repo, {})
+
+      settings.a_boolean_field?.should be_true
+
+      settings.a_boolean_field = false
+      settings.a_boolean_field?.should == false
+    end
+
     it 'allows to set a property' do
       settings = settings_class.new(repo, {})
 
