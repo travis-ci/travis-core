@@ -32,7 +32,7 @@ describe Travis::Enqueue::Services::EnqueueJobs do
     describe "with a timeout" do
       it "returns false when the timeout is hit" do
         Travis::Features.stubs(:feature_deactivated?).raises(Timeout::Error)
-        service.disabled?.should == false  
+        service.disabled?.should == false
       end
     end
   end
@@ -42,7 +42,7 @@ describe Travis::Enqueue::Services::EnqueueJobs do
     let(:test)      { stub_test(state: :created, enqueue: nil) }
 
     before :each do
-      test.repository.stubs(:settings).returns OpenStruct.new({:restricts_number_of_builds? => false})
+      test.repository.stubs(:settings).returns OpenStruct.new({:restricts_number_of_builds? => false, :ssh_keys => []})
       scope = stub('scope')
       scope.stubs(:all).returns([test])
       Job.stubs(:queueable).returns(scope)
