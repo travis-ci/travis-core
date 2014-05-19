@@ -42,7 +42,7 @@ describe Travis::Enqueue::Services::EnqueueJobs do
     let(:test)      { stub_test(state: :created, enqueue: nil) }
 
     before :each do
-      test.repository.stubs(:settings).returns OpenStruct.new({:restricts_number_of_builds? => false, :ssh_keys => []})
+      test.repository.stubs(:settings).returns OpenStruct.new({:restricts_number_of_builds? => false, :ssh_keys => [], :env_vars => []})
       scope = stub('scope')
       scope.stubs(:all).returns([test])
       Job.stubs(:queueable).returns(scope)
