@@ -17,7 +17,8 @@ module Travis
                 'config' => job.decrypted_config,
                 'queue' => job.queue,
                 'uuid' => Travis.uuid,
-                'ssh_keys' => ssh_keys
+                'ssh_keys' => ssh_keys,
+                'env_vars' => env_vars
               }
             end
 
@@ -66,6 +67,14 @@ module Travis
               repository.settings.ssh_keys.map do |key|
                 key.content.decrypt
               end
+            end
+
+            def env_vars
+              vars = repository.settings.env_vars.map do |env_var|
+                [env_var.name, env_var.value.decrypt]
+              end
+
+              Hash[*vars.flatten]
             end
 
             def include_tag_name?

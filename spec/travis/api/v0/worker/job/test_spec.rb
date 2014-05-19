@@ -9,7 +9,12 @@ describe Travis::Api::V0::Worker::Job::Test do
       'ssh_keys' => [
         'name' => 'main-repo',
         'content' => Travis::Model::EncryptedColumn.new(use_prefix: false).dump('key content')
-      ]
+      ],
+      'env_vars' => [
+        'name' => 'FOO',
+        'value' => Travis::Model::EncryptedColumn.new(use_prefix: false).dump('bar')
+      ],
+
     })
     test.repository.stubs(:settings).returns(settings)
     test
@@ -32,7 +37,8 @@ describe Travis::Api::V0::Worker::Job::Test do
           'id' => 1,
           'number' => 2
         },
-        'ssh_keys' => ['key content']
+        'ssh_keys' => ['key content'],
+        'env_vars' => { 'FOO' => 'bar' }
       }
     end
 
@@ -119,7 +125,8 @@ describe Travis::Api::V0::Worker::Job::Test do
           'id' => 1,
           'number' => 2
         },
-        'ssh_keys' => ['key content']
+        'ssh_keys' => ['key content'],
+        'env_vars' => { 'FOO' => 'bar' }
       }
     end
 
