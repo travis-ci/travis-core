@@ -78,6 +78,7 @@ module Travis
         finished_at = data['finished_at']
         data        = data.to_json
 
+        Travis.logger.info("[states-cache] Writing states cache for repo_id=#{id} branch=#{branch} finished_at=#{finished_at}")
         set(key(id), data) if update?(id, nil, finished_at)
         set(key(id, branch), data) if update?(id, branch, finished_at)
       end
@@ -89,7 +90,17 @@ module Travis
         current_date = Time.parse(current_data['finished_at'])
         new_date     = Time.parse(finished_at)
 
-        new_date > current_date
+        update = new_date > current_date
+        message = "[states-cache] Checking if cache is stale for repo_id=#{id} branch=#{branch}. "
+        if update
+          message << "The cache is going to get an update, "
+        else
+          message << "The cache is fresh, "
+        end
+        message << "last cached build finished_at=#{current_date}, we're checking build with finished_at=#{new_date}"
+        Travis.logger.info(message)
+
+        return update
       end
 
       def key(id, branch = nil)
@@ -118,9 +129,11 @@ module Travis
       def set(key, data)
         retry_ringerror do
           pool.with { |client| client.set(key, data) }
+          Travis.logger.info("[states-cache] Setting cache for key=#{key} data=#{data}")
         end
       rescue Dalli::RingError => e
         Metriks.meter("memcached.connect-errors").mark
+        Travis.logger.info("[states-cache] Writing cache key failed key=#{key} data=#{data}")
         raise CacheError, "Couldn't connect to a memcached server: #{e.message}"
       end
 
