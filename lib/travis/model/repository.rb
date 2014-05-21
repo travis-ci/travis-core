@@ -170,4 +170,9 @@ class Repository < Travis::Model
   def users_with_permission(permission)
     users.includes(:permissions).where(permissions: { permission => true }).all
   end
+
+  def reload(*)
+    @settings = nil
+    super
+  end
 end
