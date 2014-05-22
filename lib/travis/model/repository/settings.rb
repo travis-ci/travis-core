@@ -9,6 +9,7 @@ class Repository::Settings
 
   class SshKey < Model
     field :name
+    field :public, default: false
     field :content, encrypted: true
 
     validates :name, presence: true
