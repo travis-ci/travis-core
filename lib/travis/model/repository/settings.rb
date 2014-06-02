@@ -9,7 +9,6 @@ class Repository::Settings
 
   class SshKey < Model
     field :name
-    field :public, default: false
     field :content, encrypted: true
 
     validates :name, presence: true
@@ -22,6 +21,7 @@ class Repository::Settings
   class EnvVar < Model
     field :name
     field :value, encrypted: true
+    field :public, :boolean, default: false
 
     validates :name, presence: true
   end

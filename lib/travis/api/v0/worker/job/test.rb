@@ -70,11 +70,13 @@ module Travis
             end
 
             def env_vars
-              vars = repository.settings.env_vars.map do |env_var|
-                [env_var.name, env_var.value.decrypt]
+              repository.settings.env_vars.map do |var|
+                {
+                  'name' => var.name,
+                  'value' => var.value.decrypt,
+                  'public' => var.public
+                }
               end
-
-              Hash[*vars.flatten]
             end
 
             def include_tag_name?
