@@ -13,24 +13,33 @@ class Repository::Settings
   end
 
   class Field < Struct.new(:name, :type, :options)
-    attr_reader :encrypted
+    attr_reader :encrypted, :default
     alias encrypted? encrypted
+
+    def default?
+      !default.nil?
+    end
 
     def initialize(name, type, options)
       super
       @encrypted = true if options[:encrypted] || options['encrypted']
+      @default = options[:default]
     end
 
-    def set(value, options)
+    def set(value, options = {})
+
       encrypt(coerce(value), options[:key])
     end
 
-    def get(value, options)
-      wrap_as_encrypted(value, options[:key])
+    def get(value, options = {})
+      if value.nil? && default?
+        value = default
+      end
+      wrap_as_encrypted(coerce(value), options[:key])
     end
 
     def coerce(value)
-      return unless value
+      return value unless value
       coercer = Coercible::Coercer.new
       coercer[value.class].send(coercer_method, value)
     end

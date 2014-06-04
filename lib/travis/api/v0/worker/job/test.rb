@@ -17,7 +17,8 @@ module Travis
                 'config' => job.decrypted_config,
                 'queue' => job.queue,
                 'uuid' => Travis.uuid,
-                'ssh_keys' => ssh_keys
+                'ssh_keys' => ssh_keys,
+                'env_vars' => env_vars
               }
             end
 
@@ -40,6 +41,7 @@ module Travis
                 'state' => job.state.to_s,
                 'secure_env_enabled' => build.secure_env_enabled?
               }
+              data['tag'] = request.tag_name if include_tag_name?
               data['pull_request'] = commit.pull_request? ? commit.pull_request_number : false
               data
             end
@@ -65,6 +67,20 @@ module Travis
               repository.settings.ssh_keys.map do |key|
                 key.content.decrypt
               end
+            end
+
+            def env_vars
+              repository.settings.env_vars.map do |var|
+                {
+                  'name' => var.name,
+                  'value' => var.value.decrypt,
+                  'public' => var.public
+                }
+              end
+            end
+
+            def include_tag_name?
+              Travis.config.include_tag_name_in_worker_payload && request.tag_name.present?
             end
           end
         end

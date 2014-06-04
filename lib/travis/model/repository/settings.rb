@@ -5,6 +5,8 @@ require 'travis/model/repository/settings/collection'
 require 'travis/model/repository/settings/model'
 
 class Repository::Settings
+  SETTINGS = []
+
   class SshKey < Model
     field :name
     field :content, encrypted: true
@@ -16,6 +18,18 @@ class Repository::Settings
     model SshKey
   end
 
+  class EnvVar < Model
+    field :name
+    field :value, encrypted: true
+    field :public, :boolean, default: false
+
+    validates :name, presence: true
+  end
+
+  class EnvVars < Collection
+    model EnvVar
+  end
+
   include Travis::OverwritableMethodDefinitions
 
   class << self
@@ -25,7 +39,6 @@ class Repository::Settings
 
     def register(path, collection_class_or_name = nil)
       path = path.to_s
-      @collections ||= {}
 
       collection_class_or_name ||= path
       klass = if collection_class_or_name.is_a?(String) || collection_class_or_name.is_a?(Symbol)
@@ -35,16 +48,45 @@ class Repository::Settings
         collection_class_or_name
       end
 
-      @collections[path] = klass
+      collections[path] = klass
 
       define_overwritable_method "#{path}" do
         instance_variable_get("@#{path}")
       end
     end
-    attr_reader :collections
+
+    def collections
+      @collections ||= {}
+    end
+
+    def setting?(name)
+      SETTINGS.detect { |s| s.name.to_s == name.to_s }
+    end
+
+    def add_setting(name, *args)
+      options = args.last.is_a?(Hash) ? args.pop : {}
+      if args.length > 1
+        raise ArgumentError, "too many arguments"
+      end
+      type = args.first || :string
+      field = Field.new(name.to_s, type, options)
+      SETTINGS << field
+
+      method_name = field.name.dup
+      method_name << '?' if field.type == :boolean
+
+      define_overwritable_method method_name do
+        field.get(get(field.name.to_s))
+      end
+
+      define_overwritable_method "#{field.name}=" do |value|
+        set(field.name.to_s, field.set(value))
+      end
+    end
   end
 
   register :ssh_keys
+  register :env_vars
 
   attr_accessor :collections, :settings
 
@@ -69,27 +111,24 @@ class Repository::Settings
   attr_accessor :repository
 
   delegate :to_json, :[], to: :settings
-  delegate :defaults, :defaults=, to: 'self.class'
+  delegate :setting?, :defaults, :defaults=, to: 'self.class'
 
-  def builds_only_with_travis_yml?
-    get('builds_only_with_travis_yml')
+  add_setting :builds_only_with_travis_yml, :boolean, default: false
+  add_setting :build_pushes, :boolean, default: true
+  add_setting :build_pull_requests, :boolean, default: true
+  add_setting :maximum_number_of_builds, :integer
+
+  def maximum_number_of_builds
+    super.to_i
   end
 
-  def build_pushes?
-    get('build_pushes')
-  end
-
-  def build_pull_requests?
-    get('build_pull_requests')
+  def restricts_number_of_builds?
+    maximum_number_of_builds > 0
   end
 
   class << self
     def defaults
-      {
-        'builds_only_with_travis_yml' => false,
-        'build_pushes' => true,
-        'build_pull_requests' => true
-      }
+      Hash[*SETTINGS.find_all { |s| !s.default.nil? }.map { |s| [s.name, s.default] }.flatten]
     end
   end
 
@@ -98,9 +137,21 @@ class Repository::Settings
     path.split('.').take_while { |key| current = current[key] }
     current
   end
+  private :get
+
+  def set(key, value)
+    if key[/\./]
+      raise ArgumentError.new("set doesn't support paths at thie point, sorry :(")
+    end
+
+    if setting?(key)
+      settings[key] = value
+    end
+  end
+  private :set
 
   def to_hash
-    defaults.deep_merge(settings).slice('builds_only_with_travis_yml', 'build_pushes', 'build_pull_requests')
+    only_allowed_settings(defaults.deep_merge(settings))
   end
 
   def defaults
@@ -108,7 +159,9 @@ class Repository::Settings
   end
 
   def merge(json)
-    settings.deep_merge!(json)
+    only_allowed_settings(json).each { |k, v|
+      set(k, v)
+    }
     save
   end
 
@@ -143,6 +196,10 @@ class Repository::Settings
 
     repository.settings = settings.to_json
     repository.save!
+  end
+
+  def only_allowed_settings(hash)
+    hash.slice(*SETTINGS.map(&:name))
   end
 end
 

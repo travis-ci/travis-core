@@ -156,7 +156,7 @@ class Repository < Travis::Model
   end
 
   def settings
-    Settings.load(self, super)
+    @settings ||= Settings.load(self, super)
   end
 
   def settings=(value)
@@ -165,5 +165,14 @@ class Repository < Travis::Model
     else
       super(value.to_json)
     end
+  end
+
+  def users_with_permission(permission)
+    users.includes(:permissions).where(permissions: { permission => true }).all
+  end
+
+  def reload(*)
+    @settings = nil
+    super
   end
 end

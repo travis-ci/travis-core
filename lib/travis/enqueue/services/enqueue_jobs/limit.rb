@@ -12,7 +12,35 @@ module Travis
           end
 
           def queueable
-            @queueable ||= jobs[0, max_queueable]
+            @queueable ||= filter_by_repository(jobs)[0, max_queueable]
+          end
+
+          def filter_by_repository(jobs)
+            return jobs unless Travis.config.limit_per_repo_enabled?
+            queueable_by_repository_id = {}
+            jobs.reject do |job|
+              if job.repository.settings.restricts_number_of_builds?
+                queueable?(job, queueable_by_repository_id, running_by_repository_id)
+              end
+            end
+          end
+
+          def running_by_repository_id
+            @running_by_repository ||= Hash[running_jobs.group_by(&:repository_id).map {|repository_id, jobs| [repository_id, jobs.size]}]
+          end
+
+          def queueable?(job, queueable, running)
+            repository = job.repository_id
+            queueable[repository] ||= 0
+
+            runnable_count = queueable[repository] +
+                              (running[repository] || 0)
+            if runnable_count < job.repository.settings.maximum_number_of_builds
+              queueable[repository] += 1
+              false
+            else
+              true
+            end
           end
 
           def report
@@ -20,6 +48,10 @@ module Travis
           end
 
           private
+
+            def running_jobs
+              @running_jobs ||= Job.owned_by(owner).running
+            end
 
             def running
               @running ||= Job.owned_by(owner).running.count(:id)

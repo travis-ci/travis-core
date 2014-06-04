@@ -2,19 +2,13 @@
 require 'spec_helper'
 
 describe Repository::DefaultSettings do
-  describe '#get' do
+  describe 'getting properties' do
     it 'fetches a given path from default settings' do
       settings = Repository::DefaultSettings.new
       Repository::DefaultSettings.stubs(:defaults).returns(
         'build_pushes' => false
       )
-      settings.get('build_pushes').should == false
-    end
-
-    it 'returns nil when path is not available' do
-      settings = Repository::DefaultSettings.new
-      Repository::DefaultSettings.stubs(:defaults).returns({})
-      settings.get('foo.bar.baz').should == nil
+      settings.build_pushes?.should == false
     end
   end
 

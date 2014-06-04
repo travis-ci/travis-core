@@ -226,7 +226,7 @@ describe Request::States do
 
     it "should create a build" do
       request.save
-      request.add_build
+      request.add_build_and_notify.should be_a(Build)
     end
 
     it "should notify the build" do
@@ -234,14 +234,14 @@ describe Request::States do
       Travis::Event.expects(:dispatch).with do |event, *args|
         event.should == "build:created"
       end
-      request.add_build
+      request.add_build_and_notify
     end
 
     it "shouldn't notify the build when the flag is disabled" do
       Travis.config.notify_on_build_created = false
       request.save
       Travis::Event.expects(:dispatch).never
-      request.add_build
+      request.add_build_and_notify
     end
   end
 end

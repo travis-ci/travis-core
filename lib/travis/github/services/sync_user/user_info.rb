@@ -70,7 +70,6 @@ module Travis
             def user_info
               @user_info ||= begin
                 data = gh['user'].to_hash
-                Travis.logger.info("Fetching data for github_id=#{user.github_id} (UserInfo), data: #{data.inspect}")
                 data
               end
             end

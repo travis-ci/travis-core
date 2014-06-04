@@ -36,9 +36,10 @@ class Log < Travis::Model
   end
 
   def clear!
-    update_attributes!(aggregated_at: nil, archived_at: nil, archive_verified: nil)
     update_column(:content, '')        # TODO why in the world does update_attributes not set content to ''
     update_column(:aggregated_at, nil) # TODO why in the world does update_attributes not set aggregated_at to nil?
+    update_column(:archived_at, nil)
+    update_column(:archive_verified, nil)
     parts.delete_all
   end
 

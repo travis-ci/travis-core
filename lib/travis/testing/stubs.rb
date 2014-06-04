@@ -59,13 +59,14 @@ module Travis
           github_language: 'ruby',
           github_id: 549743,
           builds_only_with_travis_yml?: false,
-          settings: stub_settings
+          settings: stub_settings,
+          users_with_permission: []
         )
       end
       alias stub_repository stub_repo
 
       def stub_settings
-        Stubs.stub 'settings', 'ssh_keys' => []
+        Stubs.stub 'settings', 'ssh_keys' => [], 'env_vars' => []
       end
 
       def stub_key(attributes = {})
@@ -100,7 +101,7 @@ module Travis
           owner_email: 'svenfuchs@artweb-design.de',
           message: 'a message',
           branch_name: 'master',
-          tag_name: nil,
+          tag_name: '',
           pull_request: false,
           pull_request_title: nil,
           pull_request_number: nil

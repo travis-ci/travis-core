@@ -221,6 +221,18 @@ describe Repository do
   describe 'settings' do
     let(:repo) { Factory.build(:repository) }
 
+    it "is reset on reload" do
+      repo.save
+
+      repo.settings = {}
+      repo.update_column(:settings, { 'build_pushes' => false }.to_json)
+      repo.reload
+      repo.settings.build_pushes?.should be_false
+      repo.update_column(:settings, { 'build_pushes' => true }.to_json)
+      repo.reload
+      repo.settings.build_pushes?.should be_true
+    end
+
     it "allows to set nil for settings" do
       repo.settings = nil
       repo.settings.to_hash.should == Repository::Settings.defaults
@@ -277,6 +289,26 @@ describe Repository do
       builds.should include(one)
       builds.should include(two)
       builds.should_not include(old)
+    end
+  end
+
+  describe '#users_with_permission' do
+    it 'returns users with the given permission linked to that repository' do
+      repo = Factory(:repository)
+      other_repo = Factory(:repository)
+
+      user_with_permission = Factory(:user)
+      user_with_permission.permissions.create!(repository: repo, admin: true)
+
+      user_wrong_repo = Factory(:user)
+      user_wrong_repo.permissions.create!(repository: other_repo, admin: true)
+
+      user_wrong_permission = Factory(:user)
+      user_wrong_permission.permissions.create!(repository: repo, push: true)
+
+      repo.users_with_permission(:admin).should include(user_with_permission)
+      repo.users_with_permission(:admin).should_not include(user_wrong_repo)
+      repo.users_with_permission(:admin).should_not include(user_wrong_permission)
     end
   end
 end
