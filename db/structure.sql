@@ -122,7 +122,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: annotation_providers; Type: TABLE; Schema: public; Owner: -; Tablespace:
+-- Name: annotation_providers; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE annotation_providers (
@@ -155,7 +155,7 @@ ALTER SEQUENCE annotation_providers_id_seq OWNED BY annotation_providers.id;
 
 
 --
--- Name: annotations; Type: TABLE; Schema: public; Owner: -; Tablespace:
+-- Name: annotations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE annotations (
@@ -190,7 +190,7 @@ ALTER SEQUENCE annotations_id_seq OWNED BY annotations.id;
 
 
 --
--- Name: broadcasts; Type: TABLE; Schema: public; Owner: -; Tablespace:
+-- Name: broadcasts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE broadcasts (
@@ -237,7 +237,7 @@ CREATE SEQUENCE shared_builds_tasks_seq
 
 
 --
--- Name: builds; Type: TABLE; Schema: public; Owner: -; Tablespace:
+-- Name: builds; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE builds (
@@ -285,7 +285,7 @@ ALTER SEQUENCE builds_id_seq OWNED BY builds.id;
 
 
 --
--- Name: commits; Type: TABLE; Schema: public; Owner: -; Tablespace:
+-- Name: commits; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE commits (
@@ -326,7 +326,7 @@ ALTER SEQUENCE commits_id_seq OWNED BY commits.id;
 
 
 --
--- Name: emails; Type: TABLE; Schema: public; Owner: -; Tablespace:
+-- Name: emails; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE emails (
@@ -358,7 +358,7 @@ ALTER SEQUENCE emails_id_seq OWNED BY emails.id;
 
 
 --
--- Name: jobs; Type: TABLE; Schema: public; Owner: -; Tablespace:
+-- Name: jobs; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE jobs (
@@ -407,7 +407,7 @@ ALTER SEQUENCE jobs_id_seq OWNED BY jobs.id;
 
 
 --
--- Name: log_parts; Type: TABLE; Schema: public; Owner: -; Tablespace:
+-- Name: log_parts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE log_parts (
@@ -440,7 +440,7 @@ ALTER SEQUENCE log_parts_id_seq OWNED BY log_parts.id;
 
 
 --
--- Name: logs; Type: TABLE; Schema: public; Owner: -; Tablespace:
+-- Name: logs; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE logs (
@@ -477,7 +477,7 @@ ALTER SEQUENCE logs_id_seq OWNED BY logs.id;
 
 
 --
--- Name: memberships; Type: TABLE; Schema: public; Owner: -; Tablespace:
+-- Name: memberships; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE memberships (
@@ -507,7 +507,7 @@ ALTER SEQUENCE memberships_id_seq OWNED BY memberships.id;
 
 
 --
--- Name: organizations; Type: TABLE; Schema: public; Owner: -; Tablespace:
+-- Name: organizations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE organizations (
@@ -545,7 +545,7 @@ ALTER SEQUENCE organizations_id_seq OWNED BY organizations.id;
 
 
 --
--- Name: permissions; Type: TABLE; Schema: public; Owner: -; Tablespace:
+-- Name: permissions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE permissions (
@@ -578,7 +578,7 @@ ALTER SEQUENCE permissions_id_seq OWNED BY permissions.id;
 
 
 --
--- Name: repositories; Type: TABLE; Schema: public; Owner: -; Tablespace:
+-- Name: repositories; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE repositories (
@@ -627,7 +627,7 @@ ALTER SEQUENCE repositories_id_seq OWNED BY repositories.id;
 
 
 --
--- Name: requests; Type: TABLE; Schema: public; Owner: -; Tablespace:
+-- Name: requests; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE requests (
@@ -674,7 +674,7 @@ ALTER SEQUENCE requests_id_seq OWNED BY requests.id;
 
 
 --
--- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace:
+-- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE schema_migrations (
@@ -683,7 +683,7 @@ CREATE TABLE schema_migrations (
 
 
 --
--- Name: ssl_keys; Type: TABLE; Schema: public; Owner: -; Tablespace:
+-- Name: ssl_keys; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE ssl_keys (
@@ -716,7 +716,7 @@ ALTER SEQUENCE ssl_keys_id_seq OWNED BY ssl_keys.id;
 
 
 --
--- Name: tokens; Type: TABLE; Schema: public; Owner: -; Tablespace:
+-- Name: tokens; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE tokens (
@@ -748,7 +748,7 @@ ALTER SEQUENCE tokens_id_seq OWNED BY tokens.id;
 
 
 --
--- Name: urls; Type: TABLE; Schema: public; Owner: -; Tablespace:
+-- Name: urls; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE urls (
@@ -780,7 +780,7 @@ ALTER SEQUENCE urls_id_seq OWNED BY urls.id;
 
 
 --
--- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace:
+-- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE users (
@@ -933,7 +933,7 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 
 
 --
--- Name: annotation_providers_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
+-- Name: annotation_providers_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY annotation_providers
@@ -941,7 +941,7 @@ ALTER TABLE ONLY annotation_providers
 
 
 --
--- Name: annotations_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
+-- Name: annotations_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY annotations
@@ -949,7 +949,7 @@ ALTER TABLE ONLY annotations
 
 
 --
--- Name: broadcasts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
+-- Name: broadcasts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY broadcasts
@@ -957,7 +957,7 @@ ALTER TABLE ONLY broadcasts
 
 
 --
--- Name: builds_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
+-- Name: builds_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY builds
@@ -965,7 +965,7 @@ ALTER TABLE ONLY builds
 
 
 --
--- Name: commits_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
+-- Name: commits_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY commits
@@ -973,7 +973,7 @@ ALTER TABLE ONLY commits
 
 
 --
--- Name: emails_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
+-- Name: emails_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY emails
@@ -981,7 +981,7 @@ ALTER TABLE ONLY emails
 
 
 --
--- Name: log_parts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
+-- Name: log_parts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY log_parts
@@ -989,7 +989,7 @@ ALTER TABLE ONLY log_parts
 
 
 --
--- Name: logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
+-- Name: logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY logs
@@ -997,7 +997,7 @@ ALTER TABLE ONLY logs
 
 
 --
--- Name: memberships_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
+-- Name: memberships_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY memberships
@@ -1005,7 +1005,7 @@ ALTER TABLE ONLY memberships
 
 
 --
--- Name: organizations_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
+-- Name: organizations_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY organizations
@@ -1013,7 +1013,7 @@ ALTER TABLE ONLY organizations
 
 
 --
--- Name: permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
+-- Name: permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY permissions
@@ -1021,7 +1021,7 @@ ALTER TABLE ONLY permissions
 
 
 --
--- Name: repositories_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
+-- Name: repositories_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY repositories
@@ -1029,7 +1029,7 @@ ALTER TABLE ONLY repositories
 
 
 --
--- Name: requests_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
+-- Name: requests_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY requests
@@ -1037,7 +1037,7 @@ ALTER TABLE ONLY requests
 
 
 --
--- Name: ssl_keys_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
+-- Name: ssl_keys_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY ssl_keys
@@ -1045,7 +1045,7 @@ ALTER TABLE ONLY ssl_keys
 
 
 --
--- Name: tasks_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
+-- Name: tasks_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY jobs
@@ -1053,7 +1053,7 @@ ALTER TABLE ONLY jobs
 
 
 --
--- Name: tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
+-- Name: tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY tokens
@@ -1061,7 +1061,7 @@ ALTER TABLE ONLY tokens
 
 
 --
--- Name: urls_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
+-- Name: urls_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY urls
@@ -1069,7 +1069,7 @@ ALTER TABLE ONLY urls
 
 
 --
--- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
+-- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY users
@@ -1077,203 +1077,203 @@ ALTER TABLE ONLY users
 
 
 --
--- Name: index_builds_on_id_repository_id_and_event_type_desc; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_builds_on_id_repository_id_and_event_type_desc; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_builds_on_id_repository_id_and_event_type_desc ON builds USING btree (id DESC, repository_id, event_type);
 
 
 --
--- Name: index_builds_on_repository_id_and_event_type; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_builds_on_repository_id_and_event_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_builds_on_repository_id_and_event_type ON builds USING btree (repository_id, event_type);
 
 
 --
--- Name: index_builds_on_repository_id_and_event_type_and_state_and_bran; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_builds_on_repository_id_and_event_type_and_state_and_bran; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_builds_on_repository_id_and_event_type_and_state_and_bran ON builds USING btree (repository_id, event_type, state, branch);
 
 
 --
--- Name: index_builds_on_repository_id_and_state; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_builds_on_repository_id_and_state; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_builds_on_repository_id_and_state ON builds USING btree (repository_id, state);
 
 
 --
--- Name: index_builds_on_request_id; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_builds_on_request_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_builds_on_request_id ON builds USING btree (request_id);
 
 
 --
--- Name: index_emails_on_email; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_emails_on_email; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_emails_on_email ON emails USING btree (email);
 
 
 --
--- Name: index_emails_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_emails_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_emails_on_user_id ON emails USING btree (user_id);
 
 
 --
--- Name: index_jobs_on_owner_id_and_owner_type_and_state; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_jobs_on_owner_id_and_owner_type_and_state; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_jobs_on_owner_id_and_owner_type_and_state ON jobs USING btree (owner_id, owner_type, state);
 
 
 --
--- Name: index_jobs_on_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_jobs_on_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_jobs_on_repository_id ON jobs USING btree (repository_id);
 
 
 --
--- Name: index_jobs_on_state_owner_type_owner_id; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_jobs_on_state_owner_type_owner_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_jobs_on_state_owner_type_owner_id ON jobs USING btree (state, owner_id, owner_type);
 
 
 --
--- Name: index_jobs_on_type_and_owner_id_and_owner_type; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_jobs_on_type_and_owner_id_and_owner_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_jobs_on_type_and_owner_id_and_owner_type ON jobs USING btree (type, source_id, source_type);
 
 
 --
--- Name: index_log_parts_on_log_id_and_number; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_log_parts_on_log_id_and_number; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_log_parts_on_log_id_and_number ON log_parts USING btree (log_id, number);
 
 
 --
--- Name: index_logs_on_archive_verified; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_logs_on_archive_verified; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_logs_on_archive_verified ON logs USING btree (archive_verified);
 
 
 --
--- Name: index_logs_on_archived_at; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_logs_on_archived_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_logs_on_archived_at ON logs USING btree (archived_at);
 
 
 --
--- Name: index_logs_on_job_id; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_logs_on_job_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_logs_on_job_id ON logs USING btree (job_id);
 
 
 --
--- Name: index_memberships_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_memberships_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_memberships_on_user_id ON memberships USING btree (user_id);
 
 
 --
--- Name: index_organizations_on_github_id; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_organizations_on_github_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE UNIQUE INDEX index_organizations_on_github_id ON organizations USING btree (github_id);
 
 
 --
--- Name: index_permissions_on_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_permissions_on_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_permissions_on_repository_id ON permissions USING btree (repository_id);
 
 
 --
--- Name: index_permissions_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_permissions_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_permissions_on_user_id ON permissions USING btree (user_id);
 
 
 --
--- Name: index_repositories_on_github_id; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_repositories_on_github_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE UNIQUE INDEX index_repositories_on_github_id ON repositories USING btree (github_id);
 
 
 --
--- Name: index_repositories_on_last_build_started_at; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_repositories_on_last_build_started_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_repositories_on_last_build_started_at ON repositories USING btree (last_build_started_at);
 
 
 --
--- Name: index_repositories_on_owner_name_and_name; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_repositories_on_owner_name_and_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_repositories_on_owner_name_and_name ON repositories USING btree (owner_name, name);
 
 
 --
--- Name: index_requests_on_commit_id; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_requests_on_commit_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_requests_on_commit_id ON requests USING btree (commit_id);
 
 
 --
--- Name: index_requests_on_head_commit; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_requests_on_head_commit; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_requests_on_head_commit ON requests USING btree (head_commit);
 
 
 --
--- Name: index_requests_on_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_requests_on_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_requests_on_repository_id ON requests USING btree (repository_id);
 
 
 --
--- Name: index_ssl_key_on_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_ssl_key_on_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_ssl_key_on_repository_id ON ssl_keys USING btree (repository_id);
 
 
 --
--- Name: index_users_on_github_id; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_users_on_github_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE UNIQUE INDEX index_users_on_github_id ON users USING btree (github_id);
 
 
 --
--- Name: index_users_on_login; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: index_users_on_login; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_users_on_login ON users USING btree (login);
 
 
 --
--- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -; Tablespace:
+-- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
