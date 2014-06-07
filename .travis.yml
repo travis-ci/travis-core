@@ -13,22 +13,13 @@ matrix:
   allow_failures:
     - rvm: 2.1.2
 before_script:
-  - OLD_BUNDLE_GEMFILE=$BUNDLE_GEMFILE
-  - pushd $HOME
-  - git clone --depth=1 https://github.com/travis-ci/travis-logs.git
-  - cd travis-logs
-  - rvm use jruby-19mode
-  - export BUNDLE_GEMFILE=$PWD/Gemfile
-  - bundle install
-  - psql -c "CREATE DATABASE travis_logs_test;" -U postgres
-  - cp $TRAVIS_BUILD_DIR/config/database.yml config/travis.yml
-  - bundle exec rake db:migrate
-  - popd
-  - rvm use $TRAVIS_RUBY_VERSION
-  - export BUNDLE_GEMFILE=$OLD_BUNDLE_GEMFILE
+  # create 'logs' table matching 'travis-logs'
+  - ./set_up_travis_logs.sh
+  # set up travis_test DB
   - sudo service mysql stop
   - redis-cli config set save ""
   - 'RAILS_ENV=test bundle exec rake db:create db:structure:load --trace'
+  # replace 'logs' table in travis_test DB with that in travis_logs_test
   - psql -c "DROP TABLE IF EXISTS logs CASCADE" -U postgres travis_test
   - pg_dump -t logs travis_logs_test | psql -U postgres travis_test
 
