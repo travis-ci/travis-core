@@ -28,7 +28,7 @@ class Job
     end
 
     def start(data = {})
-      log.update_attributes!(content: '') # TODO this should be in a restart method, right?
+      log.update_attributes!(content: '', removed_at: nil, removed_by: nil) # TODO this should be in a restart method, right?
       data = data.symbolize_keys.slice(:started_at, :worker)
       data.each { |key, value| send(:"#{key}=", value) }
     end
