@@ -16,10 +16,10 @@ describe Travis::Services::RemoveLog do
       user.stubs(:permission?).with(:push, anything).returns true
     end
 
-    it 'does not change log' do
-      expect {
+    it 'raises JobUnfinished error' do
+      lambda {
         service.run
-      }.to_not change { service.log.reload.content }
+      }.should raise_error Travis::JobUnfinished
     end
   end
 
@@ -28,32 +28,41 @@ describe Travis::Services::RemoveLog do
       user.stubs(:permission?).with(:push, anything).returns false
     end
 
-    it 'does not change log' do
-      expect {
+    it 'raises AuthorizationDenied' do
+      lambda {
         service.run
-      }.to_not change { service.log.reload.content }
+      }.should raise_error Travis::AuthorizationDenied
     end
   end
 
   context 'when a job is found' do
-    before :each do
+    before :all do
       find_by_id = stub
       find_by_id.stubs(:find_by_id).returns job
       job.stubs(:finished?).returns true
       service.stubs(:scope).returns find_by_id
       user.stubs(:permission?).with(:push, anything).returns true
-
-      @result = service.run
     end
 
     it 'runs successfully' do
-      @result.should be_true
+      result = service.run
+      result.removed_by.should == user
+      result.removed_at.should be_true
+      result.should be_true
     end
 
 
     it "updates logs with desired information" do
       service.log.content.should =~ Regexp.new(user.name)
       service.log.content.should =~ Regexp.new(params[:reason])
+    end
+
+    context 'when log is already removed' do
+      it 'raises LogAlreadyRemoved error' do
+        lambda {
+          service.run
+        }.should raise_error Travis::LogAlreadyRemoved
+      end
     end
   end
 
@@ -69,4 +78,30 @@ describe Travis::Services::RemoveLog do
     end
   end
 
+end
+
+describe Travis::Services::RemoveLog::Instrument do
+  include Travis::Testing::Stubs
+
+  let(:service)   { Travis::Services::RemoveLog.new(user, params) }
+  let(:repo)      { Factory(:repository) }
+  let(:user)      { Factory(:user) }
+  let(:job)       { Factory(:test, repository: repo, state: :passed) }
+  let(:params)    { { id: job.id, reason: 'Because Science!' } }
+  let(:publisher) { Travis::Notification::Publisher::Memory.new }
+  let(:event)     { publisher.events.last }
+
+  before :each do
+    Travis::Notification.publishers.replace([publisher])
+    service.stubs(:run_service)
+    user.stubs(:permission?).with(:push, anything).returns true
+  end
+
+  it 'publishes a event' do
+    service.run
+    event.should publish_instrumentation_event(
+      event: 'travis.services.remove_log.run:completed',
+      message: "Travis::Services::RemoveLog#run:completed for <Job id=#{job.id}> (svenfuchs)",
+    )
+  end
 end
