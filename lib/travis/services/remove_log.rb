@@ -13,7 +13,7 @@ module Travis
 
         if log.removed_at || log.removed_by
           error "Log for job #{job.id} has already been removed by #{log.removed_by} at #{log.removed_at}"
-          raise LogAlreadyRemoved, "log already removed"
+          raise LogAlreadyRemoved, "Log for job #{job.id} has already been removed"
         end
 
         unless authorized?
@@ -23,7 +23,7 @@ module Travis
 
         unless job.finished?
           error "<Job id=#{job.id}> is not finished"
-          raise JobUnfinished, "Job is not finished"
+          raise JobUnfinished, "Job #{job.id} is not finished"
         end
 
         removed_at = Time.now
