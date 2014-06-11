@@ -16,7 +16,6 @@ before_script:
   # create 'logs' table matching 'travis-logs'
   - ./set_up_travis_logs.sh
   # set up travis_test DB
-  - sudo service mysql stop
   - redis-cli config set save ""
   - 'RAILS_ENV=test bundle exec rake db:create db:structure:load --trace'
   # replace 'logs' table in travis_test DB with that in travis_logs_test
