@@ -16,6 +16,9 @@ before_script:
   # set up travis_test DB
   - redis-cli config set save ""
   - 'RAILS_ENV=test bundle exec rake db:create db:structure:load --trace'
+  # perform logs table migration
+  - mv support/*.rb db/migrate
+  - 'RAILS_ENV=test bundle exec rake db:migrate --trace'
 
 script:
   - ./build.sh
