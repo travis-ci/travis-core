@@ -137,14 +137,14 @@ describe Build do
         3.times { Factory(:build) }
         Build.stubs(:per_page).returns(1)
 
-        Build.paged({}).should have(1).item
+        Build.descending.paged({}).should have(1).item
       end
 
       it 'uses an offset' do
         3.times { |i| Factory(:build) }
         Build.stubs(:per_page).returns(1)
 
-        builds = Build.paged({page: 2})
+        builds = Build.descending.paged({page: 2})
         builds.should have(1).item
         builds.first.number.should == '2'
       end
