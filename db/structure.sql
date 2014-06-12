@@ -453,7 +453,9 @@ CREATE TABLE logs (
     archiving boolean,
     archived_at timestamp without time zone,
     archive_verified boolean,
-    purged_at timestamp without time zone
+    purged_at timestamp without time zone,
+    removed_at timestamp without time zone,
+    removed_by integer
 );
 
 
@@ -1554,3 +1556,5 @@ INSERT INTO schema_migrations (version) VALUES ('20140204220926');
 INSERT INTO schema_migrations (version) VALUES ('20140210003014');
 
 INSERT INTO schema_migrations (version) VALUES ('20140210012509');
+
+INSERT INTO schema_migrations (version) VALUES ('20140612131826');
