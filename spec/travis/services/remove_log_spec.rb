@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe Travis::Services::RemoveLog do
   include Support::ActiveRecord
-  include Travis::Testing::Stubs
 
   let(:repo)    { Factory(:repository) }
   let(:job)     { Factory(:test, repository: repo, state: :created) }
@@ -81,7 +80,7 @@ describe Travis::Services::RemoveLog do
 end
 
 describe Travis::Services::RemoveLog::Instrument do
-  include Travis::Testing::Stubs
+  include Support::ActiveRecord
 
   let(:service)   { Travis::Services::RemoveLog.new(user, params) }
   let(:repo)      { Factory(:repository) }
