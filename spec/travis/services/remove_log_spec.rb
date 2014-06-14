@@ -35,7 +35,7 @@ describe Travis::Services::RemoveLog do
   end
 
   context 'when a job is found' do
-    before :all do
+    before do
       find_by_id = stub
       find_by_id.stubs(:find_by_id).returns job
       job.stubs(:finished?).returns true
@@ -52,12 +52,14 @@ describe Travis::Services::RemoveLog do
 
 
     it "updates logs with desired information" do
+      service.run
       service.log.content.should =~ Regexp.new(user.name)
       service.log.content.should =~ Regexp.new(params[:reason])
     end
 
     context 'when log is already removed' do
       it 'raises LogAlreadyRemoved error' do
+        service.run
         lambda {
           service.run
         }.should raise_error Travis::LogAlreadyRemoved
