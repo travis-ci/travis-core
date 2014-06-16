@@ -125,7 +125,7 @@ class Repository < Travis::Model
   end
 
   def last_completed_build(branch = nil)
-    builds.pushes.last_build_on(state: [:passed, :failed, :errored], branch: branch)
+    builds.pushes.last_build_on(state: [:passed, :failed, :errored, :canceled], branch: branch)
   end
 
   def last_build_on(branch)
@@ -133,7 +133,7 @@ class Repository < Travis::Model
   end
 
   def build_status(branch)
-    builds.pushes.last_state_on(state: [:passed, :failed, :errored], branch: branch)
+    builds.pushes.last_state_on(state: [:passed, :failed, :errored, :canceled], branch: branch)
   end
 
   def last_finished_builds_by_branches(limit = 50)

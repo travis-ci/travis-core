@@ -64,6 +64,12 @@ describe Repository::StatusImage do
       image.result.should == :error
     end
 
+    it 'returns :canceled if the status of the last finished build is canceled' do
+      build.update_attributes(state: 'canceled')
+      image = described_class.new(repo, nil)
+      image.result.should == :canceled
+    end
+
     it 'returns :unknown if the status of the last finished build is unknown' do
       build.update_attributes(state: :created)
       image = described_class.new(repo, nil)
@@ -88,6 +94,12 @@ describe Repository::StatusImage do
       build.update_attributes(state: :errored, branch: 'develop')
       image = described_class.new(repo, 'develop')
       image.result.should == :error
+    end
+
+    it 'returns :canceled if the last build on that branch was canceled' do
+      build.update_attributes(state: :canceled, branch: 'develop')
+      image = described_class.new(repo, 'develop')
+      image.result.should == :canceled
     end
   end
 end
