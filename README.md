@@ -17,7 +17,7 @@ Travis Core requires PostgreSQL 9.3 or higher, as well as a recent version of Re
 1. Set up the database: `bin/rake db:create db:structure:load`
 1. Move `logs` table migration to the proper place and perform DB migration:
 ```sh-session
-mv support/*.rb db/migrate
+mv spec/migrations/*.rb db/migrate
 bin/rake db:migrate
 ```
 
