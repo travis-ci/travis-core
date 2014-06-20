@@ -1,5 +1,4 @@
 require 'travis/addons/pusher/instruments'
-require 'travis/addons/pusher/task'
 require 'travis/event/handler'
 
 module Travis

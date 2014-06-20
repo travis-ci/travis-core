@@ -1,5 +1,4 @@
 require 'travis/addons/github_status/instruments'
-require 'travis/addons/github_status/task'
 require 'travis/event/handler'
 
 module Travis

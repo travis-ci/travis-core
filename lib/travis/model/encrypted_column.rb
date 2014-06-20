@@ -59,7 +59,7 @@ class Travis::Model::EncryptedColumn
     iv   = data[-16..-1]
     data = data[0..-17]
 
-    aes = create_aes :decrypt, key, iv
+    aes = create_aes :decrypt, key.to_s, iv
 
     result = aes.update(data) + aes.final
   end
@@ -67,7 +67,7 @@ class Travis::Model::EncryptedColumn
   def encrypt(data)
     iv = self.iv
 
-    aes = create_aes :encrypt, key, iv
+    aes = create_aes :encrypt, key.to_s, iv
 
     encrypted = aes.update(data) + aes.final
 

@@ -1,5 +1,4 @@
 require 'travis/addons/irc/instruments'
-require 'travis/addons/irc/task'
 require 'travis/event/handler'
 
 module Travis

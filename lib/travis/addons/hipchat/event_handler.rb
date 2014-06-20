@@ -1,5 +1,4 @@
 require 'travis/addons/hipchat/instruments'
-require 'travis/addons/hipchat/task'
 require 'travis/event/handler'
 
 module Travis
