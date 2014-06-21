@@ -18,7 +18,8 @@ module Travis
         end
 
         def by_params
-          scope = self.scope(:repository).timeline.recent
+          scope = self.scope(:repository)
+          scope = scope.timeline.recent                    if timeline?
           scope = scope.by_member(params[:member])         if params[:member]
           scope = scope.by_owner_name(params[:owner_name]) if params[:owner_name]
           scope = scope.by_slug(params[:slug])             if params[:slug]
@@ -30,6 +31,10 @@ module Travis
           # end
 
           scope
+        end
+
+        def timeline?
+          not [:member, :owner_name, :slug, :search].any? { |key| params[key] }
         end
     end
   end
