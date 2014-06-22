@@ -24,17 +24,12 @@ module Travis
           scope = scope.by_owner_name(params[:owner_name]) if params[:owner_name]
           scope = scope.by_slug(params[:slug])             if params[:slug]
           scope = scope.search(params[:search])            if params[:search].present?
-
-          # if (params.keys & [:member, :owner_name, :search, :slug]).empty?
-          #   # apply timeline scope only if it's default /repos request
-          #   scope = scope.timeline
-          # end
-
           scope
         end
 
         def timeline?
-          not [:member, :owner_name, :slug, :search].any? { |key| params[key] }
+          # :member is passed for the left sidebar on pro/enterprise
+          not [:owner_name, :slug, :search].any? { |key| params[key] }
         end
     end
   end
