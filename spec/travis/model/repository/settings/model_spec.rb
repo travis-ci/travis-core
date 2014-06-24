@@ -8,9 +8,18 @@ describe Repository::Settings::Model do
       field :name
       field :loves_travis, :boolean
       field :height, :integer
+      field :awesome, :boolean, default: true
 
       field :secret, encrypted: true
     end
+  end
+
+  it 'returns a default if it is set' do
+    model_class.new.awesome.should be_true
+  end
+
+  it 'allows to override the default' do
+    model_class.new(awesome: false).awesome.should be_false
   end
 
   it 'validates encrypted fields properly' do

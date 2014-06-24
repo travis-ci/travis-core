@@ -6,10 +6,19 @@ describe Travis::Api::V0::Worker::Job::Test do
   let(:test) do
     test = stub_test
     settings = Repository::Settings.new(test.repository, {
-      'ssh_keys' => [
+      'ssh_keys' => [{
         'name' => 'main-repo',
         'content' => Travis::Model::EncryptedColumn.new(use_prefix: false).dump('key content')
-      ]
+      }],
+      'env_vars' => [{
+        'name' => 'FOO',
+        'value' => Travis::Model::EncryptedColumn.new(use_prefix: false).dump('bar')
+      }, {
+        'name' => 'BAR',
+        'value' => Travis::Model::EncryptedColumn.new(use_prefix: false).dump('baz'),
+        'public' => true
+      }],
+
     })
     test.repository.stubs(:settings).returns(settings)
     test
@@ -32,7 +41,11 @@ describe Travis::Api::V0::Worker::Job::Test do
           'id' => 1,
           'number' => 2
         },
-        'ssh_keys' => ['key content']
+        'ssh_keys' => ['key content'],
+        'env_vars' => [
+          { 'name' => 'FOO', 'value' => 'bar', 'public' => false },
+          { 'name' => 'BAR', 'value' => 'baz', 'public' => true }
+        ]
       }
     end
 
@@ -119,7 +132,11 @@ describe Travis::Api::V0::Worker::Job::Test do
           'id' => 1,
           'number' => 2
         },
-        'ssh_keys' => ['key content']
+        'ssh_keys' => ['key content'],
+        'env_vars' => [
+          { 'name' => 'FOO', 'value' => 'bar', 'public' => false },
+          { 'name' => 'BAR', 'value' => 'baz', 'public' => true }
+        ]
       }
     end
 

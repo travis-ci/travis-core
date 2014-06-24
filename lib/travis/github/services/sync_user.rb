@@ -7,6 +7,7 @@ module Travis
         require 'travis/github/services/sync_user/organizations'
         require 'travis/github/services/sync_user/repositories'
         require 'travis/github/services/sync_user/repository'
+        require 'travis/github/services/sync_user/reset_token'
         require 'travis/github/services/sync_user/user_info'
 
         register :github_sync_user
@@ -14,6 +15,9 @@ module Travis
         def run
           new_user? do
             syncing do
+              if Time.now.utc.sunday? && !Travis::Features.feature_active?("reset_token_in_sync")
+                ResetToken.new(user).run
+              end
               UserInfo.new(user).run
               Organizations.new(user).run
               Repositories.new(user).run

@@ -55,6 +55,9 @@ module Travis
   class GithubApiError    < StandardError; end
   class AdminMissing      < StandardError; end
   class RepositoryMissing < StandardError; end
+  class LogAlreadyRemoved < StandardError; end
+  class AuthorizationDenied < StandardError; end
+  class JobUnfinished     < StandardError; end
 
   class << self
     def setup

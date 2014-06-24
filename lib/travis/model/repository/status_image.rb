@@ -3,7 +3,8 @@ class Repository
     RESULTS = {
       passed:  :passing,
       failed:  :failing,
-      errored: :error
+      errored: :error,
+      canceled: :canceled
     }
 
     attr_reader :repo, :branch

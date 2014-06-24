@@ -82,7 +82,7 @@ describe Job::Test do
       end
 
       it 'resets the log content' do
-        job.log.expects(:update_attributes!).with(content: '')
+        job.log.expects(:update_attributes!).with(content: '', removed_at: nil, removed_by: nil)
         job.start(data)
       end
 
@@ -94,6 +94,14 @@ describe Job::Test do
       it 'propagates the event to the source' do
         job.source.expects(:start)
         job.start(data)
+      end
+
+      it 'sets log\'s removed_at and removed_by to nil' do
+        job.log.removed_at = Time.now
+        job.log.removed_by = job.repository.owner
+        job.start(data)
+        job.log.removed_at.should be_nil
+        job.log.removed_by.should be_nil
       end
     end
 

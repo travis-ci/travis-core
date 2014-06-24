@@ -16,6 +16,10 @@ class Repository::Settings
     attr_reader :encrypted, :default
     alias encrypted? encrypted
 
+    def default?
+      !default.nil?
+    end
+
     def initialize(name, type, options)
       super
       @encrypted = true if options[:encrypted] || options['encrypted']
@@ -28,6 +32,9 @@ class Repository::Settings
     end
 
     def get(value, options = {})
+      if value.nil? && default?
+        value = default
+      end
       wrap_as_encrypted(coerce(value), options[:key])
     end
 

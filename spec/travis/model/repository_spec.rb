@@ -221,6 +221,18 @@ describe Repository do
   describe 'settings' do
     let(:repo) { Factory.build(:repository) }
 
+    it "is reset on reload" do
+      repo.save
+
+      repo.settings = {}
+      repo.update_column(:settings, { 'build_pushes' => false }.to_json)
+      repo.reload
+      repo.settings.build_pushes?.should be_false
+      repo.update_column(:settings, { 'build_pushes' => true }.to_json)
+      repo.reload
+      repo.settings.build_pushes?.should be_true
+    end
+
     it "allows to set nil for settings" do
       repo.settings = nil
       repo.settings.to_hash.should == Repository::Settings.defaults

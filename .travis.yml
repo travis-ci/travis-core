@@ -1,27 +1,40 @@
 language: ruby
+
 services:
   - redis
+
 addons:
   postgresql: 9.3
+
+cache: bundler
+
 rvm:
   - jruby-19mode
   - 2.0.0
   - 2.1.2
+
 jdk: oraclejdk7
+
 matrix:
   fast_finish: true
   allow_failures:
     - rvm: 2.1.2
+
 before_script:
-  - sudo service mysql stop
+  # set up travis_test DB
   - redis-cli config set save ""
-  - 'RAILS_ENV=test rake db:create db:structure:load --trace'
+  - 'RAILS_ENV=test bundle exec rake db:create db:structure:load --trace'
+  # perform logs table migration
+  - mv spec/migrations/*.rb db/migrate
+  - 'RAILS_ENV=test bundle exec rake db:migrate --trace'
+
 script:
   - ./build.sh
+
 notifications:
   irc: irc.freenode.org#travis
   campfire:
     rooms:
       - secure: "FYd2nZjSOnzG0PoCfQ4mHYgjdj6W1C8jLoM6j+OsiLFDo37ShIwuMDjXkBNurUYY1ZyGLPZFngiC4QDZCw1RwefqMukjMqMG4BMt5SV3PNnodrJqLYcT6UfbzwDx8KaoiqClwBHGChzKj+2LgGSwhXxDwO7MqX4snJHTOLAwNy4="
     template:
-      - '%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{message} (details: %{build_url}, changes: %{compare_url})' 
+      - '%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{message} (details: %{build_url}, changes: %{compare_url})'

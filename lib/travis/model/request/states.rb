@@ -86,6 +86,8 @@ class Request
 
 Please make sure that the file is valid YAML.
 
+http://lint.travis-ci.org can check your .travis.yml.
+
 The error was "#{config[".result_message"]}".
 ERROR
           job.finish!(state: "errored",   finished_at: Time.now.utc)
