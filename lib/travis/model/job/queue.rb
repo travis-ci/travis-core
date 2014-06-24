@@ -10,16 +10,17 @@ class Job
   class Queue
     class << self
       def for(job)
-        repo_name = job.repository.try(:name)
-        owner     = job.repository.try(:owner_name)
-        language  = Array(job.config[:language]).flatten.compact.first
-        os        = job.config[:os]
-        queues.detect { |queue| queue.send(:matches?, owner, repo_name, language, os) } || default
+        repo_name  = job.repository.try(:name)
+        owner      = job.repository.try(:owner_name)
+        language   = Array(job.config[:language]).flatten.compact.first
+        os         = job.config[:os]
+        super_user = job.config[:super_user]
+        queues.detect { |queue| queue.send(:matches?, owner, repo_name, language, os, super_user) } || default
       end
 
       def queues
         @queues ||= Array(Travis.config.queues).compact.map do |queue|
-          Queue.new(*queue.values_at(*[:queue, :slug, :owner, :language, :os]))
+          Queue.new(*queue.values_at(*[:queue, :slug, :owner, :language, :os, :super_user]))
         end
       end
 
@@ -28,17 +29,17 @@ class Job
       end
     end
 
-    attr_reader :name, :slug, :owner, :language, :os
+    attr_reader :name, :slug, :owner, :language, :os, :super_user
 
     protected
 
       def initialize(*args)
-        @name, @slug, @owner, @language, @os = *args
+        @name, @slug, @owner, @language, @os, @super_user = *args
       end
 
-      def matches?(owner, repo_name, language, os = nil)
+      def matches?(owner, repo_name, language, os = nil, super_user = nil)
         matches_slug?("#{owner}/#{repo_name}") || matches_owner?(owner) ||
-          matches_os?(os) || matches_language?(language)
+          matches_os?(os) || matches_language?(language) || matches_super_user?(super_user)
       end
 
       def queue
@@ -59,6 +60,10 @@ class Job
 
       def matches_os?(os)
         !!self.os && (self.os == os)
+      end
+
+      def matches_super_user?(super_user)
+        !self.super_user.nil? && (self.super_user == super_user)
       end
   end
 end

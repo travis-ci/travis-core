@@ -8,7 +8,8 @@ describe 'Job::Queue' do
   before do
     Travis.config.queues = [
       { :queue => 'builds.rails', :slug => 'rails/rails' },
-      { :queue => 'builds.mac_osx', :os => 'osx'},
+      { :queue => 'builds.mac_osx', :os => 'osx' },
+      { :queue => 'builds.docker', :super_user => false },
       { :queue => 'builds.cloudfoundry', :owner => 'cloudfoundry' },
       { :queue => 'builds.clojure', :language => 'clojure' },
       { :queue => 'builds.erlang', :language => 'erlang' },
@@ -51,6 +52,11 @@ describe 'Job::Queue' do
       Job::Queue.for(job).name.should == 'builds.cloudfoundry'
     end
 
+    it 'returns the queue when sudo requirements matches the given configuration hash' do
+      job = stub('job', :config => { super_user: false }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection'))
+      Job::Queue.for(job).name.should == 'builds.docker'
+    end
+
     it 'handles language being passed as an array gracefully' do
       job = stub('job', :config => { :language => ['clojure'] }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-ci'))
       Job::Queue.for(job).name.should == 'builds.clojure'
@@ -71,10 +77,13 @@ describe 'Job::Queue' do
 
   describe 'Queue.queues' do
     it 'returns an array of Queues for the config hash' do
-      rails, os, cloudfoundry, clojure, erlang = Job::Queue.send(:queues)
+      rails, os, docker, cloudfoundry, clojure, erlang = Job::Queue.send(:queues)
 
       rails.name.should == 'builds.rails'
       rails.slug.should == 'rails/rails'
+
+      docker.name.should == 'builds.docker'
+      docker.super_user.should == false
 
       cloudfoundry.name.should == 'builds.cloudfoundry'
       cloudfoundry.owner.should == 'cloudfoundry'
@@ -108,6 +117,21 @@ describe 'Job::Queue' do
     it 'returns true when os is missing' do
       queue = queue('builds.linux', nil, nil, 'clojure', nil)
       queue.send(:matches?, nil, nil, 'clojure', nil).should be_true
+    end
+
+    it 'returns true when sudo is false' do
+      queue = queue('builds.docker', nil, nil, nil, nil, false)
+      queue.send(:matches?, nil, nil, nil, nil, false).should be_true
+    end
+
+    it 'returns false when sudo is true' do
+      queue = queue('builds.docker', nil, nil, nil, nil, false)
+      queue.send(:matches?, nil, nil, nil, nil, true).should be_false
+    end
+
+    it 'returns false when sudo is nil' do
+      queue = queue('builds.docker', nil, nil, nil, nil, false)
+      queue.send(:matches?, nil, nil, nil, nil, nil).should be_false
     end
   end
 end
