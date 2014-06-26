@@ -14,7 +14,7 @@ class Job
         owner      = job.repository.try(:owner_name)
         language   = Array(job.config[:language]).flatten.compact.first
         os         = job.config[:os]
-        super_user = job.config[:super_user]
+        super_user = allow_super_user_specification?(job.repository) ? job.config[:super_user] : nil
         queues.detect { |queue| queue.send(:matches?, owner, repo_name, language, os, super_user) } || default
       end
 
@@ -26,6 +26,10 @@ class Job
 
       def default
         @default ||= new(Travis.config.default_queue)
+      end
+
+      def allow_super_user_specification?(repository)
+        Travis::Features.owner_active?(:queue_super_user, repository.owner)
       end
     end
 
