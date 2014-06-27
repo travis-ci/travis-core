@@ -8,6 +8,8 @@ addons:
 
 cache: bundler
 
+super_user: false
+
 rvm:
   - jruby-19mode
   - 2.0.0
