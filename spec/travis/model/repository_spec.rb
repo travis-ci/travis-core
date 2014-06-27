@@ -252,15 +252,11 @@ describe Repository do
       repo.settings = {'build_pushes' => false}
       repo.save
 
-      repo.reload.settings['build_pushes'].should == false
+      repo.reload.settings.build_pushes?.should == false
 
       repo.settings.merge('build_pushes' => true)
 
-      repo.reload.settings['build_pushes'].should == true
-
-      repo.settings['build_pushes'] = false
-
-      repo.reload.settings['build_pushes'].should == false
+      repo.reload.settings.build_pushes?.should == true
     end
   end
 

@@ -1,4 +1,4 @@
-class Repository::Settings
+class Travis::Settings
   class EncryptedValue
     attr_reader :value, :key
     def initialize(value, key)
@@ -23,7 +23,7 @@ class Repository::Settings
     end
 
     def inspect
-      "<Repository::Settings::EncryptedValue##{object_id}>"
+      "<Settings::EncryptedValue##{object_id}>"
     end
 
     def decrypt

@@ -9,7 +9,7 @@ describe Travis::Services::FindRepoSettings do
   let(:service) { described_class.new(user, params) }
 
   before do
-    repo.settings.replace('build_pushes' => false)
+    repo.settings.merge('build_pushes' => false)
     repo.save
   end
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Repository::Settings::Model do
+describe Travis::Settings::Model do
   attr_reader :model_class
 
   before do
