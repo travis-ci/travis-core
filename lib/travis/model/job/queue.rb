@@ -10,17 +10,17 @@ class Job
   class Queue
     class << self
       def for(job)
-        repo_name  = job.repository.try(:name)
-        owner      = job.repository.try(:owner_name)
-        language   = Array(job.config[:language]).flatten.compact.first
-        os         = job.config[:os]
-        super_user = allow_super_user_specification?(job.repository) ? job.config[:super_user] : nil
-        queues.detect { |queue| queue.send(:matches?, owner, repo_name, language, os, super_user) } || default
+        repo_name = job.repository.try(:name)
+        owner     = job.repository.try(:owner_name)
+        language  = Array(job.config[:language]).flatten.compact.first
+        os        = job.config[:os]
+        sudo      = allow_sudo_specification?(job.repository) ? job.config[:sudo] : nil
+        queues.detect { |queue| queue.send(:matches?, owner, repo_name, language, os, sudo) } || default
       end
 
       def queues
         @queues ||= Array(Travis.config.queues).compact.map do |queue|
-          Queue.new(*queue.values_at(*[:queue, :slug, :owner, :language, :os, :super_user]))
+          Queue.new(*queue.values_at(*[:queue, :slug, :owner, :language, :os, :sudo]))
         end
       end
 
@@ -28,22 +28,22 @@ class Job
         @default ||= new(Travis.config.default_queue)
       end
 
-      def allow_super_user_specification?(repository)
-        Travis::Features.owner_active?(:queue_super_user, repository.owner)
+      def allow_sudo_specification?(repository)
+        Travis::Features.owner_active?(:queue_sudo, repository.owner)
       end
     end
 
-    attr_reader :name, :slug, :owner, :language, :os, :super_user
+    attr_reader :name, :slug, :owner, :language, :os, :sudo
 
     protected
 
       def initialize(*args)
-        @name, @slug, @owner, @language, @os, @super_user = *args
+        @name, @slug, @owner, @language, @os, @sudo = *args
       end
 
-      def matches?(owner, repo_name, language, os = nil, super_user = nil)
+      def matches?(owner, repo_name, language, os = nil, sudo = nil)
         matches_slug?("#{owner}/#{repo_name}") || matches_owner?(owner) ||
-          matches_os?(os) || matches_language?(language) || matches_super_user?(super_user)
+          matches_os?(os) || matches_language?(language) || matches_sudo?(sudo)
       end
 
       def queue
@@ -66,8 +66,8 @@ class Job
         !!self.os && (self.os == os)
       end
 
-      def matches_super_user?(super_user)
-        !self.super_user.nil? && (self.super_user == super_user)
+      def matches_sudo?(sudo)
+        !self.sudo.nil? && (self.sudo == sudo)
       end
   end
 end

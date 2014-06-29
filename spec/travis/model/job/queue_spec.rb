@@ -9,7 +9,7 @@ describe 'Job::Queue' do
     Travis.config.queues = [
       { :queue => 'builds.rails', :slug => 'rails/rails' },
       { :queue => 'builds.mac_osx', :os => 'osx' },
-      { :queue => 'builds.docker', :super_user => false },
+      { :queue => 'builds.docker', :sudo => false },
       { :queue => 'builds.cloudfoundry', :owner => 'cloudfoundry' },
       { :queue => 'builds.clojure', :language => 'clojure' },
       { :queue => 'builds.erlang', :language => 'erlang' },
@@ -54,7 +54,7 @@ describe 'Job::Queue' do
     end
 
     it 'returns the queue when sudo requirements matches the given configuration hash' do
-      job = stub('job', :config => { super_user: false }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => stub))
+      job = stub('job', :config => { sudo: false }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => stub))
       Job::Queue.for(job).name.should == 'builds.docker'
     end
 
@@ -76,15 +76,15 @@ describe 'Job::Queue' do
     end
   end
 
-  context 'when "super_user" value matches the given configuration hash' do
+  context 'when "sudo" value matches the given configuration hash' do
     context 'when the repository owner is feature flagged' do
       it 'returns the matching queue' do
-        job = stub('job', config: { super_user: false }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'travis-core', owner: stub))
+        job = stub('job', config: { sudo: false }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'travis-core', owner: stub))
         Job::Queue.for(job).name.should == 'builds.docker'
       end
 
       it 'returns the matching queue when language is also given' do
-        job = stub('job', config: { language: 'clojure', super_user: false }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'travis-core', owner: stub))
+        job = stub('job', config: { language: 'clojure', sudo: false }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'travis-core', owner: stub))
         Job::Queue.for(job).name.should == 'builds.docker'
       end
     end
@@ -95,12 +95,12 @@ describe 'Job::Queue' do
       end
 
       it 'returns the matching queue' do
-        job = stub('job', config: { super_user: false }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'travis-core', owner: stub))
+        job = stub('job', config: { sudo: false }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'travis-core', owner: stub))
         Job::Queue.for(job).name.should == 'builds.linux'
       end
 
       it 'returns the matching queue when language is also given' do
-        job = stub('job', config: { language: 'clojure', super_user: false }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'travis-core', owner: stub))
+        job = stub('job', config: { language: 'clojure', sudo: false }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'travis-core', owner: stub))
         Job::Queue.for(job).name.should == 'builds.clojure'
       end
     end
@@ -114,7 +114,7 @@ describe 'Job::Queue' do
       rails.slug.should == 'rails/rails'
 
       docker.name.should == 'builds.docker'
-      docker.super_user.should == false
+      docker.sudo.should == false
 
       cloudfoundry.name.should == 'builds.cloudfoundry'
       cloudfoundry.owner.should == 'cloudfoundry'
