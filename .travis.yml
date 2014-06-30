@@ -30,6 +30,7 @@ before_script:
   - 'RAILS_ENV=test bundle exec rake db:create db:structure:load --trace'
   # perform logs table migration
   - mv spec/migrations/*.rb db/migrate
+  - echo $PATH
   - 'RAILS_ENV=test bundle exec rake db:migrate --trace'
 
 script:
