@@ -31,6 +31,7 @@ before_script:
   # perform logs table migration
   - mv spec/migrations/*.rb db/migrate
   - echo $PATH
+  - export PATH=/usr/lib/postgresql/9.3/bin:$PATH
   - 'RAILS_ENV=test bundle exec rake db:migrate --trace'
 
 script:
