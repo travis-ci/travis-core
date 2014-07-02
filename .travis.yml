@@ -22,16 +22,12 @@ matrix:
   allow_failures:
     - rvm: 2.1.2
 
-env: PATH=/usr/lib/postgresql/9.3/bin:$PATH
-
 before_script:
   # set up travis_test DB
   - redis-cli config set save ""
   - 'RAILS_ENV=test bundle exec rake db:create db:structure:load --trace'
   # perform logs table migration
   - mv spec/migrations/*.rb db/migrate
-  - echo $PATH
-  - export PATH=/usr/lib/postgresql/9.3/bin:$PATH
   - 'RAILS_ENV=test bundle exec rake db:migrate --trace'
 
 script:
