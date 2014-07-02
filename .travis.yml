@@ -12,8 +12,8 @@ sudo: false
 
 rvm:
   - jruby-19mode
-  - 2.0.0
-  - 2.1.2
+  - 2.0
+  - 2.1
 
 jdk: oraclejdk7
 
