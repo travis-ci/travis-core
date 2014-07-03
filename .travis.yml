@@ -12,15 +12,15 @@ sudo: false
 
 rvm:
   - jruby-19mode
-  - 2.0
-  - 2.1
+  - "2.0"
+  - "2.1"
 
 jdk: oraclejdk7
 
 matrix:
   fast_finish: true
   allow_failures:
-    - rvm: 2.1.2
+    - rvm: "2.1"
 
 before_script:
   # set up travis_test DB
