@@ -1,7 +1,7 @@
-require 'travis/settings/field'
-require 'travis/settings/encrypted_value'
+require 'travis/model/repository/settings/field'
+require 'travis/model/repository/settings/encrypted_value'
 
-class Travis::Settings
+class Repository::Settings
   class Model
     include ActiveModel::Validations
     include ActiveModel::Serialization

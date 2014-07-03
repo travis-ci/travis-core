@@ -1,6 +1,6 @@
-require 'travis/settings/encrypted_value'
+require 'travis/model/repository/settings/encrypted_value'
 
-class Travis::Settings
+class Repository::Settings
   class Errors < ActiveModel::Errors
     # Default behavior of Errors in Active Model is to
     # translate symbolized message into full text message,

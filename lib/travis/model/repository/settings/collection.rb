@@ -1,4 +1,4 @@
-class Travis::Settings
+class Repository::Settings
   class Collection
     include Enumerable
 
@@ -7,7 +7,7 @@ class Travis::Settings
         if model_name_or_class
           klass = if model_name_or_class.is_a?(String) || model_name_or_class.is_a?(Symbol)
             name = model_name_or_class.to_s.classify
-            self.const_defined?(name, false) ? self.const_get(name, false) : Travis::Settings.const_get(name, false)
+            Repository::Settings.const_get(name, false)
           else
             model_name_or_class
           end
