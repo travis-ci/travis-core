@@ -85,7 +85,9 @@ class Job < Travis::Model
     if name == :cancel
       name = :cancel_job
     end
-    source.send(name, *args)
+    Metriks.timer("job.propagate.#{name}").time do
+      source.send(name, *args)
+    end
     true
   end
 

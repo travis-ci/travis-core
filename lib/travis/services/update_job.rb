@@ -16,7 +16,9 @@ module Travis
           # the first one
           cancel_job_in_worker
         else
-          job.send(:"#{event}!", data.except(:id))
+          Metriks.timer("update_job.#{event}").time do
+            job.send(:"#{event}!", data.except(:id))
+          end
         end
       end
       instrument :run

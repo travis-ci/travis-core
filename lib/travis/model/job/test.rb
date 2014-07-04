@@ -90,8 +90,10 @@ class Job
     end
 
     def notify(event, *args)
-      event = :create if event == :reset
-      super
+      Metriks.timer("job.notify.#{event}").time do
+        event = :create if event == :reset
+        super
+      end
     end
 
     delegate :id, :content, :to => :log, :prefix => true, :allow_nil => true
