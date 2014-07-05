@@ -33,12 +33,16 @@ module Travis
           message << "\n\n#{params[:reason]}"
         end
 
-        log.content = message
-        log.archive_verified = false
-        log.archived_at = nil
-        log.removed_at = removed_at
-        log.removed_by = current_user
-        log.save! && log
+        log.transaction do
+          log.update_column(:content, message)
+          log.update_column(:archive_verified, false)
+          log.update_column(:archived_at, nil)
+          log.update_column(:removed_at, removed_at)
+          # for some reason #update_column does not work with the removed_by column
+          log.update_attributes!(:removed_by => current_user)
+          log.save!
+        end
+        log
       end
 
       instrument :run
