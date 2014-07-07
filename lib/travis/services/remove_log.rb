@@ -33,12 +33,14 @@ module Travis
           message << "\n\n#{params[:reason]}"
         end
 
-        log.content = message
-        log.archive_verified = false
-        log.archived_at = nil
-        log.removed_at = removed_at
-        log.removed_by = current_user
-        log.save! && log
+        log.clear!
+        log.update_attributes(
+          :content => message,
+          :aggregated_at => removed_at,
+          :removed_at => removed_at,
+          :removed_by => current_user
+        )
+        log
       end
 
       instrument :run
