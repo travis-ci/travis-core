@@ -34,7 +34,7 @@ module Travis
         end
 
         log.clear!
-        log.update_columns(
+        log.update_attributes(
           :content => message,
           :removed_at => removed_at,
           :removed_by => current_user
