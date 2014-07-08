@@ -28,11 +28,31 @@ class Repository::Settings < Travis::Settings
     model EnvVar
   end
 
+  class CampfireRoom < Travis::Settings::Model
+    attribute :subdomain, String
+    attribute :api_token, String
+    attribute :room_id, String
+    attribute :template, String
 
+    validates :subdomain, :api_token, :room_id, presence: true
+  end
+
+  class CampfireRooms < Collection
+    model CampfireRoom
+  end
+
+  class Campfire < Travis::Settings::Model
+    attribute :on_success, String, default: 'change'
+    attribute :on_failure, String, default: 'always'
+    attribute :template, String
+
+    attribute :rooms, CampfireRooms.for_virtus
+  end
 
   attribute :ssh_keys, SshKeys.for_virtus
   attribute :env_vars, EnvVars.for_virtus
 
+  attribute :campfire, Campfire
 
   attribute :builds_only_with_travis_yml, Boolean, default: false
   attribute :build_pushes, Boolean, default: true
