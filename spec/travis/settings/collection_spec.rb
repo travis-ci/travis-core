@@ -7,6 +7,7 @@ describe Travis::Settings::Collection do
     @model_class = Class.new(Travis::Settings::Model) {
       attribute :description
 
+      attribute :id, String
       attribute :secret, Travis::Settings::EncryptedValue
     }
 

@@ -87,11 +87,6 @@ describe Travis::Settings::Model do
     model.name.should == 'PIOTR'
   end
 
-  it 'automatically generates id attribute' do
-    model = model_class.new(id: 'foobar')
-    model.id.should == 'foobar'
-  end
-
   it 'handles validations' do
     model_class = Class.new(described_class) do
       attribute :name

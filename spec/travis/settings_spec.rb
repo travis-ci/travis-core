@@ -90,6 +90,7 @@ describe Travis::Settings do
   describe 'to_hash' do
     it 'returns registered collections and all attributes' do
       model_class = Class.new(Travis::Settings::Model) {
+        attribute :id, String
         attribute :name, String
         attribute :content, Travis::Settings::EncryptedValue
       }

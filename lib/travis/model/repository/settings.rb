@@ -6,6 +6,7 @@ require 'travis/settings/encrypted_value'
 
 class Repository::Settings < Travis::Settings
   class SshKey < Travis::Settings::Model
+    attribute :id, String
     attribute :name, String
     attribute :content, Travis::Settings::EncryptedValue
 
@@ -17,6 +18,7 @@ class Repository::Settings < Travis::Settings
   end
 
   class EnvVar < Travis::Settings::Model
+    attribute :id, String
     attribute :name, String
     attribute :value, Travis::Settings::EncryptedValue
     attribute :public, Boolean, default: false
@@ -29,6 +31,7 @@ class Repository::Settings < Travis::Settings
   end
 
   class CampfireRoom < Travis::Settings::Model
+    attribute :id, String
     attribute :subdomain, String
     attribute :api_token, String
     attribute :room_id, String
