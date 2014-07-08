@@ -2,7 +2,23 @@ class Travis::Settings
   class Collection
     include Enumerable
 
+    delegate :each, :<<, :push, :delete, to: '@collection'
+
     class << self
+      # This feels a bit weird, but I don't know how to do it better.
+      # Virtus checks for collection type by checking an array member,
+      # so if you pass Array[String], a collection type will be set to String.
+      # Here, we already specify what is a model class for a collection.
+      # In order to not have to specify class twice, I created this method
+      # which creates just what Virtus needs.
+      def for_virtus
+        self[model_class]
+      end
+
+      def [](*args)
+        new(*args)
+      end
+
       def model(model_name_or_class = nil)
         if model_name_or_class
           klass = if model_name_or_class.is_a?(String) || model_name_or_class.is_a?(Symbol)
@@ -20,42 +36,39 @@ class Travis::Settings
       attr_reader :model_class
     end
 
-    attr_reader :collection
-    attr_accessor :registered_at
     delegate :model_class, to: 'self.class'
-    delegate :each, :length, :empty?, to: :collection
 
-    def initialize
-      @collection = []
+    def initialize(*args)
+      @collection = Array[*args]
     end
 
     def create(attributes)
       model = model_class.new(attributes)
       model.id = SecureRandom.uuid unless model.id
-      collection.push model
+      push model
       model
     end
 
-    def load(array)
-      array.each do |attributes|
-        model = model_class.new(attributes, load: true)
-        collection.push model
-      end
-    end
-
-    def to_hashes
-      collection.map(&:to_hash)
-    end
-
     def find(id)
-      collection.detect { |model| model.id == id.to_s }
+      detect { |model| model.id == id.to_s }
     end
 
     def destroy(id)
       record = find(id)
       if record
-        collection.delete record
+        delete record
         record
+      end
+    end
+
+    def to_hash
+      @collection.map(&:to_hash)
+    end
+
+    def load(collection)
+      return unless collection.respond_to?(:each)
+      collection.each do |element|
+        self.push model_class.load(element)
       end
     end
   end

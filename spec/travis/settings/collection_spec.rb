@@ -1,16 +1,18 @@
 require 'spec_helper'
 
 describe Travis::Settings::Collection do
+  attr_reader :collection_class
+
   before do
     @model_class = Class.new(Travis::Settings::Model) {
-      field :description
+      attribute :description
 
-      field :secret, encrypted: true
+      attribute :secret, Travis::Settings::EncryptedValue
     }
 
     Travis::Settings.const_set('Foo', @model_class)
     @collection_class = Class.new(described_class) do
-      model :foo
+      model Travis::Settings::Foo
     end
   end
 
@@ -21,7 +23,7 @@ describe Travis::Settings::Collection do
   it 'loads models from JSON' do
     encrypted = Travis::Model::EncryptedColumn.new(use_prefix: false).dump('foo')
     json = [{ id: 'ID', description: 'a record', secret: encrypted }]
-    collection = @collection_class.new
+    collection = collection_class.new
     collection.load(json)
     record = collection.first
     record.id.should == 'ID'
@@ -30,12 +32,12 @@ describe Travis::Settings::Collection do
   end
 
   it 'finds class in Travis::Settings namespace' do
-    @collection_class.model.should == Travis::Settings::Foo
+    collection_class.model.should == Travis::Settings::Foo
   end
 
   it 'allows to create a model' do
     SecureRandom.expects(:uuid).returns('uuid')
-    collection = @collection_class.new
+    collection = collection_class.new
     model = collection.create(description: 'foo')
     model.description.should == 'foo'
     collection.to_a.should == [model]
@@ -44,7 +46,7 @@ describe Travis::Settings::Collection do
 
   describe '#destroy' do
     it 'removes an item from collection' do
-      collection = @collection_class.new
+      collection = collection_class.new
       item = collection.create(description: 'foo')
 
       collection.should have(1).item
@@ -57,7 +59,7 @@ describe Travis::Settings::Collection do
 
   describe '#find' do
     it 'finds an item' do
-      collection = @collection_class.new
+      collection = collection_class.new
       item = collection.create(description: 'foo')
 
       collection.should have(1).item

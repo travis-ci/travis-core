@@ -2,11 +2,12 @@
 require 'coercible'
 require 'travis/settings'
 require 'travis/overwritable_method_definitions'
+require 'travis/settings/encrypted_value'
 
 class Repository::Settings < Travis::Settings
-  class SshKey < Model
-    field :name
-    field :content, encrypted: true
+  class SshKey < Travis::Settings::Model
+    attribute :name, String
+    attribute :content, Travis::Settings::EncryptedValue
 
     validates :name, presence: true
   end
@@ -15,10 +16,10 @@ class Repository::Settings < Travis::Settings
     model SshKey
   end
 
-  class EnvVar < Model
-    field :name
-    field :value, encrypted: true
-    field :public, :boolean, default: false
+  class EnvVar < Travis::Settings::Model
+    attribute :name, String
+    attribute :value, Travis::Settings::EncryptedValue
+    attribute :public, Boolean, default: false
 
     validates :name, presence: true
   end
@@ -27,14 +28,16 @@ class Repository::Settings < Travis::Settings
     model EnvVar
   end
 
-  register :ssh_keys
-  register :env_vars
 
-  add_setting :builds_only_with_travis_yml, :boolean, default: false
-  add_setting :build_pushes, :boolean, default: true
-  add_setting :build_pull_requests, :boolean, default: true
-  add_setting :maximum_number_of_builds, :integer
 
+  attribute :ssh_keys, SshKeys.for_virtus
+  attribute :env_vars, EnvVars.for_virtus
+
+
+  attribute :builds_only_with_travis_yml, Boolean, default: false
+  attribute :build_pushes, Boolean, default: true
+  attribute :build_pull_requests, Boolean, default: true
+  attribute :maximum_number_of_builds, Integer
 
   def maximum_number_of_builds
     super.to_i

@@ -5,12 +5,12 @@ describe Travis::Settings::Model do
 
   before do
     @model_class = Class.new(described_class) do
-      field :name
-      field :loves_travis, :boolean
-      field :height, :integer
-      field :awesome, :boolean, default: true
+      attribute :name
+      attribute :loves_travis, :Boolean
+      attribute :height, Integer
+      attribute :awesome, :Boolean, default: true
 
-      field :secret, encrypted: true
+      attribute :secret, Travis::Settings::EncryptedValue
     end
   end
 
@@ -22,9 +22,9 @@ describe Travis::Settings::Model do
     model_class.new(awesome: false).awesome.should be_false
   end
 
-  it 'validates encrypted fields properly' do
+  it 'validates encrypted attributes properly' do
     model_class = Class.new(described_class) do
-      field :secret, encrypted: true
+      attribute :secret, Travis::Settings::EncryptedValue
       validates :secret, presence: true
     end
 
@@ -44,9 +44,8 @@ describe Travis::Settings::Model do
   end
 
   it 'can be loaded from json' do
-    key = 'foo' * 16
-    encrypted = Travis::Model::EncryptedColumn.new(key: key, use_prefix: false).dump('foo')
-    model = model_class.new({ secret: encrypted }, load: true, key: key)
+    encrypted = Travis::Model::EncryptedColumn.new(use_prefix: false).dump('foo')
+    model = model_class.load(secret: encrypted)
     model.secret.decrypt.should == 'foo'
   end
 
@@ -88,15 +87,14 @@ describe Travis::Settings::Model do
     model.name.should == 'PIOTR'
   end
 
-  it 'automatically generates id field' do
-    field = model_class.field_by_name('id')
-    field.should_not be_nil
-    field.type.should == :uuid
+  it 'automatically generates id attribute' do
+    model = model_class.new(id: 'foobar')
+    model.id.should == 'foobar'
   end
 
   it 'handles validations' do
     model_class = Class.new(described_class) do
-      field :name
+      attribute :name
 
       validates :name, presence: true
 
@@ -111,18 +109,21 @@ describe Travis::Settings::Model do
   describe 'encryption' do
     before do
       @model_class = Class.new(described_class) do
-        field :secret, encrypted: true
+        attribute :secret, Travis::Settings::EncryptedValue
       end
     end
 
-    it 'automatically encrypts the data with passed key' do
-      key = SecureRandom.hex(32)
-      encrypted_column = Travis::Model::EncryptedColumn.new(use_prefix: false, key: key)
-      model = model_class.new({ secret: 'foo' }, key: key)
+    it 'returns EncryptedValue instance even for nil values' do
+      model_class.new.secret.should be_a Travis::Settings::EncryptedValue
+    end
+
+    it 'automatically encrypts the data' do
+      encrypted_column = Travis::Model::EncryptedColumn.new(use_prefix: false)
+      model = model_class.new secret: 'foo'
       encrypted_column.load(model.secret).should == 'foo'
       model.secret.decrypt.should == 'foo'
 
-      encrypted_column.load(model.to_hash['secret'].to_s).should == 'foo'
+      encrypted_column.load(model.to_hash[:secret].to_s).should == 'foo'
       encrypted_column.load(JSON.parse(model.to_json)['secret']).should == 'foo'
     end
   end

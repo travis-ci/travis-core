@@ -5,7 +5,7 @@ describe Travis::Api::V0::Worker::Job::Test do
 
   let(:test) do
     test = stub_test
-    settings = Repository::Settings.new({
+    settings = Repository::Settings.load({
       'ssh_keys' => [{
         'name' => 'main-repo',
         'content' => Travis::Model::EncryptedColumn.new(use_prefix: false).dump('key content')

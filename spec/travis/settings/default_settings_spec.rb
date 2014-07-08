@@ -6,7 +6,7 @@ describe Travis::DefaultSettings do
     klass = Class.new(Travis::Settings) {
       include Travis::DefaultSettings
 
-      add_setting :foo, :string, default: 'bar'
+      attribute :foo, String, default: 'bar'
     }
     klass.new
   end

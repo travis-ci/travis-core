@@ -4,8 +4,8 @@ describe Travis::Settings do
   describe 'adding a setting' do
     let(:settings_class) {
       Class.new(Travis::Settings) {
-        add_setting :an_integer_field, :integer
-        add_setting :a_boolean_field, :boolean, default: true
+        attribute :an_integer_field, Integer
+        attribute :a_boolean_field, :Boolean, default: true
       }
     }
 
@@ -39,7 +39,7 @@ describe Travis::Settings do
   describe 'registering a collection' do
     before do
       model_class = Class.new(Travis::Settings::Model) {
-        field :name
+        attribute :name, String
       }
       collection_class = Class.new(Travis::Settings::Collection) {
         model model_class
@@ -54,7 +54,7 @@ describe Travis::Settings do
 
     it 'allows to register a collection' do
       settings_class = Class.new(Travis::Settings) {
-        register :items
+        attribute :items, Travis::Settings::Items.for_virtus
       }
       settings = settings_class.new
 
@@ -64,10 +64,10 @@ describe Travis::Settings do
 
     it 'populates registered collections from raw settings' do
       settings_class = Class.new(Travis::Settings) {
-        register :items
+        attribute :items, Travis::Settings::Items.for_virtus
       }
 
-      settings = settings_class.new 'items' => [{ 'name' => 'one' }, { 'name' => 'two' }]
+      settings = settings_class.new items: [{ name: 'one' }, { name: 'two' }]
       settings.items.map(&:name).should == ['one', 'two']
     end
   end
@@ -90,16 +90,16 @@ describe Travis::Settings do
   describe 'to_hash' do
     it 'returns registered collections and all attributes' do
       model_class = Class.new(Travis::Settings::Model) {
-        field :name
-        field :content, encrypted: true
+        attribute :name, String
+        attribute :content, Travis::Settings::EncryptedValue
       }
       collection_class = Class.new(Travis::Settings::Collection) {
         model model_class
       }
       settings_class = Class.new(Travis::Settings) {
-        register :items, collection_class
-        add_setting :first_setting, :string
-        add_setting :second_setting, :string, default: 'second setting default'
+        attribute :items, collection_class.for_virtus
+        attribute :first_setting,  String
+        attribute :second_setting, String, default: 'second setting default'
       }
 
       settings = settings_class.new(first_setting: 'a value')
@@ -108,32 +108,36 @@ describe Travis::Settings do
 
       hash = settings.to_hash
 
-      hash['first_setting'].should == 'a value'
-      hash['second_setting'].should == 'second setting default'
+      hash[:first_setting].should == 'a value'
+      hash[:second_setting].should == 'second setting default'
 
       column = Travis::Model::EncryptedColumn.new(use_prefix: false)
-      encrypted = column.dump('bar')
 
-      hash_item = hash['items'].first
-      hash_item['id'].should == item.id
-      hash_item['name'].should == 'foo'
-      hash_item['content'].decrypt.should == 'bar'
+      hash_item = hash[:items].first
+      hash_item[:id].should == item.id
+      hash_item[:name].should == 'foo'
+      column.load(hash_item[:content]).should == 'bar'
     end
   end
 
   describe '#merge' do
     it 'merges individual fields' do
       settings_class = Class.new(Travis::Settings) {
-        register :items, Class.new(Travis::Settings::Collection)
-        add_setting :foo, :string
+        attribute :items, Class.new(Travis::Settings::Collection) {
+          model Class.new(Travis::Settings::Model) {
+            attribute :name, String
+          }
+        }.for_virtus
+        attribute :foo, String
       }
       settings = settings_class.new(foo: 'bar')
       settings.foo.should == 'bar'
 
       settings.expects(:save)
-      settings.merge('foo' => 'baz')
+      settings.merge('foo' => 'baz', items: [{ name: 'something' }])
 
-      settings.to_hash['foo'].should == 'baz'
+      settings.to_hash[:foo].should == 'baz'
+      settings.to_hash[:items].should == []
      end
 
     it 'does not allow to merge unknown settings' do

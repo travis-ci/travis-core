@@ -235,17 +235,17 @@ describe Repository do
 
     it "allows to set nil for settings" do
       repo.settings = nil
-      repo.settings.to_hash.should == Repository::Settings.defaults
+      repo.settings.to_hash.should == Repository::Settings.new.to_hash
     end
 
     it "allows to set settings as JSON string" do
-      repo.settings = '{"build_pushes": false}'
-      repo.settings.to_hash.should == Repository::Settings.defaults.merge({'build_pushes' => false})
+      repo.settings = '{"maximum_number_of_builds": 44}'
+      repo.settings.to_hash.should == Repository::Settings.new(maximum_number_of_builds: 44).to_hash
     end
 
     it "allows to set settings as a Hash" do
-      repo.settings = {'build_pushes' => false}
-      repo.settings.to_hash.should == Repository::Settings.defaults.merge({'build_pushes' => false})
+      repo.settings = { maximum_number_of_builds: 44}
+      repo.settings.to_hash.should == Repository::Settings.new(maximum_number_of_builds: 44).to_hash
     end
 
     it 'updates settings in the DB' do

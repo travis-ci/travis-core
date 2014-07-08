@@ -157,7 +157,7 @@ class Repository < Travis::Model
 
   def settings
     @settings ||= begin
-      instance = Settings.load(super)
+      instance = Repository::Settings.load(super)
       instance.on_save do
         self.settings = instance.to_json
         self.save!
