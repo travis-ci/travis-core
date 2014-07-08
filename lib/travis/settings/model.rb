@@ -9,8 +9,6 @@ class Travis::Settings
     include ActiveModel::Validations
     include ActiveModel::Serialization
 
-    attribute :id, String
-
     class Errors < ActiveModel::Errors
       # Default behavior of Errors in Active Model is to
       # translate symbolized message into full text message,

@@ -6,6 +6,7 @@ require 'travis/settings/encrypted_value'
 
 class Repository::Settings < Travis::Settings
   class SshKey < Travis::Settings::Model
+    attribute :id, String
     attribute :name, String
     attribute :content, Travis::Settings::EncryptedValue
 
@@ -17,6 +18,7 @@ class Repository::Settings < Travis::Settings
   end
 
   class EnvVar < Travis::Settings::Model
+    attribute :id, String
     attribute :name, String
     attribute :value, Travis::Settings::EncryptedValue
     attribute :public, Boolean, default: false
@@ -28,11 +30,8 @@ class Repository::Settings < Travis::Settings
     model EnvVar
   end
 
-
-
   attribute :ssh_keys, SshKeys.for_virtus
   attribute :env_vars, EnvVars.for_virtus
-
 
   attribute :builds_only_with_travis_yml, Boolean, default: false
   attribute :build_pushes, Boolean, default: true
