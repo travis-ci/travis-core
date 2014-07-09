@@ -6,10 +6,7 @@ describe Travis::Api::V0::Worker::Job::Test do
   let(:test) do
     test = stub_test
     settings = Repository::Settings.load({
-      'ssh_keys' => [{
-        'name' => 'main-repo',
-        'content' => Travis::Model::EncryptedColumn.new(use_prefix: false).dump('key content')
-      }],
+      'ssh_key' => Travis::Model::EncryptedColumn.new(use_prefix: false).dump('an ssh key'),
       'env_vars' => [{
         'name' => 'FOO',
         'value' => Travis::Model::EncryptedColumn.new(use_prefix: false).dump('bar')
@@ -31,6 +28,18 @@ describe Travis::Api::V0::Worker::Job::Test do
       commit.stubs(:ref).returns(nil)
     end
 
+    describe 'with ssh key from config' do
+      before do
+        test.repository.settings.ssh_key = nil
+        test.stubs(:ssh_key).returns('an ssh key from config')
+      end
+
+      it 'returns source as config' do
+        data['ssh_key']['source'].should == 'config'
+        data['ssh_key']['value'].should  == 'an ssh key from config'
+      end
+    end
+
     it 'contains the expected data' do
       data.except('job', 'build', 'repository').should == {
         'type' => 'test',
@@ -41,7 +50,10 @@ describe Travis::Api::V0::Worker::Job::Test do
           'id' => 1,
           'number' => 2
         },
-        'ssh_keys' => ['key content'],
+        'ssh_key' => {
+          'source' => 'repo_settings',
+          'value'  => 'an ssh key'
+        },
         'env_vars' => [
           { 'name' => 'FOO', 'value' => 'bar', 'public' => false },
           { 'name' => 'BAR', 'value' => 'baz', 'public' => true }
@@ -132,7 +144,10 @@ describe Travis::Api::V0::Worker::Job::Test do
           'id' => 1,
           'number' => 2
         },
-        'ssh_keys' => ['key content'],
+        'ssh_key' => {
+          'source' => 'repo_settings',
+          'value'  => 'an ssh key'
+        },
         'env_vars' => [
           { 'name' => 'FOO', 'value' => 'bar', 'public' => false },
           { 'name' => 'BAR', 'value' => 'baz', 'public' => true }

@@ -101,22 +101,28 @@ describe Travis::Settings do
         attribute :items, collection_class.for_virtus
         attribute :first_setting,  String
         attribute :second_setting, String, default: 'second setting default'
+        attribute :secret, Travis::Settings::EncryptedValue
       }
 
       settings = settings_class.new(first_setting: 'a value')
+      settings.secret = '44'
 
       item = settings.items.create(name: 'foo', content: 'bar')
 
       hash = settings.to_hash
 
+      column = Travis::Model::EncryptedColumn.new(use_prefix: false)
+
+      hash[:secret].should_not == '44'
+      column.load(hash[:secret]).should == '44'
+
       hash[:first_setting].should == 'a value'
       hash[:second_setting].should == 'second setting default'
-
-      column = Travis::Model::EncryptedColumn.new(use_prefix: false)
 
       hash_item = hash[:items].first
       hash_item[:id].should == item.id
       hash_item[:name].should == 'foo'
+      hash_item[:content].should_not == 'bar'
       column.load(hash_item[:content]).should == 'bar'
     end
   end

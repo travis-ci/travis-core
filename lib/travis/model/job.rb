@@ -95,6 +95,10 @@ class Job < Travis::Model
     started_at && finished_at ? finished_at - started_at : nil
   end
 
+  def ssh_key
+    config[:source_key]
+  end
+
   def config=(config)
     super normalize_config(config)
   end

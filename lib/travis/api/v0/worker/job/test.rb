@@ -17,7 +17,7 @@ module Travis
                 'config' => job.decrypted_config,
                 'queue' => job.queue,
                 'uuid' => Travis.uuid,
-                'ssh_keys' => ssh_keys,
+                'ssh_key' => ssh_key,
                 'env_vars' => env_vars
               }
             end
@@ -63,9 +63,11 @@ module Travis
               }
             end
 
-            def ssh_keys
-              repository.settings.ssh_keys.map do |key|
-                key.content.decrypt
+            def ssh_key
+              if ssh_key = repository.settings.ssh_key.decrypt
+                { 'source' => 'repo_settings', 'value' => ssh_key }
+              elsif ssh_key = job.ssh_key
+                { 'source' => 'config', 'value' => ssh_key }
               end
             end
 
