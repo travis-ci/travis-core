@@ -6,7 +6,9 @@ describe Travis::Api::V0::Worker::Job::Test do
   let(:test) do
     test = stub_test
     settings = Repository::Settings.load({
-      'ssh_key' => Travis::Model::EncryptedColumn.new(use_prefix: false).dump('an ssh key'),
+      'ssh_key' => {
+        'value' => Travis::Model::EncryptedColumn.new(use_prefix: false).dump('an ssh key')
+      },
       'env_vars' => [{
         'name' => 'FOO',
         'value' => Travis::Model::EncryptedColumn.new(use_prefix: false).dump('bar')

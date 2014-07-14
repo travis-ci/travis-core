@@ -44,8 +44,7 @@ describe Travis::Enqueue::Services::EnqueueJobs do
     before :each do
       settings = OpenStruct.new(
         restricts_number_of_builds?: false,
-        env_vars: [],
-        ssh_key: Travis::Settings::EncryptedValue.new('an ssh key')
+        env_vars: []
       )
       test.repository.stubs(:settings).returns(settings)
       scope = stub('scope')

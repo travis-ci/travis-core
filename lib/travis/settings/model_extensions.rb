@@ -10,16 +10,7 @@ module Travis
       end
 
       def get(instance)
-        if type.primitive <= Travis::Settings::Model
-          unless instance.instance_variable_get(instance_variable_name)
-            value = Travis::Settings::Model.new
-            if instance.frozen?
-              return value
-            else
-              set(instance, value)
-            end
-          end
-        elsif type.primitive <= Travis::Settings::EncryptedValue
+        if type.primitive <= Travis::Settings::EncryptedValue
           unless instance.instance_variable_get(instance_variable_name)
             value = Travis::Settings::EncryptedValue.new(nil)
             if instance.frozen?
@@ -92,6 +83,10 @@ module Travis
         end
       end
 
+      def primitive(name)
+        attribute_set[name.to_sym].type.primitive
+      end
+
       def get(key)
         if attribute?(key)
           self.send(key)
@@ -107,9 +102,13 @@ module Travis
       private :set
 
       def load(hash)
+        return unless hash
+
         hash.each do |key, value|
           if collection?(key) || encrypted?(key) || model?(key)
-            get(key).load(value)
+            thing = get(key)
+            thing = set(key, primitive(key).new) if !thing && value
+            thing.load(value) if thing
           elsif attribute?(key)
             set(key, value)
           end

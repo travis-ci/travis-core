@@ -190,7 +190,8 @@ module Travis
           finished_at: Time.now.utc,
           worker: 'ruby3.worker.travis-ci.org:travis-ruby-4',
           tags: 'tag-a,tag-b',
-          log_content: log.content
+          log_content: log.content,
+          ssh_key: nil
         )
 
         source = stub_build(:matrix => [test])

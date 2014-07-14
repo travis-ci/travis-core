@@ -14,6 +14,13 @@ class Repository::Settings < Travis::Settings
     validates :name, presence: true
   end
 
+  class SshKey < Travis::Settings::Model
+    attribute :description, String
+    attribute :value, Travis::Settings::EncryptedValue
+
+    validates :value, presence: true
+  end
+
   class EnvVars < Collection
     model EnvVar
   end
@@ -24,7 +31,7 @@ class Repository::Settings < Travis::Settings
   attribute :build_pushes, Boolean, default: true
   attribute :build_pull_requests, Boolean, default: true
   attribute :maximum_number_of_builds, Integer
-  attribute :ssh_key, Travis::Settings::EncryptedValue
+  attribute :ssh_key, SshKey
 
   def maximum_number_of_builds
     super.to_i
