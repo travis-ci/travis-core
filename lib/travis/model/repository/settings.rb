@@ -33,8 +33,10 @@ class Repository::Settings < Travis::Settings
   attribute :maximum_number_of_builds, Integer
   attribute :ssh_key, SshKey
 
+  validates :maximum_number_of_builds, numericality: true
+
   def maximum_number_of_builds
-    super.to_i
+    super || 0
   end
 
   def restricts_number_of_builds?
