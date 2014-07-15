@@ -20,7 +20,6 @@ module Travis
       hash.each { |k, v|
         set(k, v) unless collection?(k) || model?(k)
       }
-      save
     end
 
     def obfuscated

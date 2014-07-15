@@ -22,7 +22,6 @@ describe Travis::Settings do
 
     it 'doesn\'t allow to set or get unknown settings' do
       settings = settings_class.new
-      settings.expects(:save)
       settings.merge('foo' => 'bar')
 
       settings.to_hash['foo'].should be_nil
@@ -139,6 +138,12 @@ describe Travis::Settings do
   end
 
   describe '#merge' do
+    it 'does not save' do
+      settings = Travis::Settings.new
+      settings.merge(foo: 'bar')
+      settings.expects(:save).never
+    end
+
     it 'merges individual fields' do
       settings_class = Class.new(Travis::Settings) {
         attribute :items, Class.new(Travis::Settings::Collection) {
@@ -151,7 +156,6 @@ describe Travis::Settings do
       settings = settings_class.new(foo: 'bar')
       settings.foo.should == 'bar'
 
-      settings.expects(:save)
       settings.merge('foo' => 'baz', items: [{ name: 'something' }])
 
       settings.to_hash[:foo].should == 'baz'
@@ -160,7 +164,6 @@ describe Travis::Settings do
 
     it 'does not allow to merge unknown settings' do
       settings = Travis::Settings.new
-      settings.expects(:save)
       settings.merge('possibly_unknown_setting' => 'foo')
 
       settings.to_hash['possibly_unknown_setting'].should be_nil

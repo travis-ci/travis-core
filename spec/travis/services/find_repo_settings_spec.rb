@@ -10,6 +10,7 @@ describe Travis::Services::FindRepoSettings do
 
   before do
     repo.settings.merge('build_pushes' => false)
+    repo.settings.save
     repo.save
   end
 

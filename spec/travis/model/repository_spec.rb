@@ -255,6 +255,7 @@ describe Repository do
       repo.reload.settings.build_pushes?.should == false
 
       repo.settings.merge('build_pushes' => true)
+      repo.settings.save
 
       repo.reload.settings.build_pushes?.should == true
     end
