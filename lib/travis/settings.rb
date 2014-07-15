@@ -27,7 +27,9 @@ module Travis
     end
 
     def save
-      @on_save.call
+      if valid?
+        @on_save.call
+      end
     end
 
     def to_json

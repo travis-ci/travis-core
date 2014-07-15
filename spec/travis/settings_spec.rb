@@ -95,6 +95,15 @@ describe Travis::Settings do
 
       on_save_performed.should be_true
     end
+
+    it 'does not run on_save callback if settings are not valid' do
+      on_save_performed = false
+      settings = Travis::Settings.new.on_save { on_save_performed = true }
+      settings.stubs(:valid?).returns(false)
+      settings.save.should be_false
+
+      on_save_performed.should be_false
+    end
   end
 
   describe 'to_hash' do
