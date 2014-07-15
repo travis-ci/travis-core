@@ -26,6 +26,17 @@ module Travis
     end
 
     module ModelExtensions
+      class Errors < ActiveModel::Errors
+        # Default behavior of Errors in Active Model is to
+        # translate symbolized message into full text message,
+        # using i18n if available. I don't want such a behavior,
+        # as I want to return error "codes" like :blank, not
+        # full text like "can't be blank"
+        def normalize_message(attribute, message, options)
+          message || :invalid
+        end
+      end
+
       module ClassMethods
         def attribute(name, type = nil, options = {})
           options[:finalize] = false
@@ -51,6 +62,10 @@ module Travis
 
       def self.included(base)
         base.extend ClassMethods
+      end
+
+      def errors
+        @errors ||= Errors.new(self)
       end
 
       def attribute?(key)

@@ -8,6 +8,7 @@ module Travis
   class Settings
     include Travis::OverwritableMethodDefinitions
     include Virtus.model
+    include ActiveModel::Validations
     include Travis::Settings::ModelExtensions
 
     def on_save(&block)

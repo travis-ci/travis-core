@@ -1,6 +1,17 @@
 require 'spec_helper'
 
 describe Travis::Settings do
+  it 'returns validations without going through i18n' do
+    settings = Class.new(Travis::Settings) {
+      attribute :foo, String
+      validates :foo, presence: true
+    }.new
+
+    settings.foo = nil
+    settings.should_not be_valid
+    settings.errors[:foo].should == [:blank]
+  end
+
   describe 'adding a setting' do
     let(:settings_class) {
       Class.new(Travis::Settings) {
