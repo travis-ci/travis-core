@@ -221,6 +221,19 @@ describe Repository do
   describe 'settings' do
     let(:repo) { Factory.build(:repository) }
 
+    it 'adds repository_id to collection records' do
+      repo.save
+
+      env_var = repo.settings.env_vars.create(name: 'FOO')
+      env_var.repository_id.should == repo.id
+
+      repo.settings.save
+
+      repo.reload
+
+      repo.settings.env_vars.first.repository_id.should == repo.id
+    end
+
     it "is reset on reload" do
       repo.save
 

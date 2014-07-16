@@ -51,17 +51,29 @@ module Travis
           self
         end
 
-        def load(json)
+        def load(json, additional_attributes = {})
           instance = new()
 
           json = JSON.parse(json) if json.is_a?(String)
-          instance.load json if json
+          instance.load json, additional_attributes
           instance
         end
       end
 
       def self.included(base)
         base.extend ClassMethods
+      end
+
+      attr_reader :additional_attributes
+
+      def additional_attributes=(hash = {})
+        attribute_set.each do |attribute|
+          value = get(attribute.name)
+          if value.respond_to?(:additional_attributes=)
+            value.additional_attributes = hash
+          end
+        end
+        @additional_attributes = hash
       end
 
       def errors
@@ -116,14 +128,23 @@ module Travis
       end
       private :set
 
-      def load(hash)
-        return unless hash
+      def simple_attributes
+        attributes.select { |k, v| simple_attribute?(k) }
+      end
 
-        hash.each do |key, value|
+      def simple_attribute?(key)
+        !(collection?(key) || encrypted?(key) || model?(key))
+      end
+
+      def load(hash = {}, additional_attributes = {})
+        hash ||= {}
+        self.additional_attributes = additional_attributes || {}
+
+        hash.merge(self.additional_attributes).each do |key, value|
           if collection?(key) || encrypted?(key) || model?(key)
             thing = get(key)
             thing = set(key, primitive(key).new) if !thing && value
-            thing.load(value) if thing
+            thing.load(value, self.additional_attributes) if thing
           elsif attribute?(key)
             set(key, value)
           end

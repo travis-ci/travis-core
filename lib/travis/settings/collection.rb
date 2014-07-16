@@ -2,7 +2,8 @@ class Travis::Settings
   class Collection
     include Enumerable
 
-    delegate :each, :<<, :push, :delete, to: '@collection'
+    delegate :each, :<<, :push, :delete, :length, :first, :last, to: '@collection'
+    attr_accessor :additional_attributes
 
     class << self
       # This feels a bit weird, but I don't know how to do it better.
@@ -44,6 +45,7 @@ class Travis::Settings
 
     def create(attributes)
       model = model_class.new(attributes)
+      model.load({}, additional_attributes)
       model.id = SecureRandom.uuid unless model.id
       push model
       model
@@ -65,10 +67,12 @@ class Travis::Settings
       @collection.map(&:to_hash)
     end
 
-    def load(collection)
+    def load(collection, additional_attributes = {})
+      self.additional_attributes = additional_attributes
       return unless collection.respond_to?(:each)
+
       collection.each do |element|
-        self.push model_class.load(element)
+        self.push model_class.load(element, additional_attributes)
       end
     end
   end

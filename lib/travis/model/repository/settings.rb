@@ -10,6 +10,7 @@ class Repository::Settings < Travis::Settings
     attribute :name, String
     attribute :value, Travis::Settings::EncryptedValue
     attribute :public, Boolean, default: false
+    attribute :repository_id, Integer
 
     validates :name, presence: true
   end
@@ -17,6 +18,7 @@ class Repository::Settings < Travis::Settings
   class SshKey < Travis::Settings::Model
     attribute :description, String
     attribute :value, Travis::Settings::EncryptedValue
+    attribute :repository_id, Integer
 
     validates :value, presence: true
   end

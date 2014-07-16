@@ -55,7 +55,7 @@ class Travis::Settings
       Travis::Model::EncryptedColumn.new(key: key, use_prefix: false).load(value)
     end
 
-    def load(value)
+    def load(value, additional_attributes = nil)
       self.instance_variable_set('@value', value)
     end
   end

@@ -46,6 +46,36 @@ describe Travis::Settings do
     end
   end
 
+  describe 'simple_attributes' do
+    it 'returns only plan attributes' do
+      model_class = Class.new(Travis::Settings::Model) {
+        attribute :name, String
+      }
+      collection_class = Class.new(Travis::Settings::Collection) {
+        model model_class
+      }
+      settings_class = Class.new(Travis::Settings) {
+        attribute :items, collection_class
+        attribute :item, model_class
+        attribute :secret, Travis::Settings::EncryptedValue
+        attribute :plain, String
+      }
+
+      settings = settings_class.new
+
+      settings.load({ items: [{ name: 'foo'}],
+                      item: { name: 'bar' },
+                      secret: Travis::Settings::EncryptedValue.new('baz'),
+                      plain: 'yup' })
+
+      settings.items.first.name.should == 'foo'
+      settings.item.name.should == 'bar'
+      settings.secret.decrypt.should == 'baz'
+
+      settings.simple_attributes.should == { plain: 'yup' }
+    end
+  end
+
   describe 'registering a collection' do
     before do
       model_class = Class.new(Travis::Settings::Model) {
