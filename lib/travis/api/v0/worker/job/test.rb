@@ -64,11 +64,7 @@ module Travis
             end
 
             def ssh_key
-              if ssh_key = repository.settings.ssh_key
-                { 'source' => 'repo_settings', 'value' => ssh_key.value.decrypt }
-              elsif ssh_key = job.ssh_key
-                { 'source' => 'config', 'value' => ssh_key }
-              end
+              nil
             end
 
             def env_vars
