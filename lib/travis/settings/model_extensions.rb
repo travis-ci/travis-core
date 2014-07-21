@@ -119,14 +119,12 @@ module Travis
           self.send(key)
         end
       end
-      private :get
 
       def set(key, value)
         if attribute?(key)
           self.send("#{key}=", value)
         end
       end
-      private :set
 
       def simple_attributes
         attributes.select { |k, v| simple_attribute?(k) }
