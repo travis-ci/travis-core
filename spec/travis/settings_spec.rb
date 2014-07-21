@@ -46,6 +46,43 @@ describe Travis::Settings do
     end
   end
 
+  describe '#create' do
+    it 'creates a model for a given key' do
+      model_class = Class.new(Travis::Settings::Model) {
+        attribute :name, String
+      }
+      settings_class = Class.new(Travis::Settings) {
+        attribute :item, model_class
+      }
+
+      settings = settings_class.new
+
+      settings.create(:item, name: 'foo')
+
+      settings.item.name.should == 'foo'
+    end
+  end
+
+  describe '#delete' do
+    it 'removes a model with a given name' do
+      model_class = Class.new(Travis::Settings::Model) {
+        attribute :name, String
+      }
+      settings_class = Class.new(Travis::Settings) {
+        attribute :item, model_class
+      }
+
+      settings = settings_class.new
+      settings.load(item: { name: 'foo' })
+
+      settings.item.name.should == 'foo'
+
+      settings.delete(:item)
+
+      settings.item.should be_nil
+    end
+  end
+
   describe 'simple_attributes' do
     it 'returns only plan attributes' do
       model_class = Class.new(Travis::Settings::Model) {

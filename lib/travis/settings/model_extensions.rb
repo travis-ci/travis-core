@@ -150,6 +150,14 @@ module Travis
           end
         end
       end
+
+      def create(key, attributes)
+        set(key, primitive(key).new(attributes))
+      end
+
+      def delete(key)
+        set(key, nil)
+      end
     end
   end
 end
