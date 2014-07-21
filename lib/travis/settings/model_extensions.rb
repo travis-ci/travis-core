@@ -153,10 +153,20 @@ module Travis
 
       def create(key, attributes)
         set(key, primitive(key).new(attributes))
+        get(key)
       end
 
       def delete(key)
         set(key, nil)
+      end
+
+      def update(key, attributes)
+        if model = get(key)
+          model.update(attributes)
+          model
+        else
+          create(key, attributes)
+        end
       end
     end
   end

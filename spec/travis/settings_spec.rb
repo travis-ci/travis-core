@@ -57,7 +57,38 @@ describe Travis::Settings do
 
       settings = settings_class.new
 
-      settings.create(:item, name: 'foo')
+      result = settings.create(:item, name: 'foo')
+
+      settings.item.name.should == 'foo'
+      result.should == settings.item
+    end
+  end
+
+  describe '#update' do
+    let(:settings) {
+      model_class = Class.new(Travis::Settings::Model) {
+        attribute :name, String
+      }
+      settings_class = Class.new(Travis::Settings) {
+        attribute :item, model_class
+      }
+      settings_class.new
+    }
+
+    it 'updates an existing model' do
+      settings.load(item: { name: 'foo' })
+
+      settings.item.name.should == 'foo'
+
+      settings.update(:item, name: 'bar')
+
+      settings.item.name.should == 'bar'
+    end
+
+    it 'creates a model if it does not exist yet' do
+      settings.item.should be_nil
+
+      settings.update(:item, name: 'foo')
 
       settings.item.name.should == 'foo'
     end
