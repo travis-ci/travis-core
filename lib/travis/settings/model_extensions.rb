@@ -157,7 +157,9 @@ module Travis
       end
 
       def delete(key)
+        model = get(key)
         set(key, nil)
+        model
       end
 
       def update(key, attributes)

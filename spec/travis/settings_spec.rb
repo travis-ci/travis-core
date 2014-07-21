@@ -108,9 +108,12 @@ describe Travis::Settings do
 
       settings.item.name.should == 'foo'
 
-      settings.delete(:item)
+      item = settings.item
+
+      result = settings.delete(:item)
 
       settings.item.should be_nil
+      result.should == item
     end
   end
 
