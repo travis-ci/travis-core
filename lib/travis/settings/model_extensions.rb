@@ -138,7 +138,7 @@ module Travis
         hash ||= {}
         self.additional_attributes = additional_attributes || {}
 
-        self.additional_attributes.merge(hash).each do |key, value|
+        hash.merge(self.additional_attributes).each do |key, value|
           if collection?(key) || encrypted?(key) || model?(key)
             thing = get(key)
             thing = set(key, primitive(key).new) if !thing && value
@@ -150,7 +150,7 @@ module Travis
       end
 
       def create(key, attributes)
-        attributes = (additional_attributes || {}).merge(attributes)
+        attributes = (attributes || {}).merge(additional_attributes)
         set(key, primitive(key).new(attributes))
         get(key)
       end
@@ -162,7 +162,7 @@ module Travis
       end
 
       def update(key, attributes)
-        attributes = (additional_attributes || {}).merge(attributes)
+        attributes = (attributes || {}).merge(additional_attributes)
         if model = get(key)
           model.update(attributes)
           model
