@@ -47,20 +47,32 @@ describe Travis::Settings do
   end
 
   describe '#create' do
-    it 'creates a model for a given key' do
+    let(:settings) {
       model_class = Class.new(Travis::Settings::Model) {
         attribute :name, String
+        attribute :repository_id, Integer
       }
       settings_class = Class.new(Travis::Settings) {
         attribute :item, model_class
       }
 
-      settings = settings_class.new
+      settings_class.new
+    }
 
+    it 'creates a model for a given key' do
       result = settings.create(:item, name: 'foo')
 
       settings.item.name.should == 'foo'
       result.should == settings.item
+    end
+
+    it 'adds additional attributes to the created model' do
+      settings.additional_attributes = { repository_id: 44 }
+
+      settings.create(:item, name: 'foo')
+
+      settings.item.name.should == 'foo'
+      settings.item.repository_id.should == 44
     end
   end
 
