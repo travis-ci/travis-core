@@ -69,7 +69,7 @@ describe Travis::Settings do
     it 'adds additional attributes to the created model' do
       settings.additional_attributes = { repository_id: 44 }
 
-      settings.create(:item, name: 'foo')
+      settings.create(:item, name: 'foo', repository_id: nil)
 
       settings.item.name.should == 'foo'
       settings.item.repository_id.should == 44

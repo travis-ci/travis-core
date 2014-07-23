@@ -150,7 +150,7 @@ module Travis
       end
 
       def create(key, attributes)
-        attributes = (attributes || {}).merge(additional_attributes)
+        attributes = (attributes || {}).merge(additional_attributes || {})
         set(key, primitive(key).new(attributes))
         get(key)
       end
@@ -162,7 +162,7 @@ module Travis
       end
 
       def update(key, attributes)
-        attributes = (attributes || {}).merge(additional_attributes)
+        attributes = (attributes || {}).merge(additional_attributes || {})
         if model = get(key)
           model.update(attributes)
           model
