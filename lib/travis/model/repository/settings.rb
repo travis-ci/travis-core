@@ -17,6 +17,8 @@ class Repository::Settings < Travis::Settings
   end
 
   class SshKey < Travis::Settings::Model
+    class NotAPrivateKeyError < StandardError; end
+
     attribute :description, String
     attribute :value, Travis::Settings::EncryptedValue
     attribute :repository_id, Integer
@@ -25,9 +27,10 @@ class Repository::Settings < Travis::Settings
     validate :validate_correctness
 
     def validate_correctness
-      OpenSSL::PKey::RSA.new(value.decrypt)
-    rescue OpenSSL::PKey::RSAError
-      errors.add(:value, :not_private_key)
+      key = OpenSSL::PKey::RSA.new(value.decrypt)
+      raise NotAPrivateKeyError unless key.private?
+    rescue OpenSSL::PKey::RSAError, NotAPrivateKeyError
+      errors.add(:value, :not_a_private_key)
     end
   end
 

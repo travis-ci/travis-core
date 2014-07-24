@@ -40,6 +40,14 @@ tFns8eTxHpZOYOftxpX91vS3tzKCKgkdPhnYBDrvFFWnGgRLXFpb
     ssh_key.value = 'foo'
     ssh_key.should_not be_valid
 
-    ssh_key.errors[:value].should == [:not_private_key]
+    ssh_key.errors[:value].should == [:not_a_private_key]
+  end
+
+  it 'allows only private key' do
+    public_key =  OpenSSL::PKey::RSA.new(private_key).public_key.to_s
+    ssh_key = described_class.new(value: public_key)
+
+    ssh_key.should_not be_valid
+    ssh_key.errors[:value].should == [:not_a_private_key]
   end
 end
