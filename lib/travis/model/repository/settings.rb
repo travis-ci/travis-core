@@ -3,6 +3,7 @@ require 'coercible'
 require 'travis/settings'
 require 'travis/overwritable_method_definitions'
 require 'travis/settings/encrypted_value'
+require 'openssl'
 
 class Repository::Settings < Travis::Settings
   class EnvVar < Travis::Settings::Model
@@ -21,6 +22,13 @@ class Repository::Settings < Travis::Settings
     attribute :repository_id, Integer
 
     validates :value, presence: true
+    validate :validate_correctness
+
+    def validate_correctness
+      OpenSSL::PKey::RSA.new(value.decrypt)
+    rescue OpenSSL::PKey::RSAError
+      errors.add(:value, :not_private_key)
+    end
   end
 
   class EnvVars < Collection
