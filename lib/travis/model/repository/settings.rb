@@ -27,6 +27,7 @@ class Repository::Settings < Travis::Settings
     validate :validate_correctness
 
     def validate_correctness
+      return unless value.decrypt
       key = OpenSSL::PKey::RSA.new(value.decrypt)
       raise NotAPrivateKeyError unless key.private?
     rescue OpenSSL::PKey::RSAError, NotAPrivateKeyError

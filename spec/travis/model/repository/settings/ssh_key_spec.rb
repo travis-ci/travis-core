@@ -50,4 +50,11 @@ tFns8eTxHpZOYOftxpX91vS3tzKCKgkdPhnYBDrvFFWnGgRLXFpb
     ssh_key.should_not be_valid
     ssh_key.errors[:value].should == [:not_a_private_key]
   end
+
+  it 'does not check key if a value is nil' do
+    ssh_key = described_class.new({})
+
+    ssh_key.should_not be_valid
+    ssh_key.errors[:value].should == [:blank]
+  end
 end
