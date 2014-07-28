@@ -10,6 +10,17 @@ describe Travis::Config do
     Travis.instance_variable_set(:@config, nil)
   end
 
+  describe 'endpoints' do
+    it 'returns an object even without endpoints entry' do
+      config.endpoints.foo.should be_nil
+    end
+
+    it 'returns endpoints if it is set' do
+      ENV['travis_config'] = YAML.dump('endpoints' => { 'ssh_key' => true })
+      config.endpoints.ssh_key.should be_true
+    end
+  end
+
   describe 'Hashr behaviour' do
     it 'is a Hashr instance' do
       config.should be_kind_of(Hashr)

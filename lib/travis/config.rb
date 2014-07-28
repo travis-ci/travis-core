@@ -141,6 +141,11 @@ module Travis
       run_periodically(Travis.config.assets.interval, &method(:update))
     end
 
+    def endpoints
+      result = super
+      result || Hashr.new
+    end
+
     protected
 
       def update
