@@ -142,8 +142,10 @@ module Travis
     end
 
     def endpoints
-      result = super
-      result || Hashr.new
+      @endpoints ||= begin
+        result = super
+        result || Hashr.new
+      end
     end
 
     protected

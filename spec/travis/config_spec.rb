@@ -19,6 +19,14 @@ describe Travis::Config do
       ENV['travis_config'] = YAML.dump('endpoints' => { 'ssh_key' => true })
       config.endpoints.ssh_key.should be_true
     end
+
+    it 'allows to set keys on enpoints when it is nil' do
+      config.endpoints.foo.should be_nil
+
+      config.endpoints.foo = true
+
+      config.endpoints.foo.should be_true
+    end
   end
 
   describe 'Hashr behaviour' do
