@@ -37,6 +37,10 @@ class Repository::Settings < Travis::Settings
 
   class EnvVars < Collection
     model EnvVar
+
+    def public
+      find_all { |var| var.public? }
+    end
   end
 
   attribute :env_vars, EnvVars.for_virtus

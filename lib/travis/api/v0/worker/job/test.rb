@@ -68,7 +68,10 @@ module Travis
             end
 
             def env_vars
-              repository.settings.env_vars.map do |var|
+              vars = settings.env_vars
+              vars = vars.public if commit.pull_request?
+
+              vars.map do |var|
                 {
                   'name' => var.name,
                   'value' => var.value.decrypt,
@@ -79,6 +82,10 @@ module Travis
 
             def include_tag_name?
               Travis.config.include_tag_name_in_worker_payload && request.tag_name.present?
+            end
+
+            def settings
+              repository.settings
             end
           end
         end

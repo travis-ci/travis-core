@@ -2,6 +2,17 @@
 require 'spec_helper'
 
 describe Repository::Settings do
+  describe 'env_vars' do
+    it 'can be filtered to get only public vars' do
+      settings = Repository::Settings.load(env_vars: [
+        { name: 'PUBLIC_VAR', value: 'public var', public: true },
+        { name: 'SECRET_VAR', value: 'secret var', public: false }
+      ])
+      settings.env_vars.public.length.should == 1
+      settings.env_vars.public.first.name.should == 'PUBLIC_VAR'
+    end
+  end
+
   describe '#maximum_number_of_builds' do
     it 'returns integer' do
       settings = Repository::Settings.new(maximum_number_of_builds: nil)

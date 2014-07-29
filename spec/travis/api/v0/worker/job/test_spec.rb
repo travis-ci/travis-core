@@ -130,7 +130,6 @@ describe Travis::Api::V0::Worker::Job::Test do
           'number' => 2
         },
         'env_vars' => [
-          { 'name' => 'FOO', 'value' => 'bar', 'public' => false },
           { 'name' => 'BAR', 'value' => 'baz', 'public' => true }
         ]
       }
