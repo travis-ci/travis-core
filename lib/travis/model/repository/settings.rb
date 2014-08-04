@@ -59,6 +59,8 @@ class Repository::Settings < Travis::Settings
 
   def restricts_number_of_builds?
     maximum_number_of_builds > 0
+  rescue => e
+    false
   end
 end
 
