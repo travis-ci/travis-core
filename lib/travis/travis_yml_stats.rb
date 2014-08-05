@@ -19,8 +19,8 @@ module Travis
     attr_reader :request
 
     def store_language
-      Metriks.meter("travis_yml.language.#{config["language"]}").mark
-      Metriks.meter("travis_yml.github_language.#{payload["language"]}").mark
+      Metriks.meter("travis_yml.language.#{normalize_string config["language"]}").mark
+      Metriks.meter("travis_yml.github_language.#{normalize_string payload["language"]}").mark
     end
 
     def config
@@ -29,6 +29,10 @@ module Travis
 
     def payload
       request.payload
+    end
+
+    def normalize_string(str)
+      str.downcase.tr(" ", "-")
     end
   end
 end
