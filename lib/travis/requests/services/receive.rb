@@ -101,6 +101,9 @@ module Travis
 
           def store_config_info
             Travis::TravisYmlStats.store_stats(request)
+          rescue => e
+            Travis.logger.warn("[request:receive] Couldn't store .travis.yml stats: #{e.message}")
+            Raven.capture_exception(e)
           end
 
           class Instrument < Notification::Instrument
