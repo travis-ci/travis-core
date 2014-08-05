@@ -32,7 +32,9 @@ module Travis
     end
 
     def normalize_string(str)
-      str.to_s.downcase.tr(" ", "-")
+      return "empty" unless str
+
+      str.downcase.tr(" ", "-")
     end
   end
 end
