@@ -19,8 +19,8 @@ module Travis
     attr_reader :request
 
     def store_language
-      Metriks.meter("travis_yml.language.#{normalize_string config["language"]}").mark
-      Metriks.meter("travis_yml.github_language.#{normalize_string payload["language"]}").mark
+      Metriks.meter("travis_yml.language.#{travis_yml_language}").mark
+      Metriks.meter("travis_yml.github_language.#{github_language}").mark
     end
 
     def config
@@ -31,9 +31,33 @@ module Travis
       request.payload
     end
 
-    def normalize_string(str)
-      return "empty" unless str
+    def travis_yml_language
+      language = config["language"]
+      case language
+      when String
+        normalize_string language
+      when nil
+        "empty"
+      else
+        "invalid"
+      end
+    end
 
+    def github_language
+      language = payload.fetch("repository", {})["language"]
+      case language
+      when String
+        normalize_string language
+      when nil
+        "empty"
+      when Array
+        normalize_string language.first
+      else
+        "invalid"
+      end
+    end
+
+    def normalize_string(str)
       str.downcase.tr(" ", "-")
     end
   end
