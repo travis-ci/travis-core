@@ -1,5 +1,7 @@
 require 'gh'
 
+require "travis/travis_yml_stats"
+
 module Travis
   module Requests
     module Services
@@ -30,6 +32,7 @@ module Travis
               approval = Request::Approval.new(request)
               Travis.logger.warn("[request:receive] Request #{request.id} commit=#{request.commit.try(:commit).inspect} didn't create any builds: #{approval.result}/#{approval.message}")
             else
+              store_config_info
               Travis.logger.info("[request:receive] Request #{request.id} commit=#{request.commit.try(:commit).inspect} created #{request.builds.count} builds")
             end
           else
@@ -94,6 +97,10 @@ module Travis
 
           def commit
             @commit ||= repo.commits.create!(payload.commit) if payload.commit
+          end
+
+          def store_config_info
+            Travis::TravisYmlStats.store_stats(request)
           end
 
           class Instrument < Notification::Instrument
