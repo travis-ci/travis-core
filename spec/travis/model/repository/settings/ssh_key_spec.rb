@@ -57,4 +57,48 @@ tFns8eTxHpZOYOftxpX91vS3tzKCKgkdPhnYBDrvFFWnGgRLXFpb
     ssh_key.should_not be_valid
     ssh_key.errors[:value].should == [:blank]
   end
+
+  describe 'with a passphrase' do
+    let(:private_key) {
+      "-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: AES-128-CBC,A2EDFC4C1196A9F3A58F327650CA6A1A
+
+hfJtbnTxMhnqNLbRi1KGKE1rX3ypef5tIQPC+2OyUH4MQDTpaz5INoMqk1AjOz+O
+LfmPZcy+5g3w9HJCHkGFU2kNmseHWCyoPQ3t9BKzaVWun4IxoMn7K2hZaebsyPQx
+sq7vyDKAflgUKlkZgHWIimJ1lJH0CJB/3mplc16NeNqv1AaICFJagYHwPGHfVxa/
+CQLPd2nw4LGmxEvmfuVq4qiSsYTqUkBA4wqgEX4bWGbkDZF2mKJvL/5AM5Cei+cy
+ZhB4zm0mORoNQnGHbolYstHfm6h7RjlYDV60WC7iBnRRNuWmktzA+oOjH8RqQ29Z
+LDcjyg4Rl0BsRwjkppOSScO6QAt4h740ZYHv7I/m3UAIl33xHjlz7PJb8aOzYqgC
+QDFNJOr+AJx3tamY0Hg7v2l77oWQX8hHeJEbIySbftzIX+UrpSWFlcTNm4xpffI0
+yO0Id2wY1mMOSs3yzNQ0AlGJR9Ns3P+2RjbyAJnuKI2ZctcBdlZSEiz/aavNW3ql
+mv5FAzP4tSkTaWCnJaf8RAL0CSr5ppycWYGnZYbem6Bh9Cwe4f7PmQL5RJ/Y2rMc
+V5ir+CFiVPFZP7by0OVz1Hg8XjynyCXej6J21el2hUyTI7oLxh/CxHW2lmqgUwYA
+SNGGqMrYVQKxs+yp6i62OhKTl93jmW+8mE9VX6jIKBQJ7GBf44YLALwgxLyO6lCP
+yY3dXI2QTb1StBHZhyQHazoghs3/6vEAEC8kj2U2NLBxlk8+caSEIrNoWRNCOAo+
+1p75ZHrPDuTirDsyascOJ0Yff+O+uzCiqf9aPxxVJllhC2l6LGCwU1dsZ+O2RuaI
+anH8OvFpSUhQY97vEnRDuPei/jz/C2/oZJzIdXCUmPvVn7Ut23m9A/1x6Mq3FA1X
+iN09gB3XzsJZpxQ3TEMg+pp6bV64O5yZghAAWmKzJOmZ2j2BxCbuX3H399EAW3hc
+sB/TxCh6kjiMOltbHtKsclsNZ9YQmk5+x4LwX4BSCV6YnytS+I49eMx1ikLX5nJR
+tVAVsF5oE31pgg8lUgIWRJdK7EjjX/cDfkJYf9NWSwFCYxUKB+2adX/ix0eI1NGH
+oJ+AD9tUrMAnNDTgFM4n5rtYDwf0fuA1C9RjJP8NcPm7oNlpyP2VQbtr3rSwmx+c
+xYQuIZxqYbO+iwlJDuAst1n7dDIzPtnea/KUEQy4u7jmONKQ1VdA9dyGvqy4y8ie
+bVDfnAzAvO17Zbvmqk0zQRmYXRsLuIN6QyWsfi8e2O7FctcpRVgc4e5xmBTfztBL
+Q5feJ50wqE+JNfL5dQp8N0NtWFA6d4RLMN1T8zLhYASO/NOOzQtR7X+NlMrtm0wQ
+aNDoTrIrg7xpuQOlMOe9UCwfcHu+DoPxUzZrqzhPlCGYSbecBW6G4+S4FPL5LpsW
+NrYx30C8A87A0eEUNzLxO3CoPv7XhN/b0xf7W2CA79gbZnhgPtF12/11VmRo8ckl
+zkrhrvtsjexdwYje7xjngPXrZ9USh13CoYNlduTlWB72m+wN8W7zyCLn1Zl/grTI
+76Z2FZiqBEuPEcoDRrNUmX6MeNcMRo8Zq1FRi8imYnKYC0YsJMU0N+kIsiuGQsOI
+-----END RSA PRIVATE KEY-----
+"
+    }
+
+    it 'returns key_with_a_passphrase validation error' do
+      ssh_key = described_class.new(value: private_key)
+
+      ssh_key.should_not be_valid
+
+      ssh_key.errors[:value].should == [:key_with_a_passphrase]
+    end
+  end
 end

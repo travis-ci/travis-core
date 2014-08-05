@@ -28,10 +28,17 @@ class Repository::Settings < Travis::Settings
 
     def validate_correctness
       return unless value.decrypt
-      key = OpenSSL::PKey::RSA.new(value.decrypt)
+      key = OpenSSL::PKey::RSA.new(value.decrypt, '')
       raise NotAPrivateKeyError unless key.private?
     rescue OpenSSL::PKey::RSAError, NotAPrivateKeyError
-      errors.add(:value, :not_a_private_key)
+      # it seems there is no easy way to check if key
+      # needs a pass phrase with ruby's openssl bindings,
+      # that's why we need to manually check that
+      if value.decrypt.to_s =~ /ENCRYPTED/
+        errors.add(:value, :key_with_a_passphrase)
+      else
+        errors.add(:value, :not_a_private_key)
+      end
     end
   end
 
