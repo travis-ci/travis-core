@@ -17,7 +17,6 @@ describe Travis::Api::V0::Worker::Job::Test do
 
     })
     test.repository.stubs(:settings).returns(settings)
-    test.stubs(:secure_env_enabled?).returns(true)
     test
   end
   let(:data) { Travis::Api::V0::Worker::Job::Test.new(test).data }

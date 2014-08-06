@@ -191,7 +191,8 @@ module Travis
           worker: 'ruby3.worker.travis-ci.org:travis-ruby-4',
           tags: 'tag-a,tag-b',
           log_content: log.content,
-          ssh_key: nil
+          ssh_key: nil,
+          secure_env_enabled?: true
         )
 
         source = stub_build(:matrix => [test])
