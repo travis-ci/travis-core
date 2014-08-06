@@ -141,38 +141,6 @@ describe Travis::TravisYmlStats do
     end
   end
 
-  describe "travis_yml.deploy.provider." do
-    context "single provider" do
-      before do
-        request.config["deploy"] = { "provider" => "heroku" }
-      end
-
-      it "marks travis_yml.deploy.provider.<provider>" do
-        subject
-        metriks.marked.should include("travis_yml.deploy.provider.heroku")
-      end
-    end
-
-    context "multiple providers" do
-      before do
-        request.config["deploy"] = [
-          { "provider" => "heroku" },
-          { "provider" => "s3" }
-        ]
-      end
-
-      it "marks travis_yml.deploy.provider.<provider-1>" do
-        subject
-        metriks.marked.should include("travis_yml.deploy.provider.heroku")
-      end
-
-      it "marks travis_yml.deploy.provider.<provider-2>" do
-        subject
-        metriks.marked.should include("travis_yml.deploy.provider.s3")
-      end
-    end
-  end
-
   describe "travis_yml.sudo" do
     context "build that uses sudo" do
       before do

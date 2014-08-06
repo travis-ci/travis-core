@@ -28,7 +28,6 @@ module Travis
     def store_stats
       store_language
       store_language_version
-      store_deployment_providers
       store_sudo
       store_apt_get
     end
@@ -56,16 +55,6 @@ module Travis
             mark_metric "travis_yml.#{key}.invalid"
           end
         end
-      end
-    end
-
-    def store_deployment_providers
-      return unless config.key?("deploy")
-
-      deploys = config["deploy"].is_a?(Array) ? config["deploy"] : [config["deploy"]]
-
-      deploys.map { |deploy| deploy["provider"] }.uniq.compact.each do |provider|
-        mark_metric "travis_yml.deploy.provider.#{provider}"
       end
     end
 
