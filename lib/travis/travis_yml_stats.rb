@@ -19,8 +19,8 @@ module Travis
     attr_reader :request
 
     def store_language
-      Metriks.meter("travis_yml.language.#{travis_yml_language}").mark
-      Metriks.meter("travis_yml.github_language.#{github_language}").mark
+      mark_metric "travis_yml.language.#{travis_yml_language}"
+      mark_metric "travis_yml.github_language.#{github_language}"
     end
 
     def config
@@ -59,6 +59,11 @@ module Travis
 
     def normalize_string(str)
       str.downcase.gsub("#", "-sharp").gsub(/[^A-Za-z0-9.:\-_]/, "")
+    end
+
+    def mark_metric(metric_name)
+      normalized_name = metric_name.gsub(/[^A-Za-z0-9.:\-_]/, "")
+      Metriks.meter(normalized_name).mark
     end
   end
 end
