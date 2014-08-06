@@ -3,17 +3,15 @@ require "metriks"
 module Travis
   class TravisYmlStats
     LANGUAGE_VERSION_KEYS = %w[
-      ruby rvm
-      python
-      otp_release
+      ghc
       go
       jdk
-      ghc
-      jdk
       node_js
+      otp_release
       perl
       php
       python
+      ruby
       rvm
       scala
     ]
