@@ -48,6 +48,14 @@ describe Build do
       build.secure_env_enabled?.should be_true
     end
 
+    it 'returns true if author has permissions to push to a repository' do
+      build = Factory.build(:build)
+      build.stubs(:pull_request?).returns(true)
+      build.stubs(:same_repo_pull_request?).returns(false)
+      build.stubs(:pull_request_author_has_permissions?).returns(true)
+      build.secure_env_enabled?.should be_true
+    end
+
     it 'returns false if pull request is not from the same repository' do
       build = Factory.build(:build)
       build.stubs(:pull_request?).returns(true)
