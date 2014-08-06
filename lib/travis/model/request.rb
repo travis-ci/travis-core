@@ -88,4 +88,16 @@ class Request < Travis::Model
       false
     end
   end
+
+  def pull_request_author_has_permissions?
+    payload = Hashr.new(self.payload)
+
+    author_id = payload.try(:pull_request).try(:user).try(:id)
+    return false unless author_id
+
+    author = User.find_by_github_id(author_id)
+    return false unless author
+
+    author.permission?(:push, repository_id: repository.id)
+  end
 end

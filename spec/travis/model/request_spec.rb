@@ -57,6 +57,65 @@ describe Request do
     end
   end
 
+  describe 'pull_request_author_has_permissions?' do
+    it 'returns false without an author id' do
+      request.payload = {
+        'pull_request' => {
+          'user' => {
+            'id' => nil
+          }
+        }
+      }
+
+      request.pull_request_author_has_permissions?.should be_false
+    end
+
+    it 'returns false without an author in our DB' do
+      request.payload = {
+        'pull_request' => {
+          'user' => {
+            'id' => 0
+          }
+        }
+      }
+
+      request.pull_request_author_has_permissions?.should be_false
+    end
+
+    it 'returns false without proper permission' do
+      user = Factory(:user, github_id: 100)
+      repo = Factory(:repository)
+      repo.permissions.destroy_all
+      repo.permissions.create!(repository_id: repo.id, pull: true)
+
+      request.payload = {
+        'pull_request' => {
+          'user' => {
+            'id' => user.github_id
+          }
+        }
+      }
+
+      request.pull_request_author_has_permissions?.should be_false
+    end
+
+    it 'returns true with a user and permissions' do
+      user = Factory(:user, github_id: 100)
+      user.permissions.destroy_all
+      user.permissions.create!(repository_id: repo.id, push: true, pull: true)
+
+      request.payload = {
+        'pull_request' => {
+          'user' => {
+            'id' => user.github_id
+          }
+        }
+      }
+
+      request.pull_request_author_has_permissions?.should be_true
+    end
+  end
+
   describe 'same_repo_pull_request?' do
     it 'returns true if the base and head repos match' do
       request.payload = {

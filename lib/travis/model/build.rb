@@ -59,7 +59,7 @@ class Build < Travis::Model
 
   serialize :config
 
-  delegate :same_repo_pull_request?, :to => :request
+  delegate :same_repo_pull_request?, :pull_request_author_has_permissions?, :to => :request
 
   class << self
     def recent(options = {})
@@ -174,7 +174,7 @@ class Build < Travis::Model
   end
 
   def secure_env_enabled?
-    !pull_request? || same_repo_pull_request?
+    !pull_request? || same_repo_pull_request? || pull_request_author_has_permissions?
   end
   alias addons_enabled? secure_env_enabled?
 
