@@ -39,7 +39,7 @@ module Travis
                 'branch' => commit.branch,
                 'ref' => commit.pull_request? ? commit.ref : nil,
                 'state' => job.state.to_s,
-                'secure_env_enabled' => build.secure_env_enabled?
+                'secure_env_enabled' => job.secure_env_enabled?
               }
               data['tag'] = request.tag_name if include_tag_name?
               data['pull_request'] = commit.pull_request? ? commit.pull_request_number : false
@@ -69,7 +69,7 @@ module Travis
 
             def env_vars
               vars = settings.env_vars
-              vars = vars.public if commit.pull_request?
+              vars = vars.public unless job.secure_env_enabled?
 
               vars.map do |var|
                 {
