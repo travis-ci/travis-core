@@ -58,7 +58,7 @@ module Travis
     end
 
     def normalize_string(str)
-      str.downcase.tr(" ", "-")
+      str.downcase.gsub("#", "-sharp").gsub(/[^A-Za-z0-9.:\-_]/, "")
     end
   end
 end
