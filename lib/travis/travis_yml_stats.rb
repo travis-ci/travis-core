@@ -2,6 +2,22 @@ require "metriks"
 
 module Travis
   class TravisYmlStats
+    LANGUAGE_VERSION_KEYS = %w[
+      ruby rvm
+      python
+      otp_release
+      go
+      jdk
+      ghc
+      jdk
+      node_js
+      perl
+      php
+      python
+      rvm
+      scala
+    ]
+
     def self.store_stats(request, metriks=Metriks)
       new(request, metriks).store_stats
     end
@@ -13,6 +29,7 @@ module Travis
 
     def store_stats
       store_language
+      store_language_version
     end
 
     private
@@ -22,6 +39,23 @@ module Travis
     def store_language
       mark_metric "travis_yml.language.#{travis_yml_language}"
       mark_metric "travis_yml.github_language.#{github_language}"
+    end
+
+    def store_language_version
+      LANGUAGE_VERSION_KEYS.each do |key|
+        if config.key?(key)
+          case config[key]
+          when String
+            mark_metric "travis_yml.#{key}.#{config[key]}"
+          when Array
+            config[key].each do |version|
+              mark_metric "travis_yml.#{key}.#{version}"
+            end
+          else
+            mark_metric "travis_yml.#{key}.invalid"
+          end
+        end
+      end
     end
 
     def config

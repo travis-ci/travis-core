@@ -111,4 +111,33 @@ describe Travis::TravisYmlStats do
       end
     end
   end
+
+  describe "travis_yml.ruby." do
+    context "ruby: 2.1.2" do
+      before do
+        request.config["ruby"] = "2.1.2"
+      end
+
+      it "marks travis_yml.ruby.2.1.2" do
+        subject
+        metriks.marked.should include("travis_yml.ruby.2.1.2")
+      end
+    end
+
+    context "ruby: [ '2.0.0', '2.1.2' ]" do
+      before do
+        request.config["ruby"] = %w[ 2.0.0 2.1.2 ]
+      end
+
+      it "marks travis_yml.ruby.2.0.0" do
+        subject
+        metriks.marked.should include("travis_yml.ruby.2.0.0")
+      end
+
+      it "marks travis_yml.ruby.2.1.2" do
+        subject
+        metriks.marked.should include("travis_yml.ruby.2.1.2")
+      end
+    end
+  end
 end
