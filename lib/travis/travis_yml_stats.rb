@@ -30,6 +30,7 @@ module Travis
       store_language_version
       store_deployment_providers
       store_sudo
+      store_apt_get
     end
 
     private
@@ -71,6 +72,12 @@ module Travis
     def store_sudo
       if commands.any? { |command| command =~ /\bsudo\b/ }
         mark_metric "travis_yml.sudo"
+      end
+    end
+
+    def store_apt_get
+      if commands.any? { |command| command =~ /\bapt-get\b/ }
+        mark_metric "travis_yml.apt_get"
       end
     end
 

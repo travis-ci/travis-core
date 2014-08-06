@@ -192,4 +192,24 @@ describe Travis::TravisYmlStats do
       end
     end
   end
+
+  describe "travis_yml.apt_get" do
+    context "build that uses apt-get" do
+      before do
+        request.config["before_install"] = "sudo apt-get update"
+      end
+
+      it "marks travis_yml.sudo" do
+        subject
+        metriks.marked.should include("travis_yml.apt_get")
+      end
+    end
+
+    context "build that doesn't use apt-get" do
+      it "does not mark travis_yml.apt_get" do
+        subject
+        metriks.marked.should_not include("travis_yml.apt_get")
+      end
+    end
+  end
 end
