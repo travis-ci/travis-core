@@ -2,12 +2,13 @@ require "metriks"
 
 module Travis
   class TravisYmlStats
-    def self.store_stats(request)
-      new(request).store_stats
+    def self.store_stats(request, metriks=Metriks)
+      new(request, metriks).store_stats
     end
 
-    def initialize(request)
+    def initialize(request, metriks=Metriks)
       @request = request
+      @metriks = metriks
     end
 
     def store_stats
@@ -63,7 +64,7 @@ module Travis
 
     def mark_metric(metric_name)
       normalized_name = metric_name.gsub(/[^A-Za-z0-9.:\-_]/, "")
-      Metriks.meter(normalized_name).mark
+      @metriks.meter(normalized_name).mark
     end
   end
 end
