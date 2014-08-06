@@ -29,6 +29,7 @@ module Travis
       store_language
       store_language_version
       store_deployment_providers
+      store_sudo
     end
 
     private
@@ -67,12 +68,31 @@ module Travis
       end
     end
 
+    def store_sudo
+      if commands.any? { |command| command =~ /\bsudo\b/ }
+        mark_metric "travis_yml.sudo"
+      end
+    end
+
     def config
       request.config
     end
 
     def payload
       request.payload
+    end
+
+    def commands
+      [
+        config["before_install"],
+        config["install"],
+        config["before_script"],
+        config["script"],
+        config["after_success"],
+        config["after_failure"],
+        config["before_deploy"],
+        config["after_deploy"],
+      ].flatten.compact
     end
 
     def travis_yml_language

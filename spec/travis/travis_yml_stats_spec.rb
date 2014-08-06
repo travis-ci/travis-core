@@ -172,4 +172,24 @@ describe Travis::TravisYmlStats do
       end
     end
   end
+
+  describe "travis_yml.sudo" do
+    context "build that uses sudo" do
+      before do
+        request.config["before_install"] = "sudo apt-get update"
+      end
+
+      it "marks travis_yml.sudo" do
+        subject
+        metriks.marked.should include("travis_yml.sudo")
+      end
+    end
+
+    context "build that doesn't use sudo" do
+      it "does not mark travis_yml.sudo" do
+        subject
+        metriks.marked.should_not include("travis_yml.sudo")
+      end
+    end
+  end
 end
