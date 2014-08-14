@@ -76,7 +76,7 @@ module Travis
         if config.key?(key)
           case config[key]
           when String, Array
-            set [:language_version, key], Array(config[key]).sort
+            set [:language_version, key], Array(config[key]).map(&:to_s).sort
           else
             set [:language_version, key], ["invalid"]
           end

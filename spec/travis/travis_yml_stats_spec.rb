@@ -127,6 +127,18 @@ describe Travis::TravisYmlStats do
         subject
       end
     end
+
+    context "when `ruby: [ '2.1.2', 2.0 ]'" do
+      before do
+        request.config["ruby"] = [ "2.1.2", 2.0 ]
+      end
+
+      it "sets the language_version.ruby key to ['2.0', '2.1.2']" do
+        event_should_contain language_version: { ruby: %w[2.0 2.1.2] }
+
+        subject
+      end
+    end
   end
 
   describe "sudo being used in a command" do
