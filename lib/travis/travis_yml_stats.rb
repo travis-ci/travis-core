@@ -9,7 +9,7 @@ module Travis
       sidekiq_options queue: :keen_events
 
       def perform(payload)
-        Keen.publish(:requests, keen_payload)
+        Keen.publish(:requests, payload)
       end
     end
 
