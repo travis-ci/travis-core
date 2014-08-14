@@ -1,4 +1,4 @@
-require "metriks"
+require "keen"
 
 module Travis
   class TravisYmlStats
@@ -16,58 +16,73 @@ module Travis
       scala
     ]
 
-    def self.store_stats(request, metriks=Metriks)
-      new(request, metriks).store_stats
+    def self.keen_client=(keen_client)
+      @keen_client = keen_client
     end
 
-    def initialize(request, metriks=Metriks)
+    def self.store_stats(request, keen_client=@keen_client || Keen)
+      new(request, keen_client).store_stats
+    end
+
+    def initialize(request, keen_client)
       @request = request
-      @metriks = metriks
+      @keen_client = keen_client
+      @keen_payload = {}
     end
 
     def store_stats
-      store_language
-      store_language_version
-      store_sudo
-      store_apt_get
+      set_basic_info
+      set_language
+      set_language_version
+      set_uses_sudo
+      set_uses_apt_get
+
+      @keen_client.publish(:requests, keen_payload)
     end
 
     private
 
-    attr_reader :request
+    attr_reader :request, :keen_payload
 
-    def store_language
-      mark_metric "travis_yml.language.#{travis_yml_language}"
-      mark_metric "travis_yml.github_language.#{github_language}"
+    def set(path, value)
+      path = Array(path)
+      hsh = keen_payload
+      path[0..-2].each do |key|
+        hsh[key.to_sym] ||= {}
+        hsh = hsh[key.to_sym]
+      end
+
+      hsh[path.last.to_sym] = value
     end
 
-    def store_language_version
+    def set_basic_info
+      set :repository_id, request.repository_id
+    end
+
+    def set_language
+      set :language, travis_yml_language
+      set :github_language, github_language
+    end
+
+    def set_language_version
       LANGUAGE_VERSION_KEYS.each do |key|
         if config.key?(key)
           case config[key]
-          when String
-            mark_metric "travis_yml.#{key}.#{config[key]}"
-          when Array
-            config[key].each do |version|
-              mark_metric "travis_yml.#{key}.#{version}"
-            end
+          when String, Array
+            set [:language_version, key], Array(config[key]).sort
           else
-            mark_metric "travis_yml.#{key}.invalid"
+            set [:language_version, key], ["invalid"]
           end
         end
       end
     end
 
-    def store_sudo
-      if commands.any? { |command| command =~ /\bsudo\b/ }
-        mark_metric "travis_yml.sudo"
-      end
+    def set_uses_sudo
+      set :uses_sudo, commands.any? { |command| command =~ /\bsudo\b/ }
     end
 
-    def store_apt_get
-      if commands.any? { |command| command =~ /\bapt-get\b/ }
-        mark_metric "travis_yml.apt_get"
-      end
+    def set_uses_apt_get
+      set :uses_apt_get, commands.any? { |command| command =~ /\bapt-get\b/ }
     end
 
     def config
@@ -94,36 +109,19 @@ module Travis
     def travis_yml_language
       language = config["language"]
       case language
-      when String
-        normalize_string language
-      when nil
-        "empty"
-      else
+      when Array
         "invalid"
+      else
+        language
       end
     end
 
     def github_language
-      language = payload.fetch("repository", {})["language"]
-      case language
-      when String
-        normalize_string language
-      when nil
-        "empty"
-      when Array
-        normalize_string language.first
-      else
-        "invalid"
-      end
+      payload.fetch("repository", {})["language"]
     end
 
     def normalize_string(str)
       str.downcase.gsub("#", "-sharp").gsub(/[^A-Za-z0-9.:\-_]/, "")
-    end
-
-    def mark_metric(metric_name)
-      normalized_name = metric_name.gsub(/[^A-Za-z0-9.:\-_]/, "")
-      @metriks.meter(normalized_name).mark
     end
   end
 end

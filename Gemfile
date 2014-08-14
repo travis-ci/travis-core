@@ -11,6 +11,7 @@ gem 'json', '~> 1.7.7'
 
 gem 'dalli'
 gem 'connection_pool'
+gem 'keen', '~> 0.8.6'
 
 platform :mri do
   gem 'bunny',            '~> 0.7.9'
