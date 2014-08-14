@@ -1,7 +1,8 @@
+require "spec_helper"
 require "travis/travis_yml_stats"
 
 describe Travis::TravisYmlStats do
-  let(:publisher) { double("keen-publisher") }
+  let(:publisher) { mock("keen-publisher") }
   subject { described_class.store_stats(request, publisher) }
 
   let(:request) do
@@ -15,7 +16,7 @@ describe Travis::TravisYmlStats do
   end
 
   def event_should_contain(opts)
-    publisher.should_receive(:perform_async).with(hash_including(opts))
+    publisher.expects(:perform_async).with(has_entries(opts))
   end
 
   describe ".travis.yml language key" do
