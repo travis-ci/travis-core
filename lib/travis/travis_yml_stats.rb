@@ -116,10 +116,12 @@ module Travis
     def travis_yml_language
       language = config["language"]
       case language
-      when Array
-        "invalid"
-      else
+      when String
         language
+      when nil
+        "default"
+      else
+        "invalid"
       end
     end
 

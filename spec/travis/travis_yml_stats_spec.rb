@@ -34,7 +34,7 @@ describe Travis::TravisYmlStats do
 
     context "when not specified" do
       it "sets the language key to nil" do
-        event_should_contain language: nil
+        event_should_contain language: "default"
 
         subject
       end
