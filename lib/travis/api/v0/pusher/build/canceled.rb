@@ -4,15 +4,6 @@ module Travis
       module Pusher
         class Build
           class Canceled < Build
-            def data
-              { 'build' => build_data, 'repository' => repository_data }
-            end
-
-            def build_data
-              super.
-                reject { |key, value| key == 'config' }.
-                merge({ 'duration' => build.duration })
-            end
           end
         end
       end
