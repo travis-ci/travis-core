@@ -1,7 +1,18 @@
 require "keen"
+require "sidekiq"
 
 module Travis
   class TravisYmlStats
+    class KeenPublisher
+      include ::Sidekiq::Worker
+
+      sidekiq_options queue: :keen_events
+
+      def perform(payload)
+        Keen.publish(:requests, keen_payload)
+      end
+    end
+
     LANGUAGE_VERSION_KEYS = %w[
       ghc
       go
@@ -16,17 +27,13 @@ module Travis
       scala
     ]
 
-    def self.keen_client=(keen_client)
-      @keen_client = keen_client
+    def self.store_stats(request, publisher=KeenPublisher)
+      new(request, publisher).store_stats
     end
 
-    def self.store_stats(request, keen_client=@keen_client || Keen)
-      new(request, keen_client).store_stats
-    end
-
-    def initialize(request, keen_client)
+    def initialize(request, publisher)
       @request = request
-      @keen_client = keen_client
+      @publisher = publisher
       @keen_payload = {}
     end
 
@@ -37,7 +44,7 @@ module Travis
       set_uses_sudo
       set_uses_apt_get
 
-      @keen_client.publish(:requests, keen_payload)
+      @publisher.perform_async(keen_payload)
     end
 
     private

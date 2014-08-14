@@ -1,8 +1,8 @@
 require "travis/travis_yml_stats"
 
 describe Travis::TravisYmlStats do
-  let(:keen) { double("keen") }
-  subject { described_class.store_stats(request, keen) }
+  let(:publisher) { double("keen-publisher") }
+  subject { described_class.store_stats(request, publisher) }
 
   let(:request) do
     stub({
@@ -15,7 +15,7 @@ describe Travis::TravisYmlStats do
   end
 
   def event_should_contain(opts)
-    keen.should_receive(:publish).with(:requests, hash_including(opts))
+    publisher.should_receive(:perform_async).with(hash_including(opts))
   end
 
   describe ".travis.yml language key" do
