@@ -69,7 +69,13 @@ module Travis
     end
 
     def set_basic_info
+      set :event_type, request.event_type
+      set :matrix_size, request.builds.map { |build| build.matrix.size }.reduce(:+)
       set :repository_id, request.repository_id
+      set :owner_id, request.owner_id
+      set :owner_type, request.owner_type
+      # The owner_type, owner_id tuple is there so we can do unique counts on it
+      set :owner, [request.owner_type, request.owner_id]
     end
 
     def set_language
