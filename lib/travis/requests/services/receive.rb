@@ -1,6 +1,6 @@
 require 'gh'
 
-# require "travis/travis_yml_stats"
+require "travis/travis_yml_stats"
 
 module Travis
   module Requests
