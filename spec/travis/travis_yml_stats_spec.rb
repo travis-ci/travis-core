@@ -12,6 +12,12 @@ describe Travis::TravisYmlStats do
         "repository" => {}
       },
       repository_id: 123,
+      event_type: "push",
+      owner_id: 234,
+      owner_type: "User",
+      builds: [
+        stub(matrix: [ stub, stub ])
+      ]
     })
   end
 
@@ -183,5 +189,43 @@ describe Travis::TravisYmlStats do
         subject
       end
     end
+  end
+
+  describe "a push" do
+    before do
+      request.stubs(:event_type).returns("push")
+    end
+
+    it "sets the event_type to 'push'" do
+      event_should_contain event_type: "push"
+
+      subject
+    end
+  end
+
+  describe "a pull_request" do
+    before do
+      request.stubs(:event_type).returns("pull_request")
+    end
+
+    it "sets the event_type to 'pull_request'" do
+      event_should_contain event_type: "pull_request"
+
+      subject
+    end
+  end
+
+  describe "a build with two jobs" do
+    it "sets the matrix_size to 2" do
+      event_should_contain matrix_size: 2
+
+      subject
+    end
+  end
+
+  it "owner_type and owner_id are set" do
+    event_should_contain owner_id: 234, owner_type: "User", owner: ["User", 234]
+
+    subject
   end
 end
