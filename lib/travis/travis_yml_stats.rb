@@ -1,5 +1,9 @@
-require "keen"
 require "sidekiq"
+
+begin
+  require "keen"
+rescue LoadError
+end
 
 module Travis
   class TravisYmlStats
@@ -9,7 +13,9 @@ module Travis
       sidekiq_options queue: :keen_events
 
       def perform(payload)
-        Keen.publish(:requests, payload)
+        if defined?(Keen) && ENV["KEEN_PROJECT_ID"]
+          Keen.publish(:requests, payload)
+        end
       end
     end
 
