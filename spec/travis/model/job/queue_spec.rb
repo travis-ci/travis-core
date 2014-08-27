@@ -11,7 +11,6 @@ describe 'Job::Queue' do
       { :queue => 'builds.mac_osx', :os => 'osx' },
       { :queue => 'builds.docker', :sudo => false },
       { :queue => 'builds.education', :education => true },
-      { :queue => 'builds.education-osx', :education => true, :os => 'osx' },
       { :queue => 'builds.cloudfoundry', :owner => 'cloudfoundry' },
       { :queue => 'builds.clojure', :language => 'clojure' },
       { :queue => 'builds.erlang', :language => 'erlang' },
@@ -66,10 +65,10 @@ describe 'Job::Queue' do
       Job::Queue.for(job).name.should == 'builds.education'
     end
 
-    it 'returns the queue when education requirements matches the given configuration hash, combined with other conditions' do
+    it 'returns the queue when education requirements matches, ignoring configuration hash' do
       owner = stub('owner', :education => true)
       job = stub('job', :config => { :os => 'osx' }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner))
-      Job::Queue.for(job).name.should == 'builds.education-osx'
+      Job::Queue.for(job).name.should == 'builds.education'
     end
 
     it 'handles language being passed as an array gracefully' do
@@ -122,7 +121,7 @@ describe 'Job::Queue' do
 
   describe 'Queue.queues' do
     it 'returns an array of Queues for the config hash' do
-      rails, os, docker, edu, edu_osx, cloudfoundry, clojure, erlang = Job::Queue.send(:queues)
+      rails, os, docker, edu, cloudfoundry, clojure, erlang = Job::Queue.send(:queues)
 
       rails.name.should == 'builds.rails'
       rails.slug.should == 'rails/rails'

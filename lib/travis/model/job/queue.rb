@@ -44,7 +44,7 @@ class Job
       end
 
       def matches?(owner, repo_name, language, os = nil, sudo = nil, education = false)
-        return false unless matches_education?(education)
+        return matches_education?(education) if education
         matches_slug?("#{owner}/#{repo_name}") || matches_owner?(owner) ||
           matches_os?(os) || matches_language?(language) || matches_sudo?(sudo)
       end
@@ -74,7 +74,7 @@ class Job
       end
 
       def matches_education?(education)
-        !education == !@education
+        !!self.education && (self.education == education)
       end
   end
 end
