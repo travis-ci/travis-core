@@ -22,10 +22,19 @@ module Travis
               Travis.logger.info("Changing #<User id=#{user.id} login=\"#{user.login}\" github_id=#{user.github_id}> email: current=\"#{user.email}\", new=\"#{email}\" (UserInfo)")
             end
 
-            user.update_attributes!(name: name, login: login, gravatar_id: gravatar_id, email: email)
+            user.update_attributes!(: name, login: login, gravatar_id: gravatar_id, email: email, education: education)
             emails = verified_emails
             emails << email unless emails.include? email
             emails.each { |e| user.emails.find_or_create_by_email!(e) }
+          end
+
+          def education
+            remote = GH::Remote.new
+            remote.setup('https://education.github.com/api', token: user.github_oauth_token)
+            response = remote.fetch_resource('/user')
+            JSON.parse(response.body)['student']
+          rescue GH::Error, JSON::ParseError => e
+            log_exception(e)
           end
 
           def name
