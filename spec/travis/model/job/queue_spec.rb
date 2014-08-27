@@ -10,6 +10,8 @@ describe 'Job::Queue' do
       { :queue => 'builds.rails', :slug => 'rails/rails' },
       { :queue => 'builds.mac_osx', :os => 'osx' },
       { :queue => 'builds.docker', :sudo => false },
+      { :queue => 'builds.education', :education => true },
+      { :queue => 'builds.education-osx', :education => true, :os => 'osx' },
       { :queue => 'builds.cloudfoundry', :owner => 'cloudfoundry' },
       { :queue => 'builds.clojure', :language => 'clojure' },
       { :queue => 'builds.erlang', :language => 'erlang' },
@@ -56,6 +58,18 @@ describe 'Job::Queue' do
     it 'returns the queue when sudo requirements matches the given configuration hash' do
       job = stub('job', :config => { sudo: false }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => stub))
       Job::Queue.for(job).name.should == 'builds.docker'
+    end
+
+    it 'returns the queue when education requirements matches the given configuration hash' do
+      owner = stub('owner', :education => true)
+      job = stub('job', :config => { }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner))
+      Job::Queue.for(job).name.should == 'builds.education'
+    end
+
+    it 'returns the queue when education requirements matches the given configuration hash, combined with other conditions' do
+      owner = stub('owner', :education => true)
+      job = stub('job', :config => { :os => 'osx' }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner))
+      Job::Queue.for(job).name.should == 'builds.education-osx'
     end
 
     it 'handles language being passed as an array gracefully' do
@@ -108,13 +122,16 @@ describe 'Job::Queue' do
 
   describe 'Queue.queues' do
     it 'returns an array of Queues for the config hash' do
-      rails, os, docker, cloudfoundry, clojure, erlang = Job::Queue.send(:queues)
+      rails, os, docker, edu, edu_osx, cloudfoundry, clojure, erlang = Job::Queue.send(:queues)
 
       rails.name.should == 'builds.rails'
       rails.slug.should == 'rails/rails'
 
       docker.name.should == 'builds.docker'
       docker.sudo.should == false
+
+      edu.name.should == 'builds.education'
+      edu.education.should == true
 
       cloudfoundry.name.should == 'builds.cloudfoundry'
       cloudfoundry.owner.should == 'cloudfoundry'
