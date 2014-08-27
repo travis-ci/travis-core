@@ -71,6 +71,18 @@ describe 'Job::Queue' do
       Job::Queue.for(job).name.should == 'builds.education'
     end
 
+    it 'switches educational builds to default queue on sudo true' do
+      owner = stub('owner', :education => true)
+      job = stub('job', :config => { :sudo => true }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner))
+      Job::Queue.for(job).name.should == 'builds.linux'
+    end
+
+    it 'uses educational queue for sudo false' do
+      owner = stub('owner', :education => true)
+      job = stub('job', :config => { :sudo => false }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner))
+      Job::Queue.for(job).name.should == 'builds.education'
+    end
+
     it 'handles language being passed as an array gracefully' do
       job = stub('job', :config => { :language => ['clojure'] }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-ci', :owner => stub))
       Job::Queue.for(job).name.should == 'builds.clojure'
