@@ -30,7 +30,7 @@ module Travis
           end
 
           def education
-            Education.new(user).student?
+            Education.new(user.github_oauth_token).student?
           end
 
           def name

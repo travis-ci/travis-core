@@ -3,7 +3,7 @@ require 'json'
 
 module Travis
   module Github
-    class Education < Struct.new(:user)
+    class Education < Struct.new(:github_oauth_token)
       include Travis::Logging
 
       def student?
@@ -17,7 +17,7 @@ module Travis
       def fetch
         Timeout::timeout(timeout) do
           remote = GH::Remote.new
-          remote.setup('https://education.github.com/api', token: user.github_oauth_token)
+          remote.setup('https://education.github.com/api', token: github_oauth_token)
           response = remote.fetch_resource('/user')
           JSON.parse(response.body)
         end
