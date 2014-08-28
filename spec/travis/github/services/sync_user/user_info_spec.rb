@@ -34,10 +34,6 @@ describe Travis::Github::Services::SyncUser::UserInfo do
     "konstantin.mailinglists@googlemail.com"
   ]}
 
-  before do
-    subject.stubs(:education).returns(false)
-  end
-
   describe 'no public email' do
     before { user_info.delete 'email' }
     its(:email) { should == 'konstantin.mailinglists@googlemail.com' }
