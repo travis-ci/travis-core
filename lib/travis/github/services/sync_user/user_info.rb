@@ -1,5 +1,5 @@
 require 'gh'
-require 'travis/github/services/sync_user/education'
+require 'travis/github/education'
 
 module Travis
   module Github
