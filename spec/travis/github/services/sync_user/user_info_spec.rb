@@ -34,6 +34,10 @@ describe Travis::Github::Services::SyncUser::UserInfo do
     "konstantin.mailinglists@googlemail.com"
   ]}
 
+  before do
+    subject.stubs(:education).returns(false)
+  end
+
   describe 'no public email' do
     before { user_info.delete 'email' }
     its(:email) { should == 'konstantin.mailinglists@googlemail.com' }
@@ -70,7 +74,9 @@ describe Travis::Github::Services::SyncUser::UserInfo do
   end
 
   it 'calls update_attributes! and emails.find_or_create_by_email!' do
+    subject.stubs(:education).returns(true)
     args   = user_info.slice('login', 'name', 'email', 'gravatar_id').symbolize_keys
+    args[:education] = true
     emails = stub("email")
     user.stubs(:emails).returns(emails)
     user.stubs(:github_id).returns(100)
