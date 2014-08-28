@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::Github::Services::SyncUser::Education do
+describe Travis::Github::Education do
   let(:user) { stub('user', github_oauth_token: 'an-oauth-token') }
   let(:education) { described_class.new(user) }
 
