@@ -1,4 +1,5 @@
 require 'gh'
+require 'travis/github/services/sync_user/education'
 
 module Travis
   module Github
@@ -29,12 +30,7 @@ module Travis
           end
 
           def education
-            remote = GH::Remote.new
-            remote.setup('https://education.github.com/api', token: user.github_oauth_token)
-            response = remote.fetch_resource('/user')
-            JSON.parse(response.body)['student']
-          rescue GH::Error, JSON::ParseError => e
-            log_exception(e)
+            Education.new(user).student?
           end
 
           def name
