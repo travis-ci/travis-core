@@ -30,7 +30,9 @@ module Travis
           end
 
           def education
-            Education.new(user.github_oauth_token).student?
+            if Travis::Features.owner_active?(:education_data_sync, user)
+              Education.new(user.github_oauth_token).student?
+            end
           end
 
           def name

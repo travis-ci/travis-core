@@ -77,6 +77,8 @@ describe Travis::Github::Services::SyncUser::UserInfo do
     user.stubs(:emails).returns(emails)
     user.stubs(:github_id).returns(100)
     user.stubs(:id).returns(1)
+    user.class.stubs(:table_name).returns('users') # for Features
+    Travis::Features.activate_owner(:education_data_sync, user)
     user.expects(:update_attributes!).with(args).once
     emails.expects(:find_or_create_by_email!).with("konstantin.mailinglists@gmail.com").once
     emails.expects(:find_or_create_by_email!).with("konstantin.mailinglists@googlemail.com").once
