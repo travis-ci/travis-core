@@ -77,6 +77,9 @@ module Travis
             def user_info
               @user_info ||= begin
                 data = gh['user'].to_hash
+                if user.login != data['login']
+                  Travis.logger.info("Fetching data for github_id=#{user.github_id} (UserInfo), data: #{data.inspect}")
+                end
                 data
               end
             end
