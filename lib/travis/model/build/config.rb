@@ -30,7 +30,7 @@ class Build
       'php'         => [:php],
       'python'      => [:python],
       'ruby'        => [:rvm, :gemfile, :jdk, :ruby],
-      'rust'        => [:rust]
+      'rust'        => [:rust],
       'scala'       => [:scala, :jdk]
     }
 
