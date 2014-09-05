@@ -12,7 +12,7 @@ class User < Travis::Model
   has_many :repositories, through: :permissions
   has_many :emails, dependent: :destroy
 
-  attr_accessible :name, :login, :email, :github_id, :github_oauth_token, :gravatar_id, :locale
+  attr_accessible :name, :login, :email, :github_id, :github_oauth_token, :gravatar_id, :locale, :education
 
   before_create :set_as_recent
   after_create :create_a_token

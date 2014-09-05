@@ -23,6 +23,8 @@ module Travis
               Repositories.new(user).run
             end
           end
+        ensure
+          user.update_column(:is_syncing, false)
         end
 
         def user

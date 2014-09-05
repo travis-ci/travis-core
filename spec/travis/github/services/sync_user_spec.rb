@@ -10,6 +10,17 @@ describe Travis::Github::Services::SyncUser do
     Travis.config.email.from = 'support@travis-ci.com'
   end
 
+  describe 'run' do
+    it 'resets is_syncing even on error' do
+      service.expects(:syncing).raises(StandardError)
+      user.expects(:update_column).with(:is_syncing, false)
+
+      expect {
+        service.run
+      }.to raise_error
+    end
+  end
+
   describe 'syncing' do
     it 'returns the block value' do
       service.send(:syncing) { 42 }.should == 42

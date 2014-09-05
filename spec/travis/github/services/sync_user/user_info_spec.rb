@@ -70,11 +70,15 @@ describe Travis::Github::Services::SyncUser::UserInfo do
   end
 
   it 'calls update_attributes! and emails.find_or_create_by_email!' do
+    subject.stubs(:education).returns(true)
     args   = user_info.slice('login', 'name', 'email', 'gravatar_id').symbolize_keys
+    args[:education] = true
     emails = stub("email")
     user.stubs(:emails).returns(emails)
     user.stubs(:github_id).returns(100)
     user.stubs(:id).returns(1)
+    user.class.stubs(:table_name).returns('users') # for Features
+    Travis::Features.activate_owner(:education_data_sync, user)
     user.expects(:update_attributes!).with(args).once
     emails.expects(:find_or_create_by_email!).with("konstantin.mailinglists@gmail.com").once
     emails.expects(:find_or_create_by_email!).with("konstantin.mailinglists@googlemail.com").once

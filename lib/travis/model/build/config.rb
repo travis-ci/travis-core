@@ -10,7 +10,7 @@ class Build
 
     DEFAULT_LANG = 'ruby'
 
-    ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl, :compiler, :go, :xcode_sdk, :xcode_scheme, :ghc, :ruby]
+    ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl, :compiler, :go, :xcode_sdk, :xcode_scheme, :ghc, :ruby, :rust]
 
     EXPANSION_KEYS_FEATURE = [:os]
 
@@ -30,6 +30,7 @@ class Build
       'php'         => [:php],
       'python'      => [:python],
       'ruby'        => [:rvm, :gemfile, :jdk, :ruby],
+      'rust'        => [:rust],
       'scala'       => [:scala, :jdk]
     }
 

@@ -1,4 +1,5 @@
 require 'gh'
+require 'travis/github/education'
 
 module Travis
   module Github
@@ -22,10 +23,16 @@ module Travis
               Travis.logger.info("Changing #<User id=#{user.id} login=\"#{user.login}\" github_id=#{user.github_id}> email: current=\"#{user.email}\", new=\"#{email}\" (UserInfo)")
             end
 
-            user.update_attributes!(name: name, login: login, gravatar_id: gravatar_id, email: email)
+            user.update_attributes!(name: name, login: login, gravatar_id: gravatar_id, email: email, education: education)
             emails = verified_emails
             emails << email unless emails.include? email
             emails.each { |e| user.emails.find_or_create_by_email!(e) }
+          end
+
+          def education
+            if Travis::Features.feature_active?(:education_data_sync) || Travis::Features.owner_active?(:education_data_sync, user)
+              Education.new(user.github_oauth_token).student?
+            end
           end
 
           def name
@@ -70,6 +77,9 @@ module Travis
             def user_info
               @user_info ||= begin
                 data = gh['user'].to_hash
+                if user.login != data['login']
+                  Travis.logger.info("Fetching data for github_id=#{user.github_id} (UserInfo), data: #{data.inspect}")
+                end
                 data
               end
             end
