@@ -10,17 +10,19 @@ class Job
   class Queue
     class << self
       def for(job)
-        repo_name = job.repository.try(:name)
-        owner     = job.repository.try(:owner_name)
-        language  = Array(job.config[:language]).flatten.compact.first
-        os        = job.config[:os]
-        sudo      = allow_sudo_specification?(job.repository) ? job.config[:sudo] : nil
-        queues.detect { |queue| queue.send(:matches?, owner, repo_name, language, os, sudo) } || default
+        repo_name  = job.repository.try(:name)
+        owner_name = job.repository.try(:owner_name)
+        language   = Array(job.config[:language]).flatten.compact.first
+        os         = job.config[:os]
+        sudo       = allow_sudo_specification?(job.repository) ? job.config[:sudo] : nil
+        owner      = job.repository.try(:owner)
+        education  = owner.education if owner.respond_to? :education
+        queues.detect { |queue| queue.send(:matches?, owner_name, repo_name, language, os, sudo, education) } || default
       end
 
       def queues
         @queues ||= Array(Travis.config.queues).compact.map do |queue|
-          Queue.new(*queue.values_at(*[:queue, :slug, :owner, :language, :os, :sudo]))
+          Queue.new(*queue.values_at(*[:queue, :slug, :owner, :language, :os, :sudo, :education]))
         end
       end
 
@@ -33,15 +35,16 @@ class Job
       end
     end
 
-    attr_reader :name, :slug, :owner, :language, :os, :sudo
+    attr_reader :name, :slug, :owner, :language, :os, :sudo, :education
 
     protected
 
       def initialize(*args)
-        @name, @slug, @owner, @language, @os, @sudo = *args
+        @name, @slug, @owner, @language, @os, @sudo, @education = *args
       end
 
-      def matches?(owner, repo_name, language, os = nil, sudo = nil)
+      def matches?(owner, repo_name, language, os = nil, sudo = nil, education = false)
+        return matches_education?(education) if education
         matches_slug?("#{owner}/#{repo_name}") || matches_owner?(owner) ||
           matches_os?(os) || matches_language?(language) || matches_sudo?(sudo)
       end
@@ -68,6 +71,10 @@ class Job
 
       def matches_sudo?(sudo)
         !self.sudo.nil? && (self.sudo == sudo)
+      end
+
+      def matches_education?(education)
+        !!self.education && (self.education == education)
       end
   end
 end
