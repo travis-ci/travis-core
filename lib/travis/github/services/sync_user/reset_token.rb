@@ -12,7 +12,8 @@ module Travis
           end
 
           def run
-            @user.update_attributes!(github_oauth_token: new_token)
+            token = new_token
+            @user.update_attributes!(github_oauth_token: token) if token
           end
 
           private
