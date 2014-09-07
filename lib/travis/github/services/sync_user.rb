@@ -15,7 +15,7 @@ module Travis
         def run
           new_user? do
             syncing do
-              if Time.now.utc.sunday? && !Travis::Features.feature_active?("reset_token_in_sync")
+              if Time.now.utc.sunday? && Travis::Features.feature_active?("reset_token_in_sync")
                 ResetToken.new(user).run
               end
               UserInfo.new(user).run
