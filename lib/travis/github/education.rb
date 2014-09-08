@@ -4,6 +4,12 @@ require 'json'
 module Travis
   module Github
     class Education < Struct.new(:github_oauth_token)
+      def self.active?(owner)
+        if Travis::Features.feature_active?(:education) || Travis::Features.owner_active?(:education, owner)
+          owner.education? if owner.respond_to? :education?
+        end
+      end
+
       include Travis::Logging
 
       def student?
