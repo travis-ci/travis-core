@@ -3,6 +3,18 @@ require 'spec_helper'
 describe Job do
   include Support::ActiveRecord
 
+  describe '.result' do
+    it 'returns 1 for failed builds' do
+      job = Factory.build(:test, state: :failed)
+      job.result.should == 1
+    end
+
+    it 'returns 0 for passed builds' do
+      job = Factory.build(:test, state: :passed)
+      job.result.should == 0
+    end
+  end
+
   describe ".queued" do
     let(:jobs) { [Factory.create(:test), Factory.create(:test), Factory.create(:test)] }
 

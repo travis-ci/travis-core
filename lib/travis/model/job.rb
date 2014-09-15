@@ -147,6 +147,11 @@ class Job < Travis::Model
     log.update_attributes!(content: content, aggregated_at: Time.now)
   end
 
+  # compatibility, we still use result in webhooks
+  def result
+    state.try(:to_sym) == :passed ? 0 : 1
+  end
+
   private
 
     def multi_os_enabled?
