@@ -4,11 +4,6 @@ module Travis
       module Pusher
         class Build
           class Started < Build
-            require 'travis/api/v0/pusher/build/started/job'
-
-            def data
-              { 'build' => build_data, 'repository' => repository_data }
-            end
           end
         end
       end

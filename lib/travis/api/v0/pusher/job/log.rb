@@ -3,7 +3,14 @@ module Travis
     module V0
       module Pusher
         class Job
-          class Log < Job
+          class Log
+            attr_reader :job, :options
+
+            def initialize(job, options = {})
+              @job = job
+              @options = options
+            end
+
             def data
               {
                 'id' => job.id,

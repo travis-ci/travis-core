@@ -1,24 +1,22 @@
 require 'spec_helper'
 
-describe Travis::Api::V0::Pusher::Build::Started do
+describe Travis::Api::V0::Pusher::Build do
   include Travis::Testing::Stubs, Support::Formats
 
   let(:repo)  { stub_repo(last_build_state: :started, last_build_duration: nil, last_build_finished_at: nil) }
   let(:job)   { stub_test(state: :started, finished_at: nil, finished?: false) }
   let(:build) { stub_build(repository: repo, state: :started, finished_at: nil, matrix: [job], finished?: false) }
-  let(:data)  { Travis::Api::V0::Pusher::Build::Started.new(build).data }
+  let(:data)  { Travis::Api::V0::Pusher::Build.new(build).data }
 
   it 'build' do
     data['build'].except('matrix').should == {
       'id' => build.id,
       'repository_id' => build.repository_id,
       'number' => 2,
-      'config' => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
       'state' => 'started',
-      'result' => nil,
       'started_at' => json_format_time(Time.now.utc - 1.minute),
       'finished_at' => nil,
-      'duration' => nil,
+      'duration' => 60,
       'commit' => '62aae5f70ceee39123ef',
       'commit_id' => 1,
       'branch' => 'master',
@@ -33,7 +31,8 @@ describe Travis::Api::V0::Pusher::Build::Started do
       'event_type' => 'push',
       'pull_request' => false,
       'pull_request_title' => nil,
-      'pull_request_number' => nil
+      'pull_request_number' => nil,
+      'job_ids' => [1, 2]
     }
   end
 
@@ -48,8 +47,8 @@ describe Travis::Api::V0::Pusher::Build::Started do
       'last_build_finished_at' => nil,
       'last_build_duration' => nil,
       'last_build_state' => 'started',
-      'last_build_result' => nil,
-      'last_build_language' => nil
+      'last_build_language' => nil,
+      'github_language' => 'ruby'
     }
   end
 end
