@@ -10,7 +10,7 @@ addons:
 
 cache: bundler
 
-# sudo: false
+sudo: false
 
 rvm:
   - jruby-19mode
