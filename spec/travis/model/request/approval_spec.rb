@@ -31,6 +31,11 @@ describe Request::Approval do
   end
 
   describe 'tag_approved?' do
+    it 'approves if tag is missing' do
+      request.commit.stubs(:tag).returns(nil)
+      approval.tag_approved?.should be_true
+    end
+
     it 'approves tag that is whitelisted' do
       request.commit.stubs(:tag).returns('deploy-1')
       request.config['tags'] = { 'only' => ['/deploy-/'] }

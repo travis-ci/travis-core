@@ -83,7 +83,11 @@ class Request
     end
 
     def tag_approved?
-      tags.included?(commit.tag) && !tags.excluded?(commit.tag)
+      if commit.tag
+        tags.included?(commit.tag) && !tags.excluded?(commit.tag)
+      else
+        true
+      end
     end
 
     private
