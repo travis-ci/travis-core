@@ -47,7 +47,11 @@ class Request
     end
 
     def approved?
-      accepted? && request.config.present? && branch_approved?
+      result = accepted? && request.config.present? && branch_approved?
+      if Travis::Features.active?(:proper_tags, repository)
+        result &&= tag_approved?
+      end
+      result
     end
 
     def result
@@ -74,6 +78,10 @@ class Request
       elsif repository.private?
         'private repository'
       end
+    end
+
+    def tag_approved?
+      tags.included?(commit.tag) && !tags.excluded?(commit.tag)
     end
 
     private
@@ -116,6 +124,10 @@ class Request
 
       def branches
         @branches ||= Branches.new(request)
+      end
+
+      def tags
+        @tags ||= Tags.new(request)
       end
   end
 end
