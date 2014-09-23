@@ -73,6 +73,8 @@ class Request
         'missing config'
       elsif !branch_approved? || !branch_accepted?
         'branch not included or excluded'
+      elsif !tag_approved?
+        'tag not included or excluded'
       elsif !config_accepted?
         '.travis.yml is missing and builds without .travis.yml are disabled'
       elsif repository.private?
