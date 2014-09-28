@@ -14,7 +14,7 @@ describe Repository::Settings do
   end
 
   describe '#maximum_number_of_builds' do
-    it 'returns integer' do
+    it 'defaults to 0' do
       settings = Repository::Settings.new(maximum_number_of_builds: nil)
       settings.maximum_number_of_builds.should == 0
     end
@@ -44,5 +44,19 @@ describe Repository::Settings do
 
     settings.maximum_number_of_builds = 0
     settings.should be_valid
+  end
+
+  describe '#timeout_hard_limit' do
+    it 'defaults to nil' do
+      settings = Repository::Settings.new(timeout_hard_limit: nil)
+      settings.timeout_hard_limit.should be_nil
+    end
+  end
+
+  describe '#timeout_log_silence' do
+    it 'defaults to nil' do
+      settings = Repository::Settings.new(timeout_log_silence: nil)
+      settings.timeout_log_silence.should be_nil
+    end
   end
 end

@@ -18,7 +18,8 @@ module Travis
                 'queue' => job.queue,
                 'uuid' => Travis.uuid,
                 'ssh_key' => ssh_key,
-                'env_vars' => env_vars
+                'env_vars' => env_vars,
+                'timeouts' => timeouts
               }
             end
 
@@ -78,6 +79,13 @@ module Travis
                   'public' => var.public
                 }
               end
+            end
+
+            def timeouts
+              {
+                'hard_limit' => settings.timeout_hard_limit,
+                'log_silence' => settings.timeout_log_silence
+              }
             end
 
             def include_tag_name?
