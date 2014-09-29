@@ -82,10 +82,13 @@ module Travis
             end
 
             def timeouts
-              {
-                'hard_limit' => settings.timeout_hard_limit,
-                'log_silence' => settings.timeout_log_silence
-              }
+              { 'hard_limit' => timeout(:hard_limit), 'log_silence' => timeout(:log_silence) }
+            end
+
+            def timeout(type)
+              timeout = settings.send(:"timeout_#{type}")
+              timeout = timeout * 60 if timeout # worker handles timeouts in seconds
+              timeout
             end
 
             def include_tag_name?
