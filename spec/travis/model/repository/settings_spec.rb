@@ -55,7 +55,7 @@ describe Repository::Settings do
     [:hard_limit, :log_silence].each do |type|
       describe type do
         def settings(type, value)
-          Repository::Settings.new(:"timeout_#{type}" => value, repository_id: 1)
+          Repository::Settings.load({ :"timeout_#{type}" => value }, repository_id: 1)
         end
 
         it 'defaults to nil' do

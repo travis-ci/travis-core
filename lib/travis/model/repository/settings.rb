@@ -89,7 +89,6 @@ class Repository::Settings < Travis::Settings
   attribute :ssh_key, SshKey
   attribute :timeout_hard_limit
   attribute :timeout_log_silence
-  attribute :repository_id
 
   validates :maximum_number_of_builds, numericality: true
 
@@ -103,6 +102,10 @@ class Repository::Settings < Travis::Settings
     maximum_number_of_builds > 0
   rescue => e
     false
+  end
+
+  def repository_id
+    additional_attributes[:repository_id]
   end
 end
 

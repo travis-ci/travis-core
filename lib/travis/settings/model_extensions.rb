@@ -64,7 +64,9 @@ module Travis
         base.extend ClassMethods
       end
 
-      attr_reader :additional_attributes
+      def additional_attributes
+        @additional_attributes || {}
+      end
 
       def additional_attributes=(hash = {})
         attribute_set.each do |attribute|
