@@ -51,9 +51,6 @@ class Repository::Settings < Travis::Settings
   end
 
   class TimeoutsValidator < ActiveModel::Validator
-    # DEFAULTS = { hard_limit: 120, log_silence: 10 }
-    # MAXIMUMS = { hard_limit: 180, log_silence: 50 }
-
     def validate(settings)
       [:hard_limit, :log_silence].each do |type|
         next if valid_timeout?(settings, type)
