@@ -74,20 +74,38 @@ describe Repository::Settings do
               Travis::Features.stubs(:repository_active?).with(:custom_timeouts, 1).returns true if status == :on
             end
 
-            it "is valid if #{type} is nil" do
-              settings(type, nil).should be_valid
+            describe 'is valid' do
+              it "if #{type} is nil" do
+                settings(type, nil).should be_valid
+              end
+
+              it "if #{type} is 0" do
+                settings(type, 0).should be_valid
+              end
+
+              it "if #{type} is < #{max}" do
+                settings(type, max - 1).should be_valid
+              end
+
+              it "if #{type} equals #{max}" do
+                settings(type, max).should be_valid
+              end
             end
 
-            it "is valid if #{type} is 0" do
-              settings(type, 0).should be_valid
+            describe 'is invalid' do
+              it "if #{type} is < 0" do
+                settings(type, -1).should_not be_valid
+              end
+
+              it "if #{type} is > #{max}" do
+                settings(type, max + 1).should_not be_valid
+              end
             end
 
-            it "is valid if #{type} is < #{max}" do
-              settings(type, max - 1).should be_valid
-            end
-
-            it "is valid if #{type} equals #{max}" do
-              settings(type, max).should be_valid
+            it 'adds an error message if invalid' do
+              model = settings(type, - 1)
+              model.valid?
+              model.errors[:"timeout_#{type}"].should == ["Invalid #{type} timout value (allowed: 0 - #{max})"]
             end
           end
         end
