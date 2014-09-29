@@ -46,17 +46,52 @@ describe Repository::Settings do
     settings.should be_valid
   end
 
-  describe '#timeout_hard_limit' do
-    it 'defaults to nil' do
-      settings = Repository::Settings.new(timeout_hard_limit: nil)
-      settings.timeout_hard_limit.should be_nil
-    end
-  end
+  describe 'timeouts' do
+    MAX = {
+      off: { hard_limit: 50, log_silence: 10 },
+      on:  { hard_limit: 180, log_silence: 60 }
+    }
 
-  describe '#timeout_log_silence' do
-    it 'defaults to nil' do
-      settings = Repository::Settings.new(timeout_log_silence: nil)
-      settings.timeout_log_silence.should be_nil
+    [:hard_limit, :log_silence].each do |type|
+      describe type do
+        def settings(type, value)
+          Repository::Settings.new(:"timeout_#{type}" => value, repository_id: 1)
+        end
+
+        it 'defaults to nil' do
+          settings(type, nil).send(:"timeout_#{type}").should be_nil
+        end
+
+        it "is valid if #{type} is > 0" do
+          settings(type, nil).should be_valid
+        end
+
+        [:off, :on].each do |status|
+          describe "with :custom_timeouts feature flag turned #{status}" do
+            max = MAX[status][type]
+
+            before :each do
+              Travis::Features.stubs(:repository_active?).with(:custom_timeouts, 1).returns true if status == :on
+            end
+
+            it "is valid if #{type} is nil" do
+              settings(type, nil).should be_valid
+            end
+
+            it "is valid if #{type} is 0" do
+              settings(type, 0).should be_valid
+            end
+
+            it "is valid if #{type} is < #{max}" do
+              settings(type, max - 1).should be_valid
+            end
+
+            it "is valid if #{type} equals #{max}" do
+              settings(type, max).should be_valid
+            end
+          end
+        end
+      end
     end
   end
 end
