@@ -30,18 +30,18 @@ module Travis
     end
 
     def activate_repository(feature, repository)
-      redis.sadd(repository_key(feature), repository.id)
+      redis.sadd(repository_key(feature), repository_id(repository))
     end
 
     def deactivate_repository(feature, repository)
-      redis.srem(repository_key(feature), repository.id)
+      redis.srem(repository_key(feature), repository_id(repository))
     end
 
     # Return whether a given feature is enabled for a repository.
     #
     # By default, this will return false.
     def repository_active?(feature, repository)
-      redis.sismember(repository_key(feature), repository.id)
+      redis.sismember(repository_key(feature), repository_id(repository))
     end
 
     # Return whether a given feature is enabled for a user.
@@ -137,6 +137,10 @@ module Travis
 
     def enabled_for_all_key(feature)
       "#{key(feature)}:disabled"
+    end
+
+    def repository_id(repository)
+      repository.respond_to?(:id) ? repository.id : repository.to_i
     end
   end
 end
