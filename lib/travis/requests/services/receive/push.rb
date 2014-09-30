@@ -85,6 +85,8 @@ module Travis
               if branch.nil?
                 branch = extract_branch event['base_ref']
               end
+            elsif !branch
+              branch = extract_tag event['ref']
             end
 
             branch

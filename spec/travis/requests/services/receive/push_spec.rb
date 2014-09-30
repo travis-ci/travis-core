@@ -73,6 +73,15 @@ describe Travis::Requests::Services::Receive::Push do
         payload.commit[:branch].should == 'master'
       end
 
+      it 'returns a branch name from ref even if it is a commit, when older behaviour is used' do
+        Travis::Features.disable_for_all(:proper_tags)
+        payload.event.data['ref']      = "refs/tags/a-tag"
+        payload.event.data['base_ref'] = "refs/heads/master"
+
+        payload.commit[:branch].should == 'a-tag'
+        payload.commit[:tag].should be_nil
+      end
+
       it 'returns features/travis-ci when ref is refs/heads/features/travis-ci' do
         payload.event.data['ref'] = "refs/heads/features/travis-ci"
         payload.commit[:branch].should == 'features/travis-ci'
