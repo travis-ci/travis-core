@@ -151,6 +151,9 @@ class Build < Travis::Model
     self.pull_request_title = request.pull_request_title
     self.pull_request_number = request.pull_request_number
     self.branch = commit.branch
+    if Build.column_names.include?('tag') && Commit.column_names.include?('tag') && commit.tag
+      self.tag    = commit.tag
+    end
     expand_matrix
   end
 

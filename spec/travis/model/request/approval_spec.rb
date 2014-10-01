@@ -30,6 +30,43 @@ describe Request::Approval do
     end
   end
 
+  describe 'tag_approved?' do
+    it 'approves if tag is missing' do
+      request.commit.stubs(:tag).returns(nil)
+      approval.tag_approved?.should be_true
+    end
+
+    it 'approves tag that is whitelisted' do
+      request.commit.stubs(:tag).returns('deploy-1')
+      request.config['tags'] = { 'only' => ['/deploy-/'] }
+      approval.tag_approved?.should be_true
+    end
+
+    it 'rejects tag that is not whitelisted' do
+      request.commit.stubs(:tag).returns('test-1')
+      request.config['tags'] = { 'only' => ['/deploy-/'] }
+      approval.tag_approved?.should be_false
+    end
+
+    it 'approves tag that is not blacklisted' do
+      request.commit.stubs(:tag).returns('deploy-1')
+      request.config['tags'] = { 'except' => ['/test-/'] }
+      approval.tag_approved?.should be_true
+    end
+
+    it 'rejects tag that is blacklisted' do
+      request.commit.stubs(:tag).returns('test-1')
+      request.config['tags'] = { 'except' => ['/test-/'] }
+      approval.tag_approved?.should be_false
+    end
+
+    it 'takes into account both only and except values' do
+      request.commit.stubs(:tag).returns('deploy-test')
+      request.config['tags'] = { 'only' => ['/deploy-/'], 'except' => ['deploy-test'] }
+      approval.tag_approved?.should be_false
+    end
+  end
+
   describe 'branch_accepted?' do
     it 'does not accept a request that belongs to the github_pages branch' do
       request.commit.stubs(:branch).returns('gh_pages')

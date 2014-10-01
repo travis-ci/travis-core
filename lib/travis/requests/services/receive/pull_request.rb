@@ -73,7 +73,8 @@ module Travis
               {
                 :commit          => merge_commit['sha'],
                 :message         => head_commit['message'],
-                :branch          => pull_request['base']['ref'],
+                :branch          => branch,
+                :tag             => tag,
                 :ref             => merge_commit['ref'],
                 :committed_at    => head_commit['committer']['date'],
                 :committer_name  => head_commit['committer']['name'],
@@ -111,6 +112,14 @@ module Travis
 
           def repo_owner
             @repo_owner ||= repo['owner']
+          end
+
+          def branch
+            pull_request['base']['ref']
+          end
+
+          def tag
+            nil
           end
         end
       end

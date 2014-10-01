@@ -260,7 +260,8 @@ CREATE TABLE builds (
     pull_request_number integer,
     branch character varying(255),
     canceled_at timestamp without time zone,
-    cached_matrix_ids integer[]
+    cached_matrix_ids integer[],
+    tag character varying(255)
 );
 
 
@@ -301,7 +302,8 @@ CREATE TABLE commits (
     author_name character varying(255),
     author_email character varying(255),
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    tag character varying(255)
 );
 
 
@@ -798,7 +800,8 @@ CREATE TABLE users (
     locale character varying(255),
     is_syncing boolean,
     synced_at timestamp without time zone,
-    github_scopes text
+    github_scopes text,
+    education boolean
 );
 
 
@@ -1557,3 +1560,7 @@ INSERT INTO schema_migrations (version) VALUES ('20140210003014');
 INSERT INTO schema_migrations (version) VALUES ('20140210012509');
 
 INSERT INTO schema_migrations (version) VALUES ('20140612131826');
+
+INSERT INTO schema_migrations (version) VALUES ('20140827121945');
+
+INSERT INTO schema_migrations (version) VALUES ('20140922133258');

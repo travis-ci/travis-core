@@ -56,7 +56,8 @@ module Travis
               {
                 :commit          => commit['sha'],
                 :message         => commit['message'],
-                :branch          => event['ref'].split('/', 3).last,
+                :branch          => branch,
+                :tag             => tag,
                 :ref             => event['ref'],
                 :committed_at    => commit['date'],
                 :committer_name  => commit['committer']['name'],
@@ -76,6 +77,51 @@ module Travis
 
           def skip_commit?(commit)
             Travis::CommitCommand.new(commit['message']).skip?
+          end
+
+          def branch
+            branch = extract_branch event['ref']
+            if proper_tags?
+              if branch.nil?
+                branch = extract_branch event['base_ref']
+              end
+            elsif !branch
+              branch = extract_tag event['ref']
+            end
+
+            branch
+          end
+
+          def tag
+            if proper_tags?
+              extract_tag event['ref']
+            end
+          end
+
+          def extract_branch(str)
+            extract_ref(str, 'heads')
+          end
+
+          def extract_tag(str)
+            extract_ref(str, 'tags')
+          end
+
+          def extract_ref(str, type)
+            return unless str
+
+            str.scan(%r{refs/#{type}/(.*?)$}).flatten.first
+          end
+
+          def repository_record
+            @repository_record ||= Repository.find_by_github_id(event['repository']['id'])
+          end
+
+          def proper_tags?
+            if repository_record
+              Travis::Features.active?(:proper_tags, repository_record)
+            else
+              Travis::Features.feature_active?(:proper_tags)
+            end
           end
         end
       end
