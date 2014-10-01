@@ -3,23 +3,24 @@ require 'spec_helper'
 describe Travis::Api::V0::Worker::Job::Test do
   include Travis::Testing::Stubs, Support::Formats
 
-  let(:test) do
-    test = stub_test
-    settings = Repository::Settings.load({
-      'env_vars' => [{
-        'name' => 'FOO',
-        'value' => Travis::Model::EncryptedColumn.new(use_prefix: false).dump('bar')
-      }, {
-        'name' => 'BAR',
-        'value' => Travis::Model::EncryptedColumn.new(use_prefix: false).dump('baz'),
-        'public' => true
-      }],
-
-    })
-    test.repository.stubs(:settings).returns(settings)
-    test
-  end
   let(:data) { Travis::Api::V0::Worker::Job::Test.new(test).data }
+  let(:foo)  { Travis::Model::EncryptedColumn.new(use_prefix: false).dump('bar') }
+  let(:bar)  { Travis::Model::EncryptedColumn.new(use_prefix: false).dump('baz') }
+
+  let(:settings) do
+    Repository::Settings.load({
+      'env_vars' => [
+        { 'name' => 'FOO', 'value' => foo },
+        { 'name' => 'BAR', 'value' => bar, 'public' => true }
+      ],
+      'timeout_hard_limit' => 180,
+      'timeout_log_silence' => 20
+    })
+  end
+
+  before :each do
+    test.repository.stubs(:settings).returns(settings)
+  end
 
   describe 'for a push request' do
     before :each do
@@ -41,7 +42,11 @@ describe Travis::Api::V0::Worker::Job::Test do
         'env_vars' => [
           { 'name' => 'FOO', 'value' => 'bar', 'public' => false },
           { 'name' => 'BAR', 'value' => 'baz', 'public' => true }
-        ]
+        ],
+        'timeouts' => {
+          'hard_limit' => 180 * 60, # worker handles timeouts in seconds
+          'log_silence' => 20 * 60
+        }
       }
     end
 
@@ -132,7 +137,11 @@ describe Travis::Api::V0::Worker::Job::Test do
         },
         'env_vars' => [
           { 'name' => 'BAR', 'value' => 'baz', 'public' => true }
-        ]
+        ],
+        'timeouts' => {
+          'hard_limit' => 180 * 60, # worker handles timeouts in seconds
+          'log_silence' => 20 * 60
+        }
       }
     end
 

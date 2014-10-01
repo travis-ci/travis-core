@@ -14,7 +14,7 @@ describe Repository::Settings do
   end
 
   describe '#maximum_number_of_builds' do
-    it 'returns integer' do
+    it 'defaults to 0' do
       settings = Repository::Settings.new(maximum_number_of_builds: nil)
       settings.maximum_number_of_builds.should == 0
     end
@@ -44,5 +44,72 @@ describe Repository::Settings do
 
     settings.maximum_number_of_builds = 0
     settings.should be_valid
+  end
+
+  describe 'timeouts' do
+    MAX = {
+      off: { hard_limit: 50, log_silence: 10 },
+      on:  { hard_limit: 180, log_silence: 60 }
+    }
+
+    [:hard_limit, :log_silence].each do |type|
+      describe type do
+        def settings(type, value)
+          Repository::Settings.load({ :"timeout_#{type}" => value }, repository_id: 1)
+        end
+
+        it 'defaults to nil' do
+          settings(type, nil).send(:"timeout_#{type}").should be_nil
+        end
+
+        it "is valid if #{type} is > 0" do
+          settings(type, nil).should be_valid
+        end
+
+        [:off, :on].each do |status|
+          describe "with :custom_timeouts feature flag turned #{status}" do
+            max = MAX[status][type]
+
+            before :each do
+              Travis::Features.stubs(:repository_active?).with(:custom_timeouts, 1).returns true if status == :on
+            end
+
+            describe 'is valid' do
+              it "if #{type} is nil" do
+                settings(type, nil).should be_valid
+              end
+
+              it "if #{type} is 0" do
+                settings(type, 0).should be_valid
+              end
+
+              it "if #{type} is < #{max}" do
+                settings(type, max - 1).should be_valid
+              end
+
+              it "if #{type} equals #{max}" do
+                settings(type, max).should be_valid
+              end
+            end
+
+            describe 'is invalid' do
+              it "if #{type} is < 0" do
+                settings(type, -1).should_not be_valid
+              end
+
+              it "if #{type} is > #{max}" do
+                settings(type, max + 1).should_not be_valid
+              end
+            end
+
+            it 'adds an error message if invalid' do
+              model = settings(type, - 1)
+              model.valid?
+              model.errors[:"timeout_#{type}"].should == ["Invalid #{type} timout value (allowed: 0 - #{max})"]
+            end
+          end
+        end
+      end
+    end
   end
 end

@@ -18,7 +18,8 @@ module Travis
                 'queue' => job.queue,
                 'uuid' => Travis.uuid,
                 'ssh_key' => ssh_key,
-                'env_vars' => env_vars
+                'env_vars' => env_vars,
+                'timeouts' => timeouts
               }
             end
 
@@ -78,6 +79,16 @@ module Travis
                   'public' => var.public
                 }
               end
+            end
+
+            def timeouts
+              { 'hard_limit' => timeout(:hard_limit), 'log_silence' => timeout(:log_silence) }
+            end
+
+            def timeout(type)
+              timeout = settings.send(:"timeout_#{type}")
+              timeout = timeout * 60 if timeout # worker handles timeouts in seconds
+              timeout
             end
 
             def include_tag_name?

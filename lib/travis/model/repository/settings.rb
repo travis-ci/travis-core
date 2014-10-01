@@ -50,6 +50,33 @@ class Repository::Settings < Travis::Settings
     end
   end
 
+  class TimeoutsValidator < ActiveModel::Validator
+    def validate(settings)
+      [:hard_limit, :log_silence].each do |type|
+        next if valid_timeout?(settings, type)
+        msg = "Invalid #{type} timout value (allowed: 0 - #{max_value(settings, type)})"
+        settings.errors.add :"timeout_#{type}", msg
+      end
+    end
+
+    private
+
+      def valid_timeout?(settings, type)
+        value = settings.send(:"timeout_#{type}").to_i
+        value >= 0 && value <= max_value(settings, type)
+      end
+
+      def max_value(settings, type)
+        config = Travis.config.settings.timeouts
+        values = config.send(custom_timeouts?(settings) ? :maximums : :defaults) || {}
+        values[type]
+      end
+
+      def custom_timeouts?(settings)
+        Travis::Features.repository_active?(:custom_timeouts, settings.repository_id)
+      end
+  end
+
   attribute :env_vars, EnvVars.for_virtus
 
   attribute :builds_only_with_travis_yml, Boolean, default: false
@@ -57,8 +84,12 @@ class Repository::Settings < Travis::Settings
   attribute :build_pull_requests, Boolean, default: true
   attribute :maximum_number_of_builds, Integer
   attribute :ssh_key, SshKey
+  attribute :timeout_hard_limit
+  attribute :timeout_log_silence
 
   validates :maximum_number_of_builds, numericality: true
+
+  validates_with TimeoutsValidator
 
   def maximum_number_of_builds
     super || 0
@@ -68,6 +99,10 @@ class Repository::Settings < Travis::Settings
     maximum_number_of_builds > 0
   rescue => e
     false
+  end
+
+  def repository_id
+    additional_attributes[:repository_id]
   end
 end
 
