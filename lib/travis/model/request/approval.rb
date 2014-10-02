@@ -47,11 +47,7 @@ class Request
     end
 
     def approved?
-      result = accepted? && request.config.present? && branch_approved?
-      if Travis::Features.active?(:proper_tags, repository)
-        result &&= tag_approved?
-      end
-      result
+      accepted? && request.config.present? && branch_approved?
     end
 
     def result
@@ -73,20 +69,10 @@ class Request
         'missing config'
       elsif !branch_approved? || !branch_accepted?
         'branch not included or excluded'
-      elsif !tag_approved?
-        'tag not included or excluded'
       elsif !config_accepted?
         '.travis.yml is missing and builds without .travis.yml are disabled'
       elsif repository.private?
         'private repository'
-      end
-    end
-
-    def tag_approved?
-      if commit.tag
-        tags.included?(commit.tag) && !tags.excluded?(commit.tag)
-      else
-        true
       end
     end
 
@@ -130,10 +116,6 @@ class Request
 
       def branches
         @branches ||= Branches.new(request)
-      end
-
-      def tags
-        @tags ||= Tags.new(request)
       end
   end
 end

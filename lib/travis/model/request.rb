@@ -9,8 +9,6 @@ require 'travis/model/encrypted_column'
 # Request creates a Build.
 class Request < Travis::Model
   require 'travis/model/request/approval'
-  require 'travis/model/request/inclusion_check'
-  require 'travis/model/request/tags'
   require 'travis/model/request/branches'
   require 'travis/model/request/states'
 

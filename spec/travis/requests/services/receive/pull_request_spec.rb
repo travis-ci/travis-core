@@ -109,7 +109,6 @@ describe Travis::Requests::Services::Receive::PullRequest do
         :message => "Merge branch 'master' of git://github.com/travis-repos/test-project-1\n\nConflicts:\n\tRakefile\n",
         :branch => 'master',
         :ref => 'refs/pull/1/merge',
-        :tag => nil,
         :committed_at => '2012-04-16T13:30:33Z',
         :committer_name => 'Konstantin Haase',
         :committer_email => 'konstantin.mailinglists@googlemail.com',

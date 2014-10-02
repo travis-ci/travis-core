@@ -123,8 +123,7 @@ module Travis
           committed_at: Time.now.utc - 3600,
           compare_url: 'https://github.com/svenfuchs/minimal/compare/master...develop',
           pull_request?: false,
-          pull_request_number: nil,
-          tag: nil
+          pull_request_number: nil
         )
       end
 

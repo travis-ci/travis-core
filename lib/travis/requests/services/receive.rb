@@ -96,15 +96,7 @@ module Travis
           end
 
           def commit
-            if payload.commit
-              @commit ||= begin
-                if !Commit.column_names.include?('tag')
-                  payload.commit.delete(:tag)
-                end
-
-                repo.commits.create!(payload.commit)
-              end
-            end
+            @commit ||= repo.commits.create!(payload.commit) if payload.commit
           end
 
           def store_config_info
