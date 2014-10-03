@@ -69,6 +69,34 @@ describe Travis::Github::Services::FetchConfig do
         result.has_key?("osx_image").should be false
       end
     end
+
+    context "when the repository has the template_selection feature enabled" do
+      before do
+        Travis::Features.activate_repository(:template_selection, request.repository)
+      end
+
+      it "passes the 'group' config key through" do
+        GH.stubs(:[]).returns({ "content" => ["group: latest"].pack("m") })
+        result["group"].should eql("latest")
+      end
+
+      it "passes the 'dist' config key through" do
+        GH.stubs(:[]).returns({ "content" => ["dist: latest"].pack("m") })
+        result["dist"].should eql("latest")
+      end
+    end
+
+    context "when the repository doesn't have the template_selection feature enabled" do
+      it "doesn't pass the 'group' config key through" do
+        GH.stubs(:[]).returns({ "content" => ["group: latest"].pack("m") })
+        result.has_key?("group").should be false
+      end
+
+      it "doesn't pass the 'dist' config key through" do
+        GH.stubs(:[]).returns({ "content" => ["dist: latest"].pack("m") })
+        result.has_key?("dist").should be false
+      end
+    end
   end
 end
 

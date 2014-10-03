@@ -58,6 +58,10 @@ module Travis
               config = config.except('osx_image')
             end
 
+            unless Travis::Features.active?(:template_selection, request.repository)
+              config = config.except('dist').except('group')
+            end
+
             config
           end
 
