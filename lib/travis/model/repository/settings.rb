@@ -62,8 +62,8 @@ class Repository::Settings < Travis::Settings
     private
 
       def valid_timeout?(settings, type)
-        value = settings.send(:"timeout_#{type}").to_i
-        value >= 0 && value <= max_value(settings, type)
+        value = settings.send(:"timeout_#{type}")
+        value.nil? || value.to_i > 0 && value.to_i <= max_value(settings, type)
       end
 
       def max_value(settings, type)

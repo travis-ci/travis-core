@@ -3,6 +3,7 @@
 --
 
 SET statement_timeout = 0;
+SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -452,9 +453,7 @@ CREATE TABLE logs (
     archiving boolean,
     archived_at timestamp without time zone,
     archive_verified boolean,
-    purged_at timestamp without time zone,
-    removed_at timestamp without time zone,
-    removed_by integer
+    purged_at timestamp without time zone
 );
 
 
@@ -798,7 +797,8 @@ CREATE TABLE users (
     locale character varying(255),
     is_syncing boolean,
     synced_at timestamp without time zone,
-    github_scopes text
+    github_scopes text,
+    education boolean
 );
 
 
@@ -1556,4 +1556,4 @@ INSERT INTO schema_migrations (version) VALUES ('20140210003014');
 
 INSERT INTO schema_migrations (version) VALUES ('20140210012509');
 
-INSERT INTO schema_migrations (version) VALUES ('20140612131826');
+INSERT INTO schema_migrations (version) VALUES ('20140827121945');
