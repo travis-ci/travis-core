@@ -200,6 +200,28 @@ describe Travis::Requests::Services::Receive do
       end
     end
   end
+
+  describe 'an api request' do
+    let(:params)  { { :event_type => 'api', :payload => payload } }
+    let(:payload) { JSON.parse(API_PAYLOADS['custom']) }
+
+    login = 'svenfuchs'
+    type  = 'user'
+    github_id = 2208
+
+    before(:each) do
+      Factory(:user, :id => 1, :login => login, github_id: github_id)
+      Factory(:repository, :github_id => 592533, :name => 'gem-release')
+    end
+
+    it 'creates a request for the given payload' do
+      expect { request }.to change(Request, :count).by(1)
+    end
+
+    it 'sets the payload to the request' do
+      request.payload.should == payload
+    end
+  end
 end
 
 describe Travis::Requests::Services::Receive::Instrument do

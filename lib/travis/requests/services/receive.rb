@@ -6,6 +6,7 @@ module Travis
   module Requests
     module Services
       class Receive < Travis::Services::Base
+        require 'travis/requests/services/receive/api'
         require 'travis/requests/services/receive/pull_request'
         require 'travis/requests/services/receive/push'
 
@@ -17,8 +18,8 @@ module Travis
 
         class << self
           def payload_for(type, data)
-            event = GH.load(data)
-            const_get(type.camelize).new(event)
+            data = GH.load(data)
+            const_get(type.camelize).new(data)
           end
         end
 
