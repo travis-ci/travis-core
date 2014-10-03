@@ -109,6 +109,12 @@ describe Request::States do
       request.configure
     end
 
+    it 'merges existing configuration (e.g. from an api request)' do
+      request.config = { env: 'FOO=foo' }
+      request.configure
+      request.config.should == config.merge(env: 'FOO=foo')
+    end
+
     it 'stores the config on the request' do
       request.configure
       request.config.should == config
