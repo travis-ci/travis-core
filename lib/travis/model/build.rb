@@ -209,6 +209,10 @@ class Build < Travis::Model
       Travis::Features.enabled_for_all?(:multi_os) || repository && Travis::Features.active?(:multi_os, repository)
     end
 
+    def dist_group_expansion_enabled?
+      Travis::Features.enabled_for_all?(:dist_group_expansion) || repository && Travis::Features.active?(:dist_group_expansion, repository)
+    end
+
     def last_finished_state_on_branch
       repository.builds.finished.last_state_on(branch: commit.branch)
     end
