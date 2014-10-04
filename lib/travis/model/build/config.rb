@@ -46,6 +46,7 @@ class Build
       keys = ENV_KEYS
       keys &= EXPANSION_KEYS_LANGUAGE.fetch(lang, EXPANSION_KEYS_LANGUAGE[DEFAULT_LANG])
       keys << :os if options[:multi_os]
+      keys += [:dist, :group] if options[:dist_group_expansion]
       keys | EXPANSION_KEYS_UNIVERSAL
     end
 

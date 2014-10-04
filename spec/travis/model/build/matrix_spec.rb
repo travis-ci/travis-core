@@ -702,6 +702,55 @@ describe Build, 'matrix' do
     end
   end
 
+  describe 'dist_group_expansion' do
+    let(:matrix_with_dist_and_group_ruby) {
+      YAML.load(%(
+        language: ruby
+        dist:
+          - precise
+          - trusty
+        group:
+          - current
+          - update
+        rvm:
+          - 2.0.0
+          - 1.9.3
+        gemfile:
+          - 'gemfiles/rails-4'
+      )).deep_symbolize_keys
+    }
+
+    context 'the feature is active' do
+      it 'expands on :dist and :group' do
+        Build.any_instance.stubs(:dist_group_expansion_enabled?).returns(true)
+        build = Factory(:build, config: matrix_with_dist_and_group_ruby)
+
+        build.matrix.map(&:config).should == [
+          { language: 'ruby', dist: 'precise', group: 'current', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
+          { language: 'ruby', dist: 'precise', group: 'current', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' },
+          { language: 'ruby', dist: 'precise', group: 'update',  rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
+          { language: 'ruby', dist: 'precise', group: 'update',  rvm: '1.9.3', gemfile: 'gemfiles/rails-4' },
+          { language: 'ruby', dist: 'trusty',  group: 'current', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
+          { language: 'ruby', dist: 'trusty',  group: 'current', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' },
+          { language: 'ruby', dist: 'trusty',  group: 'update',  rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
+          { language: 'ruby', dist: 'trusty',  group: 'update',  rvm: '1.9.3', gemfile: 'gemfiles/rails-4' },
+        ]
+      end
+    end
+
+    context 'the feature is inactive' do
+      it 'does not expand on :dist or :group' do
+        Build.any_instance.stubs(:dist_group_expansion_enabled?).returns(false)
+        build = Factory(:build, config: matrix_with_dist_and_group_ruby)
+
+        build.matrix.map(&:config).should == [
+          { language: 'ruby', dist: ['precise', 'trusty'], group: ['current', 'update'], rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
+          { language: 'ruby', dist: ['precise', 'trusty'], group: ['current', 'update'], rvm: '1.9.3', gemfile: 'gemfiles/rails-4' }
+        ]
+      end
+    end
+  end
+
   describe 'filter_matrix' do
     it 'selects matching builds' do
       build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'], env: ['DB=sqlite3', 'DB=postgresql'] })
