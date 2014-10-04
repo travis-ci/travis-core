@@ -9,9 +9,7 @@ API_PAYLOADS = {
       "env": ["FOO=foo", "BAR=bar"]
     },
     "user": {
-      "id": 1,
-      "login": "svenfuchs",
-      "github_id": 2208
+      "id": 1
     }
   })
 }
