@@ -7,7 +7,7 @@ describe Travis::Requests::Services::Receive do
   include Support::ActiveRecord
 
   let(:owner)   { User.first || Factory(:user) }
-  let(:service) { described_class.new(nil, params) }
+  let(:service) { described_class.new(params) }
   let(:payload) { JSON.parse(GITHUB_PAYLOADS['gem-release']) }
   let(:request) { service.run }
 
@@ -203,7 +203,7 @@ describe Travis::Requests::Services::Receive do
 
   describe 'an api request' do
     let(:params)  { { :event_type => 'api', :payload => payload } }
-    let(:payload) { JSON.parse(API_PAYLOADS['custom']) }
+    let(:payload) { API_PAYLOADS['custom'] }
 
     login = 'svenfuchs'
     type  = 'user'
@@ -228,7 +228,7 @@ describe Travis::Requests::Services::Receive::Instrument do
   include Support::ActiveRecord
 
   let(:payload)   { JSON.parse(GITHUB_PAYLOADS['gem-release']) }
-  let(:service)   { Travis::Requests::Services::Receive.new(nil, event_type: 'push', payload: payload) }
+  let(:service)   { Travis::Requests::Services::Receive.new(event_type: 'push', payload: payload) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events.last }
 

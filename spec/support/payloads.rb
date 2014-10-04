@@ -1,17 +1,17 @@
 API_PAYLOADS = {
-  'custom' => %({
-    "repository": {
-      "owner_name": "svenfuchs",
-      "name": "gem-release"
+  'custom' => {
+    'repository' => {
+      'owner_name' => 'svenfuchs',
+      'name' => 'gem-release'
     },
-    "branch": "master",
-    "config": {
-      "env": ["FOO=foo", "BAR=bar"]
+    'branch' => 'master',
+    'config' => {
+      'env' => ['FOO=foo', 'BAR=bar']
     },
-    "user": {
-      "id": 1
+    'user' => {
+      'id' => 1
     }
-  })
+  }
 }
 
 GITHUB_PAYLOADS = {
