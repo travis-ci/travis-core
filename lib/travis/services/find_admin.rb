@@ -1,4 +1,5 @@
 require 'faraday/error'
+require 'travis/services/base'
 
 # TODO extract github specific stuff to a separate service
 

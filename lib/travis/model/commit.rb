@@ -1,4 +1,4 @@
-require 'active_record'
+require 'travis/model'
 
 # Encapsulates a commit that a Build belongs to (and that a Github Request
 # referred to).

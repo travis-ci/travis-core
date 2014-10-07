@@ -40,6 +40,7 @@ describe Travis::Api::V0::Pusher::Build do
     data['repository'].should == {
       'id' => build.repository_id,
       'slug' => 'svenfuchs/minimal',
+      'private' => false,
       'description' => 'the repo description',
       'last_build_id' => 1,
       'last_build_number' => 2,

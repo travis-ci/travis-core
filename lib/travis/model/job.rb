@@ -1,4 +1,4 @@
-require 'active_record'
+require 'travis/model'
 require 'active_support/core_ext/hash/deep_dup'
 require 'travis/model/build/config/language'
 

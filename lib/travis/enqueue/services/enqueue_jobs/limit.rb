@@ -1,3 +1,6 @@
+require 'travis/services/base'
+require 'travis/model/job'
+
 module Travis
   module Enqueue
     module Services

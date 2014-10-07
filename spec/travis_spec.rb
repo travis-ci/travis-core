@@ -4,10 +4,10 @@ describe Travis do
   describe "redis" do
     before do
       Travis.redis = nil
+      Travis.setup
     end
 
     it "should connect to localhost by default" do
-      Travis.start
       client = Travis.redis.client
       client.host.should == 'localhost'
       client.port.should == 6379
@@ -23,7 +23,7 @@ describe Travis do
       end
 
       it "should use the Travis.config if set" do
-        Travis.start
+        Travis.setup
       end
     end
   end

@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'travis-support',     github: 'travis-ci/travis-support', ref: 'master-2014-10-06'
+gem 'travis-support',     github: 'travis-ci/travis-support', branch: 'sf-te'
 gem 'travis-sidekiqs',    github: 'travis-ci/travis-sidekiqs', require: nil
 gem 'gh',                 github: 'travis-ci/gh'
 gem 'addressable'
@@ -20,14 +20,13 @@ end
 
 platform :jruby do
   gem 'jruby-openssl',    '~> 0.8.5'
-  gem 'hot_bunnies',      '~> 1.4.0.pre2'
-  gem 'activerecord-jdbcpostgresql-adapter', '1.2.2.1' # see https://github.com/bmabey/database_cleaner/pull/83
-  gem 'activerecord-jdbc-adapter',           '1.2.2.1'
+  gem 'march_hare',       '~> 2.0.0'
+  gem 'activerecord-jdbcpostgresql-adapter'
+  gem 'activerecord-jdbc-adapter'
 end
 
 group :development, :test do
-  gem 'micro_migrations', git: 'https://gist.github.com/2087829.git'
-  gem 'data_migrations',  '~> 0.0.1'
+  gem 'micro_migrations'
 end
 
 group :test do

@@ -1,4 +1,8 @@
-require 'travis/services'
+require 'gh'
+require 'travis/services/base'
+require 'travis/model/organization'
+require 'travis/model/repository'
+require 'travis/model/user'
 
 module Travis
   module Github

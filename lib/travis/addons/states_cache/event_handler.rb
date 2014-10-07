@@ -1,3 +1,5 @@
+require 'travis/event/handler'
+
 module Travis
   module Addons
     module StatesCache

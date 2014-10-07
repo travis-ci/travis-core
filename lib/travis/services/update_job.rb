@@ -1,4 +1,6 @@
 require 'active_support/core_ext/hash/except'
+require 'travis/support/instrumentation'
+require 'travis/services/base'
 
 module Travis
   module Services

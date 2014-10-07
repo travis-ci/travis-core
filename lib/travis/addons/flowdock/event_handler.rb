@@ -1,3 +1,6 @@
+require 'travis/addons/flowdock/instruments'
+require 'travis/event/handler'
+
 module Travis
   module Addons
     module Flowdock

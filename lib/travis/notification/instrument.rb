@@ -9,17 +9,16 @@ module Travis
 
       class << self
         def attach_to(const)
-          namespace = const.name.underscore.gsub('/', '.')
           statuses = %w(received completed failed)
           instrumented_methods(const).product(statuses).each do |method, status|
-            ActiveSupport::Notifications.subscribe(/^#{namespace}(\..+)?.#{method}:#{status}/) do |message, args|
+            ActiveSupport::Notifications.subscribe(/^#{const.instrumentation_key}(\..+)?.#{method}:#{status}/) do |message, args|
               publish(message, method, status, args)
             end
           end
         end
 
         def instrumented_methods(const)
-          consts = ancestors.select { |const| const.name[0..5] == 'Travis' }
+          consts = ancestors.select { |const| (const.name || '')[0..5] == 'Travis' }
           methods = consts.map { |const| const.public_instance_methods(false) }.flatten.uniq
           methods = methods.map { |method| method.to_s =~ /^(.*)_(received|completed|failed)$/ && $1 }
           methods.compact.uniq

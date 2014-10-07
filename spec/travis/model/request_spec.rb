@@ -8,8 +8,22 @@ describe Request do
   let(:request) { Request.new(repository: repo, commit: commit) }
 
   describe 'config_url' do
-    it 'returns the raw url to the .travis.yml file on github' do
+    before :each do
+      GH.options.delete(:api_url)
+      GH.current = nil
+    end
+
+    after :each do
+      GH.set api_url: nil
+    end
+
+    it 'returns the api url to the .travis.yml file on github' do
       request.config_url.should == 'https://api.github.com/repos/travis-ci/travis-ci/contents/.travis.yml?ref=12345678'
+    end
+
+    it 'returns the api url to the .travis.yml file on github with a gh endpoint given' do
+      GH.set api_url: 'http://localhost/api/v3'
+      request.config_url.should == 'http://localhost/api/v3/repos/travis-ci/travis-ci/contents/.travis.yml?ref=12345678'
     end
   end
 

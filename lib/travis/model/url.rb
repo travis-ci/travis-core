@@ -1,8 +1,7 @@
 require 'digest/sha1'
-require 'active_record'
+require 'travis/model'
 
 class Url < Travis::Model
-
   validates :url,  :presence => true, :uniqueness => true
   validates :code, :presence => true, :uniqueness => true
 
@@ -13,7 +12,7 @@ class Url < Travis::Model
   end
 
   def short_url
-    [Travis.config.http_shorten_host, code].join('/')
+    ["http://#{Travis.config.shorten_host}", code].join('/')
   end
 
   private

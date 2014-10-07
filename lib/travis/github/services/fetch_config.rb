@@ -1,4 +1,9 @@
+require 'gh'
+require 'yaml'
 require 'active_support/core_ext/class/attribute'
+require 'travis/support/logging'
+require 'travis/support/instrumentation'
+require 'travis/services/base'
 
 module Travis
   module Github
@@ -77,8 +82,8 @@ module Travis
 
           class Instrument < Notification::Instrument
             def run_completed
-              # TODO exctract something like Url.strip_token
-              config_url = target.config_url.gsub(/access_token=\w*/, 'access_token=[secure]')
+              # TODO exctract something like Url.strip_secrets
+              config_url = target.config_url.gsub(/(token|secret)=\w*/) { "#{$1}=[secure]" }
               publish(msg: "#{config_url}", url: config_url, result: result)
             end
           end

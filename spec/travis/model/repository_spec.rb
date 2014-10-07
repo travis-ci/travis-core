@@ -71,13 +71,16 @@ describe Repository do
     end
 
     describe 'timeline' do
-      it 'sorts the most repository with the most recent build to the top' do
-        one   = Factory(:repository, name: 'one',   last_build_started_at: '2011-11-11')
-        two   = Factory(:repository, name: 'two',   last_build_started_at: '2011-11-12')
+      it 'sorts repositories with running builds to the top, most recent builds next, un-built repos last' do
+        Factory(:repository, name: 'unbuilt 1',  active: true, last_build_started_at: nil, last_build_finished_at: nil)
+        Factory(:repository, name: 'unbuilt 2',  active: true, last_build_started_at: nil, last_build_finished_at: nil)
+        Factory(:repository, name: 'finished 1', active: true, last_build_started_at: '2011-11-12 12:00:00', last_build_finished_at: '2011-11-12 12:00:05')
+        Factory(:repository, name: 'finished 2', active: true, last_build_started_at: '2011-11-12 12:00:01', last_build_finished_at: '2011-11-11 12:00:06')
+        Factory(:repository, name: 'started 1',  active: true, last_build_started_at: '2011-11-11 12:00:00', last_build_finished_at: nil)
+        Factory(:repository, name: 'started 2',  active: true, last_build_started_at: '2011-11-11 12:00:01', last_build_finished_at: nil)
 
-        repositories = Repository.timeline.all
-        repositories.first.id.should == two.id
-        repositories.last.id.should  == one.id
+        repositories = Repository.timeline
+        repositories.map(&:name).should == ['started 2', 'started 1', 'finished 2', 'finished 1', 'unbuilt 2', 'unbuilt 1']
       end
     end
 
@@ -167,16 +170,50 @@ describe Repository do
   end
 
   describe 'source_url' do
-    let(:repo) { Repository.new(owner_name: 'travis-ci', name: 'travis-ci') }
+    describe 'default source endpoint' do
+      let(:repo) { Repository.new(owner_name: 'travis-ci', name: 'travis-ci') }
 
-    it 'returns the public git source url for a public repository' do
-      repo.private = false
-      repo.source_url.should == 'git://github.com/travis-ci/travis-ci.git'
+      before :each do
+        Travis.config.github.source_host = nil
+      end
+
+      it 'returns the public git source url for a public repository' do
+        repo.private = false
+        repo.source_url.should == 'git://github.com/travis-ci/travis-ci.git'
+      end
+
+      it 'returns the private git source url for a private repository' do
+        repo.private = true
+        repo.source_url.should == 'git@github.com:travis-ci/travis-ci.git'
+      end
     end
 
-    it 'returns the private git source url for a private repository' do
-      repo.private = true
-      repo.source_url.should == 'git@github.com:travis-ci/travis-ci.git'
+    describe 'custom source endpoint' do
+      let(:repo) { Repository.new(owner_name: 'travis-ci', name: 'travis-ci') }
+
+      before :each do
+        Travis.config.github.source_host = 'localhost'
+      end
+
+      it 'returns the private git source url for a public repository' do
+        repo.private = false
+        repo.source_url.should == 'git@localhost:travis-ci/travis-ci.git'
+      end
+
+      it 'returns the private git source url for a private repository' do
+        repo.private = true
+        repo.source_url.should == 'git@localhost:travis-ci/travis-ci.git'
+      end
+    end
+  end
+
+  describe 'source_host' do
+    before :each do
+      Travis.config.github.stubs(:source_host).returns('localhost')
+    end
+
+    it 'returns the source_host name from Travis.config' do
+      Repository.new.source_host.should == 'localhost'
     end
   end
 

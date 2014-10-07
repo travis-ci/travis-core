@@ -19,7 +19,7 @@ module Travis
       end
 
       def run_local?
-        !!run_local || Travis::Features.feature_inactive?(:travis_tasks)
+        !!run_local || Travis::Features.feature_deactivated?(:travis_tasks)
       end
 
       def inline_or_sidekiq

@@ -31,6 +31,7 @@ module Travis
                 'id' => job.id,
                 'repository_id' => job.repository_id,
                 'repository_slug' => job.repository.slug,
+                'repository_private' => job.repository.private,
                 'build_id' => job.source_id,
                 'commit_id' => job.commit_id,
                 'log_id' => job.log_id,

@@ -1,3 +1,5 @@
+require 'travis/services/base'
+
 module Travis
   module Services
     class CancelBuild < Base
@@ -27,6 +29,8 @@ module Travis
       end
 
       def cancel
+        # build may have been retrieved with a :join query, so we need to reset the readonly status
+        build.send(:instance_variable_set, :@readonly, false)
         build.cancel!
         publish!
       end

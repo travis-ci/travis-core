@@ -21,11 +21,11 @@ describe Travis::Github::Services::SyncUser::Repositories do
     GH.stubs(:[]).returns(repos)
     repository.stubs(:new).returns(stub('repo', :run => public_repo))
     repository.stubs(:unpermit_all)
-    @type = described_class.type
+    @types = described_class.types
   end
 
   after :each do
-    described_class.type = @type
+    described_class.types = @types
   end
 
   it "fetches the user's repositories" do
@@ -36,6 +36,18 @@ describe Travis::Github::Services::SyncUser::Repositories do
   it "fetches the user's orgs' repositories" do
     GH.expects(:[]).with('orgs/travis-ci/repos') # should be: ?type=public
     sync.run
+  end
+
+  describe 'given type is set to "public,private"' do
+    before :each do
+      described_class.type = 'public,private'
+    end
+
+    it 'synchronizes all the repositories' do
+      repository.expects(:new).with(user, repos.first).once.returns(stub('repo', :run => public_repo))
+      repository.expects(:new).with(user, repos.last).once.returns(stub('repo', :run => private_repo))
+      sync.run
+    end
   end
 
   describe 'given type is set to public' do
