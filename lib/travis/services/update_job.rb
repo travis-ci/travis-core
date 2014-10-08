@@ -29,10 +29,6 @@ module Travis
         @job ||= Job::Test.find(data[:id])
       end
 
-      def event
-        params[:event]
-      end
-
       def data
         @data ||= begin
           data = params[:data].symbolize_keys
