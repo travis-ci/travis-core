@@ -10,6 +10,11 @@ module Travis
         end
       end
 
+      def self.education_queue?(owner)
+        # this method is here so it can be overridden with subscription logic
+        active?(owner)
+      end
+
       include Travis::Logging
 
       def student?
