@@ -1,4 +1,5 @@
 require 's3'
+require 'travis/services/base'
 
 module Travis
   module Services

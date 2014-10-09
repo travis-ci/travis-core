@@ -1,3 +1,7 @@
+require 'travis/services/base'
+require 'travis/support/instrumentation'
+require 'travis/support/exceptions/handling'
+
 module Travis
   module Enqueue
     module Services
@@ -27,7 +31,7 @@ module Travis
           enqueue_all && reports unless disabled?
         end
         instrument :run
-        rescues :run, from: Exception
+        rescues :run, from: Exception, backtrace: false
 
         def disabled?
           Timeout.timeout(TIMEOUT) do
@@ -81,7 +85,7 @@ module Travis
           def publish(job)
             Metriks.timer('enqueue.publish_job').time do
               payload = Travis::Api.data(job, for: 'worker', type: 'Job::Test', version: 'v0')
-              publisher(job.queue).publish(payload, properties: { type: payload['type'] })
+              publisher(job.queue).publish(payload, properties: { type: payload['type'], persistent: true })
             end
           end
 

@@ -62,7 +62,7 @@ describe Repository::Settings do
           settings(type, nil).send(:"timeout_#{type}").should be_nil
         end
 
-        it "is valid if #{type} is > 0" do
+        it "is valid if #{type} is nil" do
           settings(type, nil).should be_valid
         end
 
@@ -79,8 +79,8 @@ describe Repository::Settings do
                 settings(type, nil).should be_valid
               end
 
-              it "if #{type} is 0" do
-                settings(type, 0).should be_valid
+              it "if #{type} is > 0" do
+                settings(type, 1).should be_valid
               end
 
               it "if #{type} is < #{max}" do
@@ -95,6 +95,10 @@ describe Repository::Settings do
             describe 'is invalid' do
               it "if #{type} is < 0" do
                 settings(type, -1).should_not be_valid
+              end
+
+              it "if #{type} is == 0" do
+                settings(type, 0).should_not be_valid
               end
 
               it "if #{type} is > #{max}" do

@@ -18,6 +18,7 @@ module Travis
                 {
                   'id' => job.id,
                   'repository_id' => job.repository_id,
+                  'repository_private' => repository.private,
                   'parent_id' => job.source_id,
                   'number' => job.number,
                   'state' => job.state.to_s,

@@ -1,3 +1,5 @@
+require 'travis/notification/instrument'
+
 module Travis
   module Notification
     class Instrument

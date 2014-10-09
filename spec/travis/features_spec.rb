@@ -1,13 +1,9 @@
 require 'spec_helper'
 
 describe Travis::Features do
-  before do
-    Travis.instance_variable_set(:@config, nil)
+  it "should delegate to rollout" do
+    expect { Travis::Features.info(:short_urls) }.to_not raise_error
   end
-
-    it "should delegate to rollout" do
-      expect { Travis::Features.info(:short_urls) }.to_not raise_error
-    end
 
   describe "feature checks" do
     include Support::ActiveRecord

@@ -1,7 +1,6 @@
-require 'active_record'
-require 'core_ext/active_record/base'
 require 'core_ext/hash/deep_symbolize_keys'
 require 'simple_states'
+require 'travis/model'
 
 # Build currently models a central but rather abstract domain entity: the thing
 # that is triggered by a Github request (service hook ping).
@@ -207,6 +206,10 @@ class Build < Travis::Model
 
     def multi_os_enabled?
       Travis::Features.enabled_for_all?(:multi_os) || repository && Travis::Features.active?(:multi_os, repository)
+    end
+
+    def dist_group_expansion_enabled?
+      Travis::Features.enabled_for_all?(:dist_group_expansion) || repository && Travis::Features.active?(:dist_group_expansion, repository)
     end
 
     def last_finished_state_on_branch

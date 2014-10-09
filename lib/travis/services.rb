@@ -1,4 +1,3 @@
-
 module Travis
   module Services
     module Registry
@@ -66,8 +65,9 @@ require 'travis/services/find_user_permissions'
 require 'travis/services/regenerate_repo_key'
 require 'travis/services/remove_log'
 require 'travis/services/reset_model'
-require 'travis/services/sync_user_'     # TODO wtf, y u no load this file if named properly
+require 'travis/services/sync_user'
 require 'travis/services/update_annotation'
 require 'travis/services/update_hook'
 require 'travis/services/update_job'
+require 'travis/services/update_log'
 require 'travis/services/update_user'

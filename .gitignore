@@ -9,3 +9,8 @@ tmp
 notes
 bin
 vendor
+
+# This migration is specific to specs / local development, and is
+# linked into db/migrate when following the setup instructions in
+# README.md.
+db/migrate/20140612131826_add_removed_info_to_logs.rb

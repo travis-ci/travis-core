@@ -74,7 +74,7 @@ class Request < Travis::Model
   end
 
   def config_url
-    "https://api.github.com/repos/#{repository.slug}/contents/.travis.yml?ref=#{commit.commit}"
+    GH.full_url("repos/#{repository.slug}/contents/.travis.yml?ref=#{commit.commit}").to_s
   end
 
   def same_repo_pull_request?
@@ -84,7 +84,7 @@ class Request < Travis::Model
       base_repo = payload.try(:pull_request).try(:base).try(:repo).try(:full_name)
       head_repo && base_repo && head_repo == base_repo
     rescue => e
-      puts "[request:#{id}] Couldn't determine whether pull request is from the same repository: #{e.message}"
+      Travis.config.error "[request:#{id}] Couldn't determine whether pull request is from the same repository: #{e.message}"
       false
     end
   end

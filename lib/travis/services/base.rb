@@ -1,3 +1,5 @@
+require 'travis/services/helpers'
+
 module Travis
   module Services
     class Base

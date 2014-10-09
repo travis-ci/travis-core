@@ -9,8 +9,8 @@ describe Travis::Task do
       Travis::Features.redis.set('feature:travis_tasks:disabled', nil)
     end
 
-    it 'is true by default' do
-      subject.run_local?.should be_true
+    it 'is false by default' do
+      subject.run_local?.should be_false
     end
 
     it 'can be set to true manually' do
@@ -29,7 +29,7 @@ describe Travis::Task do
     end
 
     it 'can be set to true through a feature flag' do
-      Travis::Features.deactivate_all(:travis_tasks)
+      Travis::Features.disable_for_all(:travis_tasks)
       subject.run_local?.should be_true
     end
 

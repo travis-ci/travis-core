@@ -1,3 +1,4 @@
+require 'travis/model/build'
 class Build
   module Metrics
     def start(data = {})

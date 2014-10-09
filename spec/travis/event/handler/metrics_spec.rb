@@ -38,7 +38,7 @@ describe Travis::Event::Handler::Metrics do
 
     before :each do
       test.stubs(:created_at => created_at, :started_at => started_at, :finished_at => finished_at)
-      Travis::Instrumentation.stubs(:meter)
+      Travis::Metrics.stubs(:meter)
     end
 
     def notify(event, object)
@@ -47,12 +47,12 @@ describe Travis::Event::Handler::Metrics do
 
     describe 'job:test:started' do
       it 'meters on job.queue.wait_time' do
-        Travis::Instrumentation.expects(:meter).with('job.queue.wait_time', :started_at => created_at, :finished_at => started_at)
+        Travis::Metrics.expects(:meter).with('job.queue.wait_time', :started_at => created_at, :finished_at => started_at)
         notify('job:test:started', test)
       end
 
       it 'meters on job.queue.builds-linux.wait_time' do
-        Travis::Instrumentation.expects(:meter).with('job.queue.wait_time.builds-linux', :started_at => created_at, :finished_at => started_at)
+        Travis::Metrics.expects(:meter).with('job.queue.wait_time.builds-linux', :started_at => created_at, :finished_at => started_at)
         notify('job:test:started', test)
       end
 
@@ -60,7 +60,7 @@ describe Travis::Event::Handler::Metrics do
         let(:started_at)  { nil }
 
         it 'does not meters time' do
-          Travis::Instrumentation.expects(:meter).never
+          Travis::Metrics.expects(:meter).never
           notify('job:test:started', test)
         end
       end
@@ -68,12 +68,12 @@ describe Travis::Event::Handler::Metrics do
 
     describe 'job:test:finished' do
       it 'meters on job.duration' do
-        Travis::Instrumentation.expects(:meter).with('job.duration', :started_at => started_at, :finished_at => finished_at)
+        Travis::Metrics.expects(:meter).with('job.duration', :started_at => started_at, :finished_at => finished_at)
         notify('job:test:finished', test)
       end
 
       it 'meters on job.duration' do
-        Travis::Instrumentation.expects(:meter).with('job.duration.builds-linux', :started_at => started_at, :finished_at => finished_at)
+        Travis::Metrics.expects(:meter).with('job.duration.builds-linux', :started_at => started_at, :finished_at => finished_at)
         notify('job:test:finished', test)
       end
 
@@ -81,7 +81,7 @@ describe Travis::Event::Handler::Metrics do
         let(:finished_at)  { nil }
 
         it 'does not meters time' do
-          Travis::Instrumentation.expects(:meter).never
+          Travis::Metrics.expects(:meter).never
           notify('job:test:finished', test)
         end
       end

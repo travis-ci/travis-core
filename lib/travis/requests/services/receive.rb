@@ -1,4 +1,7 @@
 require 'gh'
+require 'travis/services/base'
+require 'travis/model/request/approval'
+require 'travis/notification/instrument'
 
 require "travis/travis_yml_stats"
 
@@ -103,7 +106,7 @@ module Travis
             Travis::TravisYmlStats.store_stats(request)
           rescue => e
             Travis.logger.warn("[request:receive] Couldn't store .travis.yml stats: #{e.message}")
-            Raven.capture_exception(e)
+            Travis::Exceptions.handle(e)
           end
 
           class Instrument < Notification::Instrument

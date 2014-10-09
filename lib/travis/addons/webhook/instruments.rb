@@ -1,3 +1,6 @@
+require 'travis/notification/instrument/event_handler'
+require 'travis/notification/instrument/task'
+
 module Travis
   module Addons
     module Webhook

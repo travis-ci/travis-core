@@ -1,6 +1,6 @@
 require 'uri'
 require 'core_ext/hash/compact'
-require 'active_record'
+require 'travis/model'
 
 # Models a repository that has many builds and requests.
 #
@@ -36,7 +36,7 @@ class Repository < Travis::Model
 
   class << self
     def timeline
-      where(arel_table[:last_build_started_at].not_eq(nil)).order(arel_table[:last_build_started_at].desc)
+      active.order('last_build_finished_at IS NULL AND last_build_started_at IS NOT NULL DESC, last_build_started_at DESC NULLS LAST, id DESC')
     end
 
     def with_builds
@@ -111,7 +111,15 @@ class Repository < Travis::Model
   end
 
   def source_url
-    private? ? "git@github.com:#{slug}.git": "git://github.com/#{slug}.git"
+    (private? || private_mode?) ? "git@#{source_host}:#{slug}.git": "git://#{source_host}/#{slug}.git"
+  end
+
+  def private_mode?
+    source_host != 'github.com'
+  end
+
+  def source_host
+    Travis.config.github.source_host || 'github.com'
   end
 
   def branches

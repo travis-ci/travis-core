@@ -1,4 +1,6 @@
 require 'active_support/core_ext/hash/except'
+require 'travis/support/instrumentation'
+require 'travis/services/base'
 
 module Travis
   module Services
@@ -25,10 +27,6 @@ module Travis
 
       def job
         @job ||= Job::Test.find(data[:id])
-      end
-
-      def event
-        params[:event]
       end
 
       def data

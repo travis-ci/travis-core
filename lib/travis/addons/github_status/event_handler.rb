@@ -1,3 +1,6 @@
+require 'travis/addons/github_status/instruments'
+require 'travis/event/handler'
+
 module Travis
   module Addons
     module GithubStatus

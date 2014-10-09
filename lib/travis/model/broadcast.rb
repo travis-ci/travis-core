@@ -1,4 +1,4 @@
-require 'active_record'
+require 'travis/model'
 
 class Broadcast < Travis::Model
   belongs_to :recipient, polymorphic: true

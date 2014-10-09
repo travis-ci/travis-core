@@ -1,4 +1,5 @@
 require 'core_ext/active_record/none_scope'
+require 'travis/model'
 
 class Permission < Travis::Model
   ROLES = %w(admin push pull)
