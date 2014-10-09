@@ -16,7 +16,7 @@ class Job
         os         = job.config[:os]
         sudo       = allow_sudo_specification?(job.repository) ? job.config[:sudo] : nil
         owner      = job.repository.try(:owner)
-        education  = Travis::Github::Education.active?(owner)
+        education  = Travis::Github::Education.education_queue?(owner)
         queues.detect { |queue| queue.send(:matches?, owner_name, repo_name, language, os, sudo, education) } || default
       end
 
