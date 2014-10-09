@@ -60,21 +60,21 @@ describe 'Job::Queue' do
     end
 
     it 'returns the queue when education requirements matches the given configuration hash' do
-      Travis::Github::Education.stubs(:active?).returns(true)
+      Travis::Github::Education.stubs(:education_queue?).returns(true)
       owner = stub('owner', :education => true)
       job = stub('job', :config => { }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner))
       Job::Queue.for(job).name.should == 'builds.education'
     end
 
     it 'does not return education queue if feature flag is disabled' do
-      Travis::Github::Education.stubs(:active?).returns(false)
+      Travis::Github::Education.stubs(:education_queue?).returns(false)
       owner = stub('owner', :education => true)
       job = stub('job', :config => { }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner))
       Job::Queue.for(job).name.should == 'builds.linux'
     end
 
     it 'returns the queue when education requirements matches, ignoring configuration hash' do
-      Travis::Github::Education.stubs(:active?).returns(true)
+      Travis::Github::Education.stubs(:education_queue?).returns(true)
       owner = stub('owner', :education => true)
       job = stub('job', :config => { :os => 'osx' }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner))
       Job::Queue.for(job).name.should == 'builds.education'
