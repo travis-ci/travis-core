@@ -47,7 +47,7 @@ module Travis
             github:        { api_url: 'https://api.github.com', token: 'travisbot-token' },
             async:         {},
             notifications: [], # TODO rename to event.handlers
-            metrics:       { reporter: 'logger' },
+            metrics:       { reporter: 'librato' },
             logger:        { thread_id: true },
             queues:        [],
             default_queue: 'builds.linux',
