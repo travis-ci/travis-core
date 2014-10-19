@@ -2,8 +2,6 @@ require 'travis/config'
 
 module Travis
   class Config < Hashr
-    include Logging
-
     HOSTS = {
       production:  'travis-ci.org',
       staging:     'staging.travis-ci.org',
