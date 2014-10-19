@@ -41,7 +41,7 @@ module Travis
               :login => data['login'],
               :email => data['email'],
               :github_id => data['id'],
-              :gravatar_id => data['gravatar_id']
+              :avatar_url => data['avatar_url']
             )
 
             nullify_logins(user.github_id, user.login)

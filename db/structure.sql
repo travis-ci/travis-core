@@ -3,7 +3,6 @@
 --
 
 SET statement_timeout = 0;
-SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -24,98 +23,6 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 SET search_path = public, pg_catalog;
-
---
--- Name: delete_log(); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION delete_log() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-        BEGIN
-          DELETE FROM logs WHERE id = OLD.id;
-          RETURN OLD;
-        END;
-      $$;
-
-
---
--- Name: delete_log_part(); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION delete_log_part() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-        BEGIN
-          DELETE FROM log_parts WHERE id = OLD.id;
-          RETURN OLD;
-        END;
-      $$;
-
-
---
--- Name: insert_log(); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION insert_log() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-        BEGIN
-          INSERT INTO logs VALUES (NEW.id, NEW.job_id, NEW.content, NEW.created_at, NEW.updated_at,
-            NEW.aggregated_at, NEW.archiving, NEW.archived_at, NEW.archive_verified);
-          RETURN NEW;
-        END;
-      $$;
-
-
---
--- Name: insert_log_part(); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION insert_log_part() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-        BEGIN
-          INSERT INTO log_parts VALUES (NEW.id, NEW.artifact_id, NEW.content, NEW.number, NEW.final,
-            NEW.created_at);
-          RETURN NEW;
-        END;
-      $$;
-
-
---
--- Name: update_log(); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION update_log() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-        BEGIN
-          UPDATE logs
-          SET job_id=NEW.job_id, content=NEW.content, created_at=NEW.created_at,
-            updated_at=NEW.updated_at, aggregated_at=NEW.aggregated_at, archiving=NEW.archiving,
-            archived_at=NEW.archived_at, archive_verified=NEW.archive_verified
-          WHERE id = NEW.id;
-          RETURN NEW;
-        END;
-      $$;
-
-
---
--- Name: update_log_part(); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION update_log_part() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-        BEGIN
-          UPDATE logs
-          SET log_id=NEW.artifact_id, content=NEW.content, number=NEW.number, created_at=NEW.created_at
-          WHERE id = NEW.id;
-          RETURN NEW;
-        END;
-      $$;
-
 
 SET default_tablespace = '';
 
@@ -200,8 +107,8 @@ CREATE TABLE broadcasts (
     kind character varying(255),
     message character varying(255),
     expired boolean,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -225,29 +132,17 @@ ALTER SEQUENCE broadcasts_id_seq OWNED BY broadcasts.id;
 
 
 --
--- Name: shared_builds_tasks_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE shared_builds_tasks_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
 -- Name: builds; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE builds (
-    id bigint DEFAULT nextval('shared_builds_tasks_seq'::regclass) NOT NULL,
+    id integer NOT NULL,
     repository_id integer,
     number character varying(255),
     started_at timestamp without time zone,
     finished_at timestamp without time zone,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     config text,
     commit_id integer,
     request_id integer,
@@ -301,8 +196,8 @@ CREATE TABLE commits (
     committer_email character varying(255),
     author_name character varying(255),
     author_email character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -333,8 +228,8 @@ CREATE TABLE emails (
     id integer NOT NULL,
     user_id integer,
     email character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -362,7 +257,7 @@ ALTER SEQUENCE emails_id_seq OWNED BY emails.id;
 --
 
 CREATE TABLE jobs (
-    id bigint DEFAULT nextval('shared_builds_tasks_seq'::regclass) NOT NULL,
+    id integer NOT NULL,
     repository_id integer,
     commit_id integer,
     source_id integer,
@@ -375,8 +270,8 @@ CREATE TABLE jobs (
     worker character varying(255),
     started_at timestamp without time zone,
     finished_at timestamp without time zone,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     tags text,
     allow_failure boolean DEFAULT false,
     owner_id integer,
@@ -453,7 +348,9 @@ CREATE TABLE logs (
     archiving boolean,
     archived_at timestamp without time zone,
     archive_verified boolean,
-    purged_at timestamp without time zone
+    purged_at timestamp without time zone,
+    removed_at timestamp without time zone,
+    removed_by integer
 );
 
 
@@ -515,8 +412,8 @@ CREATE TABLE organizations (
     name character varying(255),
     login character varying(255),
     github_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     avatar_url character varying(255),
     location character varying(255),
     email character varying(255),
@@ -585,8 +482,8 @@ CREATE TABLE repositories (
     id integer NOT NULL,
     name character varying(255),
     url character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     last_build_id integer,
     last_build_number character varying(255),
     last_build_started_at timestamp without time zone,
@@ -641,8 +538,8 @@ CREATE TABLE requests (
     config text,
     started_at timestamp without time zone,
     finished_at timestamp without time zone,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     event_type character varying(255),
     comments_url character varying(255),
     base_commit character varying(255),
@@ -691,8 +588,8 @@ CREATE TABLE ssl_keys (
     repository_id integer,
     public_key text,
     private_key text,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -723,8 +620,8 @@ CREATE TABLE tokens (
     id integer NOT NULL,
     user_id integer,
     token character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -755,8 +652,8 @@ CREATE TABLE urls (
     id integer NOT NULL,
     url character varying(255),
     code character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -788,17 +685,17 @@ CREATE TABLE users (
     name character varying(255),
     login character varying(255),
     email character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     is_admin boolean DEFAULT false,
     github_id integer,
     github_oauth_token character varying(255),
-    gravatar_id character varying(255),
     locale character varying(255),
     is_syncing boolean,
     synced_at timestamp without time zone,
     github_scopes text,
-    education boolean
+    education boolean,
+    avatar_url character varying(255)
 );
 
 
@@ -846,6 +743,13 @@ ALTER TABLE ONLY broadcasts ALTER COLUMN id SET DEFAULT nextval('broadcasts_id_s
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY builds ALTER COLUMN id SET DEFAULT nextval('builds_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY commits ALTER COLUMN id SET DEFAULT nextval('commits_id_seq'::regclass);
 
 
@@ -854,6 +758,13 @@ ALTER TABLE ONLY commits ALTER COLUMN id SET DEFAULT nextval('commits_id_seq'::r
 --
 
 ALTER TABLE ONLY emails ALTER COLUMN id SET DEFAULT nextval('emails_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY jobs ALTER COLUMN id SET DEFAULT nextval('jobs_id_seq'::regclass);
 
 
 --
@@ -982,6 +893,14 @@ ALTER TABLE ONLY emails
 
 
 --
+-- Name: jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY jobs
+    ADD CONSTRAINT jobs_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: log_parts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1043,14 +962,6 @@ ALTER TABLE ONLY requests
 
 ALTER TABLE ONLY ssl_keys
     ADD CONSTRAINT ssl_keys_pkey PRIMARY KEY (id);
-
-
---
--- Name: tasks_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY jobs
-    ADD CONSTRAINT tasks_pkey PRIMARY KEY (id);
 
 
 --
@@ -1148,10 +1059,10 @@ CREATE INDEX index_jobs_on_state_owner_type_owner_id ON jobs USING btree (state,
 
 
 --
--- Name: index_jobs_on_type_and_owner_id_and_owner_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_jobs_on_type_and_source_id_and_source_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_jobs_on_type_and_owner_id_and_owner_type ON jobs USING btree (type, source_id, source_type);
+CREATE INDEX index_jobs_on_type_and_source_id_and_source_type ON jobs USING btree (type, source_id, source_type);
 
 
 --
@@ -1278,14 +1189,6 @@ CREATE INDEX index_users_on_login ON users USING btree (login);
 --
 
 CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
-
-
---
--- Name: log_parts_log_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY log_parts
-    ADD CONSTRAINT log_parts_log_id_fk FOREIGN KEY (log_id) REFERENCES logs(id);
 
 
 --
@@ -1520,6 +1423,8 @@ INSERT INTO schema_migrations (version) VALUES ('20130702123456');
 
 INSERT INTO schema_migrations (version) VALUES ('20130702144325');
 
+INSERT INTO schema_migrations (version) VALUES ('20130702154300');
+
 INSERT INTO schema_migrations (version) VALUES ('20130705123456');
 
 INSERT INTO schema_migrations (version) VALUES ('20130707164854');
@@ -1556,4 +1461,8 @@ INSERT INTO schema_migrations (version) VALUES ('20140210003014');
 
 INSERT INTO schema_migrations (version) VALUES ('20140210012509');
 
+INSERT INTO schema_migrations (version) VALUES ('20140612131826');
+
 INSERT INTO schema_migrations (version) VALUES ('20140827121945');
+
+INSERT INTO schema_migrations (version) VALUES ('20141018121945');

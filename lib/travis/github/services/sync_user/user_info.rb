@@ -23,7 +23,7 @@ module Travis
               Travis.logger.info("Changing #<User id=#{user.id} login=\"#{user.login}\" github_id=#{user.github_id}> email: current=\"#{user.email}\", new=\"#{email}\" (UserInfo)")
             end
 
-            user.update_attributes!(name: name, login: login, gravatar_id: gravatar_id, email: email, education: education)
+            user.update_attributes!(name: name, login: login, avatar_url: avatar_url, email: email, education: education)
             emails = verified_emails
             emails << email unless emails.include? email
             emails.each { |e| user.emails.find_or_create_by_email!(e) }
@@ -43,8 +43,8 @@ module Travis
             user_info.fetch('login')
           end
 
-          def gravatar_id
-            user_info['gravatar_id']
+          def avatar_url
+            user_info['avatar_url']
           end
 
           def email

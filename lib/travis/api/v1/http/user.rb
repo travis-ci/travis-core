@@ -17,7 +17,7 @@ module Travis
               'login' => user.login,
               'name' => user.name,
               'email' => user.email,
-              'gravatar_id' => user.gravatar_id,
+              'avatar_url' => user.avatar_url,
               'locale' => user.locale,
               'is_syncing' => user.is_syncing,
               'synced_at' => format_date(user.synced_at)

@@ -11,7 +11,7 @@ class User < Travis::Model
   has_many :repositories, through: :permissions
   has_many :emails, dependent: :destroy
 
-  attr_accessible :name, :login, :email, :github_id, :github_oauth_token, :gravatar_id, :locale, :education
+  attr_accessible :name, :login, :email, :github_id, :github_oauth_token, :avatar_url, :locale, :education
 
   before_create :set_as_recent
   after_create :create_a_token
@@ -49,7 +49,7 @@ class User < Travis::Model
   end
 
   def to_json
-    keys = %w/id login email name locale github_id gravatar_id is_syncing synced_at updated_at created_at/
+    keys = %w/id login email name locale github_id avatar_url is_syncing synced_at updated_at created_at/
     { 'user' => attributes.slice(*keys) }.to_json
   end
 
@@ -105,13 +105,6 @@ class User < Travis::Model
     @recently_signed_up || false
   end
 
-  def profile_image_hash
-    # TODO:
-    #   If Github always sends valid gravatar_id in oauth payload (need to check that)
-    #   then these fallbacks (email hash and zeros) are superfluous and can be removed.
-    gravatar_id.presence || (email? && Digest::MD5.hexdigest(email)) || '0' * 32
-  end
-
   def github_scopes
     return [] unless github_oauth_token
     read_attribute(:github_scopes) || []
@@ -120,10 +113,6 @@ class User < Travis::Model
   def correct_scopes?
     missing = Oauth.wanted_scopes - github_scopes
     missing.empty?
-  end
-
-  def avatar_url
-    "https://0.gravatar.com/avatar/#{profile_image_hash}"
   end
 
   def inspect

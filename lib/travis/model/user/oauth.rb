@@ -20,7 +20,7 @@ class User
           'login'              => payload['info']['nickname'],
           'github_id'          => payload['uid'].to_i,
           'github_oauth_token' => payload['credentials']['token'],
-          'gravatar_id'        => payload['extra']['raw_info']['gravatar_id']
+          'avatar_url'         => payload['extra']['raw_info']['avatar_url']
         }
       end
     end
