@@ -88,24 +88,6 @@ describe User do
     end
   end
 
-  describe 'profile_image_hash' do
-    it "returns gravatar_id if it's present" do
-      user.gravatar_id = '41193cdbffbf06be0cdf231b28c54b18'
-      user.profile_image_hash.should == '41193cdbffbf06be0cdf231b28c54b18'
-    end
-
-    it 'returns a MD5 hash of the email if no gravatar_id and an email is set' do
-      user.gravatar_id = nil
-      user.profile_image_hash.should == Digest::MD5.hexdigest(user.email)
-    end
-
-    it 'returns 32 zeros if no gravatar_id or email is set' do
-      user.gravatar_id = nil
-      user.email = nil
-      user.profile_image_hash.should == '0' * 32
-    end
-  end
-
   describe 'authenticate_by' do
     describe 'given a valid token and login' do
       it 'authenticates the user' do
