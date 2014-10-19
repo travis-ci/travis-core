@@ -554,7 +554,7 @@ GITHUB_PAYLOADS = {
     },
     "extra" => {
       "raw_info" => {
-        "gravatar_id" => "41193cdbffbf06be0cdf231b28c54b18"
+        "avatar_url" => "https://avatars0.githubusercontent.com/u/45143"
       }
     }
   },
@@ -566,7 +566,7 @@ GITHUB_OAUTH_DATA = {
   'login'              => 'john',
   'github_id'          => 234423,
   'github_oauth_token' => '1234567890abcdefg',
-  'gravatar_id'        => '41193cdbffbf06be0cdf231b28c54b18'
+  'avatar_id'          => 'https://avatars0.githubusercontent.com/u/45143'
 }
 
 WORKER_PAYLOADS = {
