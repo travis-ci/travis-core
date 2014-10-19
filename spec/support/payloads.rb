@@ -566,7 +566,7 @@ GITHUB_OAUTH_DATA = {
   'login'              => 'john',
   'github_id'          => 234423,
   'github_oauth_token' => '1234567890abcdefg',
-  'avatar_id'          => 'https://avatars0.githubusercontent.com/u/45143'
+  'avatar_url'          => 'https://avatars0.githubusercontent.com/u/45143'
 }
 
 WORKER_PAYLOADS = {
