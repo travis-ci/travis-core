@@ -5,7 +5,7 @@ describe Travis::Github::Services::SyncUser::UserInfo do
   let(:old_user_info) {{
     'login'         => 'rkh',
     'name'          => 'Konstantin Haase',
-    'gravatar_id'   => '5c2b452f6eea4a6d84c105ebd971d2a4',
+    'avatar_url'    => 'https://avatars0.githubusercontent.com/u/30442',
     'email'         => 'konstantin.haase@gmail.com',
     'github_scopes' => ['user:email'],
     'id'            => '100',
@@ -26,7 +26,7 @@ describe Travis::Github::Services::SyncUser::UserInfo do
   subject { described_class.new(user, gh) }
 
   its(:name)            { should == 'Konstantin Haase' }
-  its(:gravatar_id)     { should == '5c2b452f6eea4a6d84c105ebd971d2a4' }
+  its(:avatar_url)      { should == 'https://avatars0.githubusercontent.com/u/30442' }
   its(:login)           { should == 'rkh' }
   its(:email)           { should == 'konstantin.haase@gmail.com' }
   its(:verified_emails) { should == [
@@ -71,7 +71,7 @@ describe Travis::Github::Services::SyncUser::UserInfo do
 
   it 'calls update_attributes! and emails.find_or_create_by_email!' do
     subject.stubs(:education).returns(true)
-    args   = user_info.slice('login', 'name', 'email', 'gravatar_id').symbolize_keys
+    args   = user_info.slice('login', 'name', 'email', 'avatar_url').symbolize_keys
     args[:education] = true
     emails = stub("email")
     user.stubs(:emails).returns(emails)
@@ -87,7 +87,7 @@ describe Travis::Github::Services::SyncUser::UserInfo do
   end
 
   it 'raises an error if github_id does not match' do
-    args   = user_info.slice('login', 'name', 'email', 'gravatar_id').symbolize_keys
+    args   = user_info.slice('login', 'name', 'email', 'avatar_url').symbolize_keys
     user.stubs(:github_id).returns(101)
     user.stubs(:id).returns(1)
     expect {
