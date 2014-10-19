@@ -63,7 +63,7 @@ module Travis
 
   class << self
     def setup(options = {})
-      @config = Config.load(*options[:configs] || [:files, :env, :heroku, :docker])
+      @config = Config.load(*options[:configs])
       @redis = Travis::RedisPool.new(config.redis)
 
       Travis.logger.info('Setting up Travis::Core')
