@@ -25,6 +25,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'coder',             '~> 0.4.0'
   s.add_dependency 'virtus',            '~> 1.0.0'
 
+  # travis
+  s.add_dependency 'travis-config',     '~> 0.1.0'
+
   # db
   s.add_dependency 'data_migrations',   '~> 0.0.1'
   s.add_dependency 'redis',             '~> 3.0'

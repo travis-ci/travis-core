@@ -42,7 +42,7 @@ module Travis
   require 'travis/event'
   require 'travis/addons'
   require 'travis/api'
-  require 'travis/config'
+  require 'travis/config/defaults'
   require 'travis/commit_command'
   require 'travis/enqueue'
   require 'travis/features'
@@ -63,7 +63,7 @@ module Travis
 
   class << self
     def setup(options = {})
-      @config = Config.load(*options[:configs] || [:files, :env, :heroku, :docker])
+      @config = Config.load(*options[:configs])
       @redis = Travis::RedisPool.new(config.redis)
 
       Travis.logger.info('Setting up Travis::Core')
