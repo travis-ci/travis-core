@@ -31,17 +31,9 @@ module Travis
         def run
           if accept?
             create && start
-            request.reload
-            if request.builds.count == 0
-              approval = Request::Approval.new(request)
-              Travis.logger.warn("[request:receive] Request #{request.id} commit=#{request.commit.try(:commit).inspect} didn't create any builds: #{approval.result}/#{approval.message}")
-            else
-              store_config_info
-              Travis.logger.info("[request:receive] Request #{request.id} commit=#{request.commit.try(:commit).inspect} created #{request.builds.count} builds")
-            end
+            store_config_info if verify
           else
-            commit = payload.commit['commit'].inspect if payload.commit rescue nil
-            Travis.logger.info("[request:receive] Github event rejected: event_type=#{event_type.inspect} repo=\"#{payload.repository['owner_name']}/#{payload.repository['name']}\" commit=#{commit} action=#{payload.action.inspect}")
+            rejected
           end
           request
         end
@@ -67,13 +59,30 @@ module Travis
               :event_type => event_type,
               :state => :created,
               :commit => commit,
-              :owner => owner,
+              :owner => repo.owner,
               :token => params[:token]
             ))
           end
 
           def start
             request.start!
+          end
+
+          def verify
+            request.reload
+            if request.builds.count == 0
+              approval = Request::Approval.new(request)
+              Travis.logger.warn("[request:receive] Request #{request.id} commit=#{request.commit.try(:commit).inspect} didn't create any builds: #{approval.result}/#{approval.message}")
+              false
+            else
+              Travis.logger.info("[request:receive] Request #{request.id} commit=#{request.commit.try(:commit).inspect} created #{request.builds.count} builds")
+              true
+            end
+          end
+
+          def rejected
+            commit = payload.commit['commit'].inspect if payload.commit rescue nil
+            Travis.logger.info("[request:receive] Github event rejected: event_type=#{event_type.inspect} repo=\"#{payload.repository['owner_name']}/#{payload.repository['name']}\" commit=#{commit} action=#{payload.action.inspect}")
           end
 
           def payload
@@ -88,15 +97,8 @@ module Travis
             @event_type ||= (params[:event_type] || 'push').gsub('-', '_')
           end
 
-          def owner
-            @owner ||= begin
-              type = payload.owner[:type] == 'User' ? 'user' : 'org'
-              run_service(:"github_find_or_create_#{type}", payload.owner)
-            end
-          end
-
           def repo
-            @repo ||= run_service(:github_find_or_create_repo, payload.repository.merge(:owner => owner))
+            @repo ||= run_service(:find_repo, payload.repository)
           end
 
           def commit
