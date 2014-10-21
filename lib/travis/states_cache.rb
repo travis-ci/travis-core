@@ -18,9 +18,9 @@ module Travis
     end
 
     def write(id, branch, data)
-      if data.respond_to?(:finished_at)
+      if data.respond_to?(:id)
         data = {
-          'finished_at' => format_date(data.finished_at),
+          'id' => data.id,
           'state' => data.state.to_s
         }
       end
@@ -75,29 +75,29 @@ module Travis
       end
 
       def write(id, branch, data)
-        finished_at = data['finished_at']
-        data        = data.to_json
+        build_id = data['id']
+        data     = data.to_json
 
-        Travis.logger.info("[states-cache] Writing states cache for repo_id=#{id} branch=#{branch} finished_at=#{finished_at}")
-        set(key(id), data) if update?(id, nil, finished_at)
-        set(key(id, branch), data) if update?(id, branch, finished_at)
+        Travis.logger.info("[states-cache] Writing states cache for repo_id=#{id} branch=#{branch} build_id=#{build_id}")
+        set(key(id), data) if update?(id, nil, build_id)
+        set(key(id, branch), data) if update?(id, branch, build_id)
       end
 
-      def update?(id, branch, finished_at)
+      def update?(id, branch, build_id)
         current_data = fetch(id, branch)
         return true unless current_data
 
-        current_date = Time.parse(current_data['finished_at'])
-        new_date     = Time.parse(finished_at)
+        current_id = current_data['id'].to_i
+        new_id     = build_id.to_i
 
-        update = new_date > current_date
+        update = new_id > current_id
         message = "[states-cache] Checking if cache is stale for repo_id=#{id} branch=#{branch}. "
         if update
           message << "The cache is going to get an update, "
         else
           message << "The cache is fresh, "
         end
-        message << "last cached build finished_at=#{current_date}, we're checking build with finished_at=#{new_date}"
+        message << "last cached build id=#{current_id}, we're checking build with id=#{new_id}"
         Travis.logger.info(message)
 
         return update
