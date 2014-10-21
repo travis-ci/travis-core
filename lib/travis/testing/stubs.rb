@@ -270,6 +270,7 @@ module Travis
       def stub_user(attributes = {})
         Stubs.stub 'user', attributes.reverse_merge(
           id: 1,
+          github_id: 1,
           organizations: [org],
           name: 'Sven Fuchs',
           login: 'svenfuchs',
