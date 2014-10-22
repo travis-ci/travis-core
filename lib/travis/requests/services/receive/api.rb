@@ -62,7 +62,7 @@ module Travis
             end
 
             def slug
-              "#{event['repository']['owner_name']}/#{event['repository']['name']}"
+              event['repository'] && "#{event['repository']['owner_name']}/#{event['repository']['name']}"
             end
 
             def branch

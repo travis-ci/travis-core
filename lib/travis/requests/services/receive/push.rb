@@ -24,15 +24,15 @@ module Travis
           end
 
           def repository
-            @repository ||= {
-              name:        event['repository']['name'],
-              description: event['repository']['description'],
-              url:         event['repository']['_links']['html']['href'],
-              owner_name:  event['repository']['owner']['login'],
-              owner_email: event['repository']['owner']['email'],
-              owner_type:  event['repository']['owner']['type'],
-              private:     !!event['repository']['private'],
-              github_id:   event['repository']['id']
+            @repository ||= repo_data && {
+              name:        repo_data['name'],
+              description: repo_data['description'],
+              url:         repo_data['_links']['html']['href'],
+              owner_name:  repo_data['owner']['login'],
+              owner_email: repo_data['owner']['email'],
+              owner_type:  repo_data['owner']['type'],
+              private:     !!repo_data['private'],
+              github_id:   repo_data['id']
             }
           end
 
@@ -56,6 +56,10 @@ module Travis
           end
 
           private
+
+            def repo_data
+              event['repository']
+            end
 
             def commit_data
               last_unskipped_commit(event['commits']) || event['commits'].last || event['head_commit']

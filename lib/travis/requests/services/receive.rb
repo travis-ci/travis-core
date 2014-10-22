@@ -26,7 +26,7 @@ module Travis
           end
         end
 
-        attr_reader :request
+        attr_reader :request, :accepted
 
         def run
           if accept?
@@ -43,19 +43,22 @@ module Travis
           payload.validate!
           validate!
           payload.accept?
+          @accepted = true
         rescue GH::Error(response_status: 404) => e
-          slug = payload.repository.values_at(:owner_name, :name).join('/')
           Travis.logger.warn "the following payload for #{slug} could not be accepted as a 404 response code was returned by GitHub: #{payload.inspect}"
-          false
-        rescue PayloadValidationError => e # TODO should use try/catch instead of raise/rescue
-          e.message << ", github-guid=#{github_guid}, event-type=#{event_type}"
-          raise e
+          @accepted = false
+        rescue PayloadValidationError => e
+          Travis.logger.error(e.message << ", github-guid=#{github_guid}, event-type=#{event_type}")
+          @accepted = false
         end
 
         private
 
           def validate!
-            raise PayloadValidationError, "Repository not found: #{slug}" unless repo
+            unless repo
+              Travis::Metrics.meter('request.receive.repository_not_found')
+              raise PayloadValidationError, "Repository not found: #{slug}"
+            end
           end
 
           def create
@@ -87,7 +90,7 @@ module Travis
 
           def rejected
             commit = payload.commit['commit'].inspect if payload.commit rescue nil
-            Travis.logger.info("[request:receive] Github event rejected: event_type=#{event_type.inspect} repo=\"#{payload.repository['owner_name']}/#{payload.repository['name']}\" commit=#{commit} action=#{payload.action.inspect}")
+            Travis.logger.info("[request:receive] Github event rejected: event_type=#{event_type.inspect} repo=\"#{slug}\" commit=#{commit} action=#{payload.action.inspect}")
           end
 
           def payload
@@ -107,7 +110,7 @@ module Travis
           end
 
           def slug
-            payload.repository.values_at(:owner_name, :name).join('/')
+            payload.repository ? payload.repository.values_at(:owner_name, :name).join('/') : '?'
           end
 
           def commit
@@ -127,7 +130,7 @@ module Travis
               publish(
                 :msg => "type=#{params[:event_type].inspect}",
                 :type => params[:event_type],
-                :accept? => target.accept?,
+                :accept? => target.accepted,
                 :payload => params[:payload]
               )
             end

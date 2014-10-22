@@ -33,7 +33,7 @@ module Travis
           end
 
           def repository
-            @repository ||= {
+            @repository ||= repo && {
               name:        repo['name'],
               description: repo['description'],
               url:         repo['_links']['html']['href'],
@@ -75,7 +75,7 @@ module Travis
           end
 
           def action
-            event['action'].to_sym
+            event['action'].try(:to_sym)
           end
 
           def base_commit
@@ -91,7 +91,7 @@ module Travis
           end
 
           def repo
-            @repo ||= event['repository']
+            event['repository']
           end
         end
       end
