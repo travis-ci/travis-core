@@ -81,6 +81,20 @@ describe Travis::Requests::Services::Receive do
       end
 
       it_should_behave_like 'creates a request'
+
+      describe 'when no commits are present' do
+        before :each do
+          payload['commits'] = nil
+        end
+
+        it 'does not explode' do
+          expect { request }.to_not raise_error
+        end
+
+        it 'logs a message' do
+          capture_log { request }.should include('missing commit')
+        end
+      end
     end
 
     describe 'with disabled pushes' do
