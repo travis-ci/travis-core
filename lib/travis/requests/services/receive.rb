@@ -41,17 +41,22 @@ module Travis
 
         def accept?
           payload.validate!
+          validate!
           payload.accept?
         rescue GH::Error(response_status: 404) => e
           slug = payload.repository.values_at(:owner_name, :name).join('/')
           Travis.logger.warn "the following payload for #{slug} could not be accepted as a 404 response code was returned by GitHub: #{payload.inspect}"
           false
-        rescue PayloadValidationError => e
+        rescue PayloadValidationError => e # TODO should use try/catch instead of raise/rescue
           e.message << ", github-guid=#{github_guid}, event-type=#{event_type}"
           raise e
         end
 
         private
+
+          def validate!
+            raise PayloadValidationError, "Repository not found: #{slug}" unless repo
+          end
 
           def create
             @request = repo.requests.create!(payload.request.merge(
@@ -99,6 +104,10 @@ module Travis
 
           def repo
             @repo ||= run_service(:find_repo, payload.repository)
+          end
+
+          def slug
+            payload.repository.values_at(:owner_name, :name).join('/')
           end
 
           def commit
