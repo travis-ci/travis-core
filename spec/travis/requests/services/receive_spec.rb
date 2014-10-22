@@ -7,7 +7,7 @@ describe Travis::Requests::Services::Receive do
   include Support::ActiveRecord
 
   let(:owner)   { User.first || Factory(:user) }
-  let(:service) { described_class.new(nil, params) }
+  let(:service) { described_class.new(params) }
   let(:payload) { JSON.parse(GITHUB_PAYLOADS['gem-release']) }
   let(:request) { service.run }
 
@@ -200,13 +200,35 @@ describe Travis::Requests::Services::Receive do
       end
     end
   end
+
+  describe 'an api request' do
+    let(:params)  { { :event_type => 'api', :payload => payload } }
+    let(:payload) { API_PAYLOADS['custom'] }
+
+    login = 'svenfuchs'
+    type  = 'user'
+    github_id = 2208
+
+    before(:each) do
+      Factory(:user, :id => 1, :login => login, github_id: github_id)
+      Factory(:repository, :github_id => 592533, :name => 'gem-release')
+    end
+
+    it 'creates a request for the given payload' do
+      expect { request }.to change(Request, :count).by(1)
+    end
+
+    it 'sets the payload to the request' do
+      request.payload.should == payload
+    end
+  end
 end
 
 describe Travis::Requests::Services::Receive::Instrument do
   include Support::ActiveRecord
 
   let(:payload)   { JSON.parse(GITHUB_PAYLOADS['gem-release']) }
-  let(:service)   { Travis::Requests::Services::Receive.new(nil, event_type: 'push', payload: payload) }
+  let(:service)   { Travis::Requests::Services::Receive.new(event_type: 'push', payload: payload) }
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:event)     { publisher.events.last }
 

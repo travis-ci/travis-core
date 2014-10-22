@@ -1,36 +1,12 @@
-require 'faraday'
-require 'hashr'
-require 'yaml'
-
-require 'active_support/core_ext/object/blank'
-require 'active_support/core_ext/string/inflections'
-require 'core_ext/hash/deep_symbolize_keys'
-require 'core_ext/kernel/run_periodically'
+require 'travis/config'
 
 module Travis
   class Config < Hashr
-    autoload :Docker, 'travis/config/docker'
-    autoload :Env,    'travis/config/env'
-    autoload :Files,  'travis/config/files'
-    autoload :Heroku, 'travis/config/heroku'
-
-    class << self
-      def load(*loaders)
-        data = loaders.inject({}) do |data, loader|
-          loader = const_get(loader.to_s.camelize).new
-          data.deep_merge(loader.load.deep_symbolize_keys)
-        end
-        new(data)
-      end
-    end
-
     HOSTS = {
       production:  'travis-ci.org',
       staging:     'staging.travis-ci.org',
       development: 'localhost:3000'
     }
-
-    include Logging
 
     define  host:  'travis-ci.org',
             shorten_host:  'trvs.io',
@@ -65,19 +41,9 @@ module Travis
             states_cache:  { memcached_servers: 'localhost:11211' },
             sentry:        { },
             services:      { find_requests: { max_limit: 100, default_limit: 25 } },
-            settings:      { timeouts: { defaults: { hard_limit: 50, log_silence: 10 }, maximums: { hard_limit: 180, log_silence: 60 } } }
+            settings:      { timeouts: { defaults: { hard_limit: 50, log_silence: 10 }, maximums: { hard_limit: 180, log_silence: 60 } } },
+            endpoints:     { }
 
     default :_access => [:key]
-
-    def endpoints
-      @endpoints ||= begin
-        result = super
-        result || Hashr.new
-      end
-    end
-
-    def update_periodically
-      Travis.logger.info "[deprecated] Travis.config.update_periodically doesn't do anything anymore"
-    end
   end
 end

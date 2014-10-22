@@ -19,10 +19,8 @@ class Request
     def configure
       if !accepted?
         Travis.logger.warn("[request:configure] Request not accepted: event_type=#{event_type.inspect} commit=#{commit.try(:commit).inspect} message=#{approval.message.inspect}")
-      elsif config.present?
-        Travis.logger.warn("[request:configure] Request not configured: config not blank, config=#{config.inspect} commit=#{commit.try(:commit).inspect}")
       else
-        self.config = fetch_config
+        self.config = fetch_config.merge(config || {})
 
         if branch_accepted? && config_accepted?
           Travis.logger.info("[request:configure] Request successfully configured commit=#{commit.commit.inspect}")
