@@ -109,7 +109,7 @@ module Travis
     end
 
     def payload
-      request.payload
+      request.payload.is_a?(String) ? MultiJson.decode(request.payload) : request.payload
     end
 
     def commands

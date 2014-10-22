@@ -62,11 +62,15 @@ module Travis
             end
 
             def commit_data
-              last_unskipped_commit(event['commits']) || event['commits'].last || event['head_commit']
+              last_unskipped_commit || commits.last || event['head_commit']
             end
 
-            def last_unskipped_commit(commits)
+            def last_unskipped_commit
               commits.reverse.find { |commit| !skip_commit?(commit) }
+            end
+
+            def commits
+              event['commits'] || []
             end
 
             def skip_commit?(commit)
