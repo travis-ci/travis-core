@@ -12,34 +12,34 @@ require 'travis/sidekiq/build_request'
 #
 # TODO: automatically filter out jobs that aren't build requests (e.g. webhook tasks)
 
-# describe 'Re-run Sidekiq payloads from retry jobs' do
-#   include Support::ActiveRecord, Support::Log
-#
-#   let(:payload) { MultiJson.decode(params['payload']) }
-#   let(:request) { Travis::Sidekiq::BuildRequest.new.perform(params) }
-#
-#   before :each do
-#     Travis::Metrics.stubs(:meter)
-#   end
-#
-#   lines = File.read('retries.rb').split("\n")
-#   lines = lines.select { |line| !line.include?('Travis::') }
-#
-#   lines.each_with_index do |line, ix|
-#     describe 'simulating retry' do
-#       let(:params)  { eval(line).first }
-#
-#       before(:each) do
-#         owner_name = payload['repository']['owner']['login'] || payload['repository']['owner']['name']
-#         name = payload['repository']['name']
-#         github_id = payload['repository']['id']
-#         Factory(:repository, name: name, owner_name: owner_name, github_id: github_id)
-#       end
-#
-#       it ix.to_s do
-#         log = capture_log { request }
-#         puts log.gsub(/(I|W|E) /, "\n" + '\1 ').strip
-#       end
-#     end
-#   end
-# end
+describe 'Re-run Sidekiq payloads from retry jobs' do
+  include Support::ActiveRecord, Support::Log
+
+  let(:payload) { MultiJson.decode(params['payload']) }
+  let(:request) { Travis::Sidekiq::BuildRequest.new.perform(params) }
+
+  before :each do
+    Travis::Metrics.stubs(:meter)
+  end
+
+  lines = File.read('retries.rb').split("\n")
+  lines = lines.select { |line| !line.include?('Travis::') }
+
+  lines.each_with_index do |line, ix|
+    describe 'simulating retry' do
+      let(:params)  { eval(line).first }
+
+      before(:each) do
+        owner_name = payload['repository']['owner']['login'] || payload['repository']['owner']['name']
+        name = payload['repository']['name']
+        github_id = payload['repository']['id']
+        Factory(:repository, name: name, owner_name: owner_name, github_id: github_id)
+      end
+
+      it ix.to_s do
+        log = capture_log { request }
+        puts log.gsub(/(I|W|E) /, "\n" + '\1 ').strip
+      end
+    end
+  end
+end
