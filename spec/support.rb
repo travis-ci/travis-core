@@ -4,7 +4,6 @@ require 'support/payloads'
 module Support
   autoload :ActiveRecord,   'support/active_record'
   autoload :Formats,        'support/formats'
-  autoload :Log,            'support/log'
   autoload :Mocks,          'support/mocks'
   autoload :Notifications,  'support/notifications'
   autoload :Redis,          'support/redis'
