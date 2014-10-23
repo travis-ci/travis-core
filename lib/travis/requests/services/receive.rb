@@ -36,8 +36,6 @@ module Travis
             rejected
           end
           request
-        rescue GH::Error => e
-          Travis.logger.error "payload for #{slug} could not be received as GitHub returned a #{e.info[:response_status]}: #{e.info}, github-guid=#{github_guid}, event-type=#{event_type}"
         end
         instrument :run
 
@@ -46,8 +44,11 @@ module Travis
           validate!
           payload.accept?
           @accepted = true
+        rescue GH::Error(response_status: 404) => e
+          Travis.logger.warn "the following payload for #{slug} could not be accepted as a 404 response code was returned by GitHub: #{payload.inspect}"
+          @accepted = false
         rescue PayloadValidationError => e
-          Travis.logger.error "#{e.message}, github-guid=#{github_guid}, event-type=#{event_type}"
+          Travis.logger.error(e.message << ", github-guid=#{github_guid}, event-type=#{event_type}")
           @accepted = false
         end
 
@@ -93,12 +94,6 @@ module Travis
           def owner_missing
             Travis::Metrics.meter('request.receive.missing_repository_owner')
             raise PayloadValidationError, "Repository does not have an owner: #{slug}"
-          end
-
-          def rescue_gh(state)
-            yield
-          # rescue GH::Error => e # (response_status: 404) => e
-          #   raise PayloadValidationError, "payload for #{slug} could not be #{"#{state}ed".gsub('ee', 'e')} as GitHub returned a #{e.info[:response_status]}. GH: #{e.info} Payload: #{payload.inspect}, github-guid=#{github_guid}, event-type=#{event_type}"
           end
 
           def rejected

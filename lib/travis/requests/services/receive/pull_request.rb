@@ -47,7 +47,7 @@ module Travis
 
           def request
             @request ||= {
-              comments_url: comments_url,
+              comments_url: pull_request['_links']['comments']['href'],
               base_commit:  base_commit['sha'],
               head_commit:  head_commit['sha']
             }
@@ -71,15 +71,11 @@ module Travis
           end
 
           def pull_request
-            event['pull_request'] || {}
+            event['pull_request']
           end
 
           def action
             event['action'].try(:to_sym)
-          end
-
-          def comments_url
-            pull_request.fetch('_links', {}).fetch('comments', {}).fetch('href', '')
           end
 
           def base_commit

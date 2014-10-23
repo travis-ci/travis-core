@@ -12,7 +12,64 @@ describe Travis::Requests::Services::Receive do
   let(:request) { service.run }
 
   before :each do
+    Request.any_instance.stubs(:configure)
+    Request.any_instance.stubs(:start)
     Travis::Metrics.stubs(:meter)
+    Travis.logger.level = Logger::INFO # hu??
+  end
+
+  describe 'with a repository that does not exist on our side' do
+    let(:params) { { :event_type => 'push', :github_guid => 'abc123', :payload => payload } }
+
+    it 'logs the validation error' do
+      message = 'Repository not found: svenfuchs/gem-release, github-guid=abc123, event-type=push'
+      capture_log { request }.should include(message)
+    end
+
+    it 'meters the event' do
+      Travis::Metrics.expects(:meter).with('request.receive.repository_not_found')
+      request
+    end
+  end
+
+  describe 'with a repository that does not have an owner' do
+    let(:params) { { :event_type => 'push', :github_guid => 'abc123', :payload => payload } }
+
+    before(:each) do
+      Factory(:repository, name: 'svenfuchs', owner_name: 'gem-release', github_id: 100, owner: nil)
+    end
+
+    it 'logs the validation error' do
+      message = 'Repository does not have an owner: svenfuchs/gem-release, github-guid=abc123, event-type=push'
+      capture_log { request }.should include(message)
+    end
+
+    it 'meters the event' do
+      Travis::Metrics.expects(:meter).with('request.receive.missing_repository_owner')
+      request
+    end
+  end
+
+  describe 'without repository data' do
+    before { payload['repository'] = nil }
+
+    describe 'a push' do
+      let(:params) { { :event_type => 'push', :github_guid => 'abc123', :payload => payload } }
+
+      it 'logs the validation error' do
+        message = "Repository data is not present in payload, github-guid=abc123, event-type=push"
+        capture_log { request }.should include(message)
+      end
+    end
+
+    describe 'a pull request' do
+      let(:params) { { :event_type => 'pull_request', :github_guid => 'abc123', :payload => payload } }
+
+      it 'logs the validation error' do
+        message = "Repository data is not present in payload, github-guid=abc123, event-type=pull_request"
+        capture_log { request }.should include(message)
+      end
+    end
   end
 
   shared_examples_for 'creates a commit' do
@@ -63,8 +120,7 @@ describe Travis::Requests::Services::Receive do
 
       before do
         repo = Factory.create(:repository, name: 'travis-core', owner_name: 'travis-ci', github_id: 111)
-        repo.settings.build_pushes = false
-        repo.settings.save
+        repo.settings.merge('build_pushes' => false)
       end
 
       it 'rejects the commit' do
@@ -105,83 +161,6 @@ describe Travis::Requests::Services::Receive do
     end
 
     it_should_behave_like 'creates a request'
-  end
-
-  describe 'with a repository that does not exist on our side' do
-    let(:params) { { :event_type => 'push', :github_guid => 'abc123', :payload => payload } }
-
-    it 'logs the validation error' do
-      message = 'Repository not found: svenfuchs/gem-release, github-guid=abc123, event-type=push'
-      capture_log { request }.should include(message)
-    end
-
-    it 'meters the event' do
-      Travis::Metrics.expects(:meter).with('request.receive.repository_not_found')
-      request
-    end
-  end
-
-  describe 'with a repository that does not have an owner' do
-    let(:params) { { :event_type => 'push', :github_guid => 'abc123', :payload => payload } }
-
-    before(:each) do
-      Factory(:repository, name: 'svenfuchs', owner_name: 'gem-release', github_id: 100, owner: nil)
-    end
-
-    it 'logs the validation error' do
-      message = 'Repository does not have an owner: svenfuchs/gem-release, github-guid=abc123, event-type=push'
-      capture_log { request }.should include(message)
-    end
-
-    it 'meters the event' do
-      Travis::Metrics.expects(:meter).with('request.receive.missing_repository_owner')
-      request
-      request
-    end
-  end
-
-  describe 'without repository data' do
-    before { payload['repository'] = nil }
-
-    describe 'a push' do
-      let(:params) { { :event_type => 'push', :github_guid => 'abc123', :payload => payload } }
-
-      it 'logs the validation error' do
-        message = "Repository data is not present in payload, github-guid=abc123, event-type=push"
-        capture_log { request }.should include(message)
-      end
-    end
-
-    describe 'a pull request' do
-      let(:params) { { :event_type => 'pull_request', :github_guid => 'abc123', :payload => payload } }
-
-      it 'logs the validation error' do
-        message = "Repository data is not present in payload, github-guid=abc123, event-type=pull_request"
-        capture_log { request }.should include(message)
-      end
-    end
-  end
-
-  describe 'catches GH:Errors' do
-    let(:params)  { { :event_type => 'push', :payload => JSON.parse(GITHUB_PAYLOADS['gem-release']) } }
-    let(:error)   { GH::Error.new(stub(response: { status: 404 })) }
-    let(:message) { 'payload for svenfuchs/gem-release could not be received as GitHub returned a 404' }
-
-    before(:each) do
-      Factory(:repository, name: 'svenfuchs', owner_name: 'gem-release', github_id: 100)
-    end
-
-    it 'during :accept?' do
-      described_class::Push.any_instance.stubs(:validate!).raises(error)
-      capture_log { request }.should include(message)
-    end
-
-    it 'during :create' do
-      requests = stub('requests')
-      requests.stubs(:create!).raises(error)
-      Repository.any_instance.stubs(:requests).returns(requests) # ugh.
-      capture_log { request }.should include(message)
-    end
   end
 end
 
