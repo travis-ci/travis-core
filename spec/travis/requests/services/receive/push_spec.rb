@@ -1,8 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Requests::Services::Receive::Push do
-  let(:data)    { MultiJson.decode(GITHUB_PAYLOADS['gem-release']) }
-  let(:payload) { Travis::Requests::Services::Receive.payload_for('push', data) }
+  let(:payload) { Travis::Requests::Services::Receive.payload_for('push', GITHUB_PAYLOADS['gem-release']) }
 
   describe 'repository' do
     it 'returns all attributes required for a Repository' do
@@ -68,3 +67,4 @@ describe Travis::Requests::Services::Receive::Push do
     end
   end
 end
+

@@ -1,8 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Requests::Services::Receive::PullRequest do
-  let(:data)    { MultiJson.decode(GITHUB_PAYLOADS['pull-request']) }
-  let(:payload) { Travis::Requests::Services::Receive.payload_for('pull_request', data) }
+  let(:payload) { Travis::Requests::Services::Receive.payload_for('pull_request', GITHUB_PAYLOADS['pull-request']) }
 
   describe 'accept' do
     before do
