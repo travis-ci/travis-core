@@ -771,7 +771,12 @@ describe Build, 'matrix' do
   describe 'does not explode' do
     it 'on a config key that is `true`' do
       build = Build.new(config: { true => 'broken' })
-      build.expand_matrix
+      expect { build.expand_matrix }.to_not raise_error
+    end
+
+    it 'on bad matrix include values' do
+      build = Build.new(config: { matrix: { include: ['broken'] } })
+      expect { build.expand_matrix }.to_not raise_error
     end
   end
 
