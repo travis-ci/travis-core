@@ -20,6 +20,15 @@ describe Travis::Requests::Services::Receive::Api do
     end
   end
 
+  describe 'owner' do
+    it 'returns all attributes required for an Owner' do
+      payload.owner.should == {
+        type: 'User',
+        github_id: 1
+      }
+    end
+  end
+
   describe 'commit' do
     it 'returns all attributes required for a Commit' do
       payload.commit.should == {
@@ -44,4 +53,5 @@ describe Travis::Requests::Services::Receive::Api do
       }
     end
   end
+
 end

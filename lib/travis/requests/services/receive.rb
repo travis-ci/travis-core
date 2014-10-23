@@ -26,14 +26,22 @@ module Travis
           end
         end
 
-        attr_reader :request, :accepted
+        attr_reader :request
 
         def run
           if accept?
             create && start
-            store_config_info if verify
+            request.reload
+            if request.builds.count == 0
+              approval = Request::Approval.new(request)
+              Travis.logger.warn("[request:receive] Request #{request.id} commit=#{request.commit.try(:commit).inspect} didn't create any builds: #{approval.result}/#{approval.message}")
+            else
+              store_config_info
+              Travis.logger.info("[request:receive] Request #{request.id} commit=#{request.commit.try(:commit).inspect} created #{request.builds.count} builds")
+            end
           else
-            rejected
+            commit = payload.commit['commit'].inspect if payload.commit rescue nil
+            Travis.logger.info("[request:receive] Github event rejected: event_type=#{event_type.inspect} repo=\"#{payload.repository['owner_name']}/#{payload.repository['name']}\" commit=#{commit} action=#{payload.action.inspect}")
           end
           request
         end
@@ -41,25 +49,17 @@ module Travis
 
         def accept?
           payload.validate!
-          validate!
           payload.accept?
-          @accepted = true
         rescue GH::Error(response_status: 404) => e
+          slug = payload.repository.values_at(:owner_name, :name).join('/')
           Travis.logger.warn "the following payload for #{slug} could not be accepted as a 404 response code was returned by GitHub: #{payload.inspect}"
-          @accepted = false
+          false
         rescue PayloadValidationError => e
-          Travis.logger.error(e.message << ", github-guid=#{github_guid}, event-type=#{event_type}")
-          @accepted = false
+          e.message << ", github-guid=#{github_guid}, event-type=#{event_type}"
+          raise e
         end
 
         private
-
-          def validate!
-            unless repo
-              Travis::Metrics.meter('request.receive.repository_not_found')
-              raise PayloadValidationError, "Repository not found: #{slug}"
-            end
-          end
 
           def create
             @request = repo.requests.create!(payload.request.merge(
@@ -67,30 +67,13 @@ module Travis
               :event_type => event_type,
               :state => :created,
               :commit => commit,
-              :owner => repo.owner,
+              :owner => owner,
               :token => params[:token]
             ))
           end
 
           def start
             request.start!
-          end
-
-          def verify
-            request.reload
-            if request.builds.count == 0
-              approval = Request::Approval.new(request)
-              Travis.logger.warn("[request:receive] Request #{request.id} commit=#{request.commit.try(:commit).inspect} didn't create any builds: #{approval.result}/#{approval.message}")
-              false
-            else
-              Travis.logger.info("[request:receive] Request #{request.id} commit=#{request.commit.try(:commit).inspect} created #{request.builds.count} builds")
-              true
-            end
-          end
-
-          def rejected
-            commit = payload.commit['commit'].inspect if payload.commit rescue nil
-            Travis.logger.info("[request:receive] Github event rejected: event_type=#{event_type.inspect} repo=\"#{slug}\" commit=#{commit} action=#{payload.action.inspect}")
           end
 
           def payload
@@ -105,12 +88,15 @@ module Travis
             @event_type ||= (params[:event_type] || 'push').gsub('-', '_')
           end
 
-          def repo
-            @repo ||= run_service(:find_repo, payload.repository)
+          def owner
+            @owner ||= begin
+              type = payload.owner[:type] == 'User' ? 'user' : 'org'
+              run_service(:"github_find_or_create_#{type}", payload.owner)
+            end
           end
 
-          def slug
-            payload.repository ? payload.repository.values_at(:owner_name, :name).join('/') : '?'
+          def repo
+            @repo ||= run_service(:github_find_or_create_repo, payload.repository.merge(:owner => owner))
           end
 
           def commit
@@ -130,7 +116,7 @@ module Travis
               publish(
                 :msg => "type=#{params[:event_type].inspect}",
                 :type => params[:event_type],
-                :accept? => target.accepted,
+                :accept? => target.accept?,
                 :payload => params[:payload]
               )
             end

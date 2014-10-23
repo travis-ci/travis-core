@@ -18,6 +18,16 @@ describe Travis::Requests::Services::Receive::Push do
     end
   end
 
+  describe 'owner' do
+    it 'returns all attributes required for an Owner' do
+      payload.owner.should == {
+        :type => 'User',
+        :login => 'svenfuchs',
+        :github_id => 2208
+      }
+    end
+  end
+
   describe 'commit' do
     it 'returns all attributes required for a Commit' do
       payload.commit.should == {
