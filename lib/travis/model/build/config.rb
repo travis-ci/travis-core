@@ -38,7 +38,7 @@ class Build
 
     def self.matrix_keys_for(config, options = {})
       keys = matrix_keys(config, options)
-      keys & config.keys.map(&:to_sym)
+      keys & config.keys.select { |key| key.respond_to?(:to_sym) }.map(&:to_sym)
     end
 
     def self.matrix_keys(config, options = {})
