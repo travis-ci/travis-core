@@ -56,11 +56,7 @@ class Build
         end
 
         def expand_keys
-          # TODO is this not exactly the same as `Config.matrix_keys_for`?
-          @expand_keys ||= begin
-            keys = config.keys.select { |key| key.respond_to?(:to_sym) }
-            keys.map(&:to_sym) & Config.matrix_keys_for(config, options)
-          end
+          @expand_keys ||= config.keys.map(&:to_sym) & Config.matrix_keys_for(config, options)
         end
 
         def exclude_matrix_configs(configs)
