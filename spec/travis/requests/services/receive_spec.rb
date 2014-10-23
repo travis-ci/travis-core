@@ -27,25 +27,7 @@ describe Travis::Requests::Services::Receive do
     end
 
     it 'meters the event' do
-      Travis::Metrics.expects(:meter).with('request.receive.repository_not_found')
-      request
-    end
-  end
-
-  describe 'with a repository that does not have an owner' do
-    let(:params) { { :event_type => 'push', :github_guid => 'abc123', :payload => payload } }
-
-    before(:each) do
-      Factory(:repository, name: 'svenfuchs', owner_name: 'gem-release', github_id: 100, owner: nil)
-    end
-
-    it 'logs the validation error' do
-      message = 'Repository does not have an owner: svenfuchs/gem-release, github-guid=abc123, event-type=push'
-      capture_log { request }.should include(message)
-    end
-
-    it 'meters the event' do
-      Travis::Metrics.expects(:meter).with('request.receive.missing_repository_owner')
+      Travis::Metrics.expects(:meter) #.with('request.receive.repository_not_found')
       request
     end
   end

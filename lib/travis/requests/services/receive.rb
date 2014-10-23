@@ -55,8 +55,10 @@ module Travis
         private
 
           def validate!
-            repo_missing  unless repo
-            owner_missing unless repo.owner
+            unless repo
+              Travis::Metrics.meter('request.receive.repository_not_found')
+              raise PayloadValidationError, "Repository not found: #{slug}"
+            end
           end
 
           def create
@@ -84,16 +86,6 @@ module Travis
               Travis.logger.info("[request:receive] Request #{request.id} commit=#{request.commit.try(:commit).inspect} created #{request.builds.count} builds")
               true
             end
-          end
-
-          def repo_missing
-            Travis::Metrics.meter('request.receive.repository_not_found')
-            raise PayloadValidationError, "Repository not found: #{slug}"
-          end
-
-          def owner_missing
-            Travis::Metrics.meter('request.receive.missing_repository_owner')
-            raise PayloadValidationError, "Repository does not have an owner: #{slug}"
           end
 
           def rejected
