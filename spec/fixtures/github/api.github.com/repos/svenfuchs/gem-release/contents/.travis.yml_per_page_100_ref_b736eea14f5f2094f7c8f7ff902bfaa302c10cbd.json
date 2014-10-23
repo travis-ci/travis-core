@@ -1,0 +1,17 @@
+{
+  "name": ".travis.yml",
+  "path": ".travis.yml",
+  "sha": "26ce1893e1f34a35c354f15c215f2b44d34322fc",
+  "size": 125,
+  "url": "https://api.github.com/repos/svenfuchs/gem-release/contents/.travis.yml?ref=master",
+  "html_url": "https://github.com/svenfuchs/gem-release/blob/master/.travis.yml",
+  "git_url": "https://api.github.com/repos/svenfuchs/gem-release/git/blobs/26ce1893e1f34a35c354f15c215f2b44d34322fc",
+  "type": "file",
+  "content": "YnJhbmNoZXM6CiAgb25seToKICAgIC0gbWFzdGVyCnNjcmlwdDogIkNPVkVS\nQUdFPXRydWUgcnVieSAtSWxpYjp0ZXN0IHRlc3QvYWxsLnJiIgpydm06CiAg\nLSAxLjkuMwogIC0gMi4wLjAKICAtIGpydWJ5LTE5bW9kZQo=\n",
+  "encoding": "base64",
+  "_links": {
+    "self": "https://api.github.com/repos/svenfuchs/gem-release/contents/.travis.yml?ref=master",
+    "git": "https://api.github.com/repos/svenfuchs/gem-release/git/blobs/26ce1893e1f34a35c354f15c215f2b44d34322fc",
+    "html": "https://github.com/svenfuchs/gem-release/blob/master/.travis.yml"
+  }
+}

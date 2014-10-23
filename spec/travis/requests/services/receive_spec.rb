@@ -4,7 +4,7 @@ require 'spec_helper'
 # somewhere else and add unit tests
 
 describe Travis::Requests::Services::Receive do
-  include Support::ActiveRecord
+  include Support::ActiveRecord, Support::Log
 
   let(:owner)   { User.first || Factory(:user) }
   let(:service) { described_class.new(params) }
@@ -12,66 +12,7 @@ describe Travis::Requests::Services::Receive do
   let(:request) { service.run }
 
   before :each do
-    Request.any_instance.stubs(:configure)
-    Request.any_instance.stubs(:start)
-  end
-
-  describe 'without a repository data' do
-    before { payload['repository'] = nil }
-
-    context 'a push' do
-      let(:params) { { :event_type => 'push', :github_guid => 'abc123', :payload => payload } }
-
-      it 'raises validation error' do
-        message = "Repository data is not present in payload, github-guid=abc123, event-type=push"
-        expect { request }.to raise_error Travis::Requests::Services::Receive::PayloadValidationError, message
-      end
-    end
-
-    context 'a pull request' do
-      let(:params) { { :event_type => 'pull_request', :github_guid => 'abc123', :payload => payload } }
-
-      it 'raises validation error' do
-        message = "Repository data is not present in payload, github-guid=abc123, event-type=pull_request"
-        expect { request }.to raise_error Travis::Requests::Services::Receive::PayloadValidationError, message
-      end
-    end
-  end
-
-  shared_examples_for 'creates a request and repository' do
-    it 'creates a request for the given payload' do
-      expect { request }.to change(Request, :count).by(1)
-    end
-
-    it 'creates a repository' do
-      expect { request }.to change(Repository, :count).by(1)
-    end
-
-    it 'sets the payload to the request' do
-      request.payload.should == payload
-    end
-  end
-
-  shared_examples_for 'sets the owner for the request and repository to the expected type and login' do |type, login|
-    it 'sets the repository owner' do
-      request.repository.owner.should be_a(type.camelize.constantize)
-    end
-
-    it 'sets the request owner' do
-      request.owner.should be_a(type.camelize.constantize)
-    end
-
-    it_should_behave_like 'has the expected login for the request and repository owner', login
-  end
-
-  shared_examples_for 'has the expected login for the request and repository owner' do |login|
-    it 'has the repository owner login' do
-      request.repository.owner.login.should == login
-    end
-
-    it 'has the request owner login' do
-      request.owner.login.should == login
-    end
+    Travis::Metrics.stubs(:meter)
   end
 
   shared_examples_for 'creates a commit' do
@@ -80,33 +21,14 @@ describe Travis::Requests::Services::Receive do
     end
   end
 
-  shared_examples_for 'creates an object from the github api' do |type, login, github_id|
-    it 'creates the object' do
-      expect { request }.to change(type.camelize.constantize, :count).by(1)
+  shared_examples_for 'creates a request' do
+    it 'creates a request for the given payload' do
+      expect { request }.to change(Request, :count).by(1)
     end
 
-    it 'calls the github api to populate the user' do
-      resource = type == 'organization' ? "organizations/#{github_id}" : "user/#{github_id}"
-      GH.expects(:[]).with(resource).returns('name' => login.camelize, 'login' => login, 'id' => github_id)
-      request
+    it 'sets the payload to the request' do
+      request.payload.should == payload
     end
-  end
-
-  shared_examples_for 'does not create a user' do
-    it 'does not create a user' do
-      expect { request }.not_to change(User, :count)
-    end
-  end
-
-  shared_examples_for 'does not create an organization' do
-    it 'does not create an organization' do
-      expect { request }.not_to change(Organization, :count)
-    end
-  end
-
-  shared_examples_for 'a created request' do |type, login|
-    it_should_behave_like 'creates a request and repository'
-    it_should_behave_like 'sets the owner for the request and repository to the expected type and login', type, login
   end
 
   describe 'a github push event' do
@@ -115,33 +37,34 @@ describe Travis::Requests::Services::Receive do
     describe 'for repository belonging to a user' do
       let(:payload) { JSON.parse(GITHUB_PAYLOADS['gem-release']) }
 
-      login = 'svenfuchs'
-      type  = 'user'
-      github_id = 2208
-
-      describe 'if the user exists' do
-        before(:each) { Factory(:user, :login => login, :github_id => 2208) }
-        it_should_behave_like 'a created request', type, login
-        it_should_behave_like 'does not create a user'
+      before(:each) do
+        Factory(:repository, name: 'svenfuchs', owner_name: 'gem-release', github_id: 100)
       end
 
-      describe 'if the user does not exist' do
-        before(:each) { User.delete_all }
-        it_should_behave_like 'a created request', type, login
-        it_should_behave_like 'creates an object from the github api', type, login, github_id
+      it_should_behave_like 'creates a request'
+
+      describe 'when no commits are present' do
+        before :each do
+          payload['commits'] = nil
+        end
+
+        it 'does not explode' do
+          expect { request }.to_not raise_error
+        end
+
+        it 'logs a message' do
+          capture_log { request }.should include('missing commit')
+        end
       end
     end
 
     describe 'with disabled pushes' do
       let(:payload) { JSON.parse(GITHUB_PAYLOADS['travis-core']) }
 
-      login = 'travis-ci'
-      type  = 'organization'
-      github_id = 639823
-
       before do
         repo = Factory.create(:repository, name: 'travis-core', owner_name: 'travis-ci', github_id: 111)
-        repo.settings.merge('build_pushes' => false)
+        repo.settings.build_pushes = false
+        repo.settings.save
       end
 
       it 'rejects the commit' do
@@ -152,21 +75,8 @@ describe Travis::Requests::Services::Receive do
     describe 'for repository belonging to an organization' do
       let(:payload) { JSON.parse(GITHUB_PAYLOADS['travis-core']) }
 
-      login = 'travis-ci'
-      type  = 'organization'
-      github_id = 639823
-
-      describe 'if the organization exists' do
-        before(:each) { Factory(:org, :login => login, :github_id => 639823) }
-        it_should_behave_like 'a created request', type, login, github_id
-        it_should_behave_like 'does not create an organization'
-      end
-
-      describe 'if the organization does not exist' do
-        before(:each) { Organization.delete_all }
-        it_should_behave_like 'a created request', type, login, github_id
-        it_should_behave_like 'creates an object from the github api', type, login, github_id
-      end
+      before(:each) { Factory(:repository, name: 'travis-core', owner_name: 'travis-ci', github_id: 111) }
+      it_should_behave_like 'creates a request'
     end
   end
 
@@ -175,28 +85,12 @@ describe Travis::Requests::Services::Receive do
       let(:params)  { { :event_type => 'pull_request', :payload => payload } }
       let(:payload) { JSON.parse(GITHUB_PAYLOADS['pull-request']) }
 
-      login = 'travis-repos'
-      type  = 'organization'
-      github_id = 864347
+      before(:each) { Factory(:repository, name: 'test-repo-1', owner_name: 'travis-repos', github_id: 1615549) }
 
-      describe 'if the organization exists' do
-        before(:each) { Factory(:org, :login => login, github_id: 864347) }
-        it_should_behave_like 'a created request', type, login, github_id
-        it_should_behave_like 'does not create an organization'
+      it_should_behave_like 'creates a request'
 
-        it 'sets the comments_url to the request' do
-          request.comments_url.should == 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments'
-        end
-      end
-
-      describe 'if the organization does not exist' do
-        before(:each) { Organization.delete_all }
-        it_should_behave_like 'a created request', type, login
-        it_should_behave_like 'creates an object from the github api', type, login, github_id
-
-        it 'sets the comments_url to the request' do
-          request.comments_url.should == 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments'
-        end
+      it 'sets the comments_url to the request' do
+        request.comments_url.should == 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments'
       end
     end
   end
@@ -205,21 +99,88 @@ describe Travis::Requests::Services::Receive do
     let(:params)  { { :event_type => 'api', :payload => payload } }
     let(:payload) { API_PAYLOADS['custom'] }
 
-    login = 'svenfuchs'
-    type  = 'user'
-    github_id = 2208
-
     before(:each) do
-      Factory(:user, :id => 1, :login => login, github_id: github_id)
+      Factory(:user, :id => 1, :login => 'svenfuchs', github_id: 2208)
       Factory(:repository, :github_id => 592533, :name => 'gem-release')
     end
 
-    it 'creates a request for the given payload' do
-      expect { request }.to change(Request, :count).by(1)
+    it_should_behave_like 'creates a request'
+  end
+
+  describe 'with a repository that does not exist on our side' do
+    let(:params) { { :event_type => 'push', :github_guid => 'abc123', :payload => payload } }
+
+    it 'logs the validation error' do
+      message = 'Repository not found: svenfuchs/gem-release, github-guid=abc123, event-type=push'
+      capture_log { request }.should include(message)
     end
 
-    it 'sets the payload to the request' do
-      request.payload.should == payload
+    it 'meters the event' do
+      Travis::Metrics.expects(:meter).with('request.receive.repository_not_found')
+      request
+    end
+  end
+
+  describe 'with a repository that does not have an owner' do
+    let(:params) { { :event_type => 'push', :github_guid => 'abc123', :payload => payload } }
+
+    before(:each) do
+      Factory(:repository, name: 'svenfuchs', owner_name: 'gem-release', github_id: 100, owner: nil)
+    end
+
+    it 'logs the validation error' do
+      message = 'Repository does not have an owner: svenfuchs/gem-release, github-guid=abc123, event-type=push'
+      capture_log { request }.should include(message)
+    end
+
+    it 'meters the event' do
+      Travis::Metrics.expects(:meter).with('request.receive.missing_repository_owner')
+      request
+      request
+    end
+  end
+
+  describe 'without repository data' do
+    before { payload['repository'] = nil }
+
+    describe 'a push' do
+      let(:params) { { :event_type => 'push', :github_guid => 'abc123', :payload => payload } }
+
+      it 'logs the validation error' do
+        message = "Repository data is not present in payload, github-guid=abc123, event-type=push"
+        capture_log { request }.should include(message)
+      end
+    end
+
+    describe 'a pull request' do
+      let(:params) { { :event_type => 'pull_request', :github_guid => 'abc123', :payload => payload } }
+
+      it 'logs the validation error' do
+        message = "Repository data is not present in payload, github-guid=abc123, event-type=pull_request"
+        capture_log { request }.should include(message)
+      end
+    end
+  end
+
+  describe 'catches GH:Errors' do
+    let(:params)  { { :event_type => 'push', :payload => JSON.parse(GITHUB_PAYLOADS['gem-release']) } }
+    let(:error)   { GH::Error.new(stub(response: { status: 404 })) }
+    let(:message) { 'payload for svenfuchs/gem-release could not be received as GitHub returned a 404' }
+
+    before(:each) do
+      Factory(:repository, name: 'svenfuchs', owner_name: 'gem-release', github_id: 100)
+    end
+
+    it 'during :accept?' do
+      described_class::Push.any_instance.stubs(:validate!).raises(error)
+      capture_log { request }.should include(message)
+    end
+
+    it 'during :create' do
+      requests = stub('requests')
+      requests.stubs(:create!).raises(error)
+      Repository.any_instance.stubs(:requests).returns(requests) # ugh.
+      capture_log { request }.should include(message)
     end
   end
 end
@@ -233,6 +194,7 @@ describe Travis::Requests::Services::Receive::Instrument do
   let(:event)     { publisher.events.last }
 
   before :each do
+    Factory(:repository, name: 'svenfuchs', owner_name: 'gem-release', github_id: 100)
     Request.any_instance.stubs(:configure)
     Request.any_instance.stubs(:start)
     Travis::Notification.publishers.replace([publisher])

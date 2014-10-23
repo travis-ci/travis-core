@@ -5,7 +5,6 @@ module Travis
         class Api
           VALIDATION_ERRORS = {
             repo: 'Repository data is not present in payload',
-            user: 'User data is not present in payload'
           }
           attr_reader :event
 
@@ -19,7 +18,6 @@ module Travis
 
           def validate!
             error(:repo) if event['repository'].nil?
-            error(:user) if event['user'].nil?
           end
 
           def action
@@ -29,13 +27,6 @@ module Travis
           def repository
             @repository ||= {
               github_id: repo_github_id
-            }
-          end
-
-          def owner
-            @owner ||= {
-              type: 'User',
-              github_id: user.github_id
             }
           end
 
@@ -71,7 +62,7 @@ module Travis
             end
 
             def slug
-              "#{event['repository']['owner_name']}/#{event['repository']['name']}"
+              event['repository'] && "#{event['repository']['owner_name']}/#{event['repository']['name']}"
             end
 
             def branch

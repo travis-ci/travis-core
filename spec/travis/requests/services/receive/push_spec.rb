@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe Travis::Requests::Services::Receive::Push do
-  let(:payload) { Travis::Requests::Services::Receive.payload_for('push', GITHUB_PAYLOADS['gem-release']) }
+  let(:data)    { MultiJson.decode(GITHUB_PAYLOADS['gem-release']) }
+  let(:payload) { Travis::Requests::Services::Receive.payload_for('push', data) }
 
   describe 'repository' do
     it 'returns all attributes required for a Repository' do
@@ -14,16 +15,6 @@ describe Travis::Requests::Services::Receive::Push do
         :owner_type => 'User',
         :private => false,
         :github_id => 100
-      }
-    end
-  end
-
-  describe 'owner' do
-    it 'returns all attributes required for an Owner' do
-      payload.owner.should == {
-        :type => 'User',
-        :login => 'svenfuchs',
-        :github_id => 2208
       }
     end
   end
@@ -77,4 +68,3 @@ describe Travis::Requests::Services::Receive::Push do
     end
   end
 end
-
