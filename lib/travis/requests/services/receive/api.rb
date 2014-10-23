@@ -17,7 +17,7 @@ module Travis
           end
 
           def validate!
-            error(:repo) if event['repository'].nil?
+            error(:repo) if repo_data.nil?
           end
 
           def action
@@ -26,7 +26,10 @@ module Travis
 
           def repository
             @repository ||= {
-              github_id: repo_github_id
+              owner_id:   repo_data['owner_id'],
+              owner_type: repo_data['owner_type'],
+              owner_name: repo_data['owner_name'],
+              name:       repo_data['name']
             }
           end
 
@@ -61,8 +64,12 @@ module Travis
               @user ||= User.find(event['user']['id'])
             end
 
+            def repo_data
+              event['repository'] || {}
+            end
+
             def slug
-              event['repository'] && "#{event['repository']['owner_name']}/#{event['repository']['name']}"
+              repo_data.values_at('owner_name', 'name').join('/')
             end
 
             def branch
@@ -70,7 +77,15 @@ module Travis
             end
 
             def repo_github_id
-              Repository.by_slug(slug).first.try(:github_id) || raise(ActiveRecord::RecordNotFound)
+              repo.try(:github_id) || raise(ActiveRecord::RecordNotFound)
+            end
+
+            def repo
+              if id = repo_data['id']
+                Repository.find(id)
+              else
+                Repository.by_slug(slug).first
+              end
             end
 
             def commit_data

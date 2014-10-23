@@ -74,6 +74,7 @@ describe Travis::Requests::Services::Receive::PullRequest do
         :name => 'test-project-1',
         :description => 'Test dummy repository for testing Travis CI',
         :url => 'https://github.com/travis-repos/test-project-1',
+        :owner_github_id => 864347,
         :owner_type => 'Organization',
         :owner_name => 'travis-repos',
         :owner_email => nil,

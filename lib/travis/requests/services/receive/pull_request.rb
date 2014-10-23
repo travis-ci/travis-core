@@ -38,14 +38,15 @@ module Travis
 
           def repository
             @repository ||= repo && {
-              name:        repo['name'],
-              description: repo['description'],
-              url:         repo['_links']['html']['href'],
-              owner_type:  repo['owner']['type'],
-              owner_name:  repo['owner']['login'],
-              owner_email: repo['owner']['email'],
-              private:     !!repo['private'],
-              github_id:   repo['id']
+              name:            repo['name'],
+              description:     repo['description'],
+              url:             repo['_links']['html']['href'],
+              owner_github_id: repo['owner']['id'],
+              owner_type:      repo['owner']['type'],
+              owner_name:      repo['owner']['login'],
+              owner_email:     repo['owner']['email'],
+              private:         !!repo['private'],
+              github_id:       repo['id']
             }
           end
 

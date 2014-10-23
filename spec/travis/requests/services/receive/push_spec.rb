@@ -11,7 +11,8 @@ describe Travis::Requests::Services::Receive::Push do
         :description => 'Release your gems with ease',
         :url => 'http://github.com/svenfuchs/gem-release',
         :owner_name => 'svenfuchs',
-        :owner_email => 'svenfuchs@artweb-design.de',
+        :owner_email => 'me@svenfuchs.com',
+        :owner_github_id => '2208',
         :owner_type => 'User',
         :private => false,
         :github_id => 100

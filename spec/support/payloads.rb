@@ -1,6 +1,8 @@
 API_PAYLOADS = {
   'custom' => {
     'repository' => {
+      'owner_id' => 2208,
+      'owner_type' => 'User',
       'owner_name' => 'svenfuchs',
       'name' => 'gem-release'
     },
@@ -48,6 +50,7 @@ GITHUB_PAYLOADS = {
       "name": "gem-release",
       "description": "Release your gems with ease",
       "owner": {
+        "id": "2208",
         "email": "svenfuchs@artweb-design.de",
         "name": "svenfuchs"
       }
@@ -188,7 +191,7 @@ GITHUB_PAYLOADS = {
     "repository": {
       "id": 111,
       "url": "http://github.com/travis-ci/travis-core",
-      "name": "gem-release",
+      "name": "travis-core",
       "description": "description for travis-core",
       "organization": "travis-ci",
       "owner": {
@@ -216,7 +219,7 @@ GITHUB_PAYLOADS = {
   "travis-core-no-commit" => %({
     "repository": {
       "url": "http://github.com/travis-ci/travis-core",
-      "name": "gem-release",
+      "name": "travis-core",
       "description": "description for travis-core",
       "organization": "travis-ci",
       "owner": {

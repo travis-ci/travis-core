@@ -15,7 +15,10 @@ describe Travis::Requests::Services::Receive::Api do
   describe 'repository' do
     it 'returns all attributes required for a Repository' do
       payload.repository.should == {
-        github_id: repo.github_id
+        name: 'gem-release',
+        owner_id: 2208,
+        owner_type: 'User',
+        owner_name: 'svenfuchs'
       }
     end
   end

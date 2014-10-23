@@ -53,8 +53,14 @@ module Travis
         private
 
           def validate!
-            repo_missing  unless repo
-            owner_missing unless repo.owner
+            repo_not_found! unless repo
+            verify_owner
+          end
+
+          def verify_owner
+            owner = owner_by_payload
+            owner_not_found! unless owner
+            update_owner(owner) if owner.id != repo.owner_id
           end
 
           def create
@@ -88,20 +94,42 @@ module Travis
             end
           end
 
-          def repo_missing
+          def update_owner(owner)
+            repo.update_attributes!(owner: owner, owner_name: owner.login)
+            owner_updated
+          end
+
+          def owner_by_payload
+            if id = payload.repository[:owner_id]
+              lookup_owner(payload.repository[:owner_type], id: id)
+            elsif github_id = payload.repository[:owner_github_id]
+              lookup_owner(payload.repository[:owner_type], github_id: github_id)
+            elsif login = payload.repository[:owner_name]
+              lookup_owner(%w(User Organization), login: login)
+            end
+          end
+
+          def lookup_owner(types, attrs)
+            Array(types).map(&:constantize).each do |type|
+              owner = type.where(attrs).first
+              return owner if owner
+            end
+            nil
+          end
+
+          def repo_not_found!
             Travis::Metrics.meter('request.receive.repository_not_found')
-            raise PayloadValidationError, "Repository not found: #{slug}"
+            raise PayloadValidationError, "Repository not found: #{payload.repository.slice(:id, :github_id, :owner_name, :name)}"
           end
 
-          def owner_missing
-            Travis::Metrics.meter('request.receive.missing_repository_owner')
-            raise PayloadValidationError, "Repository does not have an owner: #{slug}"
+          def owner_not_found!
+            Travis::Metrics.meter('request.receive.repository_owner_not_found')
+            raise PayloadValidationError, "The given repository owner could not be found: #{payload.repository.slice(:owner_id, :owner_github_id, :owner_type, :owner_name).inspect}"
           end
 
-          def rescue_gh(state)
-            yield
-          # rescue GH::Error => e # (response_status: 404) => e
-          #   raise PayloadValidationError, "payload for #{slug} could not be #{"#{state}ed".gsub('ee', 'e')} as GitHub returned a #{e.info[:response_status]}. GH: #{e.info} Payload: #{payload.inspect}, github-guid=#{github_guid}, event-type=#{event_type}"
+          def owner_updated
+            Travis::Metrics.meter('request.receive.update_owner')
+            Travis.logger.warn("[request:receive] Repository owner updated for #{slug}: #{repo.owner_type}##{repo.owner_id} (#{repo.owner_name})")
           end
 
           def rejected
