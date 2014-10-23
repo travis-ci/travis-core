@@ -34,7 +34,11 @@ module Travis
             end
 
             def create
-              ::Repository.create!(:owner_name => owner_name, :name => name, github_id: github_id)
+              if Travis::Features.enabled_for_all?(:sync_repo_owner)
+                ::Repository.create!(:owner => owner, :owner_name => owner_name, :name => name, github_id: github_id)
+              else
+                ::Repository.create!(:owner_name => owner_name, :name => name, github_id: github_id)
+              end
             end
             # instrument :create, :level => :debug
 
@@ -63,21 +67,47 @@ module Travis
             # instrument :permit, :level => :debug
 
             def update
-              repo.update_attributes!({
-                github_id: data['id'],
-                private: data['private'],
-                description: data['description'],
-                url: data['homepage'],
-                default_branch: data['default_branch'],
-                github_language: data['language'],
-                name: name,
-                owner_name: owner_name
-              })
+              if Travis::Features.enabled_for_all?(:sync_repo_owner)
+                repo.update_attributes!({
+                  owner: owner,
+                  github_id: data['id'],
+                  private: data['private'],
+                  description: data['description'],
+                  url: data['homepage'],
+                  default_branch: data['default_branch'],
+                  github_language: data['language'],
+                  name: name,
+                  owner_name: owner_name
+                })
+              else
+                repo.update_attributes!({
+                  github_id: data['id'],
+                  private: data['private'],
+                  description: data['description'],
+                  url: data['homepage'],
+                  default_branch: data['default_branch'],
+                  github_language: data['language'],
+                  name: name,
+                  owner_name: owner_name
+                })
+              end
             rescue ActiveRecord::RecordInvalid
               # ignore for now. this seems to happen when multiple syncs (i.e. user sign
               # in requests are running in parallel?
             rescue GH::Error(response_status: 404) => e
               Travis.logger.warn "[github][services][user_sync] GitHub info was not available for #{repo.owner_name}/#{repo.name}: #{e.inspect}"
+            end
+
+            def owner
+              @owner ||= owner_type.constantize.find_by_github_id(owner_id)
+            end
+
+            def owner_id
+              data['owner']['id']
+            end
+
+            def owner_type
+              data['owner']['type']
             end
 
             def owner_name

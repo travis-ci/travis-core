@@ -136,8 +136,8 @@ describe Travis::Github::Services::SyncUser::Repositories::Instrument do
   let(:publisher) { Travis::Notification::Publisher::Memory.new }
   let(:events)    { publisher.events }
 
-  let(:user)      { Factory(:user, login: 'sven', github_oauth_token: '123456') }
-  let(:data)      { [{ 'name' => 'minimal', 'owner' => { 'login' => 'sven' }, 'permissions' => { 'admin' => true }, 'private' => false }] }
+  let(:user)      { Factory(:user, login: 'sven', github_id: 1, github_oauth_token: '123456') }
+  let(:data)      { [{ 'name' => 'minimal', 'owner' => { 'id' => 1, 'type' => 'User', 'login' => 'sven' }, 'permissions' => { 'admin' => true }, 'private' => false }] }
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
