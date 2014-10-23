@@ -10,7 +10,7 @@ module Travis
           end
 
           def accept?
-            return false if disabled? || closed?
+            return false if disabled?
             case action
             when :opened, :reopened then !!merge_commit
             when :synchronize       then head_change?
@@ -26,10 +26,6 @@ module Travis
 
           def disabled?
             Travis::Features.feature_deactivated?(:pull_requests)
-          end
-
-          def closed?
-            pull_request['state'] == 'closed'
           end
 
           def head_change?

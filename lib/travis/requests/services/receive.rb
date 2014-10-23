@@ -44,7 +44,8 @@ module Travis
         def accept?
           payload.validate!
           validate!
-          @accepted = payload.accept?
+          payload.accept?
+          @accepted = true
         rescue PayloadValidationError => e
           Travis.logger.error "#{e.message}, github-guid=#{github_guid}, event-type=#{event_type}"
           @accepted = false
