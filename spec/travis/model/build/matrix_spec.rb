@@ -768,6 +768,19 @@ describe Build, 'matrix' do
     end
   end
 
+  describe 'does not explode' do
+    it 'on a config key that is `true`' do
+      build = Build.new(config: { true => 'broken' })
+      expect { build.expand_matrix }.to_not raise_error
+    end
+
+    it 'on bad matrix include values' do
+      build = Build.new(config: { matrix: { include: ['broken'] } })
+      expect { build.expand_matrix }.to_not raise_error
+    end
+  end
+
+
   # describe 'matrix_keys_for' do
   #   let(:config_default_lang) { { 'rvm' => ['1.8.7', '1.9.2'], 'env' => ['DB=sqlite3', 'DB=postgresql'] } }
   #   let(:config_non_def_lang) { { 'language' => 'scala', 'rvm' => ['1.8.7', '1.9.2'], 'env' => ['DB=sqlite3', 'DB=postgresql'] } }
