@@ -6,22 +6,30 @@ class Build
       }
       DEFAULT_OS = "linux"
 
+      attr_reader :config, :options
+
       def initialize(config, options)
         @config = config
         @options = options
       end
 
       def run
-        return @config if @config.key?(:os)
-
-        @config.merge(os: os_for_language(@config[:language]))
+        os_given? ? config : config.merge(os: os_for_language)
       end
 
       private
 
-      def os_for_language(language)
-        OS_LANGUAGE_MAP.fetch(language, DEFAULT_OS)
-      end
+        def os_given?
+          config.key?(:os) || config.key?('os')
+        end
+
+        def includes
+          config.fetch(:matrix, {}).fetch(:include, [])
+        end
+
+        def os_for_language
+          OS_LANGUAGE_MAP.fetch(config[:language], DEFAULT_OS)
+        end
     end
   end
 end

@@ -88,4 +88,10 @@ class Request < Travis::Model
       false
     end
   end
+
+  def creates_jobs?
+    Build::Config::Matrix.new(
+      Build::Config.new(config).normalize, multi_os: repository.multi_os_enabled?, dist_group_expansion: repository.dist_group_expansion_enabled?
+    ).expand.size > 0
+  end
 end

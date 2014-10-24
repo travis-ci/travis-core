@@ -8,6 +8,7 @@ describe Request::Approval do
   before do
     approval.stubs(:build_pull_requests?).returns(true)
     approval.stubs(:build_pushes?).returns(true)
+    request.stubs(:creates_jobs?).returns(true)
   end
 
   describe 'config_accepted?' do
