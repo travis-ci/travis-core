@@ -64,8 +64,7 @@ class Build
         end
 
         def exclude_config?(config)
-          exclude_configs = settings[:exclude] || []
-          exclude_configs = exclude_configs.compact.map(&:stringify_keys).map(&:to_a).map(&:sort)
+          exclude_configs = normalize_matrix_filter_configs(settings[:exclude] || [])
           config = config.map { |config| [config[0].to_s, *config[1..-1]] }.sort
           exclude_configs.any? do |excluded|
             excluded.all? { |matrix_key| config.include? matrix_key }
@@ -73,13 +72,18 @@ class Build
         end
 
         def include_matrix_configs(configs)
-          include_configs = settings[:include] || []
-          include_configs = include_configs.map(&:to_a).map(&:sort)
+          include_configs = normalize_matrix_filter_configs(settings[:include] || [])
           if configs.flatten.empty? && settings.has_key?(:include)
             include_configs
           else
             configs + include_configs
           end
+        end
+
+        def normalize_matrix_filter_configs(configs)
+          configs = configs.select { |c| c.is_a?(Hash) }
+          configs = configs.compact.map(&:stringify_keys)
+          configs.map(&:to_a).map(&:sort)
         end
 
         def merge_config(row)
