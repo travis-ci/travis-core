@@ -738,6 +738,18 @@ describe Build, 'matrix' do
       end
     end
 
+    let(:matrix_with_includes_os_ruby) {
+      YAML.load(%(
+        language: ruby
+        matrix:
+          include:
+            - os: osx
+              rvm: '2.0.0'
+        gemfile:
+          - 'gemfiles/rails-4'
+      )).deep_symbolize_keys
+    }
+
     context 'the feature is inactive' do
       it 'does not expand on :dist or :group' do
         Build.any_instance.stubs(:dist_group_expansion_enabled?).returns(false)
@@ -747,6 +759,11 @@ describe Build, 'matrix' do
           { language: 'ruby', dist: ['precise', 'trusty'], group: ['current', 'update'], rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
           { language: 'ruby', dist: ['precise', 'trusty'], group: ['current', 'update'], rvm: '1.9.3', gemfile: 'gemfiles/rails-4' }
         ]
+      end
+
+      it 'rejects jobs with os key' do
+        build = Factory(:build, config: matrix_with_includes_os_ruby)
+        build.matrix.map(&:config).select { |job| job[:os] == 'osx' }.should == []
       end
     end
   end
