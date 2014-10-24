@@ -14,7 +14,6 @@ class Build
       def expand
         configs = expand_matrix
         configs = include_matrix_configs(exclude_matrix_configs(configs))
-        configs = filter(configs)
         configs.map { |config| merge_config(Hash[config]) }
       end
 
@@ -87,18 +86,12 @@ class Build
           configs.map(&:to_a).map(&:sort)
         end
 
-        def filter(configs)
-          configs.map do |config|
-            config.select { |key, value| p [key, value]; include_key?(key.to_sym) }
-          end
-        end
-
         def merge_config(row)
           config.select { |key, value| include_key?(key) }.merge(row)
         end
 
         def include_key?(key)
-          Config.matrix_keys_for(config, options).include?(key) || !known_env_key?(key)
+          Config.matrix_keys_for(config, options).include?(key.to_sym) || !known_env_key?(key.to_sym)
         end
 
         def known_env_key?(key)

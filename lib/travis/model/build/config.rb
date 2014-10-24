@@ -1,12 +1,14 @@
 require 'travis/model/build/config/env'
+require 'travis/model/build/config/features'
 require 'travis/model/build/config/language'
 require 'travis/model/build/config/matrix'
 require 'travis/model/build/config/obfuscate'
 require 'travis/model/build/config/os'
+require 'travis/model/build/config/yaml'
 
 class Build
   class Config
-    NORMALIZERS = [Env, Language, OS]
+    NORMALIZERS = [Features, Yaml, Env, Language, OS]
 
     DEFAULT_LANG = 'ruby'
 
