@@ -1,7 +1,7 @@
 require 'faraday/error'
 require 'travis/services/base'
-
-# TODO extract github specific stuff to a separate service
+require 'travis/services/find_admin/cache'
+require 'travis/github/services/validate_admin'
 
 module Travis
   module Services
@@ -12,80 +12,43 @@ module Travis
       register :find_admin
 
       def run
-        if repository
-          admin = candidates.first
-          admin || raise_admin_missing
-        else
-          error "[github-admin] repository is nil: #{params.inspect}"
-          raise Travis::RepositoryMissing, "no repository given"
-        end
+        repo_missing! unless repo
+        admin = cache.lookup { validate? ? find_valid_admin : repo.admins.first }
+        admin ? admin : admin_not_found!
       end
       instrument :run
 
-      def repository
+      def repo
         params[:repository]
       end
 
       private
 
-        def candidates
-          User.with_github_token.with_permissions(:repository_id => repository.id, :admin => true)
+        def cache
+          Cache.new(repo, params)
         end
 
-        def validate(user)
-          Timeout.timeout(2) do
-            data = Github.authenticated(user) { repository_data }
-            if data['permissions'] && data['permissions']['admin']
-              user
-            else
-              info "[github-admin] #{user.login} no longer has admin access to #{repository.slug}"
-              update(user, data['permissions'])
-              false
-            end
-          end
-        rescue Timeout::Error => error
-          handle_error(user, error)
-          false
-        rescue GH::Error => error
-          handle_error(user, error)
-          false
+        def validate?
+          params[:validate] && Travis::Features.enabled_for_all?(:allow_validate_admin)
         end
 
-        def handle_error(user, error)
-          status = error.info[:response_status]
-          case status
-          when 401
-            error "[github-admin] token for #{user.login} no longer valid"
-            user.update_attributes!(:github_oauth_token => "")
-          when 404
-            info "[github-admin] #{user.login} no longer has any access to #{repository.slug}"
-            update(user, {})
-          else
-            error "[github-admin] error retrieving repository info for #{repository.slug} for #{user.login}: #{error.message}"
-          end
+        def find_valid_admin
+          repo.admins.detect { |user| run_service(:github_validate_admin, repo: repo, user: user) }
         end
 
-        # TODO should this not be memoized?
-        def repository_data
-          data = GH["repos/#{repository.slug}"]
-          info "[github-admin] could not retrieve data for #{repository.slug}" unless data
-          data || { 'permissions' => {} }
+        def repo_missing!
+          error "[github-admin] repository is nil: #{params.inspect}"
+          raise Travis::RepositoryMissing, "no repository given"
         end
 
-        def update(user, permissions)
-          user.update_attributes!(:permissions => permissions)
-        end
-
-        def raise_admin_missing
-          raise Travis::AdminMissing.new("no admin available for #{repository.slug}")
+        def admin_not_found!
+          error "[github-admin] no admin available for #{repo.slug}"
+          raise Travis::AdminMissing.new("no admin available for #{repo.slug}")
         end
 
         class Instrument < Notification::Instrument
           def run_completed
-            publish(
-              msg: "for #{target.repository.slug}: #{result.login}",
-              result: result
-            )
+            publish(msg: "for #{target.repo.slug}: #{result.login}", result: result)
           end
         end
         Instrument.attach_to(self)

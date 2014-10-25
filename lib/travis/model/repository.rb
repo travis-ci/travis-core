@@ -48,10 +48,6 @@ class Repository < Travis::Model
       includes(:permissions).where('permissions.admin = ?', true)
     end
 
-    # def admins(permissions)
-    #   users.where(permissions: permissions)
-    # end
-
     def recent
       limit(25)
     end
@@ -104,7 +100,10 @@ class Repository < Travis::Model
   delegate :builds_only_with_travis_yml?, to: :settings
 
   def admin
-    @admin ||= Travis.run_service(:find_admin, repository: self) # TODO check who's using this
+    @admin ||= begin
+      Travis.logger.warn "[Deprecated] Repository#admin is deprecated. Please use the :find_admin service"
+      Travis.run_service(:find_admin, repository: self)
+    end
   end
 
   def slug
