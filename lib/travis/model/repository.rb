@@ -20,6 +20,7 @@ class Repository < Travis::Model
   has_many :events
   has_many :permissions, dependent: :delete_all
   has_many :users, through: :permissions
+  has_many :admins, through: :permissions, source: :user, conditions: { permissions: { admin: true } }
 
   has_one :last_build, class_name: 'Build', order: 'id DESC'
   has_one :key, class_name: 'SslKey'
@@ -46,6 +47,10 @@ class Repository < Travis::Model
     def administratable
       includes(:permissions).where('permissions.admin = ?', true)
     end
+
+    # def admins(permissions)
+    #   users.where(permissions: permissions)
+    # end
 
     def recent
       limit(25)

@@ -82,6 +82,25 @@ describe Repository do
         repositories = Repository.timeline
         repositories.map(&:name).should == ['started 2', 'started 1', 'finished 2', 'finished 1', 'unbuilt 2', 'unbuilt 1']
       end
+
+      describe 'admins' do
+        let(:repo)  { Factory(:repository) }
+        let(:admin) { Factory(:user, login: 'admin') }
+        let(:user)  { Factory(:user, login: 'user') }
+
+        before :each do
+          repo.permissions.create!(user: admin, admin: true)
+          repo.permissions.create!(user: admin, push: true)
+        end
+
+        it 'includes admins' do
+          repo.reload.admins.should include(admin)
+        end
+
+        it 'does not include non-admins' do
+          repo.reload.admins.should_not include(user)
+        end
+      end
     end
 
 
