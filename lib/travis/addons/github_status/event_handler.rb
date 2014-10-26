@@ -53,7 +53,7 @@ module Travis
         end
 
         def admin
-          @admin ||= Travis.run_service(:find_admin, repository: object.repository)
+          @admin ||= Travis.run_service(:find_admin, repository: object.repository, validate: true, cache: true)
         rescue Travis::AdminMissing
           nil
         end
