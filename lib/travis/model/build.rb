@@ -138,10 +138,6 @@ class Build < Travis::Model
       end
   end
 
-  after_initialize do
-    self.config = {} unless read_attribute(:config)
-  end
-
   # set the build number and expand the matrix
   before_create do
     self.number = repository.builds.next_number
@@ -176,6 +172,10 @@ class Build < Travis::Model
     !pull_request? || same_repo_pull_request?
   end
   alias addons_enabled? secure_env_enabled?
+
+  def config=(config)
+    super(config || {})
+  end
 
   def config
     @config ||= Config.new(super, multi_os: repository.multi_os_enabled?).normalize

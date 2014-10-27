@@ -680,7 +680,6 @@ describe Build, 'matrix' do
 
     context 'the feature is active' do
       it 'expands on :os' do
-        matrix_with_os_ruby.stubs(:first).returns(test)
         repository.stubs(:multi_os_enabled?).returns(true)
         build = Factory(:build, config: matrix_with_os_ruby, repository: repository)
 
@@ -695,7 +694,6 @@ describe Build, 'matrix' do
 
     context 'the feature is inactive' do
       it 'does not expand on :os' do
-        matrix_with_os_ruby.stubs(:first).returns(repository)
         repository.stubs(:multi_os_enabled?).returns(false)
         build = Factory(:build, config: matrix_with_os_ruby, repository: repository)
 
