@@ -752,10 +752,14 @@ describe Build, 'matrix' do
         language: ruby
         matrix:
           include:
-            - os: osx
-              rvm: '2.0.0'
-            - os: linux
-              rvm: '2.0.0'
+           - os: linux
+             compiler: gcc
+           - os: linux
+             compiler: clang
+           - os: osx
+             compiler: gcc
+           - os: osx
+             compiler: clang
         gemfile:
           - 'gemfiles/rails-4'
       )).deep_symbolize_keys
