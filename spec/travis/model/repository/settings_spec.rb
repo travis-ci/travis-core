@@ -66,6 +66,14 @@ describe Repository::Settings do
           settings(type, nil).should be_valid
         end
 
+        it 'returns nil if set to 0' do
+          settings(type, 0).send(:"timeout_#{type}").should be_nil
+        end
+
+        it "is valid if #{type} is set to 0" do
+          settings(type, 0).should be_valid
+        end
+
         [:off, :on].each do |status|
           describe "with :custom_timeouts feature flag turned #{status}" do
             max = MAX[status][type]
@@ -95,10 +103,6 @@ describe Repository::Settings do
             describe 'is invalid' do
               it "if #{type} is < 0" do
                 settings(type, -1).should_not be_valid
-              end
-
-              it "if #{type} is == 0" do
-                settings(type, 0).should_not be_valid
               end
 
               it "if #{type} is > #{max}" do

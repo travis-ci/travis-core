@@ -101,6 +101,16 @@ class Repository::Settings < Travis::Settings
     false
   end
 
+  def timeout_hard_limit
+    value = super
+    value == 0 ? nil : value
+  end
+
+  def timeout_log_silence
+    value = super
+    value == 0 ? nil : value
+  end
+
   def repository_id
     additional_attributes[:repository_id]
   end
