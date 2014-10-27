@@ -78,13 +78,7 @@ class Build
     private
 
       def matrix_config
-        return @matrix_config if @matrix_config
-        if matrix.first.respond_to? :repository
-          repository = matrix.first.repository
-          @matrix_config = Config::Matrix.new(config, multi_os: repository.multi_os_enabled?, dist_group_expansion: repository.dist_group_expansion_enabled?)
-        else
-          @matrix_config = Config::Matrix.new(config)
-        end
+        @matrix_config ||= Config::Matrix.new(config, multi_os: repository.multi_os_enabled?, dist_group_expansion: repository.dist_group_expansion_enabled?)
       end
 
       def matrix_allow_failures
