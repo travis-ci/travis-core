@@ -60,7 +60,7 @@ module Travis
           def verify_owner
             owner = owner_by_payload
             owner_not_found! unless owner
-            update_owner(owner) if owner.id != repo.owner_id
+            update_owner(owner) if owner.id != repo.owner_id && !api_request?
           end
 
           def create
@@ -147,6 +147,10 @@ module Travis
 
           def event_type
             @event_type ||= (params[:event_type] || 'push').gsub('-', '_')
+          end
+
+          def api_request?
+            event_type == 'api'
           end
 
           def repo
