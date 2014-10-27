@@ -178,7 +178,8 @@ class Build < Travis::Model
   alias addons_enabled? secure_env_enabled?
 
   def config=(config)
-    super(Config.new(config, multi_os: multi_os_enabled?).normalize)
+    opts = repository ? { multi_os: repository.multi_os_enabled? } : {}
+    super(Config.new(config, opts).normalize)
   end
 
   def obfuscated_config
@@ -203,14 +204,6 @@ class Build < Travis::Model
   end
 
   private
-
-    def multi_os_enabled?
-      Travis::Features.enabled_for_all?(:multi_os) || repository && Travis::Features.active?(:multi_os, repository)
-    end
-
-    def dist_group_expansion_enabled?
-      Travis::Features.enabled_for_all?(:dist_group_expansion) || repository && Travis::Features.active?(:dist_group_expansion, repository)
-    end
 
     def last_finished_state_on_branch
       repository.builds.finished.last_state_on(branch: commit.branch)

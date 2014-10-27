@@ -1,3 +1,4 @@
+require 'pry'
 require 'travis/model/build/config/env'
 require 'travis/model/build/config/features'
 require 'travis/model/build/config/language'

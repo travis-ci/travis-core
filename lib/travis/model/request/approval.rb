@@ -73,6 +73,8 @@ class Request
         '.travis.yml is missing and builds without .travis.yml are disabled'
       elsif repository.private?
         'private repository'
+      elsif matrix.expand.size == 0
+        'matrix created no jobs'
       end
     end
 
@@ -116,6 +118,10 @@ class Request
 
       def branches
         @branches ||= Branches.new(request)
+      end
+
+      def matrix
+        ::Build::Config::Matrix.new(request.config, multi_os: repository.multi_os_enabled?, dist_group_expansion: repository.dist_group_expansion_enabled?)
       end
   end
 end

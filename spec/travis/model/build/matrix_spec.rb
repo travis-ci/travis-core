@@ -675,9 +675,13 @@ describe Build, 'matrix' do
       )).deep_symbolize_keys
     }
 
+    let(:repository) { Factory(:repository)}
+    let(:test) { Factory(:test, repository: repository) }
+
     context 'the feature is active' do
       it 'expands on :os' do
-        Build.any_instance.stubs(:multi_os_enabled?).returns(true)
+        matrix_with_os_ruby.stubs(:first).returns(test)
+        repository.stubs(:multi_os_enabled?).returns(true)
         build = Factory(:build, config: matrix_with_os_ruby)
 
         build.matrix.map(&:config).should == [
@@ -691,7 +695,8 @@ describe Build, 'matrix' do
 
     context 'the feature is inactive' do
       it 'does not expand on :os' do
-        Build.any_instance.stubs(:multi_os_enabled?).returns(false)
+        matrix_with_os_ruby.stubs(:first).returns(repository)
+        repository.stubs(:multi_os_enabled?).returns(false)
         build = Factory(:build, config: matrix_with_os_ruby)
 
         build.matrix.map(&:config).should == [
@@ -719,10 +724,14 @@ describe Build, 'matrix' do
           - 'gemfiles/rails-4'
       )).deep_symbolize_keys
     }
+    let(:repository) { Factory(:repository) }
 
     context 'the feature is active' do
       it 'expands on :dist and :group' do
-        Build.any_instance.stubs(:dist_group_expansion_enabled?).returns(true)
+        repository.stubs(:dist_group_expansion_enabled?).returns(true)
+
+        matrix_with_dist_and_group_ruby.stubs(:first).returns(repository)
+
         build = Factory(:build, config: matrix_with_dist_and_group_ruby)
 
         build.matrix.map(&:config).should == [
@@ -745,6 +754,8 @@ describe Build, 'matrix' do
           include:
             - os: osx
               rvm: '2.0.0'
+            - os: linux
+              rvm: '2.0.0'
         gemfile:
           - 'gemfiles/rails-4'
       )).deep_symbolize_keys
@@ -763,7 +774,7 @@ describe Build, 'matrix' do
 
       it 'rejects jobs with os key' do
         build = Factory(:build, config: matrix_with_includes_os_ruby)
-        build.matrix.map(&:config).select { |job| job[:os] == 'osx' }.should == []
+        build.matrix.map(&:config).select { |job| job.has_key? :os }.should == []
       end
     end
   end

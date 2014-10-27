@@ -35,6 +35,9 @@ module Travis
             if request.builds.count == 0
               approval = Request::Approval.new(request)
               Travis.logger.warn("[request:receive] Request #{request.id} commit=#{request.commit.try(:commit).inspect} didn't create any builds: #{approval.result}/#{approval.message}")
+            elsif request.builds.inject { |num_jobs, build| num_jobs + build.matrix.size } == 0
+              approval = Request::Approval.new(request)
+              Travis.logger.warn("[request:receive] Request #{request.id} commit=#{request.commit.try(:commit).inspect} didn't create any job: #{approval.result}/#{approval.message}")
             else
               store_config_info
               Travis.logger.info("[request:receive] Request #{request.id} commit=#{request.commit.try(:commit).inspect} created #{request.builds.count} builds")

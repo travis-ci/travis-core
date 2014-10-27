@@ -154,10 +154,6 @@ class Job < Travis::Model
 
   private
 
-    def multi_os_enabled?
-      Travis::Features.enabled_for_all?(:multi_os) || Travis::Features.active?(:multi_os, repository)
-    end
-
     def whitelisted_addons
       [:firefox, :hosts, :postgresql]
     end
