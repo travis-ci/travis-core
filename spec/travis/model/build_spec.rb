@@ -223,7 +223,8 @@ describe Build do
 
     describe 'config' do
       it 'defaults to a hash with language and os set' do
-        Build.new.config.should == { language: 'ruby', os: 'linux' }
+        build = Build.new(repository: Repository.new(owner: User.new))
+        build.config.should == { language: 'ruby', os: 'linux' }
       end
 
       it 'deep_symbolizes keys on write' do

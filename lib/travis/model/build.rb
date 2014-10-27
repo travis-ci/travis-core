@@ -139,7 +139,7 @@ class Build < Travis::Model
   end
 
   after_initialize do
-    self.config = {} if config.nil?
+    self.config = {} unless read_attribute(:config)
   end
 
   # set the build number and expand the matrix
@@ -177,9 +177,8 @@ class Build < Travis::Model
   end
   alias addons_enabled? secure_env_enabled?
 
-  def config=(config)
-    opts = repository ? { multi_os: repository.multi_os_enabled? } : {}
-    super(Config.new(config, opts).normalize)
+  def config
+    @config ||= Config.new(super, multi_os: repository.multi_os_enabled?).normalize
   end
 
   def obfuscated_config

@@ -682,7 +682,7 @@ describe Build, 'matrix' do
       it 'expands on :os' do
         matrix_with_os_ruby.stubs(:first).returns(test)
         repository.stubs(:multi_os_enabled?).returns(true)
-        build = Factory(:build, config: matrix_with_os_ruby)
+        build = Factory(:build, config: matrix_with_os_ruby, repository: repository)
 
         build.matrix.map(&:config).should == [
           { language: 'ruby', os: 'osx',   rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
@@ -697,7 +697,7 @@ describe Build, 'matrix' do
       it 'does not expand on :os' do
         matrix_with_os_ruby.stubs(:first).returns(repository)
         repository.stubs(:multi_os_enabled?).returns(false)
-        build = Factory(:build, config: matrix_with_os_ruby)
+        build = Factory(:build, config: matrix_with_os_ruby, repository: repository)
 
         build.matrix.map(&:config).should == [
           { language: 'ruby', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
@@ -729,10 +729,7 @@ describe Build, 'matrix' do
     context 'the feature is active' do
       it 'expands on :dist and :group' do
         repository.stubs(:dist_group_expansion_enabled?).returns(true)
-
-        matrix_with_dist_and_group_ruby.stubs(:first).returns(repository)
-
-        build = Factory(:build, config: matrix_with_dist_and_group_ruby)
+        build = Factory(:build, repository: repository, config: matrix_with_dist_and_group_ruby)
 
         build.matrix.map(&:config).should == [
           { language: 'ruby', dist: 'precise', group: 'current', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
