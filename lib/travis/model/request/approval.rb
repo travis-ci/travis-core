@@ -126,7 +126,7 @@ class Request
       end
 
       def job_created?
-        matrix.expand.size > 0
+        matrix.expand.tap {|x| Travis::Logger.warn "matrix expands to #{x}"}.flatten.size > 0
       end
   end
 end

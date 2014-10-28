@@ -49,6 +49,11 @@ describe Request::Approval do
   end
 
   describe 'accepted?' do
+    before :each do
+      approval.repository.stubs(:multi_os_enabled?).returns(true)
+      approval.repository.stubs(:dist_group_expansion_enabled?).returns(true)
+    end
+
     it 'accepts a request that has a commit, belongs to a public repository, is not skipped and does not belong to the github_pages branch and it is not a rails fork' do
       approval.should be_accepted
     end
