@@ -19,6 +19,7 @@ class Request
         !repository.private? &&
         (!excluded_repository? || included_repository?) &&
         !skipped? &&
+        job_created? &&
         enabled_in_settings?
     end
 
@@ -73,7 +74,7 @@ class Request
         '.travis.yml is missing and builds without .travis.yml are disabled'
       elsif repository.private?
         'private repository'
-      elsif matrix.expand.size == 0
+      elsif !job_created?
         'matrix created no jobs'
       end
     end
@@ -122,6 +123,10 @@ class Request
 
       def matrix
         ::Build::Config::Matrix.new(request.config, multi_os: repository.multi_os_enabled?, dist_group_expansion: repository.dist_group_expansion_enabled?)
+      end
+
+      def job_created?
+        matrix.expand.size > 0
       end
   end
 end
