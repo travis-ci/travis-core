@@ -90,6 +90,6 @@ class Request < Travis::Model
   end
 
   def creates_jobs?
-    builds.inject(0) { |num_jobs, build| num_jobs + build.matrix.size } > 0
+    builds.inject(0) { |num_jobs, build| num_jobs + build.expand_matrix.size } > 0
   end
 end
