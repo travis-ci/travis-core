@@ -8,7 +8,7 @@ require 'travis/model/build/config/yaml'
 
 class Build
   class Config
-    NORMALIZERS = [Features, Yaml, Env, Language, OS]
+    NORMALIZERS = [Features, Yaml, Env, Language]
 
     DEFAULT_LANG = 'ruby'
 

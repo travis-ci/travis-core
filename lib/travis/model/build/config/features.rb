@@ -13,7 +13,8 @@ class Build
         config.delete(:os)
         includes = config[:matrix] && config[:matrix][:include]
         return config unless includes.is_a?(Array)
-        includes.delete_if { |c| !c.respond_to?(:key?) || c.key?(:os) }
+        includes = includes.each { |c| c.delete(:os) if c.is_a?(Hash) }.uniq
+        config[:matrix][:include] = includes
         config
       end
     end

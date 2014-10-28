@@ -14,7 +14,8 @@ class Build
       def expand
         configs = expand_matrix
         configs = include_matrix_configs(exclude_matrix_configs(configs))
-        configs.map { |config| merge_config(Hash[config]) }
+        configs = configs.map { |config| cleanup_config(merge_config(Hash[config])) }
+        configs.map { |config| Build::Config::OS.new(config, options).run }
       end
 
       def allow_failure_configs
@@ -88,6 +89,11 @@ class Build
 
         def merge_config(row)
           config.select { |key, value| include_key?(key) }.merge(row)
+        end
+
+        def cleanup_config(config)
+          config.delete(:matrix)
+          config
         end
 
         def include_key?(key)
