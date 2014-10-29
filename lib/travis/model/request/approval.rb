@@ -47,7 +47,7 @@ class Request
     end
 
     def approved?
-      accepted? && request.config.present? && branch_approved?
+      accepted? && request.config.present? && branch_approved? && request.creates_jobs?
     end
 
     def result
@@ -73,6 +73,8 @@ class Request
         '.travis.yml is missing and builds without .travis.yml are disabled'
       elsif repository.private?
         'private repository'
+      elsif !request.creates_jobs?
+        'matrix created no jobs'
       end
     end
 

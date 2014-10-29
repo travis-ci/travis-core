@@ -190,4 +190,13 @@ class Repository < Travis::Model
     @settings = nil
     super
   end
+
+  def multi_os_enabled?
+    Travis::Features.enabled_for_all?(:multi_os) || Travis::Features.active?(:multi_os, self)
+  end
+
+  def dist_group_expansion_enabled?
+    Travis::Features.enabled_for_all?(:dist_group_expansion) || Travis::Features.active?(:dist_group_expansion, self)
+  end
+
 end
