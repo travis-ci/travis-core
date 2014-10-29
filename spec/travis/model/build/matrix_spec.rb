@@ -822,6 +822,12 @@ describe Build, 'matrix' do
       build = Factory(:build, config: config, repository: Factory(:repository))
       expect { build.expand_matrix }.to_not raise_error
     end
+
+    it 'on config[:matrix] being an array' do
+      config = { matrix: [{ foo: 'kaputt' }] }
+      build = Factory(:build, config: config, repository: Factory(:repository))
+      expect { build.expand_matrix }.to_not raise_error
+    end
   end
 
 
