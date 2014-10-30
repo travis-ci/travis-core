@@ -127,6 +127,11 @@ describe Travis::Github::Services::SyncUser::Repositories do
       sync.run
     end
   end
+
+  it 'does not explode on GH errors' do
+    GH.expects(:[]).with('user/repos').raises(GH::Error.new)
+    expect { sync.run }.to_not raise_error
+  end
 end
 
 describe Travis::Github::Services::SyncUser::Repositories::Instrument do

@@ -90,7 +90,7 @@ module Travis
             end
 
             def fetch
-              resources.map { |resource| fetch_resource(resource) }.map(&:to_a).flatten.compact
+              resources.flat_map { |resource| Array(fetch_resource(resource)) }
             end
             instrument :fetch, :level => :debug
 
@@ -98,6 +98,7 @@ module Travis
               GH[resource] # TODO should be: ?type=#{self.class.type} but GitHub doesn't work as documented
             rescue GH::Error => e
               log_exception(e)
+              nil
             end
 
             def with_github(&block)
