@@ -174,7 +174,7 @@ class Build < Travis::Model
   alias addons_enabled? secure_env_enabled?
 
   def config=(config)
-    super(config || {})
+    super((config || {}).deep_symbolize_keys)
   end
 
   def config

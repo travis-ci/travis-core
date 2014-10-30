@@ -229,7 +229,7 @@ describe Build do
 
       it 'deep_symbolizes keys on write' do
         build = Factory(:build, config: { 'foo' => { 'bar' => 'bar' } })
-        build.config[:foo][:bar].should == 'bar'
+        build.read_attribute(:config)[:foo].should == { bar: 'bar' }
       end
     end
 
