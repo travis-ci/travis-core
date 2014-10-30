@@ -38,6 +38,7 @@ RSpec.configure do |c|
   c.include Travis::Support::Testing::Webmock
 
   c.before :each do
+    Travis.logger.level = Logger::INFO
     Travis::Event.instance_variable_set(:@queues, nil)
     Travis::Event.instance_variable_set(:@subscriptions, nil)
     Travis::Event.stubs(:subscribers).returns []
@@ -57,13 +58,3 @@ ActiveRecord::Base.class_eval do
   end
 end
 
-module Kernel
-  def capture_stdout
-    out = StringIO.new
-    $stdout = out
-    yield
-    return out.string
-  ensure
-    $stdout = STDOUT
-  end
-end

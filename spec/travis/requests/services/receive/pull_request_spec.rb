@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe Travis::Requests::Services::Receive::PullRequest do
-  let(:payload) { Travis::Requests::Services::Receive.payload_for('pull_request', GITHUB_PAYLOADS['pull-request']) }
+  let(:data)    { MultiJson.decode(GITHUB_PAYLOADS['pull-request']) }
+  let(:payload) { Travis::Requests::Services::Receive.payload_for('pull_request', data) }
 
   describe 'accept' do
     before do
@@ -73,21 +74,12 @@ describe Travis::Requests::Services::Receive::PullRequest do
         :name => 'test-project-1',
         :description => 'Test dummy repository for testing Travis CI',
         :url => 'https://github.com/travis-repos/test-project-1',
+        :owner_github_id => 864347,
         :owner_type => 'Organization',
         :owner_name => 'travis-repos',
         :owner_email => nil,
         :private => false,
         :github_id => 1615549
-      }
-    end
-  end
-
-  describe 'owner' do
-    it 'returns all attributes required for an Owner' do
-      payload.owner.should == {
-        :type => 'Organization',
-        :login => 'travis-repos',
-        :github_id => 864347
       }
     end
   end

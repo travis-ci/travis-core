@@ -10,7 +10,7 @@ module Travis
           end
 
           def accept?
-            return false if disabled?
+            return false if disabled? || closed?
             case action
             when :opened, :reopened then !!merge_commit
             when :synchronize       then head_change?
@@ -28,69 +28,63 @@ module Travis
             Travis::Features.feature_deactivated?(:pull_requests)
           end
 
+          def closed?
+            pull_request['state'] == 'closed'
+          end
+
           def head_change?
             head_commit && ::Request.last_by_head_commit(head_commit['sha']).nil?
           end
 
           def repository
-            @repository ||= {
-              :name        => repo['name'],
-              :description => repo['description'],
-              :url         => repo['_links']['html']['href'],
-              :owner_type  => repo_owner['type'],
-              :owner_name  => repo_owner['login'],
-              :owner_email => repo_owner['email'],
-              :private     => !!repo['private'],
-              :github_id   => repo['id']
+            @repository ||= repo && {
+              name:            repo['name'],
+              description:     repo['description'],
+              url:             repo['_links']['html']['href'],
+              owner_github_id: repo['owner']['id'],
+              owner_type:      repo['owner']['type'],
+              owner_name:      repo['owner']['login'],
+              owner_email:     repo['owner']['email'],
+              private:         !!repo['private'],
+              github_id:       repo['id']
             }
           end
-
-          def owner
-            @owner ||= {
-              :type      => repo_owner['type'],
-              :login     => repo_owner['login'],
-              :github_id => repo_owner['id']
-            }
-          end
-
-          # def admin
-          #   @admin ||= begin
-          #     repo = Repository.where(owner_name: repository['owner_name'], name: repository['name']).first
-          #     repo.admin
-          #   end
-          # end
 
           def request
             @request ||= {
-              :comments_url => pull_request['_links']['comments']['href'],
-              :base_commit  => base_commit['sha'],
-              :head_commit  => head_commit['sha']
+              comments_url: comments_url,
+              base_commit:  base_commit['sha'],
+              head_commit:  head_commit['sha']
             }
           end
 
           def commit
             @commit ||= if merge_commit
               {
-                :commit          => merge_commit['sha'],
-                :message         => head_commit['message'],
-                :branch          => pull_request['base']['ref'],
-                :ref             => merge_commit['ref'],
-                :committed_at    => head_commit['committer']['date'],
-                :committer_name  => head_commit['committer']['name'],
-                :committer_email => head_commit['committer']['email'],
-                :author_name     => head_commit['author']['name'],
-                :author_email    => head_commit['author']['email'],
-                :compare_url     => pull_request['_links']['html']['href']
+                commit:          merge_commit['sha'],
+                message:         head_commit['message'],
+                branch:          pull_request['base']['ref'],
+                ref:             merge_commit['ref'],
+                committed_at:    head_commit['committer']['date'],
+                committer_name:  head_commit['committer']['name'],
+                committer_email: head_commit['committer']['email'],
+                author_name:     head_commit['author']['name'],
+                author_email:    head_commit['author']['email'],
+                compare_url:     pull_request['_links']['html']['href']
               }
             end
           end
 
           def pull_request
-            event['pull_request']
+            event['pull_request'] || {}
           end
 
           def action
-            event['action'].to_sym
+            event['action'].try(:to_sym)
+          end
+
+          def comments_url
+            pull_request.fetch('_links', {}).fetch('comments', {}).fetch('href', '')
           end
 
           def base_commit
@@ -106,11 +100,7 @@ module Travis
           end
 
           def repo
-            @repo ||= event['repository']
-          end
-
-          def repo_owner
-            @repo_owner ||= repo['owner']
+            event['repository']
           end
         end
       end
