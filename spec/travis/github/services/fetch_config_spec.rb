@@ -52,24 +52,6 @@ describe Travis::Github::Services::FetchConfig do
       result["foo"].should eql({ "bar" => "Foobar" })
     end
 
-    context "when the repository has the osx_alt_image feature enabled" do
-      before do
-        Travis::Features.activate_repository(:osx_alt_image, request.repository)
-      end
-
-      it "passes the 'osx_image' config key through" do
-        GH.stubs(:[]).returns({ "content" => ["osx_image: latest"].pack("m") })
-        result["osx_image"].should eql("latest")
-      end
-    end
-
-    context "when the repository doesn't have the osx_alt_image feature enabled" do
-      it "doesn't pass the 'osx_image' config key through" do
-        GH.stubs(:[]).returns({ "content" => ["osx_image: latest"].pack("m") })
-        result.has_key?("osx_image").should be false
-      end
-    end
-
     context "when the repository has the template_selection feature enabled" do
       before do
         Travis::Features.activate_repository(:template_selection, request.repository)

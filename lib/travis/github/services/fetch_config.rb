@@ -59,10 +59,6 @@ module Travis
           end
 
           def filter(config)
-            unless Travis::Features.active?(:osx_alt_image, request.repository)
-              config = config.except('osx_image')
-            end
-
             unless Travis::Features.active?(:template_selection, request.repository)
               config = config.except('dist').except('group')
             end
