@@ -99,32 +99,14 @@ describe 'Job::Queue' do
   end
 
   context 'when "sudo" value matches the given configuration hash' do
-    context 'when the repository owner is feature flagged' do
-      it 'returns the matching queue' do
-        job = stub('job', config: { sudo: false }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'travis-core', owner: stub))
-        Job::Queue.for(job).name.should == 'builds.docker'
-      end
-
-      it 'returns the matching queue when language is also given' do
-        job = stub('job', config: { language: 'clojure', sudo: false }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'travis-core', owner: stub))
-        Job::Queue.for(job).name.should == 'builds.docker'
-      end
+    it 'returns the matching queue' do
+      job = stub('job', config: { sudo: false }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'travis-core', owner: stub))
+      Job::Queue.for(job).name.should == 'builds.docker'
     end
 
-    context 'when the repository owner is not feature flagged' do
-      before :each do
-        Travis::Features.stubs(:owner_active?).returns(false)
-      end
-
-      it 'returns the matching queue' do
-        job = stub('job', config: { sudo: false }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'travis-core', owner: stub))
-        Job::Queue.for(job).name.should == 'builds.linux'
-      end
-
-      it 'returns the matching queue when language is also given' do
-        job = stub('job', config: { language: 'clojure', sudo: false }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'travis-core', owner: stub))
-        Job::Queue.for(job).name.should == 'builds.clojure'
-      end
+    it 'returns the matching queue when language is also given' do
+      job = stub('job', config: { language: 'clojure', sudo: false }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'travis-core', owner: stub))
+      Job::Queue.for(job).name.should == 'builds.docker'
     end
   end
 
