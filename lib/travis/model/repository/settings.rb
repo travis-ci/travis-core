@@ -19,6 +19,12 @@ class Repository::Settings < Travis::Settings
   class SshKey < Travis::Settings::Model
     class NotAPrivateKeyError < StandardError; end
 
+    KEY_CLASSES = [
+      OpenSSL::PKey::RSA,
+      OpenSSL::PKey::DSA,
+      OpenSSL::PKey::EC,
+    ]
+
     attribute :description, String
     attribute :value, Travis::Settings::EncryptedValue
     attribute :repository_id, Integer
@@ -28,17 +34,23 @@ class Repository::Settings < Travis::Settings
 
     def validate_correctness
       return unless value.decrypt
-      key = OpenSSL::PKey::RSA.new(value.decrypt, '')
-      raise NotAPrivateKeyError unless key.private?
-    rescue OpenSSL::PKey::RSAError, NotAPrivateKeyError
-      # it seems there is no easy way to check if key
-      # needs a pass phrase with ruby's openssl bindings,
-      # that's why we need to manually check that
-      if value.decrypt.to_s =~ /ENCRYPTED/
-        errors.add(:value, :key_with_a_passphrase)
-      else
-        errors.add(:value, :not_a_private_key)
+
+      unless KEY_CLASSES.any? { |pkey_class| validate_pkey(pkey_class, value.decrypt) }
+        if value.decrypt.to_s =~ /ENCRYPTED/
+          errors.add(:value, :key_with_a_passphrase)
+        else
+          errors.add(:value, :not_a_private_key)
+        end
       end
+    end
+
+    private
+
+    def validate_pkey(pkey_class, key_string)
+      key = pkey_class.new(key_string, '')
+      key.respond_to?(:private_key?) ? key.private_key? : key.private?
+    rescue OpenSSL::PKey::PKeyError
+      false
     end
   end
 

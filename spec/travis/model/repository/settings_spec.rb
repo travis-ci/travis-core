@@ -2,6 +2,48 @@
 require 'spec_helper'
 
 describe Repository::Settings do
+  describe Repository::Settings::SshKey do
+    # We're generating insecure keys to make the tests go fast. This test is
+    # just verifying that the keys are valid, so that shouldn't be an issue.
+    # Don't use these commands if you want to make your own secure keys, though.
+
+    it 'validates RSA keys' do
+      rsa_key = OpenSSL::PKey::RSA.generate(1024)
+
+      ssh_key = Repository::Settings::SshKey.new
+      ssh_key.value = rsa_key.to_pem
+
+      ssh_key.should be_valid
+    end
+
+    it 'validates DSA keys' do
+      dsa_key = OpenSSL::PKey::DSA.generate(1024)
+
+      ssh_key = Repository::Settings::SshKey.new
+      ssh_key.value = dsa_key.to_pem
+
+      ssh_key.should be_valid
+    end
+
+    it 'does not validate invalid keys' do
+      ssh_key = Repository::Settings::SshKey.new
+      ssh_key.value = "-----BEGIN RSA PRIVATE KEY-----\nThisisnotavalidkey\n-----END RSA PRIVATE KEY-----\n"
+
+      ssh_key.should_not be_valid
+      ssh_key.errors[:value].should == [:not_a_private_key]
+    end
+
+    it 'does not validate password protected keys' do
+      rsa_key = OpenSSL::PKey::RSA.generate(1024)
+
+      ssh_key = Repository::Settings::SshKey.new
+      ssh_key.value = rsa_key.to_pem(OpenSSL::Cipher.new("AES-128-CBC"), "passphrase")
+
+      ssh_key.should_not be_valid
+      ssh_key.errors[:value].should == [:key_with_a_passphrase]
+    end
+  end
+
   describe 'env_vars' do
     it 'can be filtered to get only public vars' do
       settings = Repository::Settings.load(env_vars: [
