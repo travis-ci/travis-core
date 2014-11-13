@@ -42,7 +42,7 @@ module Travis
           def commit
             @commit ||= {
               commit:          commit_data['sha'],
-              message:         commit_data['commit']['message'],
+              message:         message,
               branch:          branch,
               ref:             nil,                                        # TODO verify that we do not need this
               committed_at:    commit_data['commit']['committer']['date'], # TODO in case of API requests we'd want to display the timestamp of the incoming request
@@ -66,6 +66,10 @@ module Travis
 
             def repo_data
               event['repository'] || {}
+            end
+
+            def message
+              event['message'] || commit_data['commit']['message']
             end
 
             def slug
