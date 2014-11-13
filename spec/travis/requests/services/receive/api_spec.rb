@@ -3,18 +3,19 @@ require 'spec_helper'
 describe Travis::Requests::Services::Receive::Api do
   include Travis::Testing::Stubs
 
-  let(:payload) { Travis::Requests::Services::Receive.payload_for('api', API_PAYLOADS['custom']) }
-  let(:slug)    { "#{payload.event['repository']['owner_name']}/#{payload.event['repository']['name']}" }
+  let(:payload) { API_PAYLOADS['custom'].dup }
+  let(:slug)    { "#{payload['repository']['owner_name']}/#{payload['repository']['name']}" }
   let(:repo)    { stub_repo  }
+  subject       { Travis::Requests::Services::Receive.payload_for('api', payload) }
 
   before :each do
-    User.stubs(:find).with(payload.event['user']['id']).returns(user)
+    User.stubs(:find).with(payload['user']['id']).returns(user)
     Repository.stubs(:by_slug).with(slug).returns([repo])
   end
 
   describe 'repository' do
     it 'returns all attributes required for a Repository' do
-      payload.repository.should == {
+      subject.repository.should == {
         name: 'gem-release',
         owner_id: 2208,
         owner_type: 'User',
@@ -25,7 +26,7 @@ describe Travis::Requests::Services::Receive::Api do
 
   describe 'commit' do
     it 'returns all attributes required for a Commit' do
-      payload.commit.should == {
+      subject.commit.should == {
         commit: 'b736eea14f5f2094f7c8f7ff902bfaa302c10cbd',
         message: 'Bump to 0.7.3',
         branch: 'master',
@@ -42,9 +43,14 @@ describe Travis::Requests::Services::Receive::Api do
 
   describe 'request' do
     it 'returns attributes for a Request' do
-      payload.request.should == {
+      subject.request.should == {
         config: { 'env' => ['FOO=foo', 'BAR=bar'] },
       }
     end
+  end
+
+  it 'uses a custom message if given' do
+    payload['message'] = 'custom message'
+    subject.commit[:message].should == 'custom message'
   end
 end
