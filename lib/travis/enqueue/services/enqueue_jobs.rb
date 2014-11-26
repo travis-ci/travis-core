@@ -54,6 +54,7 @@ module Travis
                   limit = nil
                   queueable = nil
                   Metriks.timer('enqueue.limit_per_owner').time do
+                    Travis.logger.info "About to evaluate jobs for: #{owner.login}."
                     limit = Limit.new(owner, jobs)
                     queueable = limit.queueable
                   end
@@ -91,7 +92,9 @@ module Travis
 
           def jobs
             Metriks.timer('enqueue.fetch_jobs').time do
-              Job.includes(:owner).queueable.all
+              jobs = Job.includes(:owner).queueable.all
+              Travis.logger.info "Found #{jobs.size} jobs in total." if jobs.size > 0
+              jobs
             end
           end
 
