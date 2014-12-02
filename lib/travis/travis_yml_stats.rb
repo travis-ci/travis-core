@@ -49,6 +49,8 @@ module Travis
       set_language_version
       set_uses_sudo
       set_uses_apt_get
+      set_dist
+      set_group
 
       @publisher.perform_async(keen_payload)
     end
@@ -104,6 +106,14 @@ module Travis
       set :uses_apt_get, commands.any? { |command| command =~ /\bapt-get\b/ }
     end
 
+    def set_dist
+      set :dist_name, dist_name
+    end
+
+    def set_group
+      set :group_name, group_name
+    end
+
     def config
       request.config
     end
@@ -143,6 +153,14 @@ module Travis
 
     def normalize_string(str)
       str.downcase.gsub("#", "-sharp").gsub(/[^A-Za-z0-9.:\-_]/, "")
+    end
+
+    def dist_name
+      config.fetch('dist', 'default')
+    end
+
+    def group_name
+      config.fetch('group', 'default')
     end
   end
 end
