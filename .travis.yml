@@ -3,7 +3,7 @@ language: ruby
 sudo: false
 
 env:
-  - JRUBY_OPTS="--dev -Xcext.enabled=false -Xcompile.invokedynamic=false"
+  - JRUBY_OPTS="--dev -Xcext.enabled=false -Xcompile.invokedynamic=false -J-Xmx1g"
 
 services:
   - redis
