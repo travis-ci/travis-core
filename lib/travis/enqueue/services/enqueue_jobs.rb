@@ -73,6 +73,7 @@ module Travis
 
           def enqueue(jobs)
             jobs.each do |job|
+              Travis.logger.info("enqueueing job_id=#{job.id}")
               Metriks.timer('enqueue.publish_job').time do
                 publish(job)
               end
