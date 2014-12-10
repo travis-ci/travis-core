@@ -12,7 +12,7 @@ class Build
 
     DEFAULT_LANG = 'ruby'
 
-    ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl, :compiler, :go, :xcode_sdk, :xcode_scheme, :ghc, :ruby, :rust]
+    ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl, :compiler, :go, :xcode_sdk, :xcode_scheme, :ghc, :ruby, :rust, :csharp, :fsharp, :visualbasic, :d, :julia]
 
     EXPANSION_KEYS_FEATURE = [:os]
 
@@ -21,11 +21,15 @@ class Build
       'c++'         => [:compiler],
       'clojure'     => [:lein, :jdk],
       'cpp'         => [:compiler],
+      'csharp'      => [:csharp],
+      'd'           => [:d],
       'erlang'      => [:otp_release],
+      'fsharp'      => [:fsharp],
       'go'          => [:go],
       'groovy'      => [:jdk],
       'haskell'     => [:ghc],
       'java'        => [:jdk],
+      'julia'       => [:julia],
       'node_js'     => [:node_js],
       'objective-c' => [:rvm, :gemfile, :xcode_sdk, :xcode_scheme],
       'perl'        => [:perl],
@@ -33,7 +37,8 @@ class Build
       'python'      => [:python],
       'ruby'        => [:rvm, :gemfile, :jdk, :ruby],
       'rust'        => [:rust],
-      'scala'       => [:scala, :jdk]
+      'scala'       => [:scala, :jdk],
+      'visualbasic' => [:visualbasic]
     }
 
     EXPANSION_KEYS_UNIVERSAL = [:env, :branch]
