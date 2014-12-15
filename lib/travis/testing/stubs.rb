@@ -335,6 +335,14 @@ module Travis
           email: 'email'
         )
       end
+
+      def stub_job(attributes = {})
+        Stubs.stub 'job', attributes.reverse_merge(
+          repository: stub_repository,
+          id: '42.1',
+          enqueue: true,
+        )
+      end
     end
   end
 end
