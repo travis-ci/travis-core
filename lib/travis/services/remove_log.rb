@@ -28,7 +28,7 @@ module Travis
 
         removed_at = Time.now
 
-        message = FORMAT % [current_user.name, removed_at.iso8601]
+        message = FORMAT % [current_user.name, removed_at.utc]
         if params[:reason]
           message << "\n\n#{params[:reason]}"
         end
