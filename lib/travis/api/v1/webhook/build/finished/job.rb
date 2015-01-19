@@ -33,7 +33,8 @@ module Travis
                   'author_name' => commit.author_name,
                   'author_email' => commit.author_email,
                   'committer_name' => commit.committer_name,
-                  'committer_email' => commit.committer_email
+                  'committer_email' => commit.committer_email,
+                  'allow_failure' => job.allow_failure
                 }
                 data['log'] = job.log_content || '' if options[:include_logs]
                 data['started_at'] = format_date(job.started_at) if job.started?

@@ -19,7 +19,10 @@ describe Travis::Api::V1::Webhook::Build::Finished do
       'duration' => 60,
       'build_url' => 'https://travis-ci.org/svenfuchs/minimal/builds/1',
       'config' => { 'rvm' => ['1.8.7', '1.9.2'], 'gemfile' => ['test/Gemfile.rails-2.3.x', 'test/Gemfile.rails-3.0.x'] },
+      'commit_id' => commit.id,
       'commit' => '62aae5f70ceee39123ef',
+      'base_commit' => request.base_commit,
+      'head_commit' => request.head_commit,
       'branch' => 'master',
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
       'message' => 'the commit message',
@@ -29,7 +32,12 @@ describe Travis::Api::V1::Webhook::Build::Finished do
       'author_name' => 'Sven Fuchs',
       'author_email' => 'svenfuchs@artweb-design.de',
       'type' => 'push',
-    }
+      'state' => 'passed',
+      'pull_request' => false,
+      'pull_request_number' => build.pull_request_number,
+      'pull_request_title' => build.pull_request_title,
+      'tag' => request.tag_name
+      }
   end
 
   it 'includes the repository' do
@@ -62,7 +70,8 @@ describe Travis::Api::V1::Webhook::Build::Finished do
         'committer_name' => 'Sven Fuchs',
         'committer_email' => 'svenfuchs@artweb-design.de',
         'committed_at' => json_format_time(Time.now.utc - 1.hour),
-        'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop'
+        'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
+        'allow_failure' => false
       }
     end
 
