@@ -68,22 +68,49 @@ describe Job::Test do
   end
 
   describe 'events' do
+    describe 'receive' do
+      let(:data) { WORKER_PAYLOADS['job:test:receive'] }
+
+      it 'sets the state to :received' do
+        job.receive(data)
+        job.state.should == :received
+      end
+
+      it 'sets the worker from the payload' do
+        job.receive(data)
+        job.worker.should == 'ruby3.worker.travis-ci.org:travis-ruby-4'
+      end
+
+      it 'resets the log content' do
+        job.log.expects(:update_attributes!).with(content: '', removed_at: nil, removed_by: nil)
+        job.receive(data)
+      end
+
+      it 'notifies observers' do
+        Travis::Event.expects(:dispatch).with('job:test:received', job, data)
+        job.receive(data)
+      end
+
+      it 'propagates the event to the source' do
+        job.source.expects(:receive)
+        job.receive(data)
+      end
+
+      it 'sets log\'s removed_at and removed_by to nil' do
+        job.log.removed_at = Time.now
+        job.log.removed_by = job.repository.owner
+        job.receive(data)
+        job.log.removed_at.should be_nil
+        job.log.removed_by.should be_nil
+      end
+    end
+
     describe 'start' do
       let(:data) { WORKER_PAYLOADS['job:test:start'] }
 
       it 'sets the state to :started' do
         job.start(data)
         job.state.should == :started
-      end
-
-      it 'sets the worker from the payload' do
-        job.start(data)
-        job.worker.should == 'ruby3.worker.travis-ci.org:travis-ruby-4'
-      end
-
-      it 'resets the log content' do
-        job.log.expects(:update_attributes!).with(content: '', removed_at: nil, removed_by: nil)
-        job.start(data)
       end
 
       it 'notifies observers' do
@@ -94,14 +121,6 @@ describe Job::Test do
       it 'propagates the event to the source' do
         job.source.expects(:start)
         job.start(data)
-      end
-
-      it 'sets log\'s removed_at and removed_by to nil' do
-        job.log.removed_at = Time.now
-        job.log.removed_by = job.repository.owner
-        job.start(data)
-        job.log.removed_at.should be_nil
-        job.log.removed_by.should be_nil
       end
     end
 

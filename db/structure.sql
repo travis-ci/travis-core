@@ -261,7 +261,8 @@ CREATE TABLE builds (
     pull_request_number integer,
     branch character varying(255),
     canceled_at timestamp without time zone,
-    cached_matrix_ids integer[]
+    cached_matrix_ids integer[],
+    received_at timestamp without time zone
 );
 
 
@@ -383,7 +384,8 @@ CREATE TABLE jobs (
     owner_type character varying(255),
     result integer,
     queued_at timestamp without time zone,
-    canceled_at timestamp without time zone
+    canceled_at timestamp without time zone,
+    received_at timestamp without time zone
 );
 
 
@@ -453,7 +455,9 @@ CREATE TABLE logs (
     archiving boolean,
     archived_at timestamp without time zone,
     archive_verified boolean,
-    purged_at timestamp without time zone
+    purged_at timestamp without time zone,
+    removed_at timestamp without time zone,
+    removed_by integer
 );
 
 
@@ -1556,4 +1560,10 @@ INSERT INTO schema_migrations (version) VALUES ('20140210003014');
 
 INSERT INTO schema_migrations (version) VALUES ('20140210012509');
 
+INSERT INTO schema_migrations (version) VALUES ('20140612131826');
+
 INSERT INTO schema_migrations (version) VALUES ('20140827121945');
+
+INSERT INTO schema_migrations (version) VALUES ('20150121135400');
+
+INSERT INTO schema_migrations (version) VALUES ('20150121135401');

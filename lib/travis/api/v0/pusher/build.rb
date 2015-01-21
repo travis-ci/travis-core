@@ -5,9 +5,9 @@ module Travis
         class Build
           require 'travis/api/v0/pusher/build/canceled'
           require 'travis/api/v0/pusher/build/created'
+          require 'travis/api/v0/pusher/build/received'
           require 'travis/api/v0/pusher/build/started'
           require 'travis/api/v0/pusher/build/finished'
-
 
           include Formats
 
