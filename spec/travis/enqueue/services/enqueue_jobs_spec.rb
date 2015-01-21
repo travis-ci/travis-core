@@ -92,4 +92,12 @@ describe Travis::Enqueue::Services::EnqueueJobs do
       )
     end
   end
+
+  describe 'Logging' do
+    it 'logs the enqueue' do
+      service.stubs(:publish)
+      Travis.logger.expects(:info).with("enqueueing slug=svenfuchs/minimal job_id=42.1").once
+      service.send(:enqueue, [stub_job])
+    end
+  end
 end

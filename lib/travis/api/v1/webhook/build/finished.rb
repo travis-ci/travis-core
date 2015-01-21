@@ -22,7 +22,10 @@ module Travis
                 'finished_at' => format_date(build.finished_at),
                 'duration' => build.duration,
                 'build_url' => build_url,
+                'commit_id' => commit.id,
                 'commit' => commit.commit,
+                'base_commit' => request.base_commit,
+                'head_commit' => request.head_commit,
                 'branch' => commit.branch,
                 'message' => commit.message,
                 'compare_url' => commit.compare_url,
@@ -32,7 +35,12 @@ module Travis
                 'committer_name' => commit.committer_name,
                 'committer_email' => commit.committer_email,
                 'matrix' => build.matrix.map { |job| Job.new(job, options).data },
-                'type'  => build.event_type
+                'type'  => build.event_type,
+                'state' => build.state.to_s,
+                'pull_request' => build.pull_request?,
+                'pull_request_number' => build.pull_request_number,
+                'pull_request_title' => build.pull_request_title,
+                'tag' => request.tag_name
               }
 
               if commit.pull_request?

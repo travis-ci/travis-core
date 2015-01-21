@@ -228,4 +228,44 @@ describe Travis::TravisYmlStats do
 
     subject
   end
+
+  describe "a request without 'dist' key" do
+    it "sets the dist_name key to 'default'" do
+      event_should_contain dist_name: 'default'
+
+      subject
+    end
+  end
+
+  describe "a request with 'dist' key" do
+    before do
+      request.config['dist'] = 'trusty'
+    end
+
+    it "sets the dist_name key to 'trusty'" do
+      event_should_contain dist_name: 'trusty'
+
+      subject
+    end
+  end
+
+  describe "a request without 'group' key" do
+    it "sets the group_name key to 'default'" do
+      event_should_contain group_name: 'default'
+
+      subject
+    end
+  end
+
+  describe "a request with 'group' key" do
+    before do
+      request.config['group'] = 'dev'
+    end
+
+    it "sets the group_name key to 'dev'" do
+      event_should_contain group_name: 'dev'
+
+      subject
+    end
+  end
 end

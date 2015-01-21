@@ -60,7 +60,7 @@ module Travis
           github_id: 549743,
           builds_only_with_travis_yml?: false,
           settings: stub_settings,
-          users_with_permission: []
+          users_with_permission: [],
         )
       end
       alias stub_repository stub_repo
@@ -333,6 +333,14 @@ module Travis
       def stub_email(attributes = {})
         Stubs.stub 'email', attributes.reverse_merge(
           email: 'email'
+        )
+      end
+
+      def stub_job(attributes = {})
+        Stubs.stub 'job', attributes.reverse_merge(
+          repository: stub_repository,
+          id: '42.1',
+          enqueue: true
         )
       end
     end
