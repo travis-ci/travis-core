@@ -261,8 +261,7 @@ CREATE TABLE builds (
     pull_request_number integer,
     branch character varying(255),
     canceled_at timestamp without time zone,
-    cached_matrix_ids integer[],
-    received_at timestamp without time zone
+    cached_matrix_ids integer[]
 );
 
 
@@ -384,8 +383,7 @@ CREATE TABLE jobs (
     owner_type character varying(255),
     result integer,
     queued_at timestamp without time zone,
-    canceled_at timestamp without time zone,
-    received_at timestamp without time zone
+    canceled_at timestamp without time zone
 );
 
 
@@ -1117,6 +1115,13 @@ CREATE INDEX index_builds_on_request_id ON builds USING btree (request_id);
 
 
 --
+-- Name: index_commits_on_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_commits_on_repository_id ON commits USING btree (repository_id);
+
+
+--
 -- Name: index_emails_on_email; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1564,6 +1569,4 @@ INSERT INTO schema_migrations (version) VALUES ('20140612131826');
 
 INSERT INTO schema_migrations (version) VALUES ('20140827121945');
 
-INSERT INTO schema_migrations (version) VALUES ('20150121135400');
-
-INSERT INTO schema_migrations (version) VALUES ('20150121135401');
+INSERT INTO schema_migrations (version) VALUES ('20150204144312');
