@@ -25,6 +25,56 @@ describe Travis::Services::UpdateJob do
     end
   end
 
+  describe 'event: receive' do
+    let(:event) { :receive }
+
+    before :each do
+      job.repository.update_attributes(last_build_state: :passed)
+    end
+
+    context 'when job is canceled' do
+      before { job.update_attribute(:state, :canceled) }
+
+      it 'does not update state' do
+        service.expects(:cancel_job_in_worker)
+
+        service.run
+        job.reload.state.should == 'canceled'
+      end
+    end
+
+    it 'sets the job state to received' do
+      service.run
+      job.reload.state.should == 'received'
+    end
+
+    it 'sets the job received_at' do
+      service.run
+      job.reload.received_at.to_s.should == '2011-01-01 00:02:00 UTC'
+    end
+
+    it 'sets the job worker name' do
+      service.run
+      job.reload.worker.should == 'ruby3.worker.travis-ci.org:travis-ruby-4'
+    end
+
+    it 'sets the build state to received' do
+      service.run
+      job.reload.source.state.should == 'received'
+    end
+
+    it 'sets the build received_at' do
+      service.run
+      job.reload.source.received_at.to_s.should == '2011-01-01 00:02:00 UTC'
+    end
+
+    it 'sets the build state to received' do
+      service.run
+      job.reload.source.state.should == 'received'
+    end
+  end
+
+
   describe 'event: start' do
     let(:event) { :start }
 
@@ -51,11 +101,6 @@ describe Travis::Services::UpdateJob do
     it 'sets the job started_at' do
       service.run
       job.reload.started_at.to_s.should == '2011-01-01 00:02:00 UTC'
-    end
-
-    it 'sets the job worker name' do
-      service.run
-      job.reload.worker.should == 'ruby3.worker.travis-ci.org:travis-ruby-4'
     end
 
     it 'sets the build state to started' do

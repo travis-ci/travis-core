@@ -14,8 +14,9 @@ class Job
 
     include SimpleStates, Travis::Event
 
-    states :created, :queued, :started, :passed, :failed, :errored, :canceled
+    states :created, :queued, :received, :started, :passed, :failed, :errored, :canceled
 
+    event :receive, to: :received
     event :start,   to: :started
     event :finish,  to: :finished
     event :reset,   to: :created, unless: :created?
@@ -27,9 +28,14 @@ class Job
       notify(:queue)
     end
 
-    def start(data = {})
+    def receive(data = {})
       log.update_attributes!(content: '', removed_at: nil, removed_by: nil) # TODO this should be in a restart method, right?
-      data = data.symbolize_keys.slice(:started_at, :worker)
+      data = data.symbolize_keys.slice(:received_at, :worker)
+      data.each { |key, value| send(:"#{key}=", value) }
+    end
+
+    def start(data = {})
+      data = data.symbolize_keys.slice(:started_at)
       data.each { |key, value| send(:"#{key}=", value) }
     end
 

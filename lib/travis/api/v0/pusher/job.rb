@@ -6,6 +6,7 @@ module Travis
           require 'travis/api/v0/pusher/job/canceled'
           require 'travis/api/v0/pusher/job/created'
           require 'travis/api/v0/pusher/job/log'
+          require 'travis/api/v0/pusher/job/received'
           require 'travis/api/v0/pusher/job/started'
           require 'travis/api/v0/pusher/job/finished'
 
