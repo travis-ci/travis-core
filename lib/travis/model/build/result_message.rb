@@ -63,7 +63,7 @@ class Build
         current  = build.state.try(:to_sym)
         previous = build.previous_state.try(:to_sym)
 
-        if [:created, :started, :queued].include?(current)
+        if [:created, :queued, :received, :started].include?(current)
           :pending
         elsif previous == :passed && current == :failed
           :broken
