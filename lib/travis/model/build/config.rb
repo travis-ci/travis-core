@@ -12,7 +12,32 @@ class Build
 
     DEFAULT_LANG = 'ruby'
 
-    ENV_KEYS = [:rvm, :gemfile, :env, :otp_release, :php, :node_js, :scala, :jdk, :python, :perl, :compiler, :go, :xcode_sdk, :xcode_scheme, :ghc, :ruby, :rust, :csharp, :fsharp, :visualbasic, :d, :julia, :dart, :elixir]
+    ENV_KEYS = [
+      :compiler,
+      :csharp,
+      :d,
+      :dart,
+      :elixir,
+      :env,
+      :fsharp,
+      :gemfile,
+      :ghc,
+      :go,
+      :jdk,
+      :julia,
+      :node_js,
+      :otp_release,
+      :perl,
+      :php,
+      :python,
+      :ruby,
+      :rust,
+      :rvm,
+      :scala,
+      :visualbasic,
+      :xcode_scheme,
+      :xcode_sdk
+    ]
 
     EXPANSION_KEYS_FEATURE = [:os]
 
