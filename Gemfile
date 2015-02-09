@@ -6,7 +6,7 @@ gem 'travis-support',     github: 'travis-ci/travis-support'
 gem 'travis-sidekiqs',    github: 'travis-ci/travis-sidekiqs', require: nil
 gem 'gh',                 github: 'travis-ci/gh'
 gem 'addressable'
-gem 'aws-sdk'
+gem 'aws-sdk-v1'
 gem 'json', '~> 1.7.7'
 
 gem 'dalli'
