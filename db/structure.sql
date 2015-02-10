@@ -1306,6 +1306,13 @@ CREATE INDEX index_requests_on_commit_id ON requests USING btree (commit_id);
 
 
 --
+-- Name: index_requests_on_created_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_requests_on_created_at ON requests USING btree (created_at);
+
+
+--
 -- Name: index_requests_on_head_commit; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1632,5 +1639,7 @@ INSERT INTO schema_migrations (version) VALUES ('20150121135400');
 INSERT INTO schema_migrations (version) VALUES ('20150121135401');
 
 INSERT INTO schema_migrations (version) VALUES ('20150204144312');
+
+INSERT INTO schema_migrations (version) VALUES ('20150210170900');
 
 INSERT INTO schema_migrations (version) VALUES ('20150223125700');
