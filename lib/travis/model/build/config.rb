@@ -34,6 +34,7 @@ class Build
       :rust,
       :rvm,
       :scala,
+      :sudo,
       :visualbasic,
       :xcode_scheme,
       :xcode_sdk
