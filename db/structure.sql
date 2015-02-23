@@ -1133,7 +1133,7 @@ ALTER TABLE ONLY users
 -- Name: index_branches_on_repository_id_and_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_branches_on_repository_id_and_name ON branches USING btree (repository_id, name);
+CREATE UNIQUE INDEX index_branches_on_repository_id_and_name ON branches USING btree (repository_id, name);
 
 
 --

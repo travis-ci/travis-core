@@ -6,7 +6,7 @@ class CreateBranches < ActiveRecord::Migration
       t.string  :name
       t.timestamps
     end
-    add_index(:branches, [:repository_id, :name])
+    add_index(:branches, [:repository_id, :name], unique: true)
   end
 
   def down
