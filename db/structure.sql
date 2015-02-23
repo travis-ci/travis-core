@@ -196,7 +196,7 @@ ALTER SEQUENCE annotations_id_seq OWNED BY annotations.id;
 CREATE TABLE branches (
     id integer NOT NULL,
     repository_id integer NOT NULL,
-    last_build_id integer NOT NULL,
+    last_build_id integer,
     name character varying(255),
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL

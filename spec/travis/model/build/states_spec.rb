@@ -4,7 +4,8 @@ class BuildMock
   include Build::States
   class << self; def name; 'Build'; end; end
   attr_accessor :state, :received_at, :started_at, :finished_at, :duration
-  def denormalize(*); end
+  def denormalize(*) end
+  def update_branch(*) end
 end
 
 describe Build::States do

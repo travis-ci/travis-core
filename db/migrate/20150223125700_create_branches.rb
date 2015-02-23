@@ -2,7 +2,7 @@ class CreateBranches < ActiveRecord::Migration
   def up
     create_table(:branches) do |t|
       t.integer :repository_id, null: false
-      t.integer :last_build_id, null: false
+      t.integer :last_build_id
       t.string  :name
       t.timestamps
     end
