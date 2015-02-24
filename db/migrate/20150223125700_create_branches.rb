@@ -3,7 +3,8 @@ class CreateBranches < ActiveRecord::Migration
     create_table(:branches) do |t|
       t.integer :repository_id, null: false
       t.integer :last_build_id
-      t.string  :name
+      t.string  :name, null: false
+      t.boolean :exists_on_github, default: true, null: false
       t.timestamps
     end
     add_index(:branches, [:repository_id, :name], unique: true)

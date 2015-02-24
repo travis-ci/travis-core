@@ -5,6 +5,7 @@ class Branch < Travis::Model
   belongs_to :last_build, class_name: 'Build'
 
   def self.fetch(repository, name, force_update = false)
+    name        ||= 'master'
     repository_id = Integer === repository ? repository : repository.id
     branch        = where(repository_id: repository_id, name: name).first_or_initialize
 

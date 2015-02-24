@@ -197,7 +197,8 @@ CREATE TABLE branches (
     id integer NOT NULL,
     repository_id integer NOT NULL,
     last_build_id integer,
-    name character varying(255),
+    name character varying(255) NOT NULL,
+    exists_on_github boolean DEFAULT true NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
