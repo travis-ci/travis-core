@@ -10,6 +10,7 @@ module Travis
     require 'travis/model/account'
     require 'travis/model/annotation'
     require 'travis/model/annotation_provider'
+    require 'travis/model/branch'
     require 'travis/model/broadcast'
     require 'travis/model/build'
     require 'travis/model/commit'
