@@ -29,12 +29,12 @@ describe Travis::Services::FindJob do
       lambda { service.run }.should raise_error(ActiveRecord::RecordNotFound)
     end
 
-    it 'excludes config by default' do
-      service.run.config.should_not include(:sudo)
+    it 'includes config by default' do
+      service.run.config.should include(:sudo)
     end
 
-    it 'includes config when requested' do
-      service.run(include_config: true).config.should include(:sudo)
+    it 'excludes config when requested' do
+      service.run(exclude_config: true).config.should_not include(:sudo)
     end
   end
 

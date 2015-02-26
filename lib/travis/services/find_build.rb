@@ -6,7 +6,7 @@ module Travis
       register :find_build
 
       def run(options = {})
-        options[:include_config] ||= false
+        options[:exclude_config] ||= false
         preload(result(options)) if result(options)
       end
 
@@ -38,9 +38,9 @@ module Travis
 
         def load_result(options = {})
           columns = scope(:build).column_names
-          columns -= %w(config) unless options[:include_config]
+          columns -= %w(config) if options[:exclude_config]
           scope(:build).select(columns).find_by_id(params[:id]).tap do |res|
-            res.config = {} unless options[:include_config]
+            res.config = {} if options[:exclude_config]
           end
         end
 
