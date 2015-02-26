@@ -34,7 +34,8 @@ describe Travis::Services::FindJob do
     end
 
     it 'excludes config when requested' do
-      service.run(exclude_config: true).config.should_not include(:sudo)
+      params[:exclude_config] = '1'
+      service.run.config.should_not include(:sudo)
     end
   end
 

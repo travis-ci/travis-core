@@ -5,9 +5,8 @@ module Travis
     class FindBuild < Base
       register :find_build
 
-      def run(options = {})
-        options[:exclude_config] ||= false
-        preload(result(options)) if result(options)
+      def run
+        preload(result) if result
       end
 
       def final?
@@ -32,15 +31,15 @@ module Travis
           end
         end
 
-        def result(options = {})
-          @result ||= load_result(options)
+        def result
+          @result ||= load_result
         end
 
-        def load_result(options = {})
+        def load_result
           columns = scope(:build).column_names
-          columns -= %w(config) if options[:exclude_config]
+          columns -= %w(config) if params[:exclude_config]
           scope(:build).select(columns).find_by_id(params[:id]).tap do |res|
-            res.config = {} if options[:exclude_config]
+            res.config = {} if params[:exclude_config]
           end
         end
 
