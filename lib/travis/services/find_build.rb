@@ -47,9 +47,6 @@ module Travis
           ActiveRecord::Associations::Preloader.new(build, [:matrix, :commit, :request]).run
           ActiveRecord::Associations::Preloader.new(build.matrix, :log, select: [:id, :job_id, :updated_at]).run
           ActiveRecord::Associations::Preloader.new(build.matrix, :annotations).run
-          build.matrix.each do |job|
-            job.config = {} if params[:exclude_config]
-          end
           build
         end
     end
