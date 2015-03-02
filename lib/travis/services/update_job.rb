@@ -19,7 +19,11 @@ module Travis
           cancel_job_in_worker
         else
           Metriks.timer("update_job.#{event}").time do
+            ActiveRecord::Base.connection.begin_db_transaction
+            ActiveRecord::Base.connection.execute('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE')
+            job.source.lock!
             job.send(:"#{event}!", data.except(:id))
+            ActiveRecord::Base.connection.commit_db_transaction
           end
         end
       end
