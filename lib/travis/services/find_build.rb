@@ -44,10 +44,7 @@ module Travis
         end
 
         def preload(build)
-          matrix_columns = scope(:job).column_names
-          matrix_columns -= %w(config) if params[:exclude_config]
-          ActiveRecord::Associations::Preloader.new(build, [:commit, :request]).run
-          ActiveRecord::Associations::Preloader.new(build, :matrix, select: matrix_columns).run
+          ActiveRecord::Associations::Preloader.new(build, [:matrix, :commit, :request]).run
           ActiveRecord::Associations::Preloader.new(build.matrix, :log, select: [:id, :job_id, :updated_at]).run
           ActiveRecord::Associations::Preloader.new(build.matrix, :annotations).run
           build.matrix.each do |job|
