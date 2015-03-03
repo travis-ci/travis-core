@@ -23,7 +23,7 @@ module Travis
             begin
               ActiveRecord::Base.connection.begin_db_transaction
               ActiveRecord::Base.connection.execute('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE')
-              Travis::AdvisoryLocks.exclusive do
+              Travis::AdvisoryLocks.exclusive("build-#{job.source.id}") do
                 job.send(:"#{event}!", data.except(:id))
               end
               ActiveRecord::Base.connection.commit_db_transaction
