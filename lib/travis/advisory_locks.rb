@@ -13,8 +13,8 @@ module Travis
     end
 
     def self.exclusive(lock_name, timeout = 30)
-      al = self.new(lock_name, timeout)
-      al.exclusive { yield }
+      al = self.new(lock_name)
+      al.exclusive(timeout) { yield }
     end
 
     def exclusive(timeout = 30)
