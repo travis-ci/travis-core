@@ -87,7 +87,6 @@ class Job < Travis::Model
     end
     Metriks.timer("job.propagate.#{name}").time do
       source.send(name, *args)
-      source.touch
     end
     true
   end
