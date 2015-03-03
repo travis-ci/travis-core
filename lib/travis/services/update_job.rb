@@ -1,6 +1,7 @@
 require 'active_support/core_ext/hash/except'
 require 'travis/support/instrumentation'
 require 'travis/services/base'
+require 'travis/advisory_locks'
 
 module Travis
   module Services
@@ -22,8 +23,9 @@ module Travis
             begin
               ActiveRecord::Base.connection.begin_db_transaction
               ActiveRecord::Base.connection.execute('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE')
-              job.source.lock!
-              job.send(:"#{event}!", data.except(:id))
+              Travis::AdvisoryLocks.exclusive do
+                job.send(:"#{event}!", data.except(:id))
+              end
               ActiveRecord::Base.connection.commit_db_transaction
             rescue => e
               ActiveRecord::Base.connection.rollback_db_transaction
