@@ -12,11 +12,13 @@ module Travis
       @lock_name = lock_name
     end
 
+    # must be used within a transaction
     def self.exclusive(lock_name, timeout = 30)
       al = self.new(lock_name)
       al.exclusive(timeout) { yield }
     end
 
+    # must be used within a transaction
     def exclusive(timeout = 30)
       give_up_at = Time.now + timeout if timeout
       while timeout.nil? || Time.now < give_up_at do
@@ -27,19 +29,13 @@ module Travis
           sleep(rand(0.1..0.2))
         end
       end
-    ensure
-      release_lock(lock_name)
     end
 
     private
 
     def obtained_lock?(lock_name)
-      result = connection.select_value("select pg_try_advisory_lock(#{lock_code(lock_name)});")
+      result = connection.select_value("select pg_try_advisory_xact_lock(#{lock_code(lock_name)});")
       result == 't' || result == 'true'
-    end
-
-    def release_lock(lock_name)
-      connection.execute("select pg_advisory_unlock(#{lock_code(lock_name)});")
     end
 
     def connection
