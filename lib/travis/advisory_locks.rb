@@ -22,7 +22,7 @@ module Travis
     def exclusive(timeout = 30)
       give_up_at = Time.now + timeout if timeout
       while timeout.nil? || Time.now < give_up_at do
-        if obtained_lock?(lock_name)
+        if obtained_lock?
           return yield
         else
           # Randomizing sleep time may help reduce contention.
@@ -33,8 +33,8 @@ module Travis
 
     private
 
-    def obtained_lock?(lock_name)
-      result = connection.select_value("select pg_try_advisory_xact_lock(#{lock_code(lock_name)});")
+    def obtained_lock?
+      result = connection.select_value("select pg_try_advisory_xact_lock(#{lock_code});")
       result == 't' || result == 'true'
     end
 
@@ -42,8 +42,8 @@ module Travis
       ActiveRecord::Base.connection
     end
 
-    def lock_code(lock_name)
-      Zlib.crc32("update_job:build-1234")
+    def lock_code
+      Zlib.crc32(lock_name)
     end
   end
 end
