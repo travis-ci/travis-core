@@ -25,6 +25,7 @@ class Build
       :go,
       :jdk,
       :julia,
+      :mono,
       :node_js,
       :otp_release,
       :perl,
@@ -46,12 +47,12 @@ class Build
       'c++'         => [:compiler],
       'clojure'     => [:lein, :jdk],
       'cpp'         => [:compiler],
-      'csharp'      => [:csharp],
+      'csharp'      => [:csharp, :mono],
       'd'           => [:d],
       'dart'        => [:dart],
       'elixir'      => [:elixir, :otp_release],
       'erlang'      => [:otp_release],
-      'fsharp'      => [:fsharp],
+      'fsharp'      => [:fsharp, :mono],
       'go'          => [:go],
       'groovy'      => [:jdk],
       'haskell'     => [:ghc],
@@ -65,7 +66,7 @@ class Build
       'ruby'        => [:rvm, :gemfile, :jdk, :ruby],
       'rust'        => [:rust],
       'scala'       => [:scala, :jdk],
-      'visualbasic' => [:visualbasic]
+      'visualbasic' => [:visualbasic, :mono]
     }
 
     EXPANSION_KEYS_UNIVERSAL = [:env, :branch]
