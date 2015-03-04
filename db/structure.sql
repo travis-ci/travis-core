@@ -190,6 +190,40 @@ ALTER SEQUENCE annotations_id_seq OWNED BY annotations.id;
 
 
 --
+-- Name: branches; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE branches (
+    id integer NOT NULL,
+    repository_id integer NOT NULL,
+    last_build_id integer,
+    name character varying(255) NOT NULL,
+    exists_on_github boolean DEFAULT true NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: branches_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE branches_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: branches_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE branches_id_seq OWNED BY branches.id;
+
+
+--
 -- Name: broadcasts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -261,7 +295,8 @@ CREATE TABLE builds (
     pull_request_number integer,
     branch character varying(255),
     canceled_at timestamp without time zone,
-    cached_matrix_ids integer[]
+    cached_matrix_ids integer[],
+    received_at timestamp without time zone
 );
 
 
@@ -383,7 +418,8 @@ CREATE TABLE jobs (
     owner_type character varying(255),
     result integer,
     queued_at timestamp without time zone,
-    canceled_at timestamp without time zone
+    canceled_at timestamp without time zone,
+    received_at timestamp without time zone
 );
 
 
@@ -453,7 +489,9 @@ CREATE TABLE logs (
     archiving boolean,
     archived_at timestamp without time zone,
     archive_verified boolean,
-    purged_at timestamp without time zone
+    purged_at timestamp without time zone,
+    removed_at timestamp without time zone,
+    removed_by integer
 );
 
 
@@ -839,6 +877,13 @@ ALTER TABLE ONLY annotations ALTER COLUMN id SET DEFAULT nextval('annotations_id
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY branches ALTER COLUMN id SET DEFAULT nextval('branches_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY broadcasts ALTER COLUMN id SET DEFAULT nextval('broadcasts_id_seq'::regclass);
 
 
@@ -947,6 +992,14 @@ ALTER TABLE ONLY annotation_providers
 
 ALTER TABLE ONLY annotations
     ADD CONSTRAINT annotations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: branches_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY branches
+    ADD CONSTRAINT branches_pkey PRIMARY KEY (id);
 
 
 --
@@ -1078,6 +1131,13 @@ ALTER TABLE ONLY users
 
 
 --
+-- Name: index_branches_on_repository_id_and_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_branches_on_repository_id_and_name ON branches USING btree (repository_id, name);
+
+
+--
 -- Name: index_builds_on_id_repository_id_and_event_type_desc; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1110,6 +1170,13 @@ CREATE INDEX index_builds_on_repository_id_and_state ON builds USING btree (repo
 --
 
 CREATE INDEX index_builds_on_request_id ON builds USING btree (request_id);
+
+
+--
+-- Name: index_commits_on_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_commits_on_repository_id ON commits USING btree (repository_id);
 
 
 --
@@ -1236,6 +1303,13 @@ CREATE INDEX index_repositories_on_owner_name_and_name ON repositories USING btr
 --
 
 CREATE INDEX index_requests_on_commit_id ON requests USING btree (commit_id);
+
+
+--
+-- Name: index_requests_on_created_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_requests_on_created_at ON requests USING btree (created_at);
 
 
 --
@@ -1556,4 +1630,16 @@ INSERT INTO schema_migrations (version) VALUES ('20140210003014');
 
 INSERT INTO schema_migrations (version) VALUES ('20140210012509');
 
+INSERT INTO schema_migrations (version) VALUES ('20140612131826');
+
 INSERT INTO schema_migrations (version) VALUES ('20140827121945');
+
+INSERT INTO schema_migrations (version) VALUES ('20150121135400');
+
+INSERT INTO schema_migrations (version) VALUES ('20150121135401');
+
+INSERT INTO schema_migrations (version) VALUES ('20150204144312');
+
+INSERT INTO schema_migrations (version) VALUES ('20150210170900');
+
+INSERT INTO schema_migrations (version) VALUES ('20150223125700');

@@ -1,34 +1,35 @@
 module Travis
   module Api
-    module V1
-      module Webhook
+    module V0
+      module Pusher
         class Build
-          class Finished < Build
+          class Received < Build
             class Job
-              include Formats
+              include Formats, V1::Helpers::Legacy
 
-              attr_reader :job, :commit, :options
+              attr_reader :job, :commit
 
-              def initialize(job, options = {})
+              def initialize(job)
                 @job = job
                 @commit = job.commit
-                @options = options
               end
 
               def data
-                data = {
+                {
                   'id' => job.id,
                   'repository_id' => job.repository_id,
+                  'repository_private' => repository.private,
                   'parent_id' => job.source_id,
                   'number' => job.number,
-                  'state' => job.finished? ? 'finished' : job.state.to_s,
+                  'state' => job.state.to_s,
+                  'result' => legacy_job_result(job),
                   'config' => job.obfuscated_config,
-                  'status' => job.result,
-                  'result' => job.result,
                   'commit' => commit.commit,
                   'branch' => commit.branch,
                   'message' => commit.message,
                   'compare_url' => commit.compare_url,
+                  'started_at' => format_date(job.started_at),
+                  'finished_at' => format_date(job.finished_at),
                   'committed_at' => format_date(commit.committed_at),
                   'author_name' => commit.author_name,
                   'author_email' => commit.author_email,
@@ -36,10 +37,6 @@ module Travis
                   'committer_email' => commit.committer_email,
                   'allow_failure' => job.allow_failure
                 }
-                data['log'] = job.log_content || '' if options[:include_logs]
-                data['started_at'] = format_date(job.started_at) if job.started?
-                data['finished_at'] = format_date(job.finished_at) if job.finished?
-                data
               end
             end
           end

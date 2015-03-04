@@ -16,22 +16,27 @@ class Build
   #    attributes to its repository and notify event listeners.
   module States
     extend ActiveSupport::Concern
-    include Denormalize, Travis::Event
+    include Denormalize, UpdateBranch, Travis::Event
 
     included do
       include SimpleStates
 
-      states :created, :started, :passed, :failed, :errored, :canceled
+      states :created, :received, :started, :passed, :failed, :errored, :canceled
 
-      event :start,  to: :started,  unless: [:started?, :failed?, :errored?]
-      event :finish, to: :finished, if: :should_finish?
-      event :reset,  to: :created
-      event :cancel, to: :canceled, if: :cancelable?
-      event :all, after: [:denormalize, :notify]
+      event :receive, to: :received,  unless: [:received?, :started?, :failed?, :errored?]
+      event :start,   to: :started,   unless: [:started?, :failed?, :errored?]
+      event :finish,  to: :finished, if: :should_finish?
+      event :reset,   to: :created
+      event :cancel,  to: :canceled, if: :cancelable?
+      event :all, after: [:denormalize, :update_branch, :notify]
     end
 
     def should_finish?
       matrix_finished? && !finished?
+    end
+
+    def receive(data = {})
+      self.received_at = data[:received_at]
     end
 
     def start(data = {})

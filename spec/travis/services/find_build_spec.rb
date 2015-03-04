@@ -3,9 +3,9 @@ require 'spec_helper'
 describe Travis::Services::FindBuild do
   include Support::ActiveRecord
 
-  let(:repo)    { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
-  let!(:build)  { Factory(:build, :repository => repo, :state => :finished, :number => 1) }
-  let(:params)  { { :id => build.id } }
+  let(:repo)    { Factory(:repository, owner_name: 'travis-ci', name: 'travis-core') }
+  let!(:build)  { Factory(:build, repository: repo, state: :finished, number: 1, config: {'sudo' => false}) }
+  let(:params)  { { id: build.id } }
   let(:service) { described_class.new(stub('user'), params) }
 
   describe 'run' do
@@ -16,6 +16,15 @@ describe Travis::Services::FindBuild do
     it 'does not raise if the build could not be found' do
       @params = { :id => build.id + 1 }
       lambda { service.run }.should_not raise_error
+    end
+
+    it 'includes config by default' do
+      service.run.config.should include(:sudo)
+    end
+
+    it 'excludes config when requested' do
+      params[:exclude_config] = '1'
+      service.run.config.should_not include(:sudo)
     end
   end
 

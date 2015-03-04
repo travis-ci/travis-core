@@ -5,7 +5,7 @@ module Travis
     class FindJob < Base
       register :find_job
 
-      def run(options = {})
+      def run
         preload(result) if result
       end
 
@@ -22,10 +22,18 @@ module Travis
       private
 
         def result
-          @result ||= scope(:job).find_by_id(params[:id])
+          @result ||= load_result
         rescue ActiveRecord::SubclassNotFound => e
           Travis.logger.warn "[services:find-job] #{e.message}"
           raise ActiveRecord::RecordNotFound
+        end
+
+        def load_result
+          columns = scope(:job).column_names
+          columns -= %w(config) if params[:exclude_config]
+          scope(:job).select(columns).find_by_id(params[:id]).tap do |res|
+            res.config = {} if params[:exclude_config]
+          end
         end
 
         def preload(job)

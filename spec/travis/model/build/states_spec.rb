@@ -3,8 +3,9 @@ require 'spec_helper'
 class BuildMock
   include Build::States
   class << self; def name; 'Build'; end; end
-  attr_accessor :state, :started_at, :finished_at, :duration
-  def denormalize(*); end
+  attr_accessor :state, :received_at, :started_at, :finished_at, :duration
+  def denormalize(*) end
+  def update_branch(*) end
 end
 
 describe Build::States do
@@ -46,6 +47,59 @@ describe Build::States do
         build.stubs(matrix: [stub(state: :passed)])
         build.reset
         build.state.should == :created
+      end
+    end
+
+    describe 'receive' do
+      let(:data) { WORKER_PAYLOADS['job:test:receive'] }
+
+      it 'does not denormalize attributes' do
+        build.denormalize?('job:test:receive').should be_false
+      end
+
+      describe 'when the build is not already received' do
+        it 'sets the state to :received' do
+          build.receive(data)
+          build.state.should == :received
+        end
+
+        it 'notifies observers' do
+          Travis::Event.expects(:dispatch).with('build:received', build, data)
+          build.receive(data)
+        end
+      end
+
+      describe 'when the build is already received' do
+        before :each do
+          build.state = :received
+        end
+
+        it 'does not notify observers' do
+          Travis::Event.expects(:dispatch).never
+          build.receive(data)
+        end
+      end
+
+      describe 'when the build has failed' do
+        before :each do
+          build.state = :failed
+        end
+
+        it 'does not notify observers' do
+          Travis::Event.expects(:dispatch).never
+          build.receive(data)
+        end
+      end
+
+      describe 'when the build has errored' do
+        before :each do
+          build.state = :errored
+        end
+
+        it 'does not notify observers' do
+          Travis::Event.expects(:dispatch).never
+          build.receive(data)
+        end
       end
     end
 

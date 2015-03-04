@@ -9,7 +9,7 @@ module Travis
 
       register :update_job
 
-      EVENT = [:start, :finish, :reset]
+      EVENT = [:receive, :start, :finish, :reset]
 
       def run
         if job.canceled? && event != :reset

@@ -4,7 +4,7 @@ describe Travis::Services::FindJob do
   include Support::ActiveRecord
 
   let(:repo)    { Factory(:repository) }
-  let!(:job)    { Factory(:test, repository: repo, state: :created, queue: 'builds.linux') }
+  let!(:job)    { Factory(:test, repository: repo, state: :created, queue: 'builds.linux', config: {'sudo' => false}) }
   let(:params)  { { id: job.id } }
   let(:service) { described_class.new(stub('user'), params) }
 
@@ -20,10 +20,22 @@ describe Travis::Services::FindJob do
     end
 
     it 'raises RecordNotFound if a SubclassNotFound error is raised during find' do
-      find_by_id = stub
-      find_by_id.stubs(:find_by_id).raises(ActiveRecord::SubclassNotFound)
+      find_by_id = stub.tap do |s|
+        s.stubs(:column_names).returns(%w(id config))
+        s.stubs(:select).returns(s)
+        s.stubs(:find_by_id).raises(ActiveRecord::SubclassNotFound)
+      end
       service.stubs(:scope).returns(find_by_id)
       lambda { service.run }.should raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'includes config by default' do
+      service.run.config.should include(:sudo)
+    end
+
+    it 'excludes config when requested' do
+      params[:exclude_config] = '1'
+      service.run.config.should_not include(:sudo)
     end
   end
 

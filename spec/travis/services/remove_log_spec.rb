@@ -50,11 +50,16 @@ describe Travis::Services::RemoveLog do
       result.should be_true
     end
 
-
     it "updates logs with desired information" do
       service.run
       service.log.content.should =~ Regexp.new(user.name)
       service.log.content.should =~ Regexp.new(params[:reason])
+    end
+
+    it "uses a log part for storing the content" do
+      service.run
+      service.log.parts.first.content.should =~ Regexp.new(user.name)
+      service.log.parts.first.content.should =~ Regexp.new(params[:reason])
     end
 
     context 'when log is already removed' do

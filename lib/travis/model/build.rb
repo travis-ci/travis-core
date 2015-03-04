@@ -39,6 +39,7 @@ require 'travis/model'
 class Build < Travis::Model
   require 'travis/model/build/config'
   require 'travis/model/build/denormalize'
+  require 'travis/model/build/update_branch'
   require 'travis/model/build/matrix'
   require 'travis/model/build/metrics'
   require 'travis/model/build/result_message'

@@ -31,7 +31,7 @@ class Job < Travis::Model
 
     # what already is queued or started
     def running(queue = nil)
-      scope = where(state: [:queued, :started]).order('jobs.id')
+      scope = where(state: [:queued, :received, :started]).order('jobs.id')
       scope = scope.where(queue: queue) if queue
       scope
     end
@@ -155,7 +155,7 @@ class Job < Travis::Model
   private
 
     def whitelisted_addons
-      [:firefox, :hosts, :postgresql]
+      [:apt_packages, :firefox, :hosts, :postgresql, :ssh_known_hosts]
     end
 
     def delete_addons(config)
