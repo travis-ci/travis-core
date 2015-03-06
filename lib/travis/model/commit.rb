@@ -19,7 +19,9 @@ class Commit < Travis::Model
   end
 
   def range
-    if compare_url && compare_url =~ /\/([0-9a-f]+\^*\.\.\.[0-9a-f]+\^*$)/
+    if pull_request?
+      "#{request.base_commit}...#{request.head_commit}"
+    elsif compare_url && compare_url =~ /\/([0-9a-f]+\^*\.\.\.[0-9a-f]+\^*$)/
       $1
     end
   end

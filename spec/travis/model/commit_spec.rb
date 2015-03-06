@@ -77,5 +77,16 @@ describe Commit do
         commit.range.should be_nil
       end
     end
+
+    context 'for a pull request' do
+      before do
+        commit.ref = 'refs/pull/1/merge'
+        commit.request = Request.new(:base_commit => 'abcdef', :head_commit => '123456')
+      end
+
+      it 'returns range' do
+        commit.range.should == 'abcdef...123456'
+      end
+    end
   end
 end
