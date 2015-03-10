@@ -71,9 +71,60 @@ describe Job::Test do
     describe 'receive' do
       let(:data) { WORKER_PAYLOADS['job:test:receive'] }
 
-      it 'sets the state to :received' do
-        job.receive(data)
-        job.state.should == :received
+      describe 'when the current state is :created' do
+        before { job.state = :created }
+
+        it 'sets the state to :received' do
+          job.receive(data)
+          job.state.should == :received
+        end
+
+        it 'sets :received_at' do
+          job.receive(data)
+          job.received_at.to_s.should == data['received_at']
+        end
+      end
+
+      describe 'when the current state is :queued' do
+        before { job.state = :queued }
+
+        it 'sets the state to :received' do
+          job.receive(data)
+          job.state.should == :received
+        end
+
+        it 'sets :received_at' do
+          job.receive(data)
+          job.received_at.to_s.should == data['received_at']
+        end
+      end
+
+      describe 'when the current state is :started' do
+        before { job.state = :started }
+
+        it 'keeps the current state :started' do
+          job.receive(data)
+          job.state.should == :started
+        end
+
+        it 'sets :received_at' do
+          job.receive(data)
+          job.received_at.to_s.should == data['received_at']
+        end
+      end
+
+      describe 'when the current state is :finished' do
+        before { job.state = :finished }
+
+        it 'keeps the current state :finished' do
+          job.receive(data)
+          job.state.should == :finished
+        end
+
+        it 'sets :received_at' do
+          job.receive(data)
+          job.received_at.to_s.should == data['received_at']
+        end
       end
 
       it 'sets the worker from the payload' do
@@ -108,9 +159,60 @@ describe Job::Test do
     describe 'start' do
       let(:data) { WORKER_PAYLOADS['job:test:start'] }
 
-      it 'sets the state to :started' do
-        job.start(data)
-        job.state.should == :started
+      describe 'when the current state is :created' do
+        before { job.state = :created }
+
+        it 'sets the state to :started' do
+          job.start(data)
+          job.state.should == :started
+        end
+
+        it 'sets :started_at' do
+          job.start(data)
+          job.started_at.to_s.should == data['started_at']
+        end
+      end
+
+      describe 'when the current state is :queued' do
+        before { job.state = :queued }
+
+        it 'sets the state to :started' do
+          job.start(data)
+          job.state.should == :started
+        end
+
+        it 'sets :started_at' do
+          job.start(data)
+          job.started_at.to_s.should == data['started_at']
+        end
+      end
+
+      describe 'when the current state is :received' do
+        before { job.state = :received }
+
+        it 'sets the state to :started' do
+          job.start(data)
+          job.state.should == :started
+        end
+
+        it 'sets :started_at' do
+          job.start(data)
+          job.started_at.to_s.should == data['started_at']
+        end
+      end
+
+      describe 'when the current state is :finished' do
+        before { job.state = :finished }
+
+        it 'keeps the current state :finished' do
+          job.start(data)
+          job.state.should == :finished
+        end
+
+        it 'sets :started_at' do
+          job.start(data)
+          job.started_at.to_s.should == data['started_at']
+        end
       end
 
       it 'notifies observers' do
@@ -127,9 +229,60 @@ describe Job::Test do
     describe 'finish' do
       let(:data) { WORKER_PAYLOADS['job:test:finish'] }
 
-      it 'sets the state to the given result state' do
-        job.finish(data)
-        job.state.should == 'passed'
+      describe 'when the current state is :created' do
+        before { job.state = :created }
+
+        it 'sets the state to :passed (the given state from the event payload)' do
+          job.finish(data)
+          job.state.should == 'passed'
+        end
+
+        it 'sets :finished_at' do
+          job.finish(data)
+          job.finished_at.to_s.should == data['finished_at']
+        end
+      end
+
+      describe 'when the current state is :queued' do
+        before { job.state = :queued }
+
+        it 'sets the state to :passed (the given state from the event payload)' do
+          job.finish(data)
+          job.state.should == 'passed'
+        end
+
+        it 'sets :finished_at' do
+          job.finish(data)
+          job.finished_at.to_s.should == data['finished_at']
+        end
+      end
+
+      describe 'when the current state is :received' do
+        before { job.state = :received }
+
+        it 'sets the state to :passed (the given state from the event payload)' do
+          job.finish(data)
+          job.state.should == 'passed'
+        end
+
+        it 'sets :finished_at' do
+          job.finish(data)
+          job.finished_at.to_s.should == data['finished_at']
+        end
+      end
+
+      describe 'when the current state is :finished' do
+        before { job.state = :finished }
+
+        it 'sets the state to :passed (the given state from the event payload)' do
+          job.finish(data)
+          job.state.should == 'passed'
+        end
+
+        it 'sets :finished_at' do
+          job.finish(data)
+          job.finished_at.to_s.should == data['finished_at']
+        end
       end
 
       it 'notifies observers' do
