@@ -34,6 +34,7 @@ module Travis
                 'commit_id' => build.commit_id,
                 'number' => build.number,
                 'pull_request' => build.pull_request?,
+                'pull_request_number' => build.pull_request_number,
                 'config' => build.config.try(:except, :source_key),
                 'state' => build.state.to_s,
                 'previous_state' => build.previous_state.to_s,

@@ -16,7 +16,7 @@ cache: bundler
 sudo: false
 
 rvm:
-  - jruby-19mode
+  - jruby-1.7.16
   - jruby-head
   - "2.0"
   - "2.1"
@@ -26,7 +26,6 @@ jdk: oraclejdk7
 matrix:
   fast_finish: true
   allow_failures:
-    - rvm: "2.1"
     - rvm: jruby-head
 
 before_script:
