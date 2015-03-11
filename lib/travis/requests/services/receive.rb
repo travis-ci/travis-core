@@ -57,7 +57,6 @@ module Travis
           def with_transactional_advisory_lock
             result = nil
             ActiveRecord::Base.connection.begin_db_transaction
-            ActiveRecord::Base.connection.execute('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE')
             Travis::AdvisoryLocks.exclusive("request-#{payload.repository[:github_id]}", 300) do
               result = yield
             end
