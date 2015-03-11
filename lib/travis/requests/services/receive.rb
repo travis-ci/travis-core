@@ -2,8 +2,8 @@ require 'gh'
 require 'travis/services/base'
 require 'travis/model/request/approval'
 require 'travis/notification/instrument'
-
-require "travis/travis_yml_stats"
+require 'travis/advisory_locks'
+require 'travis/travis_yml_stats'
 
 module Travis
   module Requests
