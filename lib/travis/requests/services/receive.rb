@@ -56,11 +56,11 @@ module Travis
 
           def with_transactional_advisory_lock
             result = nil
-            ActiveRecord::Base.connection.begin_db_transaction
             Travis::AdvisoryLocks.exclusive("request-#{payload.repository[:github_id]}", 300) do
+              ActiveRecord::Base.connection.begin_db_transaction
               result = yield
+              ActiveRecord::Base.connection.commit_db_transaction
             end
-            ActiveRecord::Base.connection.commit_db_transaction
             result
           rescue => e
             ActiveRecord::Base.connection.rollback_db_transaction

@@ -6,15 +6,15 @@ module Travis
   # 13.3.4. Advisory Locks : http://www.postgresql.org/docs/9.3/static/explicit-locking.html
   # http://www.postgresql.org/docs/9.3/static/functions-admin.html#FUNCTIONS-ADVISORY-LOCKS
   class AdvisoryLocks
-    attr_reader :lock_name
+    attr_reader :lock_name, :transactional
 
-    def initialize(lock_name)
+    def initialize(lock_name, transactional = false)
       @lock_name = lock_name
     end
 
     # must be used within a transaction
-    def self.exclusive(lock_name, timeout = 30)
-      al = self.new(lock_name)
+    def self.exclusive(lock_name, timeout = 30, transactional = false)
+      al = self.new(lock_name, transactional)
       al.exclusive(timeout) { yield }
     end
 
@@ -29,13 +29,20 @@ module Travis
           sleep(rand(0.1..0.2))
         end
       end
+    ensure
+      release_lock unless transactional
     end
 
     private
 
     def obtained_lock?
-      result = connection.select_value("select pg_try_advisory_xact_lock(#{lock_code});")
+      xact = transactional ? "_xact" : nil
+      result = connection.select_value("select pg_try_advisory#{xact}_lock(#{lock_code});")
       result == 't' || result == 'true'
+    end
+
+    def release_lock
+      connection.execute("select pg_advisory_unlock(#{lock_code});")
     end
 
     def connection
