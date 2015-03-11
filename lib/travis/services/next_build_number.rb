@@ -1,4 +1,5 @@
 require 'travis/services/base'
+require 'travis/notification'
 
 module Travis
   module Services
