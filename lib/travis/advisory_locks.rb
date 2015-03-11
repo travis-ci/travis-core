@@ -9,6 +9,7 @@ module Travis
     attr_reader :lock_name, :transactional
 
     def initialize(lock_name, transactional = false)
+      raise StandardError, "lock name cannot be blank"
       @lock_name = lock_name
     end
 
