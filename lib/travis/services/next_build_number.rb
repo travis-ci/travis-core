@@ -7,13 +7,32 @@ module Travis
 
       register :next_build_number
 
-      def initialize(*)
-        super
-      end
-
       def run
+        number = repository.next_build_number
+        if number.nil?
+          number = respository.builds.maximum('number::int4').to_i + 1
+          repository.next_build_number = number
+        else
+          repository.next_build_number += 1
+        end
+        repository.save!(validate: false)
       end
       instrument :run
+
+      def repository
+        @repository ||= Repository.find(params[:repository_id])
+      end
+
+      class Instrument < Notification::Instrument
+        def run_completed
+          params = target.params
+          publish(
+            msg: "for repository_id=#{params[:repository_id]}",
+            repository_id: params[:repository_id]
+          )
+        end
+      end
+      Instrument.attach_to(self)
 
     end
   end

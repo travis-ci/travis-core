@@ -29,13 +29,15 @@ module Travis
         attr_reader :request, :accepted
 
         def run
-          if accept?
-            create && start
-            store_config_info if verify
-          else
-            rejected
+          with_transactional_advisory_lock do
+            if accept?
+              create && start
+              store_config_info if verify
+            else
+              rejected
+            end
+            request
           end
-          request
         rescue GH::Error => e
           Travis.logger.error "payload for #{slug} could not be received as GitHub returned a #{e.info[:response_status]}: #{e.info}, github-guid=#{github_guid}, event-type=#{event_type}"
         end
@@ -51,6 +53,20 @@ module Travis
         end
 
         private
+
+          def with_transactional_advisory_lock
+            result = nil
+            ActiveRecord::Base.connection.begin_db_transaction
+            ActiveRecord::Base.connection.execute('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE')
+            Travis::AdvisoryLocks.exclusive("request-#{payload.repository[:github_id]}", 300) do
+              result = yield
+            end
+            ActiveRecord::Base.connection.commit_db_transaction
+            result
+          rescue => e
+            ActiveRecord::Base.connection.rollback_db_transaction
+            raise
+          end
 
           def validate!
             repo_not_found! unless repo

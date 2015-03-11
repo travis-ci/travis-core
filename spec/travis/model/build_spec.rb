@@ -150,15 +150,6 @@ describe Build do
       end
     end
 
-    describe 'next_number' do
-      it 'returns the next build number' do
-        1.upto(3) do |number|
-          Factory(:build, repository: repository, number: number)
-          repository.builds.next_number.should == number + 1
-        end
-      end
-    end
-
     describe 'pushes' do
       before do
         Factory(:build)
