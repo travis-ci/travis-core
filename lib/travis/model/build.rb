@@ -1,6 +1,7 @@
 require 'core_ext/hash/deep_symbolize_keys'
 require 'simple_states'
 require 'travis/model'
+require 'travis/services/next_build_number'
 
 # Build currently models a central but rather abstract domain entity: the thing
 # that is triggered by a Github request (service hook ping).
