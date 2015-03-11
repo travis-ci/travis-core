@@ -17,6 +17,7 @@ module Travis
           repository.next_build_number += 1
         end
         repository.save!(validate: false)
+        number
       end
       instrument :run
 
