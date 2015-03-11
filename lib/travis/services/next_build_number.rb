@@ -12,7 +12,7 @@ module Travis
         number = repository.next_build_number
         if number.nil?
           number = repository.builds.maximum('number::int4').to_i + 1
-          repository.next_build_number = number
+          repository.next_build_number = number + 1
         else
           repository.next_build_number += 1
         end
