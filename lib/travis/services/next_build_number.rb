@@ -10,7 +10,7 @@ module Travis
       def run
         number = repository.next_build_number
         if number.nil?
-          number = respository.builds.maximum('number::int4').to_i + 1
+          number = repository.builds.maximum('number::int4').to_i + 1
           repository.next_build_number = number
         else
           repository.next_build_number += 1
@@ -33,7 +33,6 @@ module Travis
         end
       end
       Instrument.attach_to(self)
-
     end
   end
 end
