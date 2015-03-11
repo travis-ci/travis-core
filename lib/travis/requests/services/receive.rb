@@ -56,9 +56,7 @@ module Travis
 
           def with_transactional_advisory_lock
             result = nil
-            logger.info "payload : #{payload.inspect}"
-            logger.info "repository : #{payload.repository.inspect}"
-            Travis::AdvisoryLocks.exclusive("receive-repo:#{payload.repository['github_id']}", 300) do
+            Travis::AdvisoryLocks.exclusive("receive-repo:#{payload.repository[:github_id]}", 300) do
               ActiveRecord::Base.connection.begin_db_transaction
               result = yield
               ActiveRecord::Base.connection.commit_db_transaction
