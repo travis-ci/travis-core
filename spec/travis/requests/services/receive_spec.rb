@@ -3,7 +3,7 @@ require 'spec_helper'
 # TODO this is really an integration test. should move it
 # somewhere else and add unit tests
 
-describe Travis::Requests::Services::Receive do
+describe Travis::Requests::Services::Receive, truncation: true do
   include Support::ActiveRecord, Support::Log
 
   let(:owner)   { User.first || Factory(:user) }
