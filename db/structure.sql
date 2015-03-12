@@ -3,7 +3,6 @@
 --
 
 SET statement_timeout = 0;
-SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -641,7 +640,8 @@ CREATE TABLE repositories (
     github_id integer,
     default_branch character varying(255),
     github_language character varying(255),
-    settings json
+    settings json,
+    next_build_number integer
 );
 
 
@@ -1643,3 +1643,5 @@ INSERT INTO schema_migrations (version) VALUES ('20150204144312');
 INSERT INTO schema_migrations (version) VALUES ('20150210170900');
 
 INSERT INTO schema_migrations (version) VALUES ('20150223125700');
+
+INSERT INTO schema_migrations (version) VALUES ('20150311020321');
