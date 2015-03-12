@@ -38,4 +38,5 @@ group :test do
   gem 'guard'
   gem 'guard-rspec'
   gem 'rb-fsevent'
+  gem 'simplecov', require: false
 end

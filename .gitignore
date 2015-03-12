@@ -9,6 +9,7 @@ tmp
 notes
 bin
 vendor
+coverage/
 
 # This migration is specific to specs / local development, and is
 # linked into db/migrate when following the setup instructions in
