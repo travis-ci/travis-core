@@ -247,7 +247,7 @@ describe Request::States do
     it "shouldn't notify the build when the flag is disabled" do
       Travis.config.notify_on_build_created = false
       request.save
-      Travis::Event.expects(:dispatch).never
+      Travis::Event.expects(:dispatch).with { |e, *| e.should == "build:created" }.never
       request.add_build_and_notify
     end
   end

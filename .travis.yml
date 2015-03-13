@@ -10,6 +10,7 @@ services:
 
 addons:
   postgresql: 9.3
+  artifacts: true
 
 cache: bundler
 

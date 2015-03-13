@@ -3,7 +3,7 @@ require 'spec_helper'
 # TODO this is really an integration test. should move it
 # somewhere else and add unit tests
 
-describe Travis::Requests::Services::Receive do
+describe Travis::Requests::Services::Receive, truncation: true do
   include Support::ActiveRecord, Support::Log
 
   let(:owner)   { User.first || Factory(:user) }
@@ -111,12 +111,12 @@ describe Travis::Requests::Services::Receive do
     let!(:repo)   { Factory(:repository, github_id: 592533, owner: owner, owner_name: owner.login, name: 'gem-release') }
 
     describe 'giving the repo owner_id' do
-      let(:payload) { { 'repository' => { 'owner_id' => owner.id, 'owner_type' => 'User', 'owner_name' => 'svenfuchs', 'name' => 'gem-release' }, 'user' => { 'id' => 1 } } }
+      let(:payload) { { 'repository' => { 'owner_id' => owner.id, 'owner_type' => 'User', 'owner_name' => 'svenfuchs', 'name' => 'gem-release', 'id' => 111 }, 'user' => { 'id' => 1 } } }
       it_should_behave_like 'creates a request'
     end
 
     describe 'giving the repo owner_name' do
-      let(:payload) { { 'repository' => { 'owner_name' => 'svenfuchs', 'name' => 'gem-release' }, 'user' => { 'id' => 1 } } }
+      let(:payload) { { 'repository' => { 'owner_name' => 'svenfuchs', 'name' => 'gem-release', 'id' => 111 }, 'user' => { 'id' => 1 } } }
       it_should_behave_like 'creates a request'
     end
   end

@@ -1,5 +1,7 @@
 ENV['RAILS_ENV'] = ENV['ENV'] = 'test'
 
+require 'simplecov' unless RUBY_ENGINE == 'jruby'
+
 RSpec.configure do |c|
   c.before(:each) { Time.now.utc.tap { | now| Time.stubs(:now).returns(now) } }
 end

@@ -23,6 +23,18 @@ module Support
     extend ActiveSupport::Concern
 
     included do
+      before :suite do
+        DatabaseCleaner.clean_with(:truncation)
+      end
+
+      before :each do
+        DatabaseCleaner.strategy = :transaction
+      end
+
+      before(:each, :truncation => true) do
+        DatabaseCleaner.strategy = :truncation
+      end
+
       before :each do
         DatabaseCleaner.start
       end

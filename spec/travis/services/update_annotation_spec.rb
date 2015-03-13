@@ -24,7 +24,9 @@ describe Travis::Services::UpdateAnnotation do
         description: 'Foo bar baz',
       }
 
-      lambda { @annotation = service.run }.should issue_queries(7)
+      expect {
+        @annotation = service.run
+      }.to change(Annotation, :count).by(1)
       @annotation.description.should eq(params[:description])
     end
 
