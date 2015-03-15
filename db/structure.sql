@@ -1314,10 +1314,24 @@ CREATE INDEX index_repositories_on_last_build_started_at ON repositories USING b
 
 
 --
+-- Name: index_repositories_on_owner_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_repositories_on_owner_id ON repositories USING btree (owner_id);
+
+
+--
 -- Name: index_repositories_on_owner_name_and_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_repositories_on_owner_name_and_name ON repositories USING btree (owner_name, name);
+
+
+--
+-- Name: index_repositories_on_owner_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_repositories_on_owner_type ON repositories USING btree (owner_type);
 
 
 --
@@ -1671,3 +1685,5 @@ INSERT INTO schema_migrations (version) VALUES ('20150311020321');
 INSERT INTO schema_migrations (version) VALUES ('20150316020321');
 
 INSERT INTO schema_migrations (version) VALUES ('20150316080321');
+
+INSERT INTO schema_migrations (version) VALUES ('20150316100321');
