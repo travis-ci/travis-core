@@ -1146,6 +1146,20 @@ CREATE INDEX index_builds_on_id_repository_id_and_event_type_desc ON builds USIN
 
 
 --
+-- Name: index_builds_on_owner_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_builds_on_owner_id ON builds USING btree (owner_id);
+
+
+--
+-- Name: index_builds_on_owner_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_builds_on_owner_type ON builds USING btree (owner_type);
+
+
+--
 -- Name: index_builds_on_repository_id_and_event_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1276,6 +1290,13 @@ CREATE INDEX index_permissions_on_repository_id ON permissions USING btree (repo
 --
 
 CREATE INDEX index_permissions_on_user_id ON permissions USING btree (user_id);
+
+
+--
+-- Name: index_repositories_on_active; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_repositories_on_active ON repositories USING btree (active);
 
 
 --
@@ -1646,3 +1667,7 @@ INSERT INTO schema_migrations (version) VALUES ('20150210170900');
 INSERT INTO schema_migrations (version) VALUES ('20150223125700');
 
 INSERT INTO schema_migrations (version) VALUES ('20150311020321');
+
+INSERT INTO schema_migrations (version) VALUES ('20150316020321');
+
+INSERT INTO schema_migrations (version) VALUES ('20150316080321');
