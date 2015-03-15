@@ -31,6 +31,7 @@ module Travis
         def load_result
           columns = scope(:job).column_names
           columns -= %w(config) if params[:exclude_config]
+          columns = columns.map { |c| %Q{"jobs"."#{c}"} }
           scope(:job).select(columns).find_by_id(params[:id]).tap do |res|
             res.config = {} if params[:exclude_config]
           end
