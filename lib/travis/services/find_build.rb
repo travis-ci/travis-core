@@ -38,6 +38,7 @@ module Travis
         def load_result
           columns = scope(:build).column_names
           columns -= %w(config) if params[:exclude_config]
+          columns = columns.map { |c| %Q{"builds"."#{c}"} }
           scope(:build).select(columns).find_by_id(params[:id]).tap do |res|
             res.config = {} if params[:exclude_config]
           end
