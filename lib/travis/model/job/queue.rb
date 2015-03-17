@@ -17,12 +17,13 @@ class Job
         sudo       = job.config[:sudo]
         owner      = job.repository.try(:owner)
         education  = Travis::Github::Education.education_queue?(owner)
-        queues.detect { |queue| queue.send(:matches?, owner_name, repo_name, language, os, sudo, education) } || default
+        dist       = job.config[:dist]
+        queues.detect { |queue| queue.send(:matches?, owner_name, repo_name, language, os, sudo, education, dist) } || default
       end
 
       def queues
         @queues ||= Array(Travis.config.queues).compact.map do |queue|
-          Queue.new(*queue.values_at(*[:queue, :slug, :owner, :language, :os, :sudo, :education]))
+          Queue.new(*queue.values_at(*[:queue, :slug, :owner, :language, :os, :sudo, :education, :dist]))
         end
       end
 
@@ -31,18 +32,18 @@ class Job
       end
     end
 
-    attr_reader :name, :slug, :owner, :language, :os, :sudo, :education
+    attr_reader :name, :slug, :owner, :language, :os, :sudo, :education, :dist
 
     protected
 
       def initialize(*args)
-        @name, @slug, @owner, @language, @os, @sudo, @education = *args
+        @name, @slug, @owner, @language, @os, @sudo, @education, @dist = *args
       end
 
-      def matches?(owner, repo_name, language, os = nil, sudo = nil, education = false)
+      def matches?(owner, repo_name, language, os = nil, sudo = nil, education = false, dist = nil)
         return matches_education?(education) if education
         matches_slug?("#{owner}/#{repo_name}") || matches_owner?(owner) ||
-          matches_os?(os) || matches_language?(language) || matches_sudo?(sudo)
+          matches_os?(os) || matches_language?(language) || matches_sudo?(sudo) || matches_dist?(dist)
       end
 
       def queue
@@ -71,6 +72,10 @@ class Job
 
       def matches_education?(education)
         !!self.education && (self.education == education)
+      end
+
+      def matches_dist?(dist)
+        !!self.dist && (self.dist == dist)
       end
   end
 end

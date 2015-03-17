@@ -14,6 +14,7 @@ describe 'Job::Queue' do
       { :queue => 'builds.cloudfoundry', :owner => 'cloudfoundry' },
       { :queue => 'builds.clojure', :language => 'clojure' },
       { :queue => 'builds.erlang', :language => 'erlang' },
+      { :queue => 'builds.openstack', :dist => 'trusty' },
     ]
     Job::Queue.instance_variable_set(:@queues, nil)
     Job::Queue.instance_variable_set(:@default, nil)
@@ -170,6 +171,16 @@ describe 'Job::Queue' do
     it 'returns false when sudo is nil' do
       queue = queue('builds.docker', nil, nil, nil, nil, false)
       queue.send(:matches?, nil, nil, nil, nil, nil).should be_false
+    end
+
+    it 'returns true when dist matches' do
+      queue = queue('builds.openstack', nil, nil, nil, nil, false, 'trusty')
+      queue.send(:matches?, nil, nil, nil, nil, true, 'trusty').should be_true
+    end
+
+    it 'returns false when dist does not match' do
+      queue = queue('builds.docker', nil, nil, nil, nil, false, 'precise')
+      queue.send(:matches?, nil, nil, nil, nil, nil, 'trusty').should be_false
     end
   end
 end
