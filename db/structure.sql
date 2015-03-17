@@ -1279,6 +1279,13 @@ CREATE UNIQUE INDEX index_organizations_on_github_id ON organizations USING btre
 
 
 --
+-- Name: index_organizations_on_login; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_organizations_on_login ON organizations USING btree (login);
+
+
+--
 -- Name: index_permissions_on_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1367,6 +1374,13 @@ CREATE INDEX index_requests_on_repository_id ON requests USING btree (repository
 --
 
 CREATE INDEX index_ssl_key_on_repository_id ON ssl_keys USING btree (repository_id);
+
+
+--
+-- Name: index_tokens_on_token; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_tokens_on_token ON tokens USING btree (token);
 
 
 --
@@ -1687,3 +1701,7 @@ INSERT INTO schema_migrations (version) VALUES ('20150316020321');
 INSERT INTO schema_migrations (version) VALUES ('20150316080321');
 
 INSERT INTO schema_migrations (version) VALUES ('20150316100321');
+
+INSERT INTO schema_migrations (version) VALUES ('20150317020321');
+
+INSERT INTO schema_migrations (version) VALUES ('20150317080321');
