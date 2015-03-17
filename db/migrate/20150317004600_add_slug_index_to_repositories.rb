@@ -2,7 +2,8 @@ class AddSlugIndexToRepositories < ActiveRecord::Migration
   self.disable_ddl_transaction!
 
   def up
-    execute "CREATE INDEX CONCURRENTLY index_repositories_on_slug ON repositories((owner_name || '/' || name))"
+    execute "CREATE EXTENSION IF NOT EXISTS pg_trgm"
+    execute "CREATE INDEX CONCURRENTLY index_repositories_on_slug ON repositories USING gin((owner_name || '/' || name) gin_trgm_ops)"
   end
 
   def down
