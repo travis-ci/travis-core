@@ -23,6 +23,20 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
+--
+-- Name: pg_trgm; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching based on trigrams';
+
+
 SET search_path = public, pg_catalog;
 
 --
@@ -1342,6 +1356,13 @@ CREATE INDEX index_repositories_on_owner_type ON repositories USING btree (owner
 
 
 --
+-- Name: index_repositories_on_slug; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_repositories_on_slug ON repositories USING gin (((((owner_name)::text || '/'::text) || (name)::text)) gin_trgm_ops);
+
+
+--
 -- Name: index_requests_on_commit_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1701,6 +1722,8 @@ INSERT INTO schema_migrations (version) VALUES ('20150316020321');
 INSERT INTO schema_migrations (version) VALUES ('20150316080321');
 
 INSERT INTO schema_migrations (version) VALUES ('20150316100321');
+
+INSERT INTO schema_migrations (version) VALUES ('20150317004600');
 
 INSERT INTO schema_migrations (version) VALUES ('20150317020321');
 
