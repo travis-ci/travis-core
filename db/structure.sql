@@ -23,6 +23,20 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
+--
+-- Name: pg_trgm; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching based on trigrams';
+
+
 SET search_path = public, pg_catalog;
 
 --
@@ -641,7 +655,8 @@ CREATE TABLE repositories (
     github_id integer,
     default_branch character varying(255),
     github_language character varying(255),
-    settings json
+    settings json,
+    next_build_number integer
 );
 
 
@@ -1145,6 +1160,20 @@ CREATE INDEX index_builds_on_id_repository_id_and_event_type_desc ON builds USIN
 
 
 --
+-- Name: index_builds_on_owner_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_builds_on_owner_id ON builds USING btree (owner_id);
+
+
+--
+-- Name: index_builds_on_owner_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_builds_on_owner_type ON builds USING btree (owner_type);
+
+
+--
 -- Name: index_builds_on_repository_id_and_event_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1264,6 +1293,13 @@ CREATE UNIQUE INDEX index_organizations_on_github_id ON organizations USING btre
 
 
 --
+-- Name: index_organizations_on_login; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_organizations_on_login ON organizations USING btree (login);
+
+
+--
 -- Name: index_permissions_on_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1275,6 +1311,13 @@ CREATE INDEX index_permissions_on_repository_id ON permissions USING btree (repo
 --
 
 CREATE INDEX index_permissions_on_user_id ON permissions USING btree (user_id);
+
+
+--
+-- Name: index_repositories_on_active; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_repositories_on_active ON repositories USING btree (active);
 
 
 --
@@ -1292,10 +1335,31 @@ CREATE INDEX index_repositories_on_last_build_started_at ON repositories USING b
 
 
 --
+-- Name: index_repositories_on_owner_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_repositories_on_owner_id ON repositories USING btree (owner_id);
+
+
+--
 -- Name: index_repositories_on_owner_name_and_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_repositories_on_owner_name_and_name ON repositories USING btree (owner_name, name);
+
+
+--
+-- Name: index_repositories_on_owner_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_repositories_on_owner_type ON repositories USING btree (owner_type);
+
+
+--
+-- Name: index_repositories_on_slug; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_repositories_on_slug ON repositories USING gin (((((owner_name)::text || '/'::text) || (name)::text)) gin_trgm_ops);
 
 
 --
@@ -1331,6 +1395,13 @@ CREATE INDEX index_requests_on_repository_id ON requests USING btree (repository
 --
 
 CREATE INDEX index_ssl_key_on_repository_id ON ssl_keys USING btree (repository_id);
+
+
+--
+-- Name: index_tokens_on_token; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_tokens_on_token ON tokens USING btree (token);
 
 
 --
@@ -1643,3 +1714,17 @@ INSERT INTO schema_migrations (version) VALUES ('20150204144312');
 INSERT INTO schema_migrations (version) VALUES ('20150210170900');
 
 INSERT INTO schema_migrations (version) VALUES ('20150223125700');
+
+INSERT INTO schema_migrations (version) VALUES ('20150311020321');
+
+INSERT INTO schema_migrations (version) VALUES ('20150316020321');
+
+INSERT INTO schema_migrations (version) VALUES ('20150316080321');
+
+INSERT INTO schema_migrations (version) VALUES ('20150316100321');
+
+INSERT INTO schema_migrations (version) VALUES ('20150317004600');
+
+INSERT INTO schema_migrations (version) VALUES ('20150317020321');
+
+INSERT INTO schema_migrations (version) VALUES ('20150317080321');
