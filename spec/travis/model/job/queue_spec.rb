@@ -36,64 +36,64 @@ describe 'Job::Queue' do
 
   describe 'Queue.for' do
     it 'returns the default build queue when neither slug or language match the given configuration hash' do
-      job = stub('job', :config => {}, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-ci', :owner => stub))
+      job = stub('job', :config => {}, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-ci', :owner => stub, :created_at => Time.parse("1982-06-23")))
       Job::Queue.for(job).name.should == 'builds.linux'
     end
 
     it 'returns the queue when slug matches the given configuration hash' do
-      job = stub('job', :config => {}, :repository => stub('repository', :owner_name => 'rails', :name => 'rails', :owner => stub))
+      job = stub('job', :config => {}, :repository => stub('repository', :owner_name => 'rails', :name => 'rails', :owner => stub, :created_at => Time.parse("1982-06-23")))
       Job::Queue.for(job).name.should == 'builds.rails'
     end
 
     it 'returns the queue when language matches the given configuration hash' do
-      job = stub('job', :config => { :language => 'clojure' }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-ci', :owner => stub))
+      job = stub('job', :config => { :language => 'clojure' }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-ci', :owner => stub, :created_at => Time.parse("1982-06-23")))
       Job::Queue.for(job).name.should == 'builds.clojure'
     end
 
     it 'returns the queue when the owner matches the given configuration hash' do
-      job = stub('job', :config => {}, :repository => stub('repository', :owner_name => 'cloudfoundry', :name => 'bosh', :owner => stub))
+      job = stub('job', :config => {}, :repository => stub('repository', :owner_name => 'cloudfoundry', :name => 'bosh', :owner => stub, :created_at => Time.parse("1982-06-23")))
       Job::Queue.for(job).name.should == 'builds.cloudfoundry'
     end
 
     it 'returns the queue when sudo requirements matches the given configuration hash' do
-      job = stub('job', :config => { sudo: false }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => stub))
+      job = stub('job', :config => { sudo: false }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => stub, :created_at => Time.parse("1982-06-23")))
       Job::Queue.for(job).name.should == 'builds.docker'
     end
 
     it 'returns the queue when education requirements matches the given configuration hash' do
       Travis::Github::Education.stubs(:education_queue?).returns(true)
       owner = stub('owner', :education => true)
-      job = stub('job', :config => { }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner))
+      job = stub('job', :config => { }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner, :created_at => Time.parse("1982-06-23")))
       Job::Queue.for(job).name.should == 'builds.education'
     end
 
     it 'does not return education queue if feature flag is disabled' do
       Travis::Github::Education.stubs(:education_queue?).returns(false)
       owner = stub('owner', :education => true)
-      job = stub('job', :config => { }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner))
+      job = stub('job', :config => { }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner, :created_at => Time.parse("1982-06-23")))
       Job::Queue.for(job).name.should == 'builds.linux'
     end
 
     it 'returns the queue when education requirements matches, ignoring configuration hash' do
       Travis::Github::Education.stubs(:education_queue?).returns(true)
       owner = stub('owner', :education => true)
-      job = stub('job', :config => { :os => 'osx' }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner))
+      job = stub('job', :config => { :os => 'osx' }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner, :created_at => Time.parse("1982-06-23")))
       Job::Queue.for(job).name.should == 'builds.education'
     end
 
     it 'handles language being passed as an array gracefully' do
-      job = stub('job', :config => { :language => ['clojure'] }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-ci', :owner => stub))
+      job = stub('job', :config => { :language => ['clojure'] }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-ci', :owner => stub, :created_at => Time.parse("1982-06-23")))
       Job::Queue.for(job).name.should == 'builds.clojure'
     end
 
     context 'when "os" value matches the given configuration hash' do
       it 'returns the matching queue' do
-        job = stub('job', :config => { :os => 'osx'}, :repository => stub('travis-core', :owner_name => 'travis-ci', :name => 'bosh', :owner => stub))
+        job = stub('job', :config => { :os => 'osx'}, :repository => stub('travis-core', :owner_name => 'travis-ci', :name => 'bosh', :owner => stub, :created_at => Time.parse("1982-06-23")))
         Job::Queue.for(job).name.should == 'builds.mac_osx'
       end
 
       it 'returns the matching queue when language is also given' do
-        job = stub('job', :config => {:language => 'clojure', :os => 'osx'}, :repository => stub('travis-core', :owner_name => 'travis-ci', :name => 'bosh', :owner => stub))
+        job = stub('job', :config => {:language => 'clojure', :os => 'osx'}, :repository => stub('travis-core', :owner_name => 'travis-ci', :name => 'bosh', :owner => stub, :created_at => Time.parse("1982-06-23")))
         Job::Queue.for(job).name.should == 'builds.mac_osx'
       end
     end
@@ -101,12 +101,12 @@ describe 'Job::Queue' do
 
   context 'when "sudo" value matches the given configuration hash' do
     it 'returns the matching queue' do
-      job = stub('job', config: { sudo: false }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'travis-core', owner: stub))
+      job = stub('job', config: { sudo: false }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'travis-core', owner: stub, :created_at => Time.parse("1982-06-23")))
       Job::Queue.for(job).name.should == 'builds.docker'
     end
 
     it 'returns the matching queue when language is also given' do
-      job = stub('job', config: { language: 'clojure', sudo: false }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'travis-core', owner: stub))
+      job = stub('job', config: { language: 'clojure', sudo: false }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'travis-core', owner: stub, :created_at => Time.parse("1982-06-23")))
       Job::Queue.for(job).name.should == 'builds.docker'
     end
   end
