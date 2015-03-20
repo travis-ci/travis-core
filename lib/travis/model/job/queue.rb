@@ -10,15 +10,16 @@ class Job
   class Queue
     class << self
       def for(job)
-        repo_name  = job.repository.try(:name)
-        owner_name = job.repository.try(:owner_name)
-        language   = Array(job.config[:language]).flatten.compact.first
-        os         = job.config[:os]
-        sudo       = job.config[:sudo]
-        owner      = job.repository.try(:owner)
-        education  = Travis::Github::Education.education_queue?(owner)
-        dist       = job.config[:dist]
-        queues.detect { |queue| queue.send(:matches?, owner_name, repo_name, language, os, sudo, education, dist) } || default
+        repo_name       = job.repository.try(:name)
+        owner_name      = job.repository.try(:owner_name)
+        language        = Array(job.config[:language]).flatten.compact.first
+        os              = job.config[:os]
+        sudo            = job.config[:sudo]
+        owner           = job.repository.try(:owner)
+        education       = Travis::Github::Education.education_queue?(owner)
+        dist            = job.config[:dist]
+        repo_created_at = job.repository.created_at
+        queues.detect { |queue| queue.send(:matches?, owner_name, repo_name, language, os, sudo, education, dist, repo_created_at) } || default
       end
 
       def queues
@@ -40,10 +41,10 @@ class Job
         @name, @slug, @owner, @language, @os, @sudo, @education, @dist = *args
       end
 
-      def matches?(owner, repo_name, language, os = nil, sudo = nil, education = false, dist = nil)
+      def matches?(owner, repo_name, language, os = nil, sudo = nil, education = false, dist = nil, repo_created_at = nil)
         return matches_education?(education) if education
-        matches_slug?("#{owner}/#{repo_name}") || matches_owner?(owner) ||
-          matches_os?(os) || matches_language?(language) || matches_sudo?(sudo) || matches_dist?(dist)
+        matches_slug?("#{owner}/#{repo_name}") || matches_owner?(owner) || matches_os?(os) ||
+          matches_language?(language) || matches_sudo?(sudo, repo_created_at) || matches_dist?(dist)
       end
 
       def queue
@@ -66,7 +67,12 @@ class Job
         !!self.os && (self.os == os)
       end
 
-      def matches_sudo?(sudo)
+      def matches_sudo?(sudo, repo_created_at)
+        if Travis::Features.feature_active?(:docker_default_queue)
+          if repo_created_at.nil? || repo_created_at > Time.parse(Travis.config.docker_default_queue_cutoff)
+            sudo = !!sudo 
+          end
+        end
         !self.sudo.nil? && (self.sudo == sudo)
       end
 
