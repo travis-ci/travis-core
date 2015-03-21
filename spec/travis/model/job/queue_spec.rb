@@ -107,15 +107,58 @@ describe 'Job::Queue' do
         Travis::Features.stubs(:feature_active?).with(:education).returns(true)
       end
 
-      it 'returns "builds.docker" when the repo created_at is nil' do
+      it 'returns "builds.docker" when sudo: nil and the repo created_at is nil' do
         job = stub('job', :config => { }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-core', :owner => stub, :created_at => nil))
         Job::Queue.for(job).name.should == 'builds.docker'
       end
 
-      it 'returns "builds.docker" when the repo created_at is greater than the cutoff' do
+      it 'returns "builds.docker" when sudo: nil and the repo created_at is after cutoff' do
         Travis.config.docker_default_queue_cutoff = recently.to_s
         job = stub('job', :config => { }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-core', :owner => stub, :created_at => Time.now))
         Job::Queue.for(job).name.should == 'builds.docker'
+      end
+
+      it 'returns "builds.linux" when sudo: nil and the repo created_at is before cutoff' do
+        Travis.config.docker_default_queue_cutoff = recently.to_s
+        job = stub('job', :config => { }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-core', :owner => stub, :created_at => recently - 7.days))
+        Job::Queue.for(job).name.should == 'builds.linux'
+      end
+
+      it 'returns "builds.docker" when sudo: false and the repo created_at is nil' do
+        job = stub('job', :config => { sudo: false }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-core', :owner => stub, :created_at => nil))
+        Job::Queue.for(job).name.should == 'builds.docker'
+      end
+
+      it 'returns "builds.docker" when sudo: false and the repo created_at is after cutoff' do
+        Travis.config.docker_default_queue_cutoff = recently.to_s
+        job = stub('job', :config => { sudo: false }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-core', :owner => stub, :created_at => Time.now))
+        Job::Queue.for(job).name.should == 'builds.docker'
+      end
+
+      it 'returns "builds.docker" when sudo: false and the repo created_at is before cutoff' do
+        Travis.config.docker_default_queue_cutoff = recently.to_s
+        job = stub('job', :config => { sudo: false }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-core', :owner => stub, :created_at => recently - 7.days))
+        Job::Queue.for(job).name.should == 'builds.docker'
+      end
+
+      [true, 'required'].each do |sudo|
+        it %{returns "builds.linux" when sudo: #{sudo} and the repo created_at is nil} do
+          Travis.config.docker_default_queue_cutoff = recently.to_s
+          job = stub('job', :config => { sudo: sudo }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-core', :owner => stub, :created_at => nil))
+          Job::Queue.for(job).name.should == 'builds.linux'
+        end
+
+        it %{returns "builds.linux" when sudo: #{sudo} and the repo created_at is after cutoff} do
+          Travis.config.docker_default_queue_cutoff = recently.to_s
+          job = stub('job', :config => { sudo: sudo }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-core', :owner => stub, :created_at => nil))
+          Job::Queue.for(job).name.should == 'builds.linux'
+        end
+
+        it %{returns "builds.linux" when sudo: #{sudo} and the repo created_at is before cutoff} do
+          Travis.config.docker_default_queue_cutoff = recently.to_s
+          job = stub('job', :config => { sudo: sudo }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-core', :owner => stub, :created_at => nil))
+          Job::Queue.for(job).name.should == 'builds.linux'
+        end
       end
     end
   end
