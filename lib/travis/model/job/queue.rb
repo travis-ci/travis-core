@@ -68,12 +68,14 @@ class Job
       end
 
       def matches_sudo?(sudo, repo_created_at)
-        if Travis::Features.feature_active?(:docker_default_queue)
-          if repo_created_at.nil? || repo_created_at > Time.parse(Travis.config.docker_default_queue_cutoff)
-            sudo = !!sudo 
-          end
-        end
+        sudo = !!sudo if repo_is_default_docker?(repo_created_at)
         !self.sudo.nil? && (self.sudo == sudo)
+      end
+
+      def repo_is_default_docker?(repo_created_at)
+        return false unless Travis::Features.feature_active?(:docker_default_queue)
+        repo_created_at.nil? ||
+          repo_created_at > Time.parse(Travis.config.docker_default_queue_cutoff)
       end
 
       def matches_education?(education)
