@@ -35,22 +35,35 @@ class Job
 
       def sudo_detected?(config)
         config.values_at(*custom_stages).compact.map do |value|
-          Array(value).reject { |s| s =~ /\s*#.*/ }.map { |s| s =~ /\b(sudo|ping)\b/ }.any?
+          Array(value).reject do |s|
+            s =~ /\s*#.*/
+          end.map do |s|
+            s =~ /\b(#{sudo_and_setuid_executables.join('|')})\b/
+          end.any?
         end.any?
       end
 
-      def custom_stages
-        @custom_stages ||= %w(
-          before_install
-          install
-          before_script
-          script
-          before_cache
-          after_success
-          after_failure
-          after_script
-        ).map(&:to_sym)
-      end
+      private
+
+        def sudo_and_setuid_executables
+          %w(
+            sudo
+            ping
+          )
+        end
+
+        def custom_stages
+          @custom_stages ||= %w(
+            before_install
+            install
+            before_script
+            script
+            before_cache
+            after_success
+            after_failure
+            after_script
+          ).map(&:to_sym)
+        end
     end
 
     attr_reader :name, :slug, :owner, :language, :os, :sudo, :education, :dist
@@ -88,6 +101,8 @@ class Job
       end
 
       def matches_sudo?(sudo, repo_created_at, sudo_detected)
+        # coerce nil sudo to false so that the comparison on the next line will result
+        # in matching the queue with `self.sudo = false`.
         sudo = !!sudo if repo_is_default_docker?(repo_created_at, sudo_detected)
         !self.sudo.nil? && (self.sudo == sudo)
       end
