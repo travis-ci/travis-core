@@ -200,71 +200,19 @@ describe 'Job::Queue' do
       rails, os, docker, edu, cloudfoundry, clojure, erlang = Job::Queue.send(:queues)
 
       rails.name.should == 'builds.rails'
-      rails.slug.should == 'rails/rails'
+      rails.attrs[:slug].should == 'rails/rails'
 
       docker.name.should == 'builds.docker'
-      docker.sudo.should == false
+      docker.attrs[:sudo].should == false
 
       edu.name.should == 'builds.education'
-      edu.education.should == true
+      edu.attrs[:education].should == true
 
       cloudfoundry.name.should == 'builds.cloudfoundry'
-      cloudfoundry.owner.should == 'cloudfoundry'
+      cloudfoundry.attrs[:owner].should == 'cloudfoundry'
 
       clojure.name.should == 'builds.clojure'
-      clojure.language.should == 'clojure'
-    end
-  end
-
-  describe 'matches?' do
-    it "returns false when neither of slug or language match" do
-      queue = queue('builds.linux',  nil, nil, nil)
-      queue.send(:matches?, 'foo', 'foo/bar', 'COBOL').should be_false
-    end
-
-    it "returns true when the given owner matches" do
-      queue = queue('builds.cloudfoundry', nil, 'cloudfoundry', nil)
-      queue.send(:matches?, 'cloudfoundry', 'bosh', nil).should be_true
-    end
-
-    it "returns true when the given slug matches" do
-      queue = queue('builds.rails', 'rails/rails', nil, nil)
-      queue.send(:matches?, 'rails', 'rails', nil).should be_true
-    end
-
-    it "returns true when the given language matches" do
-      queue = queue('builds.linux', nil, nil, 'clojure')
-      queue.send(:matches?, nil, nil, 'clojure').should be_true
-    end
-
-    it 'returns true when os is missing' do
-      queue = queue('builds.linux', nil, nil, 'clojure', nil)
-      queue.send(:matches?, nil, nil, 'clojure', nil).should be_true
-    end
-
-    it 'returns true when sudo is false' do
-      queue = queue('builds.docker', nil, nil, nil, nil, false)
-      queue.send(:matches?, nil, nil, nil, nil, false).should be_true
-    end
-
-    it 'returns false when sudo is true' do
-      queue = queue('builds.docker', nil, nil, nil, nil, false)
-      queue.send(:matches?, nil, nil, nil, nil, true).should be_false
-    end
-
-    it 'returns false when sudo is nil' do
-      queue = queue('builds.docker', nil, nil, nil, nil, false)
-      queue.send(:matches?, nil, nil, nil, nil, nil).should be_false
-    end
-
-    it 'returns true when dist matches' do
-      queue = queue('builds.openstack', nil, nil, nil, nil, false, 'trusty')
-      queue.send(:matches?, nil, nil, nil, nil, true, 'trusty').should be_true
-    end
-
-    it 'returns false when dist does not match' do
-      queue = queue('builds.docker', nil, nil, nil, nil, false, 'precise')
-      queue.send(:matches?, nil, nil, nil, nil, nil, 'trusty').should be_false
+      clojure.attrs[:language].should == 'clojure'
     end
   end
 end
