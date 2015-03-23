@@ -57,10 +57,6 @@ class Job
 
     def matches?(job)
       matchers = matchers_for(job)
-
-      # Education jobs should run on the education queue no matter the rest of the configuration
-      return @attrs[:education] if matchers[:education] === true
-
       @attrs.length > 0 && @attrs.all? { |key, value| matchers[key.to_sym] === value }
     end
 
@@ -79,6 +75,7 @@ class Job
     end
 
     def repo_is_default_docker?(job)
+      return true if Travis::Github::Education.education_queue?(job.repository.try(:owner))
       return false unless Travis::Features.feature_active?(:docker_default_queue)
       !self.class.sudo_detected?(job.config) && repo_created_after_docker_cutoff?(job.repository)
     end

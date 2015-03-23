@@ -78,25 +78,18 @@ describe 'Job::Queue' do
       Job::Queue.for(job).name.should == 'builds.docker'
     end
 
-    it 'returns the queue when education requirements matches the given configuration hash' do
+    it 'returns the docker queue by default for educational repositories' do
       Travis::Github::Education.stubs(:education_queue?).returns(true)
       owner = stub('owner', :education => true)
       job = stub('job', :config => { }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner, :created_at => the_past))
-      Job::Queue.for(job).name.should == 'builds.education'
+      Job::Queue.for(job).name.should == 'builds.docker'
     end
 
-    it 'does not return education queue if feature flag is disabled' do
-      Travis::Github::Education.stubs(:education_queue?).returns(false)
-      owner = stub('owner', :education => true)
-      job = stub('job', :config => { }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner, :created_at => the_past))
-      Job::Queue.for(job).name.should == 'builds.linux'
-    end
-
-    it 'returns the queue when education requirements matches, ignoring configuration hash' do
+    it 'returns the queue matching configuration for educational repository' do
       Travis::Github::Education.stubs(:education_queue?).returns(true)
       owner = stub('owner', :education => true)
       job = stub('job', :config => { :os => 'osx' }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner, :created_at => the_past))
-      Job::Queue.for(job).name.should == 'builds.education'
+      Job::Queue.for(job).name.should == 'builds.mac_osx'
     end
 
     it 'handles language being passed as an array gracefully' do
