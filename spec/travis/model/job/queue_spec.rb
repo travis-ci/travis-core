@@ -37,6 +37,20 @@ describe 'Job::Queue' do
     Job::Queue.default.name.should == 'builds.common'
   end
 
+  describe 'Queue.sudo_detected?' do
+    [
+      [{ script: 'sudo echo' }, true],
+      [{ bogus: 'sudo echo' }, false],
+      [{ before_install: ['# no sudo', 'ping -c 1 google.com'] }, true],
+      [{ before_script: ['echo ; echo ; echo ; sudo echo ; echo'] }, true],
+      [{ install: '# no sudo needed here' }, false],
+    ].each do |config, expected|
+      it "returns #{expected} for #{config}" do
+        Job::Queue.sudo_detected?(config).should == expected
+      end
+    end
+  end
+
   describe 'Queue.for' do
     it 'returns the default build queue when neither slug or language match the given configuration hash' do
       job = stub('job', :config => {}, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-ci', :owner => stub, :created_at => the_past))
@@ -121,6 +135,12 @@ describe 'Job::Queue' do
       it 'returns "builds.linux" when sudo: nil and the repo created_at is before cutoff' do
         Travis.config.docker_default_queue_cutoff = recently.to_s
         job = stub('job', :config => { }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-core', :owner => stub, :created_at => recently - 7.days))
+        Job::Queue.for(job).name.should == 'builds.linux'
+      end
+
+      it 'returns "builds.linux" when sudo: nil and the repo created_at is after cutoff and sudo is detected' do
+        Travis.config.docker_default_queue_cutoff = recently.to_s
+        job = stub('job', :config => { script: 'sudo echo whatever' }, :repository => stub('repository', :owner_name => 'travis-ci', :name => 'travis-core', :owner => stub, :created_at => recently - 7.days))
         Job::Queue.for(job).name.should == 'builds.linux'
       end
 
