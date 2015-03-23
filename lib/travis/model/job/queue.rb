@@ -10,15 +10,17 @@ class Job
   class Queue
     class << self
       def for(job)
-        repo_name  = job.repository.try(:name)
-        owner_name = job.repository.try(:owner_name)
-        language   = Array(job.config[:language]).flatten.compact.first
-        os         = job.config[:os]
-        sudo       = job.config[:sudo]
-        owner      = job.repository.try(:owner)
-        education  = Travis::Github::Education.education_queue?(owner)
-        dist       = job.config[:dist]
-        queues.detect { |queue| queue.send(:matches?, owner_name, repo_name, language, os, sudo, education, dist) } || default
+        repo_name       = job.repository.try(:name)
+        owner_name      = job.repository.try(:owner_name)
+        language        = Array(job.config[:language]).flatten.compact.first
+        os              = job.config[:os]
+        sudo            = job.config[:sudo]
+        sudo_detected   = sudo_detected?(job.config)
+        owner           = job.repository.try(:owner)
+        education       = Travis::Github::Education.education_queue?(owner)
+        dist            = job.config[:dist]
+        repo_created_at = job.repository.created_at
+        queues.detect { |queue| queue.send(:matches?, owner_name, repo_name, language, os, sudo, education, dist, repo_created_at, sudo_detected) } || default
       end
 
       def queues
@@ -30,6 +32,38 @@ class Job
       def default
         @default ||= new(Travis.config.default_queue)
       end
+
+      def sudo_detected?(config)
+        config.values_at(*custom_stages).compact.map do |value|
+          Array(value).reject do |s|
+            s =~ /\s*#.*/
+          end.map do |s|
+            s =~ /\b(#{sudo_and_setuid_executables.join('|')})\b/
+          end.any?
+        end.any?
+      end
+
+      private
+
+        def sudo_and_setuid_executables
+          %w(
+            sudo
+            ping
+          )
+        end
+
+        def custom_stages
+          @custom_stages ||= %w(
+            before_install
+            install
+            before_script
+            script
+            before_cache
+            after_success
+            after_failure
+            after_script
+          ).map(&:to_sym)
+        end
     end
 
     attr_reader :name, :slug, :owner, :language, :os, :sudo, :education, :dist
@@ -40,10 +74,10 @@ class Job
         @name, @slug, @owner, @language, @os, @sudo, @education, @dist = *args
       end
 
-      def matches?(owner, repo_name, language, os = nil, sudo = nil, education = false, dist = nil)
+      def matches?(owner, repo_name, language, os = nil, sudo = nil, education = false, dist = nil, repo_created_at = nil, sudo_detected = false)
         return matches_education?(education) if education
-        matches_slug?("#{owner}/#{repo_name}") || matches_owner?(owner) ||
-          matches_os?(os) || matches_language?(language) || matches_sudo?(sudo) || matches_dist?(dist)
+        matches_slug?("#{owner}/#{repo_name}") || matches_owner?(owner) || matches_os?(os) ||
+          matches_language?(language) || matches_sudo?(sudo, repo_created_at, sudo_detected) || matches_dist?(dist)
       end
 
       def queue
@@ -66,8 +100,19 @@ class Job
         !!self.os && (self.os == os)
       end
 
-      def matches_sudo?(sudo)
+      def matches_sudo?(sudo, repo_created_at, sudo_detected)
+        # coerce nil sudo to false so that the comparison on the next line will result
+        # in matching the queue with `self.sudo = false`.
+        sudo = !!sudo if repo_is_default_docker?(repo_created_at, sudo_detected)
         !self.sudo.nil? && (self.sudo == sudo)
+      end
+
+      def repo_is_default_docker?(repo_created_at, sudo_detected)
+        return false unless Travis::Features.feature_active?(:docker_default_queue)
+        !sudo_detected && (
+          repo_created_at.nil? ||
+          repo_created_at > Time.parse(Travis.config.docker_default_queue_cutoff)
+        )
       end
 
       def matches_education?(education)
