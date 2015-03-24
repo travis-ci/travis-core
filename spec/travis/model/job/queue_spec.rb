@@ -22,6 +22,7 @@ describe 'Job::Queue' do
     Job::Queue.instance_variable_set(:@queues, nil)
     Job::Queue.instance_variable_set(:@default, nil)
     Travis::Features.stubs(:owner_active?).returns(true)
+    Travis::Github::Education.stubs(:education_queue?).returns(false)
   end
 
   after do
@@ -77,25 +78,18 @@ describe 'Job::Queue' do
       Job::Queue.for(job).name.should == 'builds.docker'
     end
 
-    it 'returns the queue when education requirements matches the given configuration hash' do
+    it 'returns the docker queue by default for educational repositories' do
       Travis::Github::Education.stubs(:education_queue?).returns(true)
       owner = stub('owner', :education => true)
       job = stub('job', :config => { }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner, :created_at => the_past))
-      Job::Queue.for(job).name.should == 'builds.education'
+      Job::Queue.for(job).name.should == 'builds.docker'
     end
 
-    it 'does not return education queue if feature flag is disabled' do
-      Travis::Github::Education.stubs(:education_queue?).returns(false)
-      owner = stub('owner', :education => true)
-      job = stub('job', :config => { }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner, :created_at => the_past))
-      Job::Queue.for(job).name.should == 'builds.linux'
-    end
-
-    it 'returns the queue when education requirements matches, ignoring configuration hash' do
+    it 'returns the queue matching configuration for educational repository' do
       Travis::Github::Education.stubs(:education_queue?).returns(true)
       owner = stub('owner', :education => true)
       job = stub('job', :config => { :os => 'osx' }, :repository => stub('repository', :owner_name => 'markronson', :name => 'recordcollection', :owner => owner, :created_at => the_past))
-      Job::Queue.for(job).name.should == 'builds.education'
+      Job::Queue.for(job).name.should == 'builds.mac_osx'
     end
 
     it 'handles language being passed as an array gracefully' do
@@ -200,71 +194,71 @@ describe 'Job::Queue' do
       rails, os, docker, edu, cloudfoundry, clojure, erlang = Job::Queue.send(:queues)
 
       rails.name.should == 'builds.rails'
-      rails.slug.should == 'rails/rails'
+      rails.attrs[:slug].should == 'rails/rails'
 
       docker.name.should == 'builds.docker'
-      docker.sudo.should == false
+      docker.attrs[:sudo].should == false
 
       edu.name.should == 'builds.education'
-      edu.education.should == true
+      edu.attrs[:education].should == true
 
       cloudfoundry.name.should == 'builds.cloudfoundry'
-      cloudfoundry.owner.should == 'cloudfoundry'
+      cloudfoundry.attrs[:owner].should == 'cloudfoundry'
 
       clojure.name.should == 'builds.clojure'
-      clojure.language.should == 'clojure'
+      clojure.attrs[:language].should == 'clojure'
     end
   end
 
   describe 'matches?' do
     it "returns false when neither of slug or language match" do
-      queue = queue('builds.linux',  nil, nil, nil)
-      queue.send(:matches?, 'foo', 'foo/bar', 'COBOL').should be_false
+      queue = queue('builds.linux', {})
+      queue.matches?(stub('job', repository: stub('repository', owner_name: 'foo', name: 'bar', owner: nil), config: { language: 'COBOL' })).should be_false
     end
 
     it "returns true when the given owner matches" do
-      queue = queue('builds.cloudfoundry', nil, 'cloudfoundry', nil)
-      queue.send(:matches?, 'cloudfoundry', 'bosh', nil).should be_true
+      queue = queue('builds.cloudfoundry', { owner: 'cloudfoundry' })
+      queue.matches?(stub('job', repository: stub('repository', owner_name: 'cloudfoundry', name: 'bosh', owner: nil), config: {})).should be_true
     end
 
     it "returns true when the given slug matches" do
-      queue = queue('builds.rails', 'rails/rails', nil, nil)
-      queue.send(:matches?, 'rails', 'rails', nil).should be_true
+      queue = queue('builds.rails', { slug: 'rails/rails' })
+      queue.matches?(stub('job', repository: stub('repository', owner_name: 'rails', name: 'rails', owner: nil), config: {})).should be_true
     end
 
     it "returns true when the given language matches" do
-      queue = queue('builds.linux', nil, nil, 'clojure')
-      queue.send(:matches?, nil, nil, 'clojure').should be_true
+      queue = queue('builds.linux', { language: 'clojure' })
+      queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: { language: 'clojure' })).should be_true
     end
 
     it 'returns true when os is missing' do
-      queue = queue('builds.linux', nil, nil, 'clojure', nil)
-      queue.send(:matches?, nil, nil, 'clojure', nil).should be_true
+      queue = queue('builds.linux', { language: 'clojure' })
+      queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: { language: 'clojure' })).should be_true
     end
 
     it 'returns true when sudo is false' do
-      queue = queue('builds.docker', nil, nil, nil, nil, false)
-      queue.send(:matches?, nil, nil, nil, nil, false).should be_true
+      queue = queue('builds.docker', { sudo: false })
+      queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: { sudo: false })).should be_true
     end
 
     it 'returns false when sudo is true' do
-      queue = queue('builds.docker', nil, nil, nil, nil, false)
-      queue.send(:matches?, nil, nil, nil, nil, true).should be_false
+      queue = queue('builds.docker', { sudo: false })
+      queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: { sudo: true })).should be_false
     end
 
-    it 'returns false when sudo is nil' do
-      queue = queue('builds.docker', nil, nil, nil, nil, false)
-      queue.send(:matches?, nil, nil, nil, nil, nil).should be_false
+    it 'returns false when sudo is not specified' do
+      queue = queue('builds.docker', { sudo: false })
+      queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: {})).should be_false
     end
 
     it 'returns true when dist matches' do
-      queue = queue('builds.openstack', nil, nil, nil, nil, false, 'trusty')
-      queue.send(:matches?, nil, nil, nil, nil, true, 'trusty').should be_true
+      queue = queue('builds.openstack', { dist: 'trusty' })
+      queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: { dist: 'trusty' })).should be_true
     end
 
     it 'returns false when dist does not match' do
-      queue = queue('builds.docker', nil, nil, nil, nil, false, 'precise')
-      queue.send(:matches?, nil, nil, nil, nil, nil, 'trusty').should be_false
+      queue = queue('builds.docker', { dist: 'precise' })
+      queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: { dist: 'trusty' })).should be_false
     end
   end
 end
