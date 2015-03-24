@@ -257,5 +257,10 @@ describe 'Job::Queue' do
       queue = queue('builds.docker', { dist: 'precise' })
       queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: { dist: 'trusty' })).should be_false
     end
+
+    it 'returns false if no valid matchers are specified' do
+      queue = queue('builds.invalid', { foobar_donotmatch: true })
+      queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: {})).should be_false
+    end
   end
 end
