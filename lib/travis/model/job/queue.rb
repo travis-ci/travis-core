@@ -70,6 +70,7 @@ class Job
         :language => Array(job.config[:language]).flatten.compact.first,
         :sudo => job.config.fetch(:sudo) { !repo_is_default_docker?(job) },
         :dist => job.config[:dist],
+        :osx_image => job.config[:osx_image],
       }
     end
 

@@ -258,6 +258,16 @@ describe 'Job::Queue' do
       queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: { dist: 'trusty' })).should be_false
     end
 
+    it 'returns true when osx_image matches' do
+      queue = queue('builds.mac_beta', { osx_image: 'beta' })
+      queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: { osx_image: 'beta' })).should be_true
+    end
+
+    it 'returns false when osx_image does not match' do
+      queue = queue('builds.mac_stable', { osx_image: 'stable' })
+      queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: { osx_image: 'beta' })).should be_false
+    end
+
     it 'returns false if no valid matchers are specified' do
       queue = queue('builds.invalid', { foobar_donotmatch: true })
       queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: {})).should be_false
