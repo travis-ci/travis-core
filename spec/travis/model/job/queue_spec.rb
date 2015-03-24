@@ -13,7 +13,6 @@ describe 'Job::Queue' do
       { :queue => 'builds.rails', :slug => 'rails/rails' },
       { :queue => 'builds.mac_osx', :os => 'osx' },
       { :queue => 'builds.docker', :sudo => false },
-      { :queue => 'builds.education', :education => true },
       { :queue => 'builds.cloudfoundry', :owner => 'cloudfoundry' },
       { :queue => 'builds.clojure', :language => 'clojure' },
       { :queue => 'builds.erlang', :language => 'erlang' },
@@ -192,16 +191,13 @@ describe 'Job::Queue' do
 
   describe 'Queue.queues' do
     it 'returns an array of Queues for the config hash' do
-      rails, os, docker, edu, cloudfoundry, clojure, erlang = Job::Queue.send(:queues)
+      rails, os, docker, cloudfoundry, clojure, erlang = Job::Queue.send(:queues)
 
       rails.name.should == 'builds.rails'
       rails.attrs[:slug].should == 'rails/rails'
 
       docker.name.should == 'builds.docker'
       docker.attrs[:sudo].should == false
-
-      edu.name.should == 'builds.education'
-      edu.attrs[:education].should == true
 
       cloudfoundry.name.should == 'builds.cloudfoundry'
       cloudfoundry.attrs[:owner].should == 'cloudfoundry'
