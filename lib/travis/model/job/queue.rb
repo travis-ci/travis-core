@@ -57,7 +57,15 @@ class Job
 
     def matches?(job)
       matchers = matchers_for(job)
-      @attrs.length > 0 && @attrs.all? { |key, value| matchers[key.to_sym] === value }
+
+      unknown_matchers = @attrs.keys - matchers.keys
+      if unknown_matchers.length > 0
+        warn "unknown matchers used for queue #{name}: #{unknown_matchers.join(", ")}"
+      end
+
+      known_matchers = @attrs.keys & matchers.keys
+
+      known_matchers.length > 0 && known_matchers.all? { |key| matchers[key.to_sym] === @attrs[key] }
     end
 
     private
