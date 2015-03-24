@@ -13,7 +13,7 @@ class Job
       ping
     )
 
-    SUDO_DETECTION_REGEXP = /\A[^#]*\b(#{SUDO_AND_SETUID_EXECUTABLES.join('|')})\b/
+    SUDO_DETECTION_REGEXP = /^[^#]*\b(#{SUDO_AND_SETUID_EXECUTABLES.join('|')})\b/
 
     CUSTOM_STAGES = %w(
       before_install
