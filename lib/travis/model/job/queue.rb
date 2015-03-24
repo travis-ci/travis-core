@@ -43,7 +43,7 @@ class Job
 
       def sudo_detected?(config)
         config.values_at(*CUSTOM_STAGES).compact.flatten.any? do |s|
-           SUDO_DETECTION_REGEXP =~ s
+          SUDO_DETECTION_REGEXP =~ s
         end
       end
     end
