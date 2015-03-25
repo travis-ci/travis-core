@@ -1,7 +1,6 @@
 require 'active_support/core_ext/hash/except'
 require 'travis/support/instrumentation'
 require 'travis/services/base'
-require 'travis/advisory_locks'
 
 module Travis
   module Services
@@ -20,9 +19,7 @@ module Travis
           cancel_job_in_worker
         else
           Metriks.timer("update_job.#{event}").time do
-            with_transactional_advisory_lock("build-#{job.source.id}") do
-              job.send(:"#{event}!", data.except(:id))
-            end
+            job.send(:"#{event}!", data.except(:id))
           end
         end
       end
@@ -55,20 +52,6 @@ module Travis
 
       def publisher
         Travis::Amqp::FanoutPublisher.new('worker.commands')
-      end
-
-      def with_transactional_advisory_lock(id)
-        result = nil
-        Travis::AdvisoryLocks.exclusive(id, 30) do
-          # ActiveRecord::Base.connection.begin_db_transaction
-          # ActiveRecord::Base.connection.execute('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE')
-          result = yield
-          # ActiveRecord::Base.connection.commit_db_transaction
-        end
-        result
-      rescue => e
-        # ActiveRecord::Base.connection.rollback_db_transaction
-        raise
       end
 
       class Instrument < Notification::Instrument

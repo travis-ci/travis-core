@@ -23,8 +23,8 @@ class Build
 
       states :created, :received, :started, :passed, :failed, :errored, :canceled
 
-      event :receive, to: :received, unless: :received? #,  unless: [:received?, :started?, :failed?, :errored?]
-      event :start,   to: :started, unless: :started?   #,  unless: [:started?, :failed?, :errored?]
+      event :receive, to: :received,  unless: [:received?, :started?, :failed?, :errored?]
+      event :start,   to: :started,   unless: [:started?, :failed?, :errored?]
       event :finish,  to: :finished, if: :should_finish?
       event :reset,   to: :created
       event :cancel,  to: :canceled, if: :cancelable?
@@ -36,13 +36,10 @@ class Build
     end
 
     def receive(data = {})
-      # self.state = past_states.last if was_started? || was_finished?
-      self.state = past_states.last if [:started, :passed, :failed, :errored, :canceled].include?(past_states.last)
       self.received_at = data[:received_at]
     end
 
     def start(data = {})
-      self.state = past_states.last if [:passed, :failed, :errored, :canceled].include?(past_states.last)
       self.started_at = data[:started_at]
     end
 
@@ -106,7 +103,6 @@ class Build
     end
 
     def notify(event, *args)
-      return if args.first && args.first[:state].to_s != state.to_s
       event = :create if event == :reset
       super
     end

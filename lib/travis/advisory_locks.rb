@@ -6,7 +6,6 @@ module Travis
   # 13.3.4. Advisory Locks : http://www.postgresql.org/docs/9.3/static/explicit-locking.html
   # http://www.postgresql.org/docs/9.3/static/functions-admin.html#FUNCTIONS-ADVISORY-LOCKS
   class AdvisoryLocks
-
     attr_reader :lock_name, :transactional
 
     def initialize(lock_name, transactional = false)
@@ -16,6 +15,7 @@ module Travis
       @lock_name = lock_name
     end
 
+    # must be used within a transaction
     def self.exclusive(lock_name, timeout = 30, transactional = false)
       al = self.new(lock_name, transactional)
       al.exclusive(timeout) { yield }

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Travis::Services::UpdateJob, truncation: true do
+describe Travis::Services::UpdateJob do
   include Support::ActiveRecord
 
   let(:service) { described_class.new(event: event, data: payload) }

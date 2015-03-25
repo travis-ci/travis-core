@@ -29,14 +29,12 @@ class Job
     end
 
     def receive(data = {})
-      self.state = past_states.last if [:started, :finished].include?(past_states.last)
       log.update_attributes!(content: '', removed_at: nil, removed_by: nil) # TODO this should be in a restart method, right?
       data = data.symbolize_keys.slice(:received_at, :worker)
       data.each { |key, value| send(:"#{key}=", value) }
     end
 
     def start(data = {})
-      self.state = past_states.last if [:finished].include?(past_states.last)
       data = data.symbolize_keys.slice(:started_at)
       data.each { |key, value| send(:"#{key}=", value) }
     end
