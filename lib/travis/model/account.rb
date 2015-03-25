@@ -5,7 +5,7 @@ class Account
     end
   end
 
-  ATTR_NAMES = [:id, :type, :name, :login, :repos_count]
+  ATTR_NAMES = [:id, :type, :name, :login, :repos_count, :avatar_url]
 
   attr_accessor *ATTR_NAMES
 
