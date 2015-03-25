@@ -60,14 +60,14 @@ module Travis
       def with_transactional_advisory_lock(id)
         result = nil
         Travis::AdvisoryLocks.exclusive(id, 30) do
-          ActiveRecord::Base.connection.begin_db_transaction
-          ActiveRecord::Base.connection.execute('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE')
+          # ActiveRecord::Base.connection.begin_db_transaction
+          # ActiveRecord::Base.connection.execute('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE')
           result = yield
-          ActiveRecord::Base.connection.commit_db_transaction
+          # ActiveRecord::Base.connection.commit_db_transaction
         end
         result
       rescue => e
-        ActiveRecord::Base.connection.rollback_db_transaction
+        # ActiveRecord::Base.connection.rollback_db_transaction
         raise
       end
 
