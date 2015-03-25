@@ -241,4 +241,29 @@ describe Travis::Services::UpdateJob, truncation: true do
       job.reload.repository.last_build_started_at.should be_nil
     end
   end
+
+  describe 'the instrument' do
+    let(:publisher) { Travis::Notification::Publisher::Memory.new }
+    let(:event)     { :start }
+
+    before :each do
+      Travis::Notification.publishers.replace([publisher])
+    end
+
+    it 'publishes a received event' do
+      service.run
+      publisher.events.first.should publish_instrumentation_event(
+        event: 'travis.services.update_job.run:received',
+        message: /Travis::Services::UpdateJob#run:received event: start for <Job id=#{job.id}>/
+      )
+    end
+
+    it 'publishes a completed event' do
+      service.run
+      publisher.events.last.should publish_instrumentation_event(
+        event: 'travis.services.update_job.run:completed',
+        message: /Travis::Services::UpdateJob#run:completed event: start for <Job id=#{job.id}>/,
+      )
+    end
+  end
 end

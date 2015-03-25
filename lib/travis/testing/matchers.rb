@@ -29,7 +29,9 @@ end
 
 RSpec::Matchers.define :publish_instrumentation_event do |data|
   match do |event|
-    non_matching = data.map { |key, value| [key, value, event[key]] unless event[key] == value }.compact
+    non_matching = data.map do |key, value|
+      [key, value, event[key]] unless value.is_a?(Regexp) && event[key] =~ value || event[key] == value
+    end.compact
     expected_keys = [:uuid, :event, :started_at]
     missing_keys = expected_keys.select { |key| !event.key?(key) }
 

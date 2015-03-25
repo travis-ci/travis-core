@@ -80,6 +80,7 @@ module Travis
             data: target.data
           )
         end
+        alias run_received run_completed
       end
       Instrument.attach_to(self)
     end
