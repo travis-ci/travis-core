@@ -51,7 +51,13 @@ class Request
       end
 
       def split(branches)
-        branches.is_a?(String) ? branches.split(',').map(&:strip) : branches
+        if branches.is_a?(Numeric)
+          branches.to_s
+        elsif branches.is_a?(String)
+          branches.split(',').map(&:strip)
+        else
+          branches
+        end
       end
   end
 end
