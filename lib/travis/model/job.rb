@@ -15,6 +15,7 @@ class Job < Travis::Model
   require 'travis/model/env_helpers'
 
   WHITELISTED_ADDONS = %w(
+    apt
     apt_packages
     apt_sources
     firefox
