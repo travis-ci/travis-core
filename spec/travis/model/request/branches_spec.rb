@@ -12,6 +12,11 @@ describe Request::Branches do
     end
 
     describe 'returns true if the included branches include the given branch' do
+      it 'given as a float' do
+        request.config['branches'] = { 'only' => 2.3 }
+        branches.included?('2.3').should be_true
+      end
+
       it 'given as a string' do
         request.config['branches'] = { 'only' => 'feature' }
         branches.included?('feature').should be_true
@@ -87,6 +92,11 @@ describe Request::Branches do
     end
 
     describe 'returns true if the excluded branches include the given branch' do
+      it 'given as a float' do
+        request.config['branches'] = { 'except' => 2.3 }
+        branches.excluded?('2.3').should be_true
+      end
+
       it 'given as a string' do
         request.config['branches'] = { 'except' => 'feature' }
         branches.excluded?('feature').should be_true
@@ -121,6 +131,11 @@ describe Request::Branches do
     end
 
     describe 'returns false if the excluded branches do not include the given branch' do
+      it 'given as a float' do
+        request.config['branches'] = { 'except' => 2.3 }
+        branches.excluded?('master').should be_false
+      end
+
       it 'given as a string' do
         request.config['branches'] = { 'except' => 'feature' }
         branches.excluded?('master').should be_false
