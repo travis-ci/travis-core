@@ -130,7 +130,7 @@ describe Job do
       }
     end
 
-    it 'removes addons config which is not whitelisted' do
+    it 'removes addons items which are not whitelisted' do
       job = Job.new(repository: Factory(:repository))
       config = { rvm: '1.8.7',
                  addons: { sauce_connect: true, firefox: '22.0' },
@@ -334,7 +334,9 @@ describe Job do
                      },
                      firefox: '22.0',
                      postgresql: '9.3',
-                     hosts: ["travis.dev"]
+                     hosts: %w(travis.dev),
+                     apt_packages: %w(curl git),
+                     apt_sources: %w(deadsnakes)
                    }
                  }
         job.config = config
@@ -344,7 +346,9 @@ describe Job do
           addons: {
             firefox: '22.0',
             postgresql: '9.3',
-            hosts: ["travis.dev"]
+            hosts: %w(travis.dev),
+            apt_packages: %w(curl git),
+            apt_sources: %w(deadsnakes)
           }
         }
       end
