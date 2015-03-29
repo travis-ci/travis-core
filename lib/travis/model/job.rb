@@ -21,7 +21,7 @@ class Job < Travis::Model
     hosts
     postgresql
     ssh_known_hosts
-  ).map(&:to_sym).freeze
+  ).freeze
 
   class << self
     # what we return from the json api
@@ -165,7 +165,7 @@ class Job < Travis::Model
 
     def delete_addons(config)
       if config[:addons].is_a?(Hash)
-        config[:addons].keep_if { |key, value| WHITELISTED_ADDONS.include? key.to_sym }
+        config[:addons].keep_if { |key, _| WHITELISTED_ADDONS.include? key.to_s }
       else
         config.delete(:addons)
       end
