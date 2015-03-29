@@ -40,7 +40,7 @@ class Request
       def config
         @config ||= case branches = request.config.try(:[], 'branches')
           when Array
-            { :only => branches }
+            { :only => branches.is_a?(Numeric) ? branches.to_s : branches }
           when String
             { :only => split(branches) }
           when Hash
@@ -52,7 +52,7 @@ class Request
 
       def split(branches)
         if branches.is_a?(Numeric)
-          branches.to_s
+          Array(branches.to_s)
         elsif branches.is_a?(String)
           branches.split(',').map(&:strip)
         else
