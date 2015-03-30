@@ -14,6 +14,16 @@ class Job < Travis::Model
   require 'travis/model/job/test'
   require 'travis/model/env_helpers'
 
+  WHITELISTED_ADDONS = %w(
+    apt
+    apt_packages
+    apt_sources
+    firefox
+    hosts
+    postgresql
+    ssh_known_hosts
+  ).freeze
+
   class << self
     # what we return from the json api
     def queued(queue = nil)
@@ -154,13 +164,9 @@ class Job < Travis::Model
 
   private
 
-    def whitelisted_addons
-      [:apt_packages, :firefox, :hosts, :postgresql, :ssh_known_hosts]
-    end
-
     def delete_addons(config)
       if config[:addons].is_a?(Hash)
-        config[:addons].keep_if { |key, value| whitelisted_addons.include? key.to_sym }
+        config[:addons].keep_if { |key, _| WHITELISTED_ADDONS.include? key.to_s }
       else
         config.delete(:addons)
       end
