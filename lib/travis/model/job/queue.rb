@@ -8,12 +8,13 @@ class Job
   # queue) or the language given in the configuration (`.travis.yml`) and
   # default to 'builds.linux'.
   class Queue
-    SUDO_AND_SETUID_EXECUTABLES = %w(
-      sudo
+    SUDO_REQUIRED_EXECUTABLES = %w(
+      docker
       ping
+      sudo
     )
 
-    SUDO_DETECTION_REGEXP = /^[^#]*\b(#{SUDO_AND_SETUID_EXECUTABLES.join('|')})\b/
+    SUDO_DETECTION_REGEXP = /^[^#]*\b(#{SUDO_REQUIRED_EXECUTABLES.join('|')})\b/
 
     CUSTOM_STAGES = %w(
       before_install
