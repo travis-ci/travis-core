@@ -25,7 +25,6 @@ describe Travis::Services::UpdateHook do
   describe 'when a repo is activated' do
     let(:url) {'http://test_url.com'}
     let(:event) { { :timestamp => Time.now, :owner => { :id => repo.owner.id, :name=>repo.owner.name, :login=>repo.owner.login, :type=>repo.owner.class.name }, :repo=> { :id=> repo.id, :name=> repo.name } } }
-    # let(:event) { { :timestamp => Time.now, :repo=> { :id=> repository.id, :name=> repository.name } } }
 
     before do
       Travis::Topaz.setup(url)
