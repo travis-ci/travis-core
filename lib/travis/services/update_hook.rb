@@ -1,5 +1,6 @@
 require 'travis/support/instrumentation'
 require 'travis/services/base'
+require 'travis/topaz'
 
 module Travis
   module Services
@@ -11,6 +12,7 @@ module Travis
       def run
         run_service(:github_set_hook, id: repo.id, active: active?)
         repo.update_column(:active, active?)
+        update_topaz(repo)
         true
       end
       instrument :run
@@ -31,6 +33,24 @@ module Travis
         active = params[:active]
         active = { 'true' => true, 'false' => false }[active] if active.is_a?(String)
         !!active
+      end
+
+      def update_topaz(repo)
+        event = {
+          timestamp: Time.now,
+          owner: {
+              id: repo.owner.id,
+              name: repo.owner.name,
+              login: repo.owner.login,
+              type: repo.owner.class.name
+          },
+          repo: {
+              id: repo.id,
+              name: repo.name
+          },
+          type: :repository_activated
+        }
+        Travis::Topaz.update(event)
       end
 
       class Instrument < Notification::Instrument

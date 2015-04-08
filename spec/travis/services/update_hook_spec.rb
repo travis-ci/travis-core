@@ -22,6 +22,24 @@ describe Travis::Services::UpdateHook do
     service.run
   end
 
+  describe 'when a repo is activated' do
+    let(:url) {'http://test_url.com'}
+    let(:event) { { :timestamp => Time.now, :owner => { :id => repo.owner.id, :name=>repo.owner.name, :login=>repo.owner.login, :type=>repo.owner.class.name }, :repo=> { :id=> repo.id, :name=> repo.name } } }
+    # let(:event) { { :timestamp => Time.now, :repo=> { :id=> repository.id, :name=> repository.name } } }
+
+    before do
+      Travis::Topaz.setup(url)
+      now = Time.now
+      Time.stubs(:now).returns(now)
+    end
+
+    it 'sends an event update to topaz' do
+      Travis::Topaz.expects(:update).with(event.merge(type: :repository_activated))
+        service.run
+    end
+
+  end
+
   describe 'sets the repo to the active param' do
     it 'given true' do
       service.params.update(active: true)
@@ -72,5 +90,7 @@ describe Travis::Services::UpdateHook::Instrument do
       result: true
     )
   end
+
+  it
 end
 
