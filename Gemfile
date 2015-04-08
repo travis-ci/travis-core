@@ -4,7 +4,7 @@ gemspec
 
 gem 'travis-support',     github: 'travis-ci/travis-support'
 gem 'travis-sidekiqs',    github: 'travis-ci/travis-sidekiqs', require: nil
-gem 'travis-topaz',       git: 'https://fb0054b267c7f12dca77267796f676d443d8d29e:x-oauth-basic@github.com/travis-pro/travis-topaz-gem.git'
+gem 'travis-topaz',       github: 'travis-ci/travis-topaz-gem'
 
 gem 'gh',                 github: 'travis-ci/gh'
 gem 'addressable'
