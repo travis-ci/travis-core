@@ -36,7 +36,6 @@ describe Travis::Services::UpdateHook do
       Travis::Topaz.expects(:update).with(event.merge(type: :repository_activated))
         service.run
     end
-
   end
 
   describe 'sets the repo to the active param' do
