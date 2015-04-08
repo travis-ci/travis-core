@@ -34,7 +34,7 @@ describe Travis::Services::UpdateHook do
 
     it 'sends an event update to topaz' do
       Travis::Topaz.expects(:update).with(event.merge(type: :repository_activated))
-        service.run
+      service.run
     end
   end
 
