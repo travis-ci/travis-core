@@ -39,10 +39,9 @@ module Travis
         event = {
           timestamp: Time.now,
           owner: {
-              id: repo.owner.id,
-              name: repo.owner.name,
-              login: repo.owner.login,
-              type: repo.owner.class.name
+              id: repo.owner_id,
+              name: repo.owner_name,
+              type: repo.owner_type
           },
           repo: {
               id: repo.id,
