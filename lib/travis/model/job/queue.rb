@@ -25,6 +25,7 @@ class Job
       after_success
       after_failure
       after_script
+      before_deploy
     ).map(&:to_sym)
 
     class << self
