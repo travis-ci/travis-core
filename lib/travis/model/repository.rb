@@ -157,7 +157,7 @@ class Repository < Travis::Model
 
   def regenerate_key!
     ActiveRecord::Base.transaction do
-      key.destroy
+      key.destroy unless key.nil?
       build_key
       save!
     end
