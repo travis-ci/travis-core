@@ -1300,6 +1300,13 @@ CREATE INDEX index_organizations_on_login ON organizations USING btree (login);
 
 
 --
+-- Name: index_organizations_on_lower_login; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_organizations_on_lower_login ON organizations USING btree (lower((login)::text));
+
+
+--
 -- Name: index_permissions_on_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1332,6 +1339,20 @@ CREATE UNIQUE INDEX index_repositories_on_github_id ON repositories USING btree 
 --
 
 CREATE INDEX index_repositories_on_last_build_started_at ON repositories USING btree (last_build_started_at);
+
+
+--
+-- Name: index_repositories_on_lower_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_repositories_on_lower_name ON repositories USING btree (lower((name)::text));
+
+
+--
+-- Name: index_repositories_on_lower_owner_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_repositories_on_lower_owner_name ON repositories USING btree (lower((owner_name)::text));
 
 
 --
@@ -1416,6 +1437,13 @@ CREATE UNIQUE INDEX index_users_on_github_id ON users USING btree (github_id);
 --
 
 CREATE INDEX index_users_on_login ON users USING btree (login);
+
+
+--
+-- Name: index_users_on_lower_login; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_users_on_lower_login ON users USING btree (lower((login)::text));
 
 
 --
@@ -1728,3 +1756,5 @@ INSERT INTO schema_migrations (version) VALUES ('20150317004600');
 INSERT INTO schema_migrations (version) VALUES ('20150317020321');
 
 INSERT INTO schema_migrations (version) VALUES ('20150317080321');
+
+INSERT INTO schema_migrations (version) VALUES ('20150414001337');
