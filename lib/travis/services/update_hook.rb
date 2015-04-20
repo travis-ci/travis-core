@@ -40,7 +40,7 @@ module Travis
           timestamp: Time.now,
           owner: {
               id: repo.owner_id,
-              name: repo.owner_name,
+              login: repo.owner_name,
               type: repo.owner_type
           },
           repo: {
