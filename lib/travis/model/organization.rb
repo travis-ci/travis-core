@@ -7,7 +7,7 @@ class Organization < Travis::Model
   has_many :repositories, :as => :owner
 
   def education?
-    false
+    Travis::Features.owner_active?(:educational_org, self)
   end
   alias education education?
 end
