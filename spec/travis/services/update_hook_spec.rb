@@ -89,6 +89,5 @@ describe Travis::Services::UpdateHook::Instrument do
     )
   end
 
-  it
 end
 
