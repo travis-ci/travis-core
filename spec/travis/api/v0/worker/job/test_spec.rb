@@ -94,7 +94,8 @@ describe Travis::Api::V0::Worker::Job::Test do
         'last_build_duration' => 60,
         'last_build_state' => 'passed',
         'description' => 'the repo description',
-        'github_id' => 549743
+        'github_id' => 549743,
+        'default_branhc' => 'master'
       }
     end
 
