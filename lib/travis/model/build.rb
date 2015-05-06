@@ -83,12 +83,14 @@ class Build < Travis::Model
       pushes.where(branch.present? ? ['branch IN (?)', normalize_to_array(branch)] : [])
     end
 
-    def by_event_type(event_type)
-      event_type == 'pull_request' ?  pull_requests : pushes
+    def by_event_type(event_types)
+      event_types = Array(event_types).flatten
+      event_types << 'push' if event_types.empty?
+      where(event_type: event_types)
     end
 
     def pushes
-      where(:event_type => 'push')
+      where(event_type: 'push')
     end
 
     def pull_requests
