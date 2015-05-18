@@ -273,5 +273,15 @@ describe 'Job::Queue' do
       queue = queue('builds.invalid', { foobar_donotmatch: true })
       queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: {})).should be_false
     end
+
+    it 'returns true for percentage: 100' do
+      queue = queue('builds.always', { percentage: 100 })
+      queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: {})).should be_true
+    end
+
+    it 'returns false for percentage: 0' do
+      queue = queue('builds.always', { percentage: 0 })
+      queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: {})).should be_false
+    end
   end
 end

@@ -81,6 +81,7 @@ class Job
         :sudo => job.config.fetch(:sudo) { !repo_is_default_docker?(job) },
         :dist => job.config[:dist],
         :osx_image => job.config[:osx_image],
+        :percentage => lambda { |percentage| rand(100) < percentage },
       }
     end
 
