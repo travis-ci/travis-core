@@ -50,7 +50,7 @@ describe Travis::Services::FindJobs do
       received = Factory(:test, :state => :received, :source => build)
 
       @params = {}
-      service.run.sort_by(&:id).should == [queued, created, received].sort_by(&:id)
+      service.run.sort_by(&:id).should == [started, queued, created, received].sort_by(&:id)
     end
   end
 

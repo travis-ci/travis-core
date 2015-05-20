@@ -24,7 +24,7 @@ module Travis
           if params[:state]
             jobs = jobs.where(state: params[:state])
           else
-            jobs = jobs.where(state: [:created, :queued, :received])
+            jobs = jobs.where(state: [:created, :queued, :received, :started])
             # we don't use it anymore, but just for backwards compat
             jobs = jobs.where(queue: params[:queue]) if params[:queue]
             jobs
