@@ -37,6 +37,21 @@ describe Travis::Services::FindJobs do
       @params = { :state => ['created', 'passed'] }
       service.run.sort_by(&:id).should == [created, passed].sort_by(&:id)
     end
+
+    it 'finds jobs that are about to run without any args' do
+      build = Factory(:build)
+
+      Job::Test.destroy_all
+
+      started = Factory(:test, :state => :started, :source => build)
+      queued = Factory(:test, :state => :queued, :source => build)
+      passed  = Factory(:test, :state => :passed,  :source => build)
+      created = Factory(:test, :state => :created, :source => build)
+      received = Factory(:test, :state => :received, :source => build)
+
+      @params = {}
+      service.run.sort_by(&:id).should == [queued, created, received].sort_by(&:id)
+    end
   end
 
   describe 'updated_at' do

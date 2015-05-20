@@ -24,7 +24,10 @@ module Travis
           if params[:state]
             jobs = jobs.where(state: params[:state])
           else
-            jobs = jobs.queued(params[:queue])
+            jobs = jobs.where(state: [:created, :queued, :received])
+            # we don't use it anymore, but just for backwards compat
+            jobs = jobs.where(queue: params[:queue]) if params[:queue]
+            jobs
           end
           jobs.limit(250)
         end
