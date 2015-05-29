@@ -7,7 +7,7 @@ gem 'travis-sidekiqs',    github: 'travis-ci/travis-sidekiqs', require: nil
 gem 'gh',                 github: 'travis-ci/gh'
 gem 'addressable'
 gem 'aws-sdk-v1'
-gem 'json', '~> 1.7.7'
+gem 'json', '~> 1.8.2'
 
 gem 'dalli'
 gem 'connection_pool'
@@ -15,7 +15,7 @@ gem 'keen', '~> 0.8.6'
 
 platform :mri do
   gem 'bunny',            '~> 0.7.9'
-  gem 'pg',               '~> 0.14.0'
+  gem 'pg',               '~> 0.18.2'
 end
 
 platform :jruby do

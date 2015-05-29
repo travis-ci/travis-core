@@ -60,7 +60,7 @@ class Repository < Travis::Model
     end
 
     def by_slug(slug)
-      where(owner_name: slug.split('/').first, name: slug.split('/').last)
+      where(owner_name: slug.split('/').first, name: slug.split('/').last).order('id DESC')
     end
 
     def search(query)
