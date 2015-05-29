@@ -769,6 +769,58 @@ ALTER SEQUENCE ssl_keys_id_seq OWNED BY ssl_keys.id;
 
 
 --
+-- Name: subscriptions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE subscriptions (
+    id integer NOT NULL,
+    cc_token character varying(255),
+    valid_to timestamp without time zone,
+    owner_id integer,
+    owner_type character varying(255),
+    first_name character varying(255),
+    last_name character varying(255),
+    company character varying(255),
+    zip_code character varying(255),
+    address character varying(255),
+    address2 character varying(255),
+    city character varying(255),
+    state character varying(255),
+    country character varying(255),
+    vat_id character varying(255),
+    customer_id character varying(255),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    cc_owner character varying(255),
+    cc_last_digits character varying(255),
+    cc_expiration_date character varying(255),
+    billing_email character varying(255),
+    selected_plan character varying(255),
+    coupon character varying(255),
+    contact_id integer
+);
+
+
+--
+-- Name: subscriptions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE subscriptions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: subscriptions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE subscriptions_id_seq OWNED BY subscriptions.id;
+
+
+--
 -- Name: tokens; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -976,6 +1028,13 @@ ALTER TABLE ONLY ssl_keys ALTER COLUMN id SET DEFAULT nextval('ssl_keys_id_seq':
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY subscriptions ALTER COLUMN id SET DEFAULT nextval('subscriptions_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY tokens ALTER COLUMN id SET DEFAULT nextval('tokens_id_seq'::regclass);
 
 
@@ -1111,6 +1170,14 @@ ALTER TABLE ONLY requests
 
 ALTER TABLE ONLY ssl_keys
     ADD CONSTRAINT ssl_keys_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: subscriptions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY subscriptions
+    ADD CONSTRAINT subscriptions_pkey PRIMARY KEY (id);
 
 
 --
