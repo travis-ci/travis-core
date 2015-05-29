@@ -15,7 +15,7 @@ gem 'keen', '~> 0.8.6'
 
 platform :mri do
   gem 'bunny',            '~> 0.7.9'
-  gem 'pg',               '~> 0.14.0'
+  gem 'pg',               '~> 0.18.2'
 end
 
 platform :jruby do
