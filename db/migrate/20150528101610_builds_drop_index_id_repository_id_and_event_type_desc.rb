@@ -1,4 +1,4 @@
-class BuildsDropIndexIdRepositoryIdAndEventType < ActiveRecord::Migration
+class BuildsDropIndexIdRepositoryIdAndEventTypeDesc < ActiveRecord::Migration
   self.disable_ddl_transaction!
 
   def up
