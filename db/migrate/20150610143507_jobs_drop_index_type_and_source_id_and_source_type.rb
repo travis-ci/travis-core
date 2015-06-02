@@ -1,4 +1,4 @@
-class JobsDropIndexJobsTypeAndSourceIdAndSourceType < ActiveRecord::Migration
+class JobsDropIndexTypeAndSourceIdAndSourceType < ActiveRecord::Migration
   self.disable_ddl_transaction!
 
   def up
