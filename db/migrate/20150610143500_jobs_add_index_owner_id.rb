@@ -9,4 +9,3 @@ class JobsAddIndexOwnerId < ActiveRecord::Migration
     execute "DROP INDEX CONCURRENTLY index_jobs_on_owner_id"
   end
 end
-
