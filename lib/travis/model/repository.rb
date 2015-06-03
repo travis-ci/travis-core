@@ -80,7 +80,7 @@ class Repository < Travis::Model
       elsif params.key?(:slug)
         by_slug(params[:slug]).first
       elsif params.key?(:name) && params.key?(:owner_name)
-        where(params.slice(:name, :owner_name)).first
+        by_slug("#{params[:owner_name]}/#{params[:name]}").first
       end
     end
 
