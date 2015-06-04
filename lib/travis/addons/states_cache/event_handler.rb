@@ -37,7 +37,7 @@ module Travis
 
         def data
           {
-            'finished_at' => build['finished_at'],
+            'id'    => build['id'],
             'state' => build['state']
           }
         end
