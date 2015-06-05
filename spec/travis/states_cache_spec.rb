@@ -74,6 +74,18 @@ module Travis
         subject.fetch(1)['state'].should == 'failed'
       end
 
+      it 'updates the state if the id of the build is the same' do
+        data = { id: 10, state: 'failed' }.stringify_keys
+        subject.write(1, 'master', data)
+
+        subject.fetch(1, 'master')['state'].should == 'passed'
+
+        data = { id: 10, state: 'passed' }.stringify_keys
+        subject.write(1, 'master', data)
+
+        subject.fetch(1, 'master')['state'].should == 'passed'
+      end
+
       it 'handles connection errors gracefully' do
         data = { id: 10, state: 'passed' }.stringify_keys
         client = Dalli::Client.new('illegalserver:11211')
@@ -130,12 +142,12 @@ module Travis
           subject.update?(1, 'master', 9).should be_false
         end
 
-        it 'returns false if persisted data is the same age' do
+        it 'returns true if persisted data is the same age' do
           subject.expects(:fetch).with(1, nil).returns({ 'id' => 10 })
-          subject.update?(1, nil, 10).should be_false
+          subject.update?(1, nil, 10).should be_true
 
           subject.expects(:fetch).with(1, 'master').returns({ 'id' => 10 })
-          subject.update?(1, 'master', 10).should be_false
+          subject.update?(1, 'master', 10).should be_true
         end
       end
     end

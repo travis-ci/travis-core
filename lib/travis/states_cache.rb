@@ -90,7 +90,7 @@ module Travis
         current_id = current_data['id'].to_i
         new_id     = build_id.to_i
 
-        update = new_id > current_id
+        update = new_id >= current_id
         message = "[states-cache] Checking if cache is stale for repo_id=#{id} branch=#{branch}. "
         if update
           message << "The cache is going to get an update, "
