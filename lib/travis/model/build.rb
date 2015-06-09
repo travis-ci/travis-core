@@ -63,8 +63,8 @@ class Build < Travis::Model
   delegate :same_repo_pull_request?, :to => :request
 
   class << self
-    def recent(options = {})
-      where('state IN (?)', state_names - [:created, :queued]).order(arel_table[:started_at].desc).paged(options)
+    def recent
+      where(state: ['failed', 'passed']).order('id DESC').limit(25)
     end
 
     def was_started
