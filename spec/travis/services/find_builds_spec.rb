@@ -4,7 +4,7 @@ describe Travis::Services::FindBuilds do
   include Support::ActiveRecord
 
   let(:repo)    { Factory(:repository, owner_name: 'travis-ci', name: 'travis-core') }
-  let!(:push)   { Factory(:build, repository: repo, event_type: 'push', state: :finished, number: 1) }
+  let!(:push)   { Factory(:build, repository: repo, event_type: 'push', state: :failed, number: 1) }
   let(:service) { described_class.new(stub('user'), params) }
 
   attr_reader :params

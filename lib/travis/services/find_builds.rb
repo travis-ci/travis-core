@@ -34,7 +34,7 @@ module Travis
               builds.older_than(params[:after_number])
             end
           elsif params.nil? || params == {}
-            scope(:build).order('id DESC').where(state: ['failed', 'passed']).limit(25)
+            scope(:build).recent
           else
             scope(:build).none
           end
