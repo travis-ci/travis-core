@@ -34,6 +34,7 @@ matrix:
 
 before_install:
   - gem uninstall bundler
+  - bundle --version
   - gem install bundler -v 1.9.0
   - bundle --version
 
