@@ -20,7 +20,7 @@ cache: bundler
 sudo: false
 
 rvm:
-  - jruby-1.7.16
+  - jruby-1.7.17
   - jruby-head
   - "2.0"
   - "2.1"
