@@ -34,7 +34,7 @@ matrix:
 
 before_install:
   - gem uninstall bundler
-  - gem install bundler -v 1.10.2
+  - gem install bundler -v 1.9.0
 
 before_script:
   - redis-cli config set save ""
