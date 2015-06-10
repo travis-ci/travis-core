@@ -17,6 +17,8 @@ addons:
 
 cache: bundler
 
+sudo: false
+
 rvm:
   - jruby-1.7.17
   - jruby-head
