@@ -10,10 +10,6 @@ module Travis
         result
       end
 
-      def updated_at
-        result.maximum(:updated_at)
-      end
-
       private
 
         def result
