@@ -42,6 +42,14 @@ module Travis
             end
           end
 
+          def repository_id
+            if payload && payload['repository'] && payload['repository']['id']
+              payload['repository']['id']
+            elsif object && object.repository && object.repository.id
+              object.repository.id
+            end
+          end
+
           Instruments::EventHandler.attach_to(self)
       end
     end
