@@ -3,11 +3,18 @@ require 'spec_helper'
 describe Travis::Addons::Pusher::EventHandler do
   include Travis::Testing::Stubs
 
+  let(:build)   { stub_build(state: :failed, repository: repository) }
   let(:subject) { Travis::Addons::Pusher::EventHandler }
+  let(:payload) { Travis::Api.data(build, for: 'event', version: 'v0') }
 
   before do
     Travis::Event.stubs(:subscribers).returns [:pusher]
     subject.stubs(:handle => true, :handle? => true)
+  end
+
+  it "doesn't override original payload" do
+    event_handler = subject.new('build:finished', build, {}, payload)
+    event_handler.payload.should == payload
   end
 
   describe 'subscription' do
