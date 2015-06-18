@@ -24,7 +24,6 @@ module Travis
         end
 
         def handle
-          # Travis::Addons::Pusher::Task.run(:pusher, payload, :event => event)
           Travis::Addons::Pusher::Task.run(queue, payload, :event => event)
         end
 
