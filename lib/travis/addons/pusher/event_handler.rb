@@ -24,13 +24,21 @@ module Travis
         end
 
         def handle
-          Travis::Addons::Pusher::Task.run(:pusher, payload, :event => event)
+          Travis::Addons::Pusher::Task.run(queue, payload, :event => event)
         end
 
         private
 
           def type
             event.sub('test:', '').sub(':', '/')
+          end
+
+          def queue
+            if Travis::Features.enabled_for_all?(:"pusher-live") || Travis::Features.repository_active?(:"pusher-live", payload['repository_id'])
+              :"pusher-live"
+            else
+              :pusher
+            end
           end
 
           Instruments::EventHandler.attach_to(self)
