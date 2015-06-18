@@ -35,7 +35,7 @@ module Travis
 
           def queue
             if Travis::Features.enabled_for_all?(:"pusher-live") ||
-               Travis::Features.repository_active?(:"pusher-live", payload['repository']['id'])
+               Travis::Features.repository_active?(:"pusher-live", repository_id)
               :"pusher-live"
             else
               :pusher
