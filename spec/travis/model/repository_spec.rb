@@ -4,7 +4,7 @@ describe Repository do
   include Support::ActiveRecord
 
   describe '#last_completed_build' do
-    let(:repo) {  Factory(:repository, name: 'foobarbaz', builds: [build1, build2]) }
+    let(:repo)   {  Factory(:repository, name: 'foobarbaz', builds: [build1, build2]) }
     let(:build1) { Factory(:build, finished_at: 1.hour.ago, state: :passed) }
     let(:build2) { Factory(:build, finished_at: Time.now, state: :failed) }
 
@@ -71,19 +71,26 @@ describe Repository do
     end
 
     describe 'timeline' do
-      it 'sorts repositories with running builds to the top, most recent builds next, un-built repos last' do
-        Factory(:repository, name: 'unbuilt 1',  active: true, last_build_started_at: nil, last_build_finished_at: nil)
-        Factory(:repository, name: 'unbuilt 2',  active: true, last_build_started_at: nil, last_build_finished_at: nil)
-        Factory(:repository, name: 'finished 1', active: true, last_build_started_at: '2011-11-12 12:00:00', last_build_finished_at: '2011-11-12 12:00:05')
-        Factory(:repository, name: 'finished 2', active: true, last_build_started_at: '2011-11-12 12:00:01', last_build_finished_at: '2011-11-11 12:00:06')
-        Factory(:repository, name: 'started 1',  active: true, last_build_started_at: '2011-11-11 12:00:00', last_build_finished_at: nil)
-        Factory(:repository, name: 'started 2',  active: true, last_build_started_at: '2011-11-11 12:00:01', last_build_finished_at: nil)
+      before do
+        Factory(:repository, name: 'unbuilt 1',   active: true, last_build_started_at: nil, last_build_finished_at: nil)
+        Factory(:repository, name: 'unbuilt 2',   active: true, last_build_started_at: nil, last_build_finished_at: nil)
+        Factory(:repository, name: 'finished 1',  active: true, last_build_started_at: '2011-11-12 12:00:00', last_build_finished_at: '2011-11-12 12:00:05')
+        Factory(:repository, name: 'finished 2',  active: true, last_build_started_at: '2011-11-12 12:00:01', last_build_finished_at: '2011-11-11 12:00:06')
+        Factory(:repository, name: 'started 1',   active: true, last_build_started_at: '2011-11-11 12:00:00', last_build_finished_at: nil)
+        Factory(:repository, name: 'started 2',   active: true, last_build_started_at: '2011-11-11 12:00:01', last_build_finished_at: nil)
+        Factory(:repository, name: 'invalidated', active: true, last_build_started_at: '2011-11-11 12:00:01', last_build_finished_at: nil, invalidated_at: '2012-11-11 12:00:06')
+      end
 
+      it 'sorts repositories with running builds to the top, most recent builds next, un-built repos last' do
         repositories = Repository.timeline
         repositories.map(&:name).should == ['started 2', 'started 1', 'finished 2', 'finished 1', 'unbuilt 2', 'unbuilt 1']
       end
-    end
 
+      it 'does not include invalidated repos' do
+        repositories = Repository.timeline
+        repositories.map(&:name).should_not include('invalidated')
+      end
+    end
 
     describe 'with_builds' do
       it 'gets only projects with existing builds' do
@@ -97,8 +104,9 @@ describe Repository do
     end
 
     describe 'active' do
-      let(:active)   { Factory(:repository, active: true) }
-      let(:inactive) { Factory(:repository, active: false) }
+      let(:active)      { Factory(:repository, active: true) }
+      let(:inactive)    { Factory(:repository, active: false) }
+      let(:invalidated) { Factory(:repository, invalidated_at: Time.now) }
 
       it 'contains active repositories' do
         Repository.active.should include(active)
@@ -107,12 +115,17 @@ describe Repository do
       it 'does not include inactive repositories' do
         Repository.active.should_not include(inactive)
       end
+
+      it 'does not include invalidated repositories' do
+        Repository.active.should_not include(invalidated)
+      end
     end
 
     describe 'search' do
       before(:each) do
         Factory(:repository, name: 'repo 1', last_build_started_at: '2011-11-11')
         Factory(:repository, name: 'repo 2', last_build_started_at: '2011-11-12')
+        Factory(:repository, name: 'invalidated', invalidated_at: Time.now)
       end
 
       it 'performs searches case-insensitive' do
@@ -126,21 +139,30 @@ describe Repository do
       it 'performs searches with \ entered' do
         Repository.search('fuchs\\').to_a.count.should == 2
       end
+
+      it 'does not find invalidated repos' do
+        Repository.search('fuchs').map(&:name).should_not include('invalidated')
+      end
     end
 
     describe 'by_member' do
-      let(:user) { Factory(:user) }
-      let(:org)  { Factory(:org) }
-      let(:user_repo) { Factory(:repository, owner: user)}
-      let(:org_repo)  { Factory(:repository, owner: org, name: 'globalize')}
-
+      let(:user)        { Factory(:user) }
+      let(:org)         { Factory(:org) }
+      let(:user_repo)   { Factory(:repository, owner: user)}
+      let(:org_repo)    { Factory(:repository, owner: org, name: 'globalize')}
+      let(:invalidated) { Factory(:repository, owner: org, name: 'invalidated', invalidated_at: Time.now)}
       before do
         Permission.create!(user: user, repository: user_repo, pull: true, push: true)
         Permission.create!(user: user, repository: org_repo, pull: true)
+        Permission.create!(user: user, repository: invalidated, pull: true)
       end
 
       it 'returns all repositories a user has rights to' do
         Repository.by_member('svenfuchs').should have(2).items
+      end
+
+      it 'does not find invalidated repos' do
+        Repository.by_member('svenfuchs').map(&:name).should_not include('invalidated')
       end
     end
 
@@ -148,6 +170,7 @@ describe Repository do
       let!(:repositories) do
         Factory(:repository, owner_name: 'svenfuchs', name: 'minimal')
         Factory(:repository, owner_name: 'travis-ci', name: 'travis-ci')
+        Factory(:repository, owner_name: 'travis-ci', name: 'invalidated', invalidated_at: Time.now)
       end
 
       it 'returns repository counts per owner_name for the given owner_names' do

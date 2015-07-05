@@ -35,7 +35,7 @@ class SslKey < Travis::Model
 
   def generate_keys
     unless public_key && private_key
-      keys = OpenSSL::PKey::RSA.generate(4096)
+      keys = OpenSSL::PKey::RSA.generate(Travis.config.repository.ssl_key.size)
       self.public_key = keys.public_key.to_s
       self.private_key = keys.to_pem
     end
