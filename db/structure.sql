@@ -656,7 +656,8 @@ CREATE TABLE repositories (
     default_branch character varying(255),
     github_language character varying(255),
     settings json,
-    next_build_number integer
+    next_build_number integer,
+    invalidated_at timestamp without time zone
 );
 
 
@@ -1220,10 +1221,17 @@ CREATE UNIQUE INDEX index_branches_on_repository_id_and_name ON branches USING b
 
 
 --
--- Name: index_builds_on_id_repository_id_and_event_type_desc; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_builds_on_branch; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_builds_on_id_repository_id_and_event_type_desc ON builds USING btree (id DESC, repository_id, event_type);
+CREATE INDEX index_builds_on_branch ON builds USING btree (branch);
+
+
+--
+-- Name: index_builds_on_event_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_builds_on_event_type ON builds USING btree (event_type);
 
 
 --
@@ -1241,24 +1249,10 @@ CREATE INDEX index_builds_on_owner_type ON builds USING btree (owner_type);
 
 
 --
--- Name: index_builds_on_repository_id_and_event_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_builds_on_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_builds_on_repository_id_and_event_type ON builds USING btree (repository_id, event_type);
-
-
---
--- Name: index_builds_on_repository_id_and_event_type_and_state_and_bran; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_builds_on_repository_id_and_event_type_and_state_and_bran ON builds USING btree (repository_id, event_type, state, branch);
-
-
---
--- Name: index_builds_on_repository_id_and_state; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_builds_on_repository_id_and_state ON builds USING btree (repository_id, state);
+CREATE INDEX index_builds_on_repository_id ON builds USING btree (repository_id);
 
 
 --
@@ -1266,6 +1260,13 @@ CREATE INDEX index_builds_on_repository_id_and_state ON builds USING btree (repo
 --
 
 CREATE INDEX index_builds_on_request_id ON builds USING btree (request_id);
+
+
+--
+-- Name: index_builds_on_state; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_builds_on_state ON builds USING btree (state);
 
 
 --
@@ -1290,10 +1291,24 @@ CREATE INDEX index_emails_on_user_id ON emails USING btree (user_id);
 
 
 --
--- Name: index_jobs_on_owner_id_and_owner_type_and_state; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_jobs_on_owner_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_jobs_on_owner_id_and_owner_type_and_state ON jobs USING btree (owner_id, owner_type, state);
+CREATE INDEX index_jobs_on_owner_id ON jobs USING btree (owner_id);
+
+
+--
+-- Name: index_jobs_on_owner_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_jobs_on_owner_type ON jobs USING btree (owner_type);
+
+
+--
+-- Name: index_jobs_on_queue; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_jobs_on_queue ON jobs USING btree (queue);
 
 
 --
@@ -1304,17 +1319,31 @@ CREATE INDEX index_jobs_on_repository_id ON jobs USING btree (repository_id);
 
 
 --
--- Name: index_jobs_on_state_owner_type_owner_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_jobs_on_source_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_jobs_on_state_owner_type_owner_id ON jobs USING btree (state, owner_id, owner_type);
+CREATE INDEX index_jobs_on_source_id ON jobs USING btree (source_id);
 
 
 --
--- Name: index_jobs_on_type_and_owner_id_and_owner_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_jobs_on_source_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_jobs_on_type_and_owner_id_and_owner_type ON jobs USING btree (type, source_id, source_type);
+CREATE INDEX index_jobs_on_source_type ON jobs USING btree (source_type);
+
+
+--
+-- Name: index_jobs_on_state; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_jobs_on_state ON jobs USING btree (state);
+
+
+--
+-- Name: index_jobs_on_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_jobs_on_type ON jobs USING btree (type);
 
 
 --
@@ -1423,6 +1452,13 @@ CREATE INDEX index_repositories_on_lower_owner_name ON repositories USING btree 
 
 
 --
+-- Name: index_repositories_on_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_repositories_on_name ON repositories USING btree (name);
+
+
+--
 -- Name: index_repositories_on_owner_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1430,10 +1466,10 @@ CREATE INDEX index_repositories_on_owner_id ON repositories USING btree (owner_i
 
 
 --
--- Name: index_repositories_on_owner_name_and_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_repositories_on_owner_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_repositories_on_owner_name_and_name ON repositories USING btree (owner_name, name);
+CREATE INDEX index_repositories_on_owner_name ON repositories USING btree (owner_name);
 
 
 --
@@ -1490,6 +1526,13 @@ CREATE INDEX index_ssl_key_on_repository_id ON ssl_keys USING btree (repository_
 --
 
 CREATE INDEX index_tokens_on_token ON tokens USING btree (token);
+
+
+--
+-- Name: index_tokens_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_tokens_on_user_id ON tokens USING btree (user_id);
 
 
 --
@@ -1825,3 +1868,49 @@ INSERT INTO schema_migrations (version) VALUES ('20150317020321');
 INSERT INTO schema_migrations (version) VALUES ('20150317080321');
 
 INSERT INTO schema_migrations (version) VALUES ('20150414001337');
+
+INSERT INTO schema_migrations (version) VALUES ('20150528101600');
+
+INSERT INTO schema_migrations (version) VALUES ('20150528101601');
+
+INSERT INTO schema_migrations (version) VALUES ('20150528101602');
+
+INSERT INTO schema_migrations (version) VALUES ('20150528101603');
+
+INSERT INTO schema_migrations (version) VALUES ('20150528101604');
+
+INSERT INTO schema_migrations (version) VALUES ('20150528101605');
+
+INSERT INTO schema_migrations (version) VALUES ('20150528101607');
+
+INSERT INTO schema_migrations (version) VALUES ('20150528101608');
+
+INSERT INTO schema_migrations (version) VALUES ('20150528101609');
+
+INSERT INTO schema_migrations (version) VALUES ('20150528101610');
+
+INSERT INTO schema_migrations (version) VALUES ('20150528101611');
+
+INSERT INTO schema_migrations (version) VALUES ('20150610143500');
+
+INSERT INTO schema_migrations (version) VALUES ('20150610143501');
+
+INSERT INTO schema_migrations (version) VALUES ('20150610143502');
+
+INSERT INTO schema_migrations (version) VALUES ('20150610143503');
+
+INSERT INTO schema_migrations (version) VALUES ('20150610143504');
+
+INSERT INTO schema_migrations (version) VALUES ('20150610143505');
+
+INSERT INTO schema_migrations (version) VALUES ('20150610143506');
+
+INSERT INTO schema_migrations (version) VALUES ('20150610143507');
+
+INSERT INTO schema_migrations (version) VALUES ('20150610143508');
+
+INSERT INTO schema_migrations (version) VALUES ('20150610143509');
+
+INSERT INTO schema_migrations (version) VALUES ('20150610143510');
+
+INSERT INTO schema_migrations (version) VALUES ('20150629231300');

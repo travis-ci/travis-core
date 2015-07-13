@@ -20,7 +20,7 @@ module Travis
         end
 
         def by_params
-          scope = self.scope(:repository)
+          scope = self.scope(:repository).without_invalidated
           scope = scope.timeline.recent                    if timeline?
           scope = scope.by_member(params[:member])         if params[:member]
           scope = scope.by_owner_name(params[:owner_name]) if params[:owner_name]

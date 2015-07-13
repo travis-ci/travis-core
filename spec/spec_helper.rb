@@ -46,6 +46,7 @@ RSpec.configure do |c|
     Travis::Event.stubs(:subscribers).returns []
     Travis.config.oauth2 ||= {}
     Travis.config.oauth2.scope = 'public_repo,user'
+    Travis.config.repository.ssl_key.size = 1024
     Travis::Github.stubs(:scopes_for).returns(['public_repo', 'user'])
     GH.reset
   end
