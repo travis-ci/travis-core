@@ -657,8 +657,6 @@ CREATE TABLE repositories (
     github_language character varying(255),
     settings json,
     next_build_number integer,
-    deleted_at timestamp without time zone,
-    deleted_by character varying(255),
     invalidated_at timestamp without time zone
 );
 
