@@ -43,7 +43,7 @@ module Travis
                 'finished_at' => format_date(build.finished_at),
                 'duration' => build.duration,
                 'job_ids' => build.matrix_ids,
-                'event_type' => 'push',
+                'event_type' => build.event_type,
 
                 # this is a legacy thing, we should think about removing it
                 'commit' => commit.commit,

@@ -5,7 +5,7 @@ describe Travis::Api::V0::Pusher::Build do
 
   let(:repo)  { stub_repo(last_build_state: :started, last_build_duration: nil, last_build_finished_at: nil) }
   let(:job)   { stub_test(state: :started, finished_at: nil, finished?: false) }
-  let(:build) { stub_build(repository: repo, state: :started, finished_at: nil, matrix: [job], finished?: false) }
+  let(:build) { stub_build(repository: repo, event_type: 'pull_request',  state: :started, finished_at: nil, matrix: [job], finished?: false) }
   let(:data)  { Travis::Api::V0::Pusher::Build.new(build).data }
 
   it 'build' do
@@ -28,7 +28,7 @@ describe Travis::Api::V0::Pusher::Build do
       'committer_email' => 'svenfuchs@artweb-design.de',
       'committed_at' => json_format_time(Time.now.utc - 1.hour),
       'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
-      'event_type' => 'push',
+      'event_type' => 'pull_request',
       'pull_request' => false,
       'pull_request_title' => nil,
       'pull_request_number' => nil,
