@@ -33,10 +33,11 @@ module Travis
         self.class.handlers[name.to_sym] || Handler.const_get(name.to_s.camelize, false)
       rescue NameError => e
         Travis.logger.error "Could not find event handler #{name.inspect}, ignoring."
+        nil
       end
 
       def patterns
-        Array(subscriber::EVENTS)
+        subscriber ? Array(subscriber::EVENTS) : []
       end
 
       def notify(event, *args)
