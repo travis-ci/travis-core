@@ -11,6 +11,12 @@ describe Repository::Settings do
       settings.env_vars.public.length.should == 1
       settings.env_vars.public.first.name.should == 'PUBLIC_VAR'
     end
+
+    it 'strips leading whitespace from the variable value' do
+      var = Repository::Settings::EnvVar.new
+      var.update(name: 'FOO', value: ' foo', public: false)
+      var.value.decrypt.should == 'foo'
+    end
   end
 
   describe '#maximum_number_of_builds' do

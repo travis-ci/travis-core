@@ -14,6 +14,10 @@ class Repository::Settings < Travis::Settings
     attribute :repository_id, Integer
 
     validates :name, presence: true
+
+    def value=(value)
+      super(value.strip)
+    end
   end
 
   class SshKey < Travis::Settings::Model
