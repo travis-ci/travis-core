@@ -333,6 +333,7 @@ describe Job do
                        access_key: job.repository.key.secure.encrypt('foobar')
                      },
                      firefox: '22.0',
+                     mariadb: '10.1',
                      postgresql: '9.3',
                      hosts: %w(travis.dev),
                      apt_packages: %w(curl git),
@@ -345,6 +346,7 @@ describe Job do
           rvm: '1.8.7',
           addons: {
             firefox: '22.0',
+            mariadb: '10.1',
             postgresql: '9.3',
             hosts: %w(travis.dev),
             apt_packages: %w(curl git),
