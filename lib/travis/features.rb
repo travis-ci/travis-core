@@ -25,7 +25,7 @@ module Travis
     # By default, this will return false.
     def active?(feature, repository)
       feature_active?(feature) or
-        (rollout.active?(feature, repository.owner) or
+        (owner_active?(feature, repository.owner) or
           repository_active?(feature, repository))
     end
 
