@@ -78,11 +78,11 @@ class Request < Travis::Model
   end
 
   def head_repo
-    @head_repo = _payload.try(:pull_request).try(:head).try(:repo).try(:full_name)
+    _payload.try(:pull_request).try(:head).try(:repo).try(:full_name)
   end
 
   def base_repo
-    @base_repo = _payload.try(:pull_request).try(:base).try(:repo).try(:full_name)
+    _payload.try(:pull_request).try(:base).try(:repo).try(:full_name)
   end
 
   alias pr_source_repo head_repo
