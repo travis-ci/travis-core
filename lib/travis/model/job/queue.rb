@@ -74,14 +74,15 @@ class Job
 
     def matchers_for(job)
       {
-        :slug => "#{job.repository.try(:owner_name)}/#{job.repository.try(:name)}",
-        :owner => job.repository.try(:owner_name),
-        :os => job.config[:os],
-        :language => Array(job.config[:language]).flatten.compact.first,
-        :sudo => job.config.fetch(:sudo) { !repo_is_default_docker?(job) },
-        :dist => job.config[:dist],
-        :osx_image => job.config[:osx_image],
-        :percentage => lambda { |percentage| rand(100) < percentage },
+        slug: "#{job.repository.try(:owner_name)}/#{job.repository.try(:name)}",
+        owner: job.repository.try(:owner_name),
+        os: job.config[:os],
+        language: Array(job.config[:language]).flatten.compact.first,
+        sudo: job.config.fetch(:sudo) { !repo_is_default_docker?(job) },
+        dist: job.config[:dist],
+        osx_image: job.config[:osx_image],
+        percentage: lambda { |percentage| rand(100) < percentage },
+        services: PresenceDetectionArray.new(job.config[:services]),
       }
     end
 
@@ -94,6 +95,16 @@ class Job
     def repo_created_after_docker_cutoff?(repository)
       return true if repository.created_at.nil?
       repository.created_at > Time.parse(Travis.config.docker_default_queue_cutoff)
+    end
+
+    class PresenceDetectionArray
+      def initialize(arr)
+        @arr = Array(arr)
+      end
+
+      def ===(other)
+        !(@arr & other).empty?
+      end
     end
   end
 end
