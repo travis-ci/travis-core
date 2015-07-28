@@ -73,14 +73,22 @@ class Request < Travis::Model
     end
   end
 
-  def head_repo
+  def _payload
     @_payload ||= Hashr.new(self.payload)
-    @head_repo = @_payload.try(:pull_request).try(:head).try(:repo).try(:full_name)
+  end
+
+  def head_repo
+    @head_repo = _payload.try(:pull_request).try(:head).try(:repo).try(:full_name)
   end
 
   def base_repo
-    @_payload ||= Hashr.new(self.payload)
-    @base_repo = @_payload.try(:pull_request).try(:base).try(:repo).try(:full_name)
+    @base_repo = _payload.try(:pull_request).try(:base).try(:repo).try(:full_name)
+  end
+
+  alias pr_source_repo head_repo
+
+  def pr_source_branch
+    _payload.try(:pull_request).try(:head).try(:ref)
   end
 
   def config_url

@@ -71,6 +71,34 @@ describe Request do
     end
   end
 
+  describe '#pr_source_repo' do
+    it 'returns a branch name if available' do
+      request.payload = { 'pull_request' => { 'head' => { 'repo' => { 'full_name' => 'foo/bar' } } } }
+
+      request.pr_source_repo.should == 'foo/bar'
+    end
+
+    it 'returns nil if a branch name is not available' do
+      request.payload = { }
+
+      request.pr_source_repo.should be_nil
+    end
+  end
+
+  describe '#pr_source_branch' do
+    it 'returns a branch name if available' do
+      request.payload = { 'pull_request' => { 'head' => { 'ref' => 'foo' } } }
+
+      request.pr_source_branch.should == 'foo'
+    end
+
+    it 'returns nil if a branch name is not available' do
+      request.payload = { }
+
+      request.pr_source_branch.should be_nil
+    end
+  end
+
   describe 'same_repo_pull_request?' do
     it 'returns true if the base and head repos match' do
       request.payload = {
