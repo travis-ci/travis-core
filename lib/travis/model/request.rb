@@ -78,11 +78,15 @@ class Request < Travis::Model
   end
 
   def head_repo
-    _payload.try(:pull_request).try(:head).try(:repo).try(:full_name)
+    owner_name = _payload.try(:pull_request).try(:head).try(:repo).try(:owner).try(:login)
+    name = _payload.try(:pull_request).try(:head).try(:repo).try(:name)
+    [owner_name, name].join('/')
   end
 
   def base_repo
-    _payload.try(:pull_request).try(:base).try(:repo).try(:full_name)
+    owner_name = _payload.try(:pull_request).try(:base).try(:repo).try(:owner).try(:login)
+    name = _payload.try(:pull_request).try(:base).try(:repo).try(:name)
+    [owner_name, name].join('/')
   end
 
   alias pr_source_repo head_repo
