@@ -10,13 +10,14 @@ describe 'Job::Queue' do
 
   before do
     Travis.config.queues = [
-      { :queue => 'builds.rails', :slug => 'rails/rails' },
-      { :queue => 'builds.mac_osx', :os => 'osx' },
-      { :queue => 'builds.docker', :sudo => false },
-      { :queue => 'builds.cloudfoundry', :owner => 'cloudfoundry' },
-      { :queue => 'builds.clojure', :language => 'clojure' },
-      { :queue => 'builds.erlang', :language => 'erlang' },
-      { :queue => 'builds.openstack', :dist => 'trusty' },
+      { queue: 'builds.rails', slug: 'rails/rails' },
+      { queue: 'builds.mac_osx', os: 'osx' },
+      { queue: 'builds.docker', sudo: false },
+      { queue: 'builds.gce', services: %w(docker) },
+      { queue: 'builds.gce', dist: 'trusty' },
+      { queue: 'builds.cloudfoundry', owner: 'cloudfoundry' },
+      { queue: 'builds.clojure', language: 'clojure' },
+      { queue: 'builds.erlang', language: 'erlang' },
     ]
     Job::Queue.instance_variable_set(:@queues, nil)
     Job::Queue.instance_variable_set(:@default, nil)
@@ -110,6 +111,18 @@ describe 'Job::Queue' do
       end
     end
 
+    context 'when "services" value matches the given configuration hash' do
+      it 'returns the matching queue' do
+        job = stub('job', config: { services: %w(redis docker postgresql) }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'bosh', owner: stub, created_at: the_past))
+        Job::Queue.for(job).name.should == 'builds.gce'
+      end
+
+      it 'returns the matching queue when language is also given' do
+        job = stub('job', config: { language: 'clojure', services: %w(redis docker postgresql) }, repository: stub('travis-core', owner_name: 'travis-ci', name: 'bosh', owner: stub, created_at: the_past))
+        Job::Queue.for(job).name.should == 'builds.gce'
+      end
+    end
+
     context 'when "docker_default_queue" feature is active' do
       before do
         Travis::Features.stubs(:feature_active?).with(:docker_default_queue).returns(true)
@@ -192,7 +205,7 @@ describe 'Job::Queue' do
 
   describe 'Queue.queues' do
     it 'returns an array of Queues for the config hash' do
-      rails, os, docker, cloudfoundry, clojure, erlang = Job::Queue.send(:queues)
+      rails, _, docker, _, _, cloudfoundry, clojure, _ = Job::Queue.send(:queues)
 
       rails.name.should == 'builds.rails'
       rails.attrs[:slug].should == 'rails/rails'
@@ -250,7 +263,7 @@ describe 'Job::Queue' do
     end
 
     it 'returns true when dist matches' do
-      queue = queue('builds.openstack', { dist: 'trusty' })
+      queue = queue('builds.gce', { dist: 'trusty' })
       queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: { dist: 'trusty' })).should be_true
     end
 
@@ -267,6 +280,16 @@ describe 'Job::Queue' do
     it 'returns false when osx_image does not match' do
       queue = queue('builds.mac_stable', { osx_image: 'stable' })
       queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: { osx_image: 'beta' })).should be_false
+    end
+
+    it 'returns true when services match' do
+      queue = queue('builds.gce', { services: %w(docker) })
+      queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: { services: %w(redis docker postgresql) })).should be_true
+    end
+
+    it 'returns false when services do not match' do
+      queue = queue('builds.gce', { services: %w(docker) })
+      queue.matches?(stub('job', repository: stub('repository', owner_name: nil, name: nil, owner: nil), config: { services: %w(redis postgresql) })).should be_false
     end
 
     it 'returns false if no valid matchers are specified' do
