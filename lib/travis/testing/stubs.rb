@@ -105,7 +105,11 @@ module Travis
           tag_name: '',
           pull_request: false,
           pull_request_title: nil,
-          pull_request_number: nil
+          pull_request_number: nil,
+          head_repo: 'BanzaiMan/travis-core',
+          head_branch: 'feature-branch',
+          base_repo: 'travis-ci/travis-core',
+          base_branch: 'master',
         )
       end
 

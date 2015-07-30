@@ -71,31 +71,31 @@ describe Request do
     end
   end
 
-  describe '#pr_source_repo' do
+  describe '#head_repo' do
     it 'returns a branch name if available' do
-      request.payload = { 'pull_request' => { 'head' => { 'repo' => { 'full_name' => 'foo/bar' } } } }
+      request.payload = { 'pull_request' => { 'head' => { 'repo' => { 'name' => 'bar', 'owner' => { 'login' => 'foo' } } } } }
 
-      request.pr_source_repo.should == 'foo/bar'
+      request.head_repo.should == 'foo/bar'
     end
 
-    it 'returns nil if a branch name is not available' do
+    it 'returns nil if this is not a pull request' do
       request.payload = { }
 
-      request.pr_source_repo.should be_nil
+      request.head_repo.should be_nil
     end
   end
 
-  describe '#pr_source_branch' do
+  describe '#head_branch' do
     it 'returns a branch name if available' do
       request.payload = { 'pull_request' => { 'head' => { 'ref' => 'foo' } } }
 
-      request.pr_source_branch.should == 'foo'
+      request.head_branch.should == 'foo'
     end
 
-    it 'returns nil if a branch name is not available' do
+    it 'returns nil if this is not a pull request' do
       request.payload = { }
 
-      request.pr_source_branch.should be_nil
+      request.head_branch.should be_nil
     end
   end
 
@@ -103,8 +103,8 @@ describe Request do
     it 'returns true if the base and head repos match' do
       request.payload = {
         'pull_request' => {
-          'base' => { 'repo' => { 'full_name' => 'travis-ci/travis-core' } },
-          'head' => { 'repo' => { 'full_name' => 'travis-ci/travis-core' } }
+          'base' => { 'repo' => { 'name' => 'travis-core', 'owner' => { 'name' => 'travis-ci' } } },
+          'head' => { 'repo' => { 'name' => 'travis-core', 'owner' => { 'name' => 'travis-ci' } } }
         }
       }
 
@@ -114,8 +114,8 @@ describe Request do
     it 'returns false if the base and head repos do not match' do
       request.payload = {
         'pull_request' => {
-          'base' => { 'repo' => { 'full_name' => 'travis-ci/travis-core' } },
-          'head' => { 'repo' => { 'full_name' => 'evilmonkey/travis-core' } }
+          'base' => { 'repo' => { 'name' => 'ravis-core',  'owner' => { 'name' => 'travis-ci' } } },
+          'head' => { 'repo' => { 'name' => 'travis-core', 'owner' => { 'name' => 'travis-ci' } } }
         }
       }
 

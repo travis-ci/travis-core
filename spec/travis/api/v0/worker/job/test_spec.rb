@@ -29,7 +29,7 @@ describe Travis::Api::V0::Worker::Job::Test do
     end
 
     it 'contains the expected data' do
-      data.except('job', 'build', 'repository').should == {
+      data.except('job', 'build', 'repository', 'pull_request').should == {
         'type' => 'test',
         'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
         'queue' => 'builds.linux',
@@ -104,6 +104,10 @@ describe Travis::Api::V0::Worker::Job::Test do
       request.stubs(:tag_name).returns 'v1.2.3'
       data['job']['tag'].should == 'v1.2.3'
     end
+
+    it 'contains the no pull_request data' do
+      data['pull_request'].should == false
+    end
   end
 
   describe 'for a pull request' do
@@ -126,7 +130,7 @@ describe Travis::Api::V0::Worker::Job::Test do
     end
 
     it 'contains the expected data' do
-      data.except('job', 'build', 'repository').should == {
+      data.except('job', 'build', 'repository', 'pull_request').should == {
         'type' => 'test',
         'config' => { 'rvm' => '1.8.7', 'gemfile' => 'test/Gemfile.rails-2.3.x' },
         'queue' => 'builds.linux',
@@ -192,6 +196,16 @@ describe Travis::Api::V0::Worker::Job::Test do
         'description' => 'the repo description',
         'github_id' => 549743,
         'default_branch' => 'master'
+      }
+    end
+
+    it 'contains the expected pull_request data' do
+      data['pull_request'].should == {
+        'number' => 180,
+        'base_repo' => 'travis-ci/travis-core',
+        'base_branch' => 'master',
+        'head_repo' => 'BanzaiMan/travis-core',
+        'head_branch' => 'feature-branch',
       }
     end
   end

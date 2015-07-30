@@ -78,21 +78,25 @@ class Request < Travis::Model
   end
 
   def head_repo
+    return unless _payload.try(:pull_request)
     owner_name = _payload.try(:pull_request).try(:head).try(:repo).try(:owner).try(:login)
     name = _payload.try(:pull_request).try(:head).try(:repo).try(:name)
     [owner_name, name].join('/')
   end
 
   def base_repo
+    return unless _payload.try(:pull_request)
     owner_name = _payload.try(:pull_request).try(:base).try(:repo).try(:owner).try(:login)
     name = _payload.try(:pull_request).try(:base).try(:repo).try(:name)
     [owner_name, name].join('/')
   end
 
-  alias pr_source_repo head_repo
-
-  def pr_source_branch
+  def head_branch
     _payload.try(:pull_request).try(:head).try(:ref)
+  end
+
+  def base_branch
+    _payload.try(:pull_request).try(:base).try(:ref)
   end
 
   def config_url

@@ -120,11 +120,11 @@ describe Travis::Requests::Services::Receive, truncation: true do
       end
 
       it 'returns the expected pr_source_repo' do
-        request.pr_source_repo.should == 'travis-repos/test-project-1'
+        request.head_repo.should == 'travis-repos/test-project-1'
       end
 
       it 'returns the expected pr_source_branch' do
-        request.pr_source_branch.should == 'feature-branch'
+        request.head_branch.should == 'feature-branch'
       end
     end
 
@@ -141,11 +141,11 @@ describe Travis::Requests::Services::Receive, truncation: true do
       end
 
       it 'returns the expected pr_source_repo' do
-        request.pr_source_repo.should == 'rkh/test-project-1'
+        request.head_repo.should == 'rkh/test-project-1'
       end
 
       it 'returns the expected pr_source_branch' do
-        request.pr_source_branch.should == 'master'
+        request.head_branch.should == 'master'
       end
     end
   end
