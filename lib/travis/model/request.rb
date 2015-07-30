@@ -10,6 +10,7 @@ require 'travis/model/encrypted_column'
 class Request < Travis::Model
   require 'travis/model/request/approval'
   require 'travis/model/request/branches'
+  require 'travis/model/request/pull_request'
   require 'travis/model/request/states'
 
   include States, SimpleStates
@@ -45,58 +46,48 @@ class Request < Travis::Model
     read_attribute(:event_type) || 'push'
   end
 
+  def ref
+    payload['ref'] if payload
+  end
+
+  def branch_name
+    ref.scan(%r{refs/heads/(.*?)$}).flatten.first if ref
+  end
+
+  def tag_name
+    ref.scan(%r{refs/tags/(.*?)$}).flatten.first if ref
+  end
+
   def pull_request?
     event_type == 'pull_request'
   end
 
+  def pull_request
+    @pull_request ||= PullRequest.new(payload && payload['pull_request'])
+  end
+
   def pull_request_title
-    if pull_request? && payload
-      payload['pull_request'] && payload['pull_request']['title']
-    end
+    pull_request.title if pull_request?
   end
 
   def pull_request_number
-    if pull_request? && payload
-      payload['pull_request'] && payload['pull_request']['number']
-    end
-  end
-
-  def branch_name
-    if payload && payload['ref']
-      payload['ref'].scan(%r{refs/heads/(.*?)$}).flatten.first
-    end
-  end
-
-  def tag_name
-    if payload && payload['ref']
-      payload['ref'].scan(%r{refs/tags/(.*?)$}).flatten.first
-    end
-  end
-
-  def _payload
-    @_payload ||= Hashr.new(self.payload)
+    pull_request.number if pull_request?
   end
 
   def head_repo
-    return unless _payload.try(:pull_request)
-    owner_name = _payload.try(:pull_request).try(:head).try(:repo).try(:owner).try(:login)
-    name = _payload.try(:pull_request).try(:head).try(:repo).try(:name)
-    [owner_name, name].join('/')
+    pull_request.head_repo
   end
 
   def base_repo
-    return unless _payload.try(:pull_request)
-    owner_name = _payload.try(:pull_request).try(:base).try(:repo).try(:owner).try(:login)
-    name = _payload.try(:pull_request).try(:base).try(:repo).try(:name)
-    [owner_name, name].join('/')
+    pull_request.base_repo
   end
 
   def head_branch
-    _payload.try(:pull_request).try(:head).try(:ref)
+    pull_request.head_branch
   end
 
   def base_branch
-    _payload.try(:pull_request).try(:base).try(:ref)
+    pull_request.base_branch
   end
 
   def config_url

@@ -73,7 +73,7 @@ describe Request do
 
   describe '#head_repo' do
     it 'returns a branch name if available' do
-      request.payload = { 'pull_request' => { 'head' => { 'repo' => { 'name' => 'bar', 'owner' => { 'login' => 'foo' } } } } }
+      request.payload = { 'pull_request' => { 'head' => { 'repo' => { 'full_name' => 'foo/bar' } } } }
 
       request.head_repo.should == 'foo/bar'
     end
@@ -103,8 +103,8 @@ describe Request do
     it 'returns true if the base and head repos match' do
       request.payload = {
         'pull_request' => {
-          'base' => { 'repo' => { 'name' => 'travis-core', 'owner' => { 'name' => 'travis-ci' } } },
-          'head' => { 'repo' => { 'name' => 'travis-core', 'owner' => { 'name' => 'travis-ci' } } }
+          'base' => { 'repo' => { 'full_name' => 'travis-ci/travis-core' } },
+          'head' => { 'repo' => { 'full_name' => 'travis-ci/travis-core' } },
         }
       }
 
@@ -114,8 +114,8 @@ describe Request do
     it 'returns false if the base and head repos do not match' do
       request.payload = {
         'pull_request' => {
-          'base' => { 'repo' => { 'name' => 'ravis-core',  'owner' => { 'name' => 'travis-ci' } } },
-          'head' => { 'repo' => { 'name' => 'travis-core', 'owner' => { 'name' => 'travis-ci' } } }
+          'base' => { 'repo' => { 'full_name' => 'travis-ci/travis-core' } },
+          'head' => { 'repo' => { 'full_name' => 'BanzaiMan/travis-core' } },
         }
       }
 
