@@ -12,7 +12,6 @@ addons:
   postgresql: 9.3
   artifacts:
     paths:
-    - coverage/
     - log/
 
 cache:
