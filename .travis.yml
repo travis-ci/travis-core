@@ -15,7 +15,9 @@ addons:
     - coverage/
     - log/
 
-cache: bundler
+cache:
+  directories:
+    - vendor/bundle
 
 sudo: false
 
