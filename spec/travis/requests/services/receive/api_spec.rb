@@ -36,7 +36,7 @@ describe Travis::Requests::Services::Receive::Api do
         committer_email: 'dan@cerebris.com',
         author_name: 'Dan Gebhardt',
         author_email: 'dan@cerebris.com',
-        compare_url: nil
+        compare_url: 'https://api.github.com/repos/svenfuchs/gem-release/commits/b736eea14f5f2094f7c8f7ff902bfaa302c10cbd'
       }
     end
   end

@@ -50,7 +50,7 @@ module Travis
               committer_email: commit_data['commit']['committer']['email'],
               author_name:     commit_data['commit']['author']['name'],
               author_email:    commit_data['commit']['author']['email'],
-              compare_url:     nil
+              compare_url:     commit_data['_links']['self']['href']
             }
           end
 
