@@ -31,5 +31,9 @@ class Request
     def head_branch
       payload.head.ref.value
     end
+
+    def base_branch
+      payload.base.ref.value
+    end
   end
 end
