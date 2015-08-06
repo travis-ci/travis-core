@@ -71,12 +71,40 @@ describe Request do
     end
   end
 
+  describe '#head_repo' do
+    it 'returns a branch name if available' do
+      request.payload = { 'pull_request' => { 'head' => { 'repo' => { 'full_name' => 'foo/bar' } } } }
+
+      request.head_repo.should == 'foo/bar'
+    end
+
+    it 'returns nil if this is not a pull request' do
+      request.payload = { }
+
+      request.head_repo.should be_nil
+    end
+  end
+
+  describe '#head_branch' do
+    it 'returns a branch name if available' do
+      request.payload = { 'pull_request' => { 'head' => { 'ref' => 'foo' } } }
+
+      request.head_branch.should == 'foo'
+    end
+
+    it 'returns nil if this is not a pull request' do
+      request.payload = { }
+
+      request.head_branch.should be_nil
+    end
+  end
+
   describe 'same_repo_pull_request?' do
     it 'returns true if the base and head repos match' do
       request.payload = {
         'pull_request' => {
           'base' => { 'repo' => { 'full_name' => 'travis-ci/travis-core' } },
-          'head' => { 'repo' => { 'full_name' => 'travis-ci/travis-core' } }
+          'head' => { 'repo' => { 'full_name' => 'travis-ci/travis-core' } },
         }
       }
 
@@ -87,7 +115,7 @@ describe Request do
       request.payload = {
         'pull_request' => {
           'base' => { 'repo' => { 'full_name' => 'travis-ci/travis-core' } },
-          'head' => { 'repo' => { 'full_name' => 'evilmonkey/travis-core' } }
+          'head' => { 'repo' => { 'full_name' => 'BanzaiMan/travis-core' } },
         }
       }
 

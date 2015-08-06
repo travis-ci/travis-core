@@ -1,0 +1,18 @@
+{
+  "name": ".travis.yml",
+  "path": ".travis.yml",
+  "sha": "77478e165852b4c166022f5a83dbcace37414997",
+  "size": 1549,
+  "url": "https://api.github.com/repos/travis-repos/test-project-1/contents/.travis.yml?ref=master",
+  "html_url": "https://github.com/travis-repos/test-project-1/blob/master/.travis.yml",
+  "git_url": "https://api.github.com/repos/travis-repos/test-project-1/git/blobs/77478e165852b4c166022f5a83dbcace37414997",
+  "download_url": "https://raw.githubusercontent.com/travis-repos/test-project-1/master/.travis.yml",
+  "type": "file",
+  "content": "c3VkbzogZmFsc2UKYWRkb25zOgogIHNzaF9rbm93bl9ob3N0czoKICAtIGJp\ndGJ1Y2tldC5vcmcKICAtIHNhbW1pY2gubWVhdGJhbGxoYXQuY29tCmxhbmd1\nYWdlOiBydWJ5CmNhY2hlOiBidW5kbGVyCnJ2bToKLSAyLjIKbm90aWZpY2F0\naW9uczoKICBlbWFpbDogZmFsc2UKICBpcmM6CiAgICBjaGFubmVsczogaXJj\nLmZyZWVub2RlLm9yZyN0cmF2aXNzdGFnaW5nCiAgICB0ZW1wbGF0ZTogIltT\nVEFHSU5HXSAle3JlcG9zaXRvcnl9ICgle2NvbW1pdH0pICV7YnVpbGRfdXJs\nfSA6ICV7bWVzc2FnZX0gLSBBTQogICAgICBJIFJJR0hUPyIKICB3ZWJob29r\nczoKICAgIHVybHM6IGh0dHA6Ly9yZXF1ZXN0Yi5pbi94Nmc4aTJ4NgogICAg\nb25fc3RhcnQ6IGFsd2F5cwogICAgb25fZmluaXNoOiBhbHdheXMKICBoaXBj\naGF0OgogICAgc2VydmVyOgogICAgICBzZWN1cmU6IE85K25YVkhYajEzMUZK\nZlY3YTR0bHcrNHVPM0JmbXRheWxnS0NrVW5mQzl2VE44MlNXWnh1ZGZGdjZB\nVVY1MzNrL2Zxa0NTUTFMYnl3bGx2WnJINGlHbEFkNTZqVXdqbXQ2WURSam11\nb0g3MC94d2FpUGo5WGpsWjdFaHF5ZVhLREJKZVhIZkdLSnIySzRNUlBmTXZD\nWEUrNjZpcTVGTHJERlFBMkpIRlpSWT0KICAgIHJvb21zOgogICAgICBzZWN1\ncmU6IFovOVBGVFFuQ2pjQWVXWCtvVzRxMGlwVnRQbmZzYlpVU3gvWHhjZ2tG\nM2pwOHY2VURaTi9lQXoxSW5WSEU5VkdCcUI5anluU2ZpVTVmV0Vmd3pMcWFs\nb1Q1UXIxSzdpLzcrcDJxeHpRY0JPU1BSaVdINitTbFdUcG45N0xzQVBDMW5N\nMk9CeGdML2tTeThMNDN6b1p1SE8wdjZLOFBGdmlFbDU0WkNBcTJEbz0KaW5z\ndGFsbDoKLSBjdXJsIC12IC1zIGh0dHBzOi8vbm9kZWpzLm9yZy9kaXN0IC1v\nIC0gfHwgdHJ1ZQotIG52bSAtLXZlcnNpb24gfHwgdHJ1ZQotIG52bSBscy1y\nZW1vdGUgfHwgdHJ1ZQotIG52bSBpbnN0YWxsIDAuMTAuMzIgfHwgdHJ1ZQpz\nY3JpcHQ6Ci0gZGF0ZQotIHRyYXZpc19yZXRyeSAuL2Vycm9yX291dAotIGVj\naG8gIk5FWFQgU0NSSVBUISEiCi0gZXhwb3J0IEVYUE9SVEVEX0RVUklOR19T\nQ1JJUFQ9ImV4cG9ydGVkIGR1cmluZyBzY3JpcHQsIHdvcmtzIHdpdGggdHJh\ndmlzX2NtZCBzdGlsbCIKLSBlY2hvICRFWFBPUlRFRF9EVVJJTkdfU0NSSVBU\nCi0gZWNobyAkKGVjaG8gIiRFWFBPUlRFRF9EVVJJTkdfU0NSSVBULCBldmVu\nIHdpdGggYW4gZXh0cmEgc3Vic2hlbGwiKQotIGVjaG8gJChlY2hvICJyZWRp\ncmVjdGluZyBzdGRvdXQiID4gLi9mb28gJiYgY2F0IC4vZm9vKSA+IC4vYmFy\nICYmIGNhdCAuL2JhcgpiZWZvcmVfc2NyaXB0OgotIGVjaG8gJ0JlZm9yZSBz\nY3JpcHQhIScKLSBzdWRvIHNlcnZpY2UgcG9zdGdyZXNxbCByZXN0YXJ0CmFm\ndGVyX3NjcmlwdDoKLSBlY2hvICdBZnRlciBzY3JpcHQnCmFmdGVyX3N1Y2Nl\nc3M6Ci0gZWNobyAnQWZ0ZXIgc3VjY2VzcycKYWZ0ZXJfZmFpbHVyZToKLSBl\nY2hvICdBZnRlciBmYWlsdXJlJwphZnRlcl90ZXN0OgotIGVjaG8gJ1l1cGkn\nCi0gZWNobyAnU3BsZW5kaWQnCi0gcHJpbnRlbnYKZW52OgogIGdsb2JhbDoK\nICAtIEdMT0JBTF9WQVI9Zm9vCg==\n",
+  "encoding": "base64",
+  "_links": {
+    "self": "https://api.github.com/repos/travis-repos/test-project-1/contents/.travis.yml?ref=master",
+    "git": "https://api.github.com/repos/travis-repos/test-project-1/git/blobs/77478e165852b4c166022f5a83dbcace37414997",
+    "html": "https://github.com/travis-repos/test-project-1/blob/master/.travis.yml"
+  }
+}

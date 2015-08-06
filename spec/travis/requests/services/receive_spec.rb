@@ -103,6 +103,54 @@ describe Travis::Requests::Services::Receive, truncation: true do
         request.comments_url.should == 'https://api.github.com/repos/travis-repos/test-project-1/issues/1/comments'
       end
     end
+
+    describe 'for a branch on the same repository' do
+      let(:params)  { { :event_type => 'pull_request', :payload => payload } }
+      let(:payload) { JSON.parse(GITHUB_PAYLOADS['pull-request']).tap { |payload|
+        payload['pull_request']['head']['repo']['full_name'] = 'travis-repos/test-project-1'
+        payload['pull_request']['head']['ref'] = 'feature-branch'
+      } }
+      let(:owner)   { Factory(:org, login: 'travis-repos', github_id: 864347) }
+      let!(:repo)   { Factory(:repository, owner: owner, owner_name: owner.login, name: 'test-project-1', github_id: 1615549) }
+
+      it_should_behave_like 'creates a request'
+
+      it 'returns the expected base_repo' do
+        request.base_repo.should == 'travis-repos/test-project-1'
+      end
+
+      it 'returns the expected head_repo' do
+        request.head_repo.should == 'travis-repos/test-project-1'
+      end
+
+      it 'returns the expected head_branch' do
+        request.head_branch.should == 'feature-branch'
+      end
+    end
+
+    describe 'for a branch on a foreign repository' do
+      let(:params)  { { :event_type => 'pull_request', :payload => payload } }
+      let(:payload) { JSON.parse(GITHUB_PAYLOADS['pull-request']).tap { |payload|
+        payload['pull_request']['head']['repo']['full_name'] = 'rkh/test-project-1'
+        payload['pull_request']['head']['ref'] = 'master'
+      } }
+      let(:owner)   { Factory(:org, login: 'travis-repos', github_id: 864347) }
+      let!(:repo)   { Factory(:repository, owner: owner, owner_name: owner.login, name: 'test-project-1', github_id: 1615549) }
+
+      it_should_behave_like 'creates a request'
+
+      it 'returns the expected base_repo' do
+        request.base_repo.should == 'travis-repos/test-project-1'
+      end
+
+      it 'returns the expected head_repo' do
+        request.head_repo.should == 'rkh/test-project-1'
+      end
+
+      it 'returns the expected head_branch' do
+        request.head_branch.should == 'master'
+      end
+    end
   end
 
   describe 'an API request' do

@@ -14,6 +14,7 @@ module Travis
                 'job' => job_data,
                 'source' => build_data,
                 'repository' => repository_data,
+                'pull_request' => commit.pull_request? ? pull_request_data : false,
                 'config' => job.decrypted_config,
                 'queue' => job.queue,
                 'uuid' => Travis.uuid,
@@ -62,6 +63,16 @@ module Travis
                 'last_build_state' => repository.last_build_state.to_s,
                 'description' => repository.description,
                 'default_branch' => repository.default_branch
+              }
+            end
+
+            def pull_request_data
+              {
+                'number' => commit.pull_request_number,
+                'head_repo' => request.head_repo,
+                'base_repo' => request.base_repo,
+                'head_branch' => request.head_branch,
+                'base_branch' => request.base_branch
               }
             end
 
