@@ -4,10 +4,11 @@ require "travis/travis_yml_stats"
 describe Travis::TravisYmlStats do
   let(:publisher) { mock("keen-publisher") }
   subject { described_class.store_stats(request, publisher) }
+  let(:config) { {} }
 
   let(:request) do
     stub({
-      config: {},
+      config: config,
       payload: {
         "repository" => {}
       },
