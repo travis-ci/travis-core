@@ -51,6 +51,7 @@ module Travis
       set_uses_apt_get
       set_dist
       set_group
+      set_deployment_provider_count
 
       @publisher.perform_async(keen_payload)
     end
@@ -62,7 +63,11 @@ module Travis
     def set(path, value)
       path = Array(path)
       hsh = keen_payload
+      # drop the last element from path
+      # we are looking at a 2-element array
+      # e.g., [:language_version, 'ruby']
       path[0..-2].each do |key|
+        # []
         hsh[key.to_sym] ||= {}
         hsh = hsh[key.to_sym]
       end
@@ -112,6 +117,15 @@ module Travis
 
     def set_group
       set :group_name, group_name
+    end
+
+    def set_deployment_provider_count
+      deploy = config["deploy"]
+      # Hash#to_a is not what we want here
+      deployments = deploy.is_a?(Hash) ? [deploy] : Array(deploy)
+      deployments.group_by {|deployment| deployment["provider"] }.each do |provider, definition|
+        set [:deployment, :provider, provider], definition.size
+      end
     end
 
     def config

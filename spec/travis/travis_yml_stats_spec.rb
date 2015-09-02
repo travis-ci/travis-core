@@ -269,4 +269,31 @@ describe Travis::TravisYmlStats do
       subject
     end
   end
+
+  context "when payload contains a single deployment provider" do
+    let(:config) { { "deploy" => { "provider" => "s3" } } }
+
+    it "reports deployment count correctly" do
+      event_should_contain deployment: { provider: { s3: 1 } }
+      subject
+    end
+  end
+
+  context "when payload contains multiple deployment providers" do
+    let(:config) { { "deploy" => [ { "provider" => "s3" }, { "provider" => "npm" } ] } }
+
+    it "reports deployment count correctly" do
+      event_should_contain deployment: { provider: { s3: 1, npm: 1 } }
+      subject
+    end
+  end
+
+  context "when payload contains multiple deployment providers of the same type" do
+    let(:config) { { "deploy" => [ { "provider" => "s3" }, { "provider" => "s3" } ] } }
+
+    it "reports deployment count correctly" do
+      event_should_contain deployment: { provider: { s3: 2 } }
+      subject
+    end
+  end
 end
