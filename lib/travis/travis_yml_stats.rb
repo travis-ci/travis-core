@@ -123,9 +123,7 @@ module Travis
       deploy = config["deploy"]
       # Hash#to_a is not what we want here
       deployments = deploy.is_a?(Hash) ? [deploy] : Array(deploy)
-      deployments.group_by {|deployment| deployment["provider"] }.each do |provider, definition|
-        set [:deployment, :provider, provider], definition.size
-      end
+      set [:deployment, :provider], deployments.map { |deployment| deployment["provider"] }
     end
 
     def config

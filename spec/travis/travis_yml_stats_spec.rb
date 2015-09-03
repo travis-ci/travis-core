@@ -274,7 +274,7 @@ describe Travis::TravisYmlStats do
     let(:config) { { "deploy" => { "provider" => "s3" } } }
 
     it "reports deployment count correctly" do
-      event_should_contain deployment: { provider: { s3: 1 } }
+      event_should_contain deployment: { provider: ["s3"] }
       subject
     end
   end
@@ -283,7 +283,7 @@ describe Travis::TravisYmlStats do
     let(:config) { { "deploy" => [ { "provider" => "s3" }, { "provider" => "npm" } ] } }
 
     it "reports deployment count correctly" do
-      event_should_contain deployment: { provider: { s3: 1, npm: 1 } }
+      event_should_contain deployment: { provider: ["s3", "npm"] }
       subject
     end
   end
@@ -292,7 +292,7 @@ describe Travis::TravisYmlStats do
     let(:config) { { "deploy" => [ { "provider" => "s3" }, { "provider" => "s3" } ] } }
 
     it "reports deployment count correctly" do
-      event_should_contain deployment: { provider: { s3: 2 } }
+      event_should_contain deployment: { provider: ["s3", "s3"] }
       subject
     end
   end
