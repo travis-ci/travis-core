@@ -4,10 +4,11 @@ require "travis/travis_yml_stats"
 describe Travis::TravisYmlStats do
   let(:publisher) { mock("keen-publisher") }
   subject { described_class.store_stats(request, publisher) }
+  let(:config) { {} }
 
   let(:request) do
     stub({
-      config: {},
+      config: config,
       payload: {
         "repository" => {}
       },
@@ -23,6 +24,10 @@ describe Travis::TravisYmlStats do
 
   def event_should_contain(opts)
     publisher.expects(:perform_async).with(has_entries(opts))
+  end
+
+  def event_should_not_contain(opts)
+    publisher.expects(:perform_async).with(Not(has_entries(opts)))
   end
 
   describe ".travis.yml language key" do
@@ -265,6 +270,40 @@ describe Travis::TravisYmlStats do
     it "sets the group_name key to 'dev'" do
       event_should_contain group_name: 'dev'
 
+      subject
+    end
+  end
+
+  context "when payload does not contain deployment provider" do
+    it "reports deployment count correctly" do
+      event_should_not_contain deployment: { provider: [] }
+      subject
+    end
+  end
+
+  context "when payload contains a single deployment provider" do
+    let(:config) { { "deploy" => { "provider" => "s3" } } }
+
+    it "reports deployment count correctly" do
+      event_should_contain deployment: { provider: ["s3"] }
+      subject
+    end
+  end
+
+  context "when payload contains multiple deployment providers" do
+    let(:config) { { "deploy" => [ { "provider" => "s3" }, { "provider" => "npm" } ] } }
+
+    it "reports deployment count correctly" do
+      event_should_contain deployment: { provider: ["s3", "npm"] }
+      subject
+    end
+  end
+
+  context "when payload contains multiple deployment providers of the same type" do
+    let(:config) { { "deploy" => [ { "provider" => "s3" }, { "provider" => "s3" } ] } }
+
+    it "reports deployment count correctly" do
+      event_should_contain deployment: { provider: ["s3", "s3"] }
       subject
     end
   end

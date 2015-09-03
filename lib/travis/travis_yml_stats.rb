@@ -51,6 +51,7 @@ module Travis
       set_uses_apt_get
       set_dist
       set_group
+      set_deployment_provider_count
 
       @publisher.perform_async(keen_payload)
     end
@@ -112,6 +113,13 @@ module Travis
 
     def set_group
       set :group_name, group_name
+    end
+
+    def set_deployment_provider_count
+      deploy = config["deploy"] || return
+      # Hash#to_a is not what we want here
+      deployments = deploy.is_a?(Hash) ? [deploy] : Array(deploy)
+      set [:deployment, :provider], deployments.map { |deployment| deployment["provider"] }
     end
 
     def config
