@@ -26,6 +26,10 @@ describe Travis::TravisYmlStats do
     publisher.expects(:perform_async).with(has_entries(opts))
   end
 
+  def event_should_not_contain(opts)
+    publisher.expects(:perform_async).with(Not(has_entries(opts)))
+  end
+
   describe ".travis.yml language key" do
     context "when `language: ruby'" do
       before do
@@ -266,6 +270,13 @@ describe Travis::TravisYmlStats do
     it "sets the group_name key to 'dev'" do
       event_should_contain group_name: 'dev'
 
+      subject
+    end
+  end
+
+  context "when payload does not contain deployment provider" do
+    it "reports deployment count correctly" do
+      event_should_not_contain deployment: { provider: [] }
       subject
     end
   end

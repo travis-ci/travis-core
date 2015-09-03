@@ -120,7 +120,7 @@ module Travis
     end
 
     def set_deployment_provider_count
-      deploy = config["deploy"]
+      deploy = config["deploy"] || return
       # Hash#to_a is not what we want here
       deployments = deploy.is_a?(Hash) ? [deploy] : Array(deploy)
       set [:deployment, :provider], deployments.map { |deployment| deployment["provider"] }
