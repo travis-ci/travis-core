@@ -63,11 +63,7 @@ module Travis
     def set(path, value)
       path = Array(path)
       hsh = keen_payload
-      # drop the last element from path
-      # we are looking at a 2-element array
-      # e.g., [:language_version, 'ruby']
       path[0..-2].each do |key|
-        # []
         hsh[key.to_sym] ||= {}
         hsh = hsh[key.to_sym]
       end
