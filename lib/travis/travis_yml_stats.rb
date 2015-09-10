@@ -12,9 +12,13 @@ module Travis
 
       sidekiq_options queue: :keen_events
 
-      def perform(payload)
+      def perform(payload, collection = :requests)
         if defined?(Keen) && ENV["KEEN_PROJECT_ID"]
-          Keen.publish(:requests, payload)
+          if payload.is_a? Array
+            Keen.publish_batch({collection => payload})
+          else
+            Keen.publish(collection, payload)
+          end
         end
       end
     end
@@ -41,6 +45,7 @@ module Travis
       @request = request
       @publisher = publisher
       @keen_payload = {}
+      @keen_payload_deployment = []
     end
 
     def store_stats
@@ -53,16 +58,18 @@ module Travis
       set_group
       set_deployment_provider_count
 
-      @publisher.perform_async(keen_payload)
+      @publisher.perform_async(keen_payload, :requests)
+      @publisher.perform_async(keen_payload_deployment, :deployments)
     end
 
     private
 
     attr_reader :request, :keen_payload
+    attr_accessor :keen_payload_deployment
 
-    def set(path, value)
+    def set(path, value, collection = keen_payload)
       path = Array(path)
-      hsh = keen_payload
+      hsh = collection
       path[0..-2].each do |key|
         hsh[key.to_sym] ||= {}
         hsh = hsh[key.to_sym]
@@ -119,7 +126,9 @@ module Travis
       deploy = config["deploy"] || return
       # Hash#to_a is not what we want here
       deployments = deploy.is_a?(Hash) ? [deploy] : Array(deploy)
-      set [:deployment, :provider], deployments.map { |deployment| deployment["provider"] }
+      deployments.map {|d| d["provider"] }.uniq.each do |provider|
+        keen_payload_deployment << { provider: provider, repository_id: request.repository_id }
+      end
     end
 
     def config
