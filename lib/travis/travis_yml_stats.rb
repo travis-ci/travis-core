@@ -12,13 +12,9 @@ module Travis
 
       sidekiq_options queue: :keen_events
 
-      def perform(payload, collection = :requests)
+      def perform(payload, deployment_payload)
         if defined?(Keen) && ENV["KEEN_PROJECT_ID"]
-          if payload.is_a? Array
-            Keen.publish_batch({collection => payload})
-          else
-            Keen.publish(collection, payload)
-          end
+          Keen.publish_batch({:requests => [payload], :deployments => deployment_payload})
         end
       end
     end
@@ -58,8 +54,7 @@ module Travis
       set_group
       set_deployment_provider_count
 
-      @publisher.perform_async(keen_payload, :requests)
-      @publisher.perform_async(keen_payload_deployment, :deployments)
+      @publisher.perform_async(keen_payload, keen_payload_deployment)
     end
 
     private

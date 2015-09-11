@@ -22,18 +22,12 @@ describe Travis::TravisYmlStats do
     })
   end
 
-  def ignore_collection(collection)
-    publisher.expects(:perform_async).with(anything, collection)
-  end
-
   def requests_should_contain(opts)
-    ignore_collection(:deployments)
-    publisher.expects(:perform_async).with(has_entries(opts), :requests)
+    publisher.expects(:perform_async).with(has_entries(opts), anything)
   end
 
   def deployments_should_contain(items)
-    ignore_collection(:requests)
-    publisher.expects(:perform_async).with(all_of(items.each {|i| includes(i)}), :deployments)
+    publisher.expects(:perform_async).with(anything, all_of(items.each {|i| includes(i)}))
   end
 
   describe ".travis.yml language key" do
