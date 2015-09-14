@@ -16,6 +16,7 @@ module Travis
         if defined?(Keen) && ENV["KEEN_PROJECT_ID"]
           payload = { :requests => [payload] }
           payload[:deployments] = deployment_payload if deployment_payload.size > 0
+          Keen.publish_batch({:requests => [payload], :deployments => deployment_payload})
         end
       end
     end
