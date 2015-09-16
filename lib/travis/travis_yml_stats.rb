@@ -12,10 +12,11 @@ module Travis
 
       sidekiq_options queue: :keen_events
 
-      def perform(payload, deployment_payload)
+      def perform(payload, deployment_payload, notification_payload)
         if defined?(Keen) && ENV["KEEN_PROJECT_ID"]
           payload = { :requests => [payload] }
           payload[:deployments] = deployment_payload if deployment_payload.size > 0
+          payload[:notifications] = notification_payload if notification_payload.size > 0
           Keen.publish_batch(payload)
         end
       end
@@ -44,6 +45,7 @@ module Travis
       @publisher = publisher
       @keen_payload = {}
       @keen_payload_deployment = []
+      @keen_payload_notification = []
     end
 
     def store_stats
@@ -55,14 +57,16 @@ module Travis
       set_dist
       set_group
       set_deployment_provider_count
+      set_notification
 
-      @publisher.perform_async(keen_payload, keen_payload_deployment)
+      @publisher.perform_async(keen_payload, keen_payload_deployment, keen_payload_notification)
     end
 
     private
 
     attr_reader :request, :keen_payload
     attr_accessor :keen_payload_deployment
+    attr_accessor :keen_payload_notification
 
     def set(path, value, collection = keen_payload)
       path = Array(path)
@@ -125,6 +129,13 @@ module Travis
       deployments = deploy.is_a?(Hash) ? [deploy] : Array(deploy)
       deployments.map {|d| d["provider"] }.uniq.each do |provider|
         keen_payload_deployment << { provider: provider, repository_id: request.repository_id }
+      end
+    end
+
+    def set_notification
+      notifications = config["notifications"] || return
+      notifications.keys.each do |notifier|
+        keen_payload_notification << { notifier: notifier, repository_id: request.repository_id }
       end
     end
 
