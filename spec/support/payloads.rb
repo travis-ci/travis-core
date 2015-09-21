@@ -386,6 +386,7 @@ GITHUB_PAYLOADS = {
             "login": "travis-repos"
           },
           "name": "test-project-1",
+          "full_name": "travis-repos/test-project-1",
           "watchers": 8,
           "html_url": "https://github.com/travis-repos/test-project-1",
           "id": 1615549,
@@ -433,6 +434,7 @@ GITHUB_PAYLOADS = {
             "login": "rkh"
           },
           "name": "test-project-1",
+          "full_name": "rkh/test-project-1",
           "watchers": 1,
           "html_url": "https://github.com/rkh/test-project-1",
           "id": 3431064,
