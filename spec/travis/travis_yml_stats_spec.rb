@@ -23,11 +23,15 @@ describe Travis::TravisYmlStats do
   end
 
   def requests_should_contain(opts)
-    publisher.expects(:perform_async).with(has_entries(opts), anything)
+    publisher.expects(:perform_async).with(has_entries(opts), anything, anything)
   end
 
   def deployments_should_contain(items)
-    publisher.expects(:perform_async).with(anything, all_of(items.each {|i| includes(i)}))
+    publisher.expects(:perform_async).with(anything, all_of(items.each {|i| includes(i)}), anything)
+  end
+
+  def notifications_should_contain(items)
+    publisher.expects(:perform_async).with(anything, anything, all_of(items.each {|i| includes(i)}))
   end
 
   describe ".travis.yml language key" do
@@ -297,6 +301,15 @@ describe Travis::TravisYmlStats do
 
     it "reports deployment count correctly" do
       deployments_should_contain( [{:provider => 's3', :repository_id => 123}] )
+      subject
+    end
+  end
+
+  context "when payload contains notifications" do
+    let(:config) { { "notifications" => { "irc" => "chat.freenode.net#travis" } } }
+
+    it "reports deployment count correctly" do
+      notifications_should_contain( [{:notifier => 'irc', :repository_id => 123}] )
       subject
     end
   end
