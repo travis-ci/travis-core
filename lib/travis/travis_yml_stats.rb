@@ -130,6 +130,8 @@ module Travis
       deployments.map {|d| d["provider"] }.uniq.each do |provider|
         keen_payload_deployment << { provider: provider, repository_id: request.repository_id }
       end
+    rescue
+      nil
     end
 
     def set_notification
@@ -137,6 +139,8 @@ module Travis
       notifications.keys.each do |notifier|
         keen_payload_notification << { notifier: notifier, repository_id: request.repository_id }
       end
+    rescue
+      nil
     end
 
     def config
