@@ -15,8 +15,8 @@ module Travis
       def perform(payload, deployment_payload = nil, notification_payload = nil)
         if defined?(Keen) && ENV["KEEN_PROJECT_ID"]
           payload = { :requests => [payload] }
-          payload[:deployments] = deployment_payload if deployment_payload.size > 0
-          payload[:notifications] = notification_payload if notification_payload.size > 0
+          payload[:deployments] = deployment_payload if deployment_payload.to_a.size > 0
+          payload[:notifications] = notification_payload if notification_payload.to_a.size > 0
           Keen.publish_batch(payload)
         end
       end
