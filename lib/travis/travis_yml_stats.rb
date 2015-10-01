@@ -12,7 +12,7 @@ module Travis
 
       sidekiq_options queue: :keen_events
 
-      def perform(payload, deployment_payload, notification_payload)
+      def perform(payload, deployment_payload = nil, notification_payload = nil)
         if defined?(Keen) && ENV["KEEN_PROJECT_ID"]
           payload = { :requests => [payload] }
           payload[:deployments] = deployment_payload if deployment_payload.size > 0
