@@ -12,7 +12,7 @@ module Travis
 
       sidekiq_options queue: :keen_events
 
-      def perform(payload, deployment_payload, notification_payload)
+      def perform(payload, deployment_payload = nil, notification_payload = nil)
         if defined?(Keen) && ENV["KEEN_PROJECT_ID"]
           payload = { :requests => [payload] }
           payload[:deployments] = deployment_payload if deployment_payload.size > 0
@@ -128,15 +128,19 @@ module Travis
       # Hash#to_a is not what we want here
       deployments = deploy.is_a?(Hash) ? [deploy] : Array(deploy)
       deployments.map {|d| d["provider"] }.uniq.each do |provider|
-        keen_payload_deployment << { provider: provider, repository_id: request.repository_id }
+        keen_payload_deployment << { provider: provider.downcase, repository_id: request.repository_id }
       end
+    rescue
+      nil
     end
 
     def set_notification
       notifications = config["notifications"] || return
       notifications.keys.each do |notifier|
-        keen_payload_notification << { notifier: notifier, repository_id: request.repository_id }
+        keen_payload_notification << { notifier: notifier.downcase, repository_id: request.repository_id }
       end
+    rescue
+      nil
     end
 
     def config
