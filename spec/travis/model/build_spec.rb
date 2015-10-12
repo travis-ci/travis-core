@@ -192,6 +192,12 @@ describe Build do
         Factory(:build).reload.previous_state.should == 'failed'
       end
     end
+
+    it "updates the last_build on the build's branch" do
+      build = FactoryGirl.create(:build)
+      branch = Branch.where(repository_id: build.repository_id, name: build.branch).first
+      branch.last_build.should == build
+    end
   end
 
   describe 'instance methods' do
