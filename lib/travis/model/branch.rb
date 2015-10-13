@@ -11,6 +11,7 @@ class Branch < Travis::Model
 
     if branch.new_record? or force_update
       branch.last_build = repository.last_build_on(branch.name)
+      Travis.logger.info 'Updating last_build to %s on branch %s, repo %s' % [branch.last_build.try(:id), branch.try(:name), repository.respond_to?(:slug) ? repository.slug : repository.id]
       branch.save!
     end
 
