@@ -47,7 +47,7 @@ class Build < Travis::Model
   require 'travis/model/build/states'
   require 'travis/model/env_helpers'
 
-  include Matrix, States, SimpleStates
+  include Matrix, States, SimpleStates, UpdateBranch
 
   belongs_to :commit
   belongs_to :request
@@ -154,6 +154,7 @@ class Build < Travis::Model
     unless cached_matrix_ids
       update_column(:cached_matrix_ids, to_postgres_array(matrix_ids))
     end
+    update_branch
   end
 
   # AR 3.2 does not handle pg arrays and the plugins supporting them

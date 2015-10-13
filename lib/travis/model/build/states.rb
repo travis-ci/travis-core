@@ -16,7 +16,7 @@ class Build
   #    attributes to its repository and notify event listeners.
   module States
     extend ActiveSupport::Concern
-    include Denormalize, UpdateBranch, Travis::Event
+    include Denormalize, Travis::Event
 
     included do
       include SimpleStates
@@ -28,7 +28,7 @@ class Build
       event :finish,  to: :finished, if: :should_finish?
       event :reset,   to: :created
       event :cancel,  to: :canceled, if: :cancelable?
-      event :all, after: [:denormalize, :update_branch, :notify]
+      event :all, after: [:denormalize, :notify]
     end
 
     def should_finish?

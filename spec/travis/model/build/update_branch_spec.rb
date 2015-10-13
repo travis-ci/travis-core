@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Build, 'denormalization' do
+describe Build, 'update_branch' do
   include Support::ActiveRecord
 
   let(:build) { Factory(:build, state: :started, duration: 30, branch: 'master') }
@@ -10,7 +10,7 @@ describe Build, 'denormalization' do
       Branch.fetch(build.repository, 'master').destroy
       Branch.where(repository_id: build.repository_id, name: build.branch).should_not be_any
 
-      build.update_branch(:start)
+      build.update_branch
 
       branch = Branch.where(repository_id: build.repository_id, name: build.branch).first
       branch.should_not be_nil
@@ -20,7 +20,7 @@ describe Build, 'denormalization' do
     it 'updates branch if branch is exists' do
       Branch.fetch(build.repository, 'master')
 
-      build.update_branch(:start)
+      build.update_branch
 
       branch = Branch.fetch(build.repository, 'master')
       branch.last_build.should be == build
@@ -32,7 +32,7 @@ describe Build, 'denormalization' do
       Branch.fetch(build.repository, 'master').destroy
       Branch.where(repository_id: build.repository_id, name: build.branch).should_not be_any
 
-      build.update_branch(:finished)
+      build.update_branch
 
       branch = Branch.where(repository_id: build.repository_id, name: build.branch).first
       branch.should_not be_nil
@@ -42,7 +42,7 @@ describe Build, 'denormalization' do
     it 'updates branch if branch is exists' do
       Branch.fetch(build.repository, 'master')
 
-      build.update_branch(:finished)
+      build.update_branch
 
       branch = Branch.fetch(build.repository, 'master')
       branch.last_build.should be == build
