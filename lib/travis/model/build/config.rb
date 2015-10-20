@@ -14,6 +14,7 @@ class Build
 
     ENV_KEYS = [
       :compiler,
+      :crystal,
       :csharp,
       :d,
       :dart,
@@ -49,6 +50,7 @@ class Build
       'c++'         => [:compiler],
       'clojure'     => [:lein, :jdk],
       'cpp'         => [:compiler],
+      'crystal'     => [:crystal],
       'csharp'      => [:csharp, :mono],
       'd'           => [:d],
       'dart'        => [:dart],
