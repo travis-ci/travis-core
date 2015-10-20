@@ -30,7 +30,7 @@ class Job
 
     class << self
       def for(job)
-        queues.detect(lambda { default }) { |queue| queue.matches?(job) }
+        queues.find(-> { ifnone }) { |queue| queue.matches?(job) }
       end
 
       def queues
@@ -47,6 +47,13 @@ class Job
         config.values_at(*CUSTOM_STAGES).compact.flatten.any? do |s|
           SUDO_DETECTION_REGEXP =~ s.to_s
         end
+      end
+
+      private
+
+      def ifnone
+        Travis.logger.info("job matches queue #{default.name} via ifnone proc")
+        default
       end
     end
 
@@ -67,7 +74,16 @@ class Job
 
       known_matchers = @attrs.keys & matchers.keys
 
-      known_matchers.length > 0 && known_matchers.all? { |key| matchers[key.to_sym] === @attrs[key] }
+      all_match = known_matchers.all? do |key|
+        matchers[key.to_sym] === @attrs[key]
+      end
+
+      if known_matchers.length > 0 && all_match
+        logger.info("job matches queue #{name} via matchers #{matchers.inspect}")
+        return true
+      end
+
+      false
     end
 
     private
@@ -80,9 +96,10 @@ class Job
         language: Array(job.config[:language]).flatten.compact.first,
         sudo: job.config.fetch(:sudo) { !repo_is_default_docker?(job) },
         dist: job.config[:dist],
+        group: job.config[:group],
         osx_image: job.config[:osx_image],
         percentage: lambda { |percentage| rand(100) < percentage },
-        services: PresenceDetectionArray.new(job.config[:services]),
+        services: lambda { |other| !(Array(job.config[:services]) & other).empty? },
       }
     end
 
@@ -97,14 +114,8 @@ class Job
       repository.created_at > Time.parse(Travis.config.docker_default_queue_cutoff)
     end
 
-    class PresenceDetectionArray
-      def initialize(arr)
-        @arr = Array(arr)
-      end
-
-      def ===(other)
-        !(@arr & other).empty?
-      end
+    def logger
+      Travis.logger
     end
   end
 end

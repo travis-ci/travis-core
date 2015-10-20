@@ -13,7 +13,7 @@ module Travis
   class S3
     class << self
       def setup
-        AWS.config(Travis.config.s3.to_hash.slice(:access_key_id, :secret_access_key))
+        AWS.config(Travis.config.s3.to_h.slice(:access_key_id, :secret_access_key))
       end
     end
 
@@ -121,7 +121,7 @@ module Travis
           end
 
           def http
-            Faraday.new(ssl: Travis.config.ssl.compact) do |f|
+            Faraday.new(ssl: Travis.config.ssl.to_h.compact) do |f|
               f.request :url_encoded
               f.adapter :net_http
             end

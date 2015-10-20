@@ -65,11 +65,11 @@ module Travis
                 message:         head_commit['message'],
                 branch:          pull_request['base']['ref'],
                 ref:             merge_commit['ref'],
-                committed_at:    head_commit['committer']['date'],
-                committer_name:  head_commit['committer']['name'],
-                committer_email: head_commit['committer']['email'],
-                author_name:     head_commit['author']['name'],
-                author_email:    head_commit['author']['email'],
+                committed_at:    committer['date'],
+                committer_name:  committer['name'],
+                committer_email: committer['email'],
+                author_name:     author['name'],
+                author_email:    author['email'],
                 compare_url:     pull_request['_links']['html']['href']
               }
             end
@@ -101,6 +101,14 @@ module Travis
 
           def repo
             event['repository']
+          end
+
+          def committer
+            head_commit.fetch('committer', {})
+          end
+
+          def author
+            head_commit.fetch('author', {})
           end
         end
       end

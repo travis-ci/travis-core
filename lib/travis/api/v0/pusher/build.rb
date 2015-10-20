@@ -47,7 +47,6 @@ module Travis
 
                 # this is a legacy thing, we should think about removing it
                 'commit' => commit.commit,
-                'commit_id' => commit.id,
                 'branch' => commit.branch,
                 'message' => commit.message,
                 'compare_url' => commit.compare_url,
@@ -87,10 +86,23 @@ module Travis
                 'last_build_language' => nil,
                 'last_build_started_at' => format_date(repository.last_build_started_at),
                 'last_build_finished_at' => format_date(repository.last_build_finished_at),
-                'github_language' => repository.github_language
+                'github_language' => repository.github_language,
+                'default_branch' => {
+                  'name' => repository.default_branch,
+                  'last_build_id' => last_build_on_default_branch_id(repository)
+                },
+                'active' => repository.active,
+                'current_build_id' => repository.current_build_id
               }
             end
 
+            def last_build_on_default_branch_id(repository)
+              default_branch = Branch.where(repository_id: repository.id, name: repository.default_branch).first
+
+              if default_branch
+                default_branch.last_build_id
+              end
+            end
         end
       end
     end

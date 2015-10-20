@@ -221,12 +221,22 @@ describe Build do
     describe 'config' do
       it 'defaults to a hash with language and os set' do
         build = Build.new(repository: Repository.new(owner: User.new))
-        build.config.should == { language: 'ruby', os: 'linux' }
+        build.config.should == { language: 'ruby', group: 'stable', dist: 'precise', os: 'linux' }
       end
 
       it 'deep_symbolizes keys on write' do
         build = Factory(:build, config: { 'foo' => { 'bar' => 'bar' } })
         build.read_attribute(:config)[:foo].should == { bar: 'bar' }
+      end
+
+      it 'downcases the language on config' do
+        build = Factory.create(:build, config: { language: "PYTHON" })
+        Build.last.config[:language].should == "python"
+      end
+
+      it 'sets ruby as default language' do
+        build = Factory.create(:build, config: { 'foo' => { 'bar' => 'bar' } })
+        Build.last.config[:language].should == "ruby"
       end
     end
 

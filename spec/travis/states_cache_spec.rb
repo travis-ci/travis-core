@@ -32,7 +32,8 @@ module Travis
     end
 
     describe 'integration' do
-      let(:client) { Dalli::Client.new('localhost:11211') }
+      let(:memcached_addr) { ENV['MEMCACHED_ADDR'] || 'localhost:11211' }
+      let(:client) { Dalli::Client.new(memcached_addr) }
       let(:adapter) { StatesCache::MemcachedAdapter.new(client: client) }
 
       before do
@@ -78,7 +79,7 @@ module Travis
         data = { id: 10, state: 'failed' }.stringify_keys
         subject.write(1, 'master', data)
 
-        subject.fetch(1, 'master')['state'].should == 'passed'
+        subject.fetch(1, 'master')['state'].should == 'failed'
 
         data = { id: 10, state: 'passed' }.stringify_keys
         subject.write(1, 'master', data)

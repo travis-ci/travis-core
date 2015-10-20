@@ -14,22 +14,14 @@ Travis Core requires PostgreSQL 9.3 or higher, as well as a recent version of Re
 
 1. Clone the repository: `git clone https://github.com/travis-ci/travis-core.git`
 1. Install gem dependencies: `cd travis-core; bundle install --binstubs --path=vendor/gems`
-1. Set up the database: `bin/rake db:create db:structure:load`
-1. Link the `logs` table migration to the proper place and perform DB migration:
-```sh-session
-pushd db/migrate
-ln -svf ../../spec/migrations/*
-popd
-bin/rake db:migrate
-git checkout -- db/structure.sql
-```
 
-Repeat the database steps for `RAILS_ENV=test`.
-```sh-session
-RAILS_ENV=test bin/rake db:create db:structure:load
-RAILS_ENV=test bin/rake db:migrate
-git checkout -- db/structure.sql
-```
+### Database setup
+
+NB detail for how `rake` sets up the database can be found in the `Rakefile`. In the `namespace :db` block you will see the database name is configured using the environment variable RAILS_ENV. If you are using a different configuration you will have to make your own adjustments.
+
+1. `bundle exec rake db:create`
+2. for testing, you will need to run `RAILS_ENV=test bundle exec rake db:create --trace`
+
 
 ### Running tests
 
@@ -49,4 +41,3 @@ bundle exec rspec spec/travis/model/job_spec.rb
 ### Submitting patches
 
 Please fork the repository and submit a pull request. For larger changes, please open a ticket on our [main issue tracker](https://github.com/travis-ci/travis-ci/issues) first.
-

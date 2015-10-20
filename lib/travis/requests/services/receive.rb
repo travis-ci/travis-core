@@ -10,6 +10,7 @@ module Travis
     module Services
       class Receive < Travis::Services::Base
         require 'travis/requests/services/receive/api'
+        require 'travis/requests/services/receive/cron'
         require 'travis/requests/services/receive/pull_request'
         require 'travis/requests/services/receive/push'
 

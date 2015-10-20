@@ -240,14 +240,65 @@ describe Repository do
     end
   end
 
-  it "last_build returns the most recent build" do
-    repo = Factory(:repository)
-    attributes = { repository: repo, state: 'finished' }
-    Factory(:build, attributes)
-    Factory(:build, attributes)
-    build = Factory(:build, attributes)
+  describe "#last_build" do
+    let(:repo) { Factory(:repository) }
+    let(:attributes) { { repository: repo, state: 'finished' } }
+    let(:api_req)    { Factory(:request, {event_type: 'api'}) }
 
-    repo.last_build.id.should == build.id
+    before :each do
+      Factory(:build, attributes)
+      Factory(:build, attributes)
+    end
+
+    context 'when last build is a push build' do
+      before :each do
+        @build = Factory(:build, attributes)
+      end
+
+      it 'returns the most recent build' do
+        repo.last_build('master').id.should == @build.id
+      end
+    end
+
+    context 'when last build is an API build' do
+      before :each do
+        @build = Factory(:build, attributes.merge({request: api_req}))
+      end
+
+      it 'returns the most recent build' do
+        repo.last_build('master').id.should == @build.id
+      end
+    end
+  end
+
+  describe '#last_build_on' do
+    let(:repo)       { Factory(:repository) }
+    let(:attributes) { { repository: repo, state: 'finished' } }
+    let(:api_req)    { Factory(:request, {event_type: 'api'}) }
+
+    before :each do
+      Factory(:build, attributes)
+    end
+
+    context 'when last build is a push build' do
+      before :each do
+        @build = Factory(:build, attributes)
+      end
+
+      it 'returns the most recent build' do
+        repo.last_build_on('master').id.should == @build.id
+      end
+    end
+
+    context 'when last build is an API build' do
+      before :each do
+        @build = Factory(:build, attributes.merge({request: api_req}))
+      end
+
+      it 'returns the most recent build' do
+        repo.last_build_on('master').id.should == @build.id
+      end
+    end
   end
 
   describe "keys" do

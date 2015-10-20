@@ -169,6 +169,22 @@ describe Travis::Requests::Services::Receive, truncation: true do
     end
   end
 
+  describe 'a cron job request' do
+    let(:params)  { { :event_type => 'cron', :payload => payload } }
+    let(:owner)   { Factory(:user, id: 1, login: 'svenfuchs') }
+    let!(:repo)   { Factory(:repository, github_id: 592533, owner: owner, owner_name: owner.login, name: 'gem-release') }
+
+    describe 'giving the repo owner_id' do
+      let(:payload) { { 'repository' => { 'owner_id' => owner.id, 'owner_type' => 'User', 'owner_name' => 'svenfuchs', 'name' => 'gem-release', 'id' => 111 }, 'user' => { 'id' => 1 } } }
+      it_should_behave_like 'creates a request'
+    end
+
+    describe 'giving the repo owner_name' do
+      let(:payload) { { 'repository' => { 'owner_name' => 'svenfuchs', 'name' => 'gem-release', 'id' => 111 }, 'user' => { 'id' => 1 } } }
+      it_should_behave_like 'creates a request'
+    end
+  end
+
   describe 'with a repository that does not exist on our side' do
     let(:params) { { :event_type => 'push', :github_guid => 'abc123', :payload => payload } }
 

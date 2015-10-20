@@ -19,7 +19,7 @@ class Build
       end
 
       def allow_failure_configs
-        (settings[:allow_failures] || []).select do |config|
+        Array(settings[:allow_failures] || []).select do |config|
           # TODO check with @drogus how/when this might happen
           config = config.to_hash.symbolize_keys if config.respond_to?(:to_hash)
         end

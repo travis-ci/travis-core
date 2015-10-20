@@ -294,6 +294,14 @@ describe Build, 'matrix' do
     yml
     }
 
+    let(:matrix_with_empty_include) {
+      YAML.load <<-yml
+      language: ruby
+      matrix:
+        include:
+    yml
+    }
+
     let(:multiple_tests_config_with_allow_failures) {
       YAML.load <<-yml
       language: objective-c
@@ -325,6 +333,20 @@ describe Build, 'matrix' do
         allow_failures:
           - rvm: 1.9.3
             env: "FOO=bar"
+    yml
+    }
+
+    let(:scalar_allow_failures) {
+      YAML.load <<-yml
+      env:
+        global:
+          - "GLOBAL=global NEXT_GLOBAL=next"
+        matrix:
+          - "FOO=bar"
+          - "FOO=baz"
+      matrix:
+        allow_failures:
+          "FOO=bar"
     yml
     }
 
@@ -375,8 +397,8 @@ describe Build, 'matrix' do
       it 'does not expand on :os' do
         build = Factory.create(:build, config: { rvm: ['1.9.3', '2.0.0'], os: ['osx', 'linux']})
         build.matrix.map(&:config).should == [
-          { os: 'linux', language: 'ruby', rvm: '1.9.3' },
-          { os: 'linux', language: 'ruby', rvm: '2.0.0' }
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.3' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '2.0.0' }
         ]
       end
 
@@ -384,49 +406,49 @@ describe Build, 'matrix' do
         build = Factory(:build, config: env_global_config)
 
         build.matrix.map(&:config).should == [
-          { os: 'linux', language: 'ruby', script: 'rake ci', rvm: '1.9.2', gemfile: 'gemfiles/rails-4.0.0', env: 'FOO=bar', global_env: ['TOKEN=abcdef'] },
-          { os: 'linux', language: 'ruby', script: 'rake ci', rvm: '1.9.2', gemfile: 'gemfiles/rails-4.0.0', env: 'BAR=baz', global_env: ['TOKEN=abcdef'] },
-          { os: 'linux', language: 'ruby', script: 'rake ci', rvm: '1.9.3', gemfile: 'gemfiles/rails-4.0.0', env: 'FOO=bar', global_env: ['TOKEN=abcdef'] },
-          { os: 'linux', language: 'ruby', script: 'rake ci', rvm: '1.9.3', gemfile: 'gemfiles/rails-4.0.0', env: 'BAR=baz', global_env: ['TOKEN=abcdef'] }
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.9.2', gemfile: 'gemfiles/rails-4.0.0', env: 'FOO=bar', global_env: ['TOKEN=abcdef'] },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.9.2', gemfile: 'gemfiles/rails-4.0.0', env: 'BAR=baz', global_env: ['TOKEN=abcdef'] },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.9.3', gemfile: 'gemfiles/rails-4.0.0', env: 'FOO=bar', global_env: ['TOKEN=abcdef'] },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.9.3', gemfile: 'gemfiles/rails-4.0.0', env: 'BAR=baz', global_env: ['TOKEN=abcdef'] }
         ]
       end
 
       it 'sets the config to the jobs (no config)' do
         build = Factory(:build, config: {})
         build.matrix.map(&:config).should == [
-          { os: 'linux', language: 'ruby' }
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise' }
         ]
       end
 
       it 'sets the config to the jobs (no matrix config)' do
         build = Factory(:build, config: no_matrix_config)
         build.matrix.map(&:config).should == [
-          { os: 'linux', language: 'ruby', script: 'rake ci' }
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci' }
         ]
       end
 
       it 'sets the config to the jobs (single test config)' do
         build = Factory(:build, config: single_test_config)
         build.matrix.map(&:config).should == [
-          { os: 'linux', language: 'ruby', script: 'rake ci', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.6', env: 'USE_GIT_REPOS=true' }
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.6', env: 'USE_GIT_REPOS=true' }
         ]
       end
 
       it 'sets the config to the jobs (multiple tests config)' do
         build = Factory(:build, config: multiple_tests_config)
         build.matrix.map(&:config).should == [
-          { os: 'linux', language: 'ruby', script: 'rake ci', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.6',      env: 'USE_GIT_REPOS=true' },
-          { os: 'linux', language: 'ruby', script: 'rake ci', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.7',      env: 'USE_GIT_REPOS=true' },
-          { os: 'linux', language: 'ruby', script: 'rake ci', rvm: '1.8.7', gemfile: 'gemfiles/rails-3-0-stable', env: 'USE_GIT_REPOS=true' },
-          { os: 'linux', language: 'ruby', script: 'rake ci', rvm: '1.8.7', gemfile: 'gemfiles/rails-master',     env: 'USE_GIT_REPOS=true' },
-          { os: 'linux', language: 'ruby', script: 'rake ci', rvm: '1.9.1', gemfile: 'gemfiles/rails-3.0.6',      env: 'USE_GIT_REPOS=true' },
-          { os: 'linux', language: 'ruby', script: 'rake ci', rvm: '1.9.1', gemfile: 'gemfiles/rails-3.0.7',      env: 'USE_GIT_REPOS=true' },
-          { os: 'linux', language: 'ruby', script: 'rake ci', rvm: '1.9.1', gemfile: 'gemfiles/rails-3-0-stable', env: 'USE_GIT_REPOS=true' },
-          { os: 'linux', language: 'ruby', script: 'rake ci', rvm: '1.9.1', gemfile: 'gemfiles/rails-master',     env: 'USE_GIT_REPOS=true' },
-          { os: 'linux', language: 'ruby', script: 'rake ci', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.6',      env: 'USE_GIT_REPOS=true' },
-          { os: 'linux', language: 'ruby', script: 'rake ci', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.7',      env: 'USE_GIT_REPOS=true' },
-          { os: 'linux', language: 'ruby', script: 'rake ci', rvm: '1.9.2', gemfile: 'gemfiles/rails-3-0-stable', env: 'USE_GIT_REPOS=true' },
-          { os: 'linux', language: 'ruby', script: 'rake ci', rvm: '1.9.2', gemfile: 'gemfiles/rails-master',     env: 'USE_GIT_REPOS=true' }
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.6',      env: 'USE_GIT_REPOS=true' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.7',      env: 'USE_GIT_REPOS=true' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.8.7', gemfile: 'gemfiles/rails-3-0-stable', env: 'USE_GIT_REPOS=true' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.8.7', gemfile: 'gemfiles/rails-master',     env: 'USE_GIT_REPOS=true' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.9.1', gemfile: 'gemfiles/rails-3.0.6',      env: 'USE_GIT_REPOS=true' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.9.1', gemfile: 'gemfiles/rails-3.0.7',      env: 'USE_GIT_REPOS=true' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.9.1', gemfile: 'gemfiles/rails-3-0-stable', env: 'USE_GIT_REPOS=true' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.9.1', gemfile: 'gemfiles/rails-master',     env: 'USE_GIT_REPOS=true' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.6',      env: 'USE_GIT_REPOS=true' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.7',      env: 'USE_GIT_REPOS=true' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.9.2', gemfile: 'gemfiles/rails-3-0-stable', env: 'USE_GIT_REPOS=true' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', script: 'rake ci', rvm: '1.9.2', gemfile: 'gemfiles/rails-master',     env: 'USE_GIT_REPOS=true' }
         ]
       end
 
@@ -450,6 +472,16 @@ describe Build, 'matrix' do
         end
       end
 
+      context 'when matrix specifies scalar allow_failures' do
+        before :each do
+          @build = Factory(:build, config: scalar_allow_failures)
+        end
+
+        it 'ignores allow_failures silently' do
+          @build.matrix.map(&:allow_failure).should == [false, false]
+        end
+      end
+
       context 'when ruby project contains unwanted key' do
         before :each do
           @build_ruby = Factory(:build, config: matrix_with_unwanted_expansion_ruby)
@@ -457,8 +489,8 @@ describe Build, 'matrix' do
 
         it 'ignores irrelevant matrix dimensions' do
           @build_ruby.matrix.map(&:config).should == [
-            { os: 'linux', language: 'ruby', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
-            { os: 'linux', language: 'ruby', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' }
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' }
           ]
         end
 
@@ -479,8 +511,8 @@ describe Build, 'matrix' do
 
         it 'ignores irrelevant matrix dimensions' do
           @build_python.matrix.map(&:config).should == [
-            { os: 'linux', language: 'python', python: '3.3' },
-            { os: 'linux', language: 'python', python: '2.7' }
+            { os: 'linux', language: 'python', group: 'stable', dist: 'precise', python: '3.3' },
+            { os: 'linux', language: 'python', group: 'stable', dist: 'precise', python: '2.7' }
           ]
         end
 
@@ -511,10 +543,10 @@ describe Build, 'matrix' do
           }
 
           build.matrix.map(&:config).should == [
-            { os: 'linux', language: 'ruby', rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x' },
-            { os: 'linux', language: 'ruby', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x' },
-            { os: 'linux', language: 'ruby', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.x' },
-            { os: 'linux', language: 'ruby', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.1.x' }
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x' },
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x' },
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.x' },
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.1.x' }
           ]
         end
 
@@ -523,9 +555,9 @@ describe Build, 'matrix' do
           matrix_exclusion = { exclude: [{ rvm: "1.9.2", gemfile: "gemfiles/rails-4.0.x" }] }
 
           build.matrix.map(&:config).should eq([
-            { os: 'linux', language: 'ruby', rvm: "1.9.2", gemfile: "gemfiles/rails-3.1.x", global_env: ["FOO=bar"] },
-            { os: 'linux', language: 'ruby', rvm: "2.0.0", gemfile: "gemfiles/rails-3.1.x", global_env: ["FOO=bar"] },
-            { os: 'linux', language: 'ruby', rvm: "2.0.0", gemfile: "gemfiles/rails-4.0.x", global_env: ["FOO=bar"] },
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: "1.9.2", gemfile: "gemfiles/rails-3.1.x", global_env: ["FOO=bar"] },
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: "2.0.0", gemfile: "gemfiles/rails-3.1.x", global_env: ["FOO=bar"] },
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: "2.0.0", gemfile: "gemfiles/rails-4.0.x", global_env: ["FOO=bar"] },
           ])
         end
 
@@ -535,12 +567,12 @@ describe Build, 'matrix' do
           matrix_exclusion = { exclude: [{ rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.x' }] }
 
           build.matrix.map(&:config).should == [
-            { os: 'linux', language: 'ruby', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x', env: 'FOO=bar' },
-            { os: 'linux', language: 'ruby', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x', env: 'BAR=baz' },
-            { os: 'linux', language: 'ruby', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.1.x', env: 'FOO=bar' },
-            { os: 'linux', language: 'ruby', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.1.x', env: 'BAR=baz' },
-            { os: 'linux', language: 'ruby', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.1.x', env: 'FOO=bar' },
-            { os: 'linux', language: 'ruby', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.1.x', env: 'BAR=baz' }
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x', env: 'FOO=bar' },
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x', env: 'BAR=baz' },
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.1.x', env: 'FOO=bar' },
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.1.x', env: 'BAR=baz' },
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.1.x', env: 'FOO=bar' },
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.1.x', env: 'BAR=baz' }
           ]
         end
       end
@@ -557,11 +589,11 @@ describe Build, 'matrix' do
           }
 
           build.matrix.map(&:config).should == [
-            { os: 'linux', language: 'ruby', rvm: '1.8.7', env: 'FOO=bar' },
-            { os: 'linux', language: 'ruby', rvm: '1.8.7', env: 'BAR=baz' },
-            { os: 'linux', language: 'ruby', rvm: '1.9.2', env: 'FOO=bar' },
-            { os: 'linux', language: 'ruby', rvm: '1.9.2', env: 'BAR=baz' },
-            { os: 'linux', language: 'ruby', rvm: '1.9.2', env: 'BAR=xyzzy' }
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', env: 'FOO=bar' },
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', env: 'BAR=baz' },
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.2', env: 'FOO=bar' },
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.2', env: 'BAR=baz' },
+            { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.2', env: 'BAR=xyzzy' }
           ]
         end
 
@@ -577,10 +609,20 @@ describe Build, 'matrix' do
         }
 
         build.matrix.map(&:config).should == [
-          { os: 'linux', language: 'ruby', rvm: '2.1.0', env: 'FOO=true' },
-          { os: 'linux', language: 'ruby', rvm: '2.1.0', env: 'BAR=true' },
-          { os: 'linux', language: 'ruby', rvm: '1.9.3', env: 'BAZ=true' }
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '2.1.0', env: 'FOO=true' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '2.1.0', env: 'BAR=true' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.3', env: 'BAZ=true' }
         ]
+      end
+
+      it 'includes "empty" matrix config when matrix.include is null' do
+        build = Factory(:build, config: matrix_with_empty_include)
+
+        matrix_inclusion = {
+          include: nil
+        }
+
+        build.matrix.map(&:config).should == []
       end
     end
 
@@ -590,7 +632,7 @@ describe Build, 'matrix' do
       it 'with string values' do
         build = Factory(:build, config: { rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x', env: 'FOO=bar' })
         build.matrix.map(&:config).should == [
-          { os: 'linux', language: 'ruby', rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x', env: 'FOO=bar' }
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x', env: 'FOO=bar' }
         ]
       end
 
@@ -599,37 +641,37 @@ describe Build, 'matrix' do
         config = { rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x', env: env }
         build = Factory(:build, repository: repository, config: config)
         build.matrix.map(&:config).should == [
-          { os: 'linux', language: 'ruby', rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x', env: env }
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x', env: env }
         ]
       end
 
       it 'with two Rubies and Gemfiles' do
         build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'], gemfile: ['gemfiles/rails-2.3.x', 'gemfiles/rails-3.0.x'] })
         build.matrix.map(&:config).should == [
-          { os: 'linux', language: 'ruby', rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x' },
-          { os: 'linux', language: 'ruby', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x' },
-          { os: 'linux', language: 'ruby', rvm: '1.9.2', gemfile: 'gemfiles/rails-2.3.x' },
-          { os: 'linux', language: 'ruby', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.x' }
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.2', gemfile: 'gemfiles/rails-2.3.x' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.x' }
         ]
       end
 
       it 'with unequal number of Rubies, env variables and Gemfiles' do
         build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2', 'ree'], gemfile: ['gemfiles/rails-3.0.x'], env: ['DB=postgresql', 'DB=mysql'] })
         build.matrix.map(&:config).should == [
-          { os: 'linux', language: 'ruby', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x', env: 'DB=postgresql' },
-          { os: 'linux', language: 'ruby', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x', env: 'DB=mysql' },
-          { os: 'linux', language: 'ruby', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.x', env: 'DB=postgresql' },
-          { os: 'linux', language: 'ruby', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.x', env: 'DB=mysql' },
-          { os: 'linux', language: 'ruby', rvm: 'ree',   gemfile: 'gemfiles/rails-3.0.x', env: 'DB=postgresql' },
-          { os: 'linux', language: 'ruby', rvm: 'ree',   gemfile: 'gemfiles/rails-3.0.x', env: 'DB=mysql' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x', env: 'DB=postgresql' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-3.0.x', env: 'DB=mysql' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.x', env: 'DB=postgresql' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.2', gemfile: 'gemfiles/rails-3.0.x', env: 'DB=mysql' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: 'ree',   gemfile: 'gemfiles/rails-3.0.x', env: 'DB=postgresql' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: 'ree',   gemfile: 'gemfiles/rails-3.0.x', env: 'DB=mysql' },
         ]
       end
 
       it 'with an array of Rubies and a single Gemfile' do
         build = Factory(:build, config: { rvm: ['1.8.7', '1.9.2'], gemfile: 'gemfiles/rails-2.3.x' })
         build.matrix.map(&:config).should == [
-          { os: 'linux', language: 'ruby', rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x' },
-          { os: 'linux', language: 'ruby', rvm: '1.9.2', gemfile: 'gemfiles/rails-2.3.x' }
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.8.7', gemfile: 'gemfiles/rails-2.3.x' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.2', gemfile: 'gemfiles/rails-2.3.x' }
         ]
       end
     end
@@ -639,23 +681,23 @@ describe Build, 'matrix' do
     it 'with a single Scala version given as a string' do
       build = Factory(:build, config: { language: 'scala', scala: '2.8.2', env: 'NETWORK=false' })
         build.matrix.map(&:config).should == [
-        { os: 'linux', language: 'scala', scala: '2.8.2', env: 'NETWORK=false' }
+        { os: 'linux', language: 'scala', group: 'stable', dist: 'precise', scala: '2.8.2', env: 'NETWORK=false' }
       ]
     end
 
     it 'with multiple Scala versions and no env variables' do
       build = Factory(:build, config: { language: 'scala', scala: ['2.8.2', '2.9.1']})
         build.matrix.map(&:config).should == [
-        { os: 'linux', language: 'scala', scala: '2.8.2' },
-        { os: 'linux', language: 'scala', scala: '2.9.1' }
+        { os: 'linux', language: 'scala', group: 'stable', dist: 'precise', scala: '2.8.2' },
+        { os: 'linux', language: 'scala', group: 'stable', dist: 'precise', scala: '2.9.1' }
        ]
     end
 
     it 'with a single Scala version passed in as array and two env variables' do
       build = Factory(:build, config: { language: 'scala', scala: ['2.8.2'], env: ['STORE=postgresql', 'STORE=redis'] })
         build.matrix.map(&:config).should == [
-        { os: 'linux', language: 'scala', scala: '2.8.2', env: 'STORE=postgresql' },
-        { os: 'linux', language: 'scala', scala: '2.8.2', env: 'STORE=redis' }
+        { os: 'linux', language: 'scala', group: 'stable', dist: 'precise', scala: '2.8.2', env: 'STORE=postgresql' },
+        { os: 'linux', language: 'scala', group: 'stable', dist: 'precise', scala: '2.8.2', env: 'STORE=redis' }
       ]
     end
   end
@@ -684,10 +726,10 @@ describe Build, 'matrix' do
         build = Factory(:build, config: matrix_with_os_ruby, repository: repository)
 
         build.matrix.map(&:config).should == [
-          { os: 'osx',   language: 'ruby', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
-          { os: 'osx',   language: 'ruby', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' },
-          { os: 'linux', language: 'ruby', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
-          { os: 'linux', language: 'ruby', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' },
+          { os: 'osx', language: 'ruby', group: 'stable', dist: 'precise', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
+          { os: 'osx', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' },
         ]
       end
     end
@@ -698,8 +740,8 @@ describe Build, 'matrix' do
         build = Factory(:build, config: matrix_with_os_ruby, repository: repository)
 
         build.matrix.map(&:config).should == [
-          { os: 'linux', language: 'ruby', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
-          { os: 'linux', language: 'ruby', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' }
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '2.0.0', gemfile: 'gemfiles/rails-4' },
+          { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.3', gemfile: 'gemfiles/rails-4' }
         ]
       end
     end
@@ -727,18 +769,18 @@ describe Build, 'matrix' do
     it 'expands on :os if the feature is active' do
       repository.stubs(:multi_os_enabled?).returns(true)
       build.matrix.map(&:config).should == [
-        { os: 'linux', language: 'ruby', compiler: 'gcc' },
-        { os: 'linux', language: 'ruby', compiler: 'clang' },
-        { os: 'osx',   language: 'ruby', compiler: 'gcc' },
-        { os: 'osx',   language: 'ruby', compiler: 'clang' }
+        { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', compiler: 'gcc' },
+        { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', compiler: 'clang' },
+        { os: 'osx',   language: 'ruby', group: 'stable', dist: 'precise', compiler: 'gcc' },
+        { os: 'osx',   language: 'ruby', group: 'stable', dist: 'precise', compiler: 'clang' }
       ]
     end
 
     it 'ignores the os key if the feature is inactive' do
       repository.stubs(:multi_os_enabled?).returns(false)
       build.matrix.map(&:config).should == [
-        { os: 'linux', language: 'ruby', compiler: 'gcc' },
-        { os: 'linux', language: 'ruby', compiler: 'clang' }
+        { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', compiler: 'gcc' },
+        { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', compiler: 'clang' }
       ]
     end
   end

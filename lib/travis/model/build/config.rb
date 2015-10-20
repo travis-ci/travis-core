@@ -1,5 +1,7 @@
+require 'travis/model/build/config/dist'
 require 'travis/model/build/config/env'
 require 'travis/model/build/config/features'
+require 'travis/model/build/config/group'
 require 'travis/model/build/config/language'
 require 'travis/model/build/config/matrix'
 require 'travis/model/build/config/obfuscate'
@@ -8,12 +10,13 @@ require 'travis/model/build/config/yaml'
 
 class Build
   class Config
-    NORMALIZERS = [Features, Yaml, Env, Language]
+    NORMALIZERS = [Features, Yaml, Env, Language, Group, Dist]
 
     DEFAULT_LANG = 'ruby'
 
     ENV_KEYS = [
       :compiler,
+      :crystal,
       :csharp,
       :d,
       :dart,
@@ -36,7 +39,10 @@ class Build
       :ruby,
       :rust,
       :rvm,
+      :r,
       :scala,
+      :smalltalk,
+      :smalltalk_config,
       :visualbasic,
       :xcode_scheme,
       :xcode_sdk
@@ -49,6 +55,7 @@ class Build
       'c++'         => [:compiler],
       'clojure'     => [:lein, :jdk],
       'cpp'         => [:compiler],
+      'crystal'     => [:crystal],
       'csharp'      => [:csharp, :mono],
       'd'           => [:d],
       'dart'        => [:dart],
@@ -69,7 +76,9 @@ class Build
       'python'      => [:python],
       'ruby'        => [:rvm, :gemfile, :jdk, :ruby],
       'rust'        => [:rust],
+      'r'           => [:r],
       'scala'       => [:scala, :jdk],
+      'smalltalk'   => [:smalltalk, :smalltalk_config],
       'visualbasic' => [:visualbasic, :mono]
     }
 

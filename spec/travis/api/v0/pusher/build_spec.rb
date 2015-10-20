@@ -3,10 +3,15 @@ require 'spec_helper'
 describe Travis::Api::V0::Pusher::Build do
   include Travis::Testing::Stubs, Support::Formats
 
-  let(:repo)  { stub_repo(last_build_state: :started, last_build_duration: nil, last_build_finished_at: nil) }
+  let(:repo)  { stub_repo(last_build_state: :started, last_build_duration: nil, last_build_finished_at: nil, current_build_id: 10) }
   let(:job)   { stub_test(state: :started, finished_at: nil, finished?: false) }
   let(:build) { stub_build(repository: repo, event_type: 'pull_request',  state: :started, finished_at: nil, matrix: [job], finished?: false) }
-  let(:data)  { Travis::Api::V0::Pusher::Build.new(build).data }
+  let(:serializer) {
+    serializer = Travis::Api::V0::Pusher::Build.new(build)
+    serializer.stubs(:last_build_on_default_branch_id).returns(1)
+    serializer
+  }
+  let(:data)  { serializer.data }
 
   it 'build' do
     data['build'].except('matrix').should == {
@@ -20,7 +25,6 @@ describe Travis::Api::V0::Pusher::Build do
       'commit' => '62aae5f70ceee39123ef',
       'commit_id' => 1,
       'branch' => 'master',
-      'job_ids' => [1],
       'message' => 'the commit message',
       'author_name' => 'Sven Fuchs',
       'author_email' => 'svenfuchs@artweb-design.de',
@@ -49,7 +53,13 @@ describe Travis::Api::V0::Pusher::Build do
       'last_build_duration' => nil,
       'last_build_state' => 'started',
       'last_build_language' => nil,
-      'github_language' => 'ruby'
+      'github_language' => 'ruby',
+      'default_branch' => {
+        'name' => 'master',
+        'last_build_id' => 1
+      },
+      'active' => true,
+      'current_build_id' => 10
     }
   end
 end

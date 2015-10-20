@@ -90,6 +90,11 @@ describe Request::Approval do
       approval.stubs(:enabled_in_settings?).returns(false)
       approval.should_not be_accepted
     end
+
+    it 'does not accept a request when compare URL is too long' do
+      request.commit.stubs(:compare_url).returns('a'*256)
+      approval.should_not be_accepted
+    end
   end
 
   describe 'approved?' do
@@ -136,15 +141,21 @@ describe Request::Approval do
       approval.message.should == 'github pages branch'
     end
 
-    it 'returns "missing config" if the config is not present' do
+    it 'returns "config is missing or contains YAML syntax error" if the config is not present' do
       request.stubs(:config).returns(nil)
-      approval.message.should == 'missing config'
+      approval.message.should == 'config is missing or contains YAML syntax error'
     end
 
     it 'returns "branch not included or excluded" if the branch was not approved' do
       request.commit.stubs(:branch).returns('feature')
       request.stubs(:config).returns('branches' => { 'only' => 'master' })
       approval.message.should == 'branch not included or excluded'
+    end
+
+    it 'returns "compare URL too long; branch/tag names may be too long" if the compare URL is too long' do
+      request.stubs(:config).returns({key: 'value'})
+      request.commit.stubs(:compare_url).returns('a'*256)
+      approval.message.should == 'compare URL too long; branch/tag names may be too long'
     end
   end
 
@@ -227,6 +238,11 @@ describe Request::Approval do
   end
 
   describe 'enabled_in_settings?' do
+    it 'returns true if a request is an api request' do
+      request.stubs(:api_request?).returns(true)
+      approval.enabled_in_settings?.should be_true
+    end
+
     it 'returns true if pull requests are enabled and a request is a pull request' do
       request.stubs(:pull_request?).returns(true)
       approval.stubs(:build_pull_requests?).returns(true)

@@ -72,7 +72,6 @@ class Build
       if matrix_finished?
         finalize_cancel
         denormalize(:cancel)
-        notify(:cancel)
       end
     end
 

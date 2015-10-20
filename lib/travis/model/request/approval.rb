@@ -19,11 +19,12 @@ class Request
         !repository.private? &&
         (!excluded_repository? || included_repository?) &&
         !skipped? &&
+        !compare_url_too_long? &&
         enabled_in_settings?
     end
 
     def enabled_in_settings?
-      request.pull_request? ? build_pull_requests? : build_pushes?
+      request.api_request? || (request.pull_request? ? build_pull_requests? : build_pushes?)
     end
 
     def disabled_in_settings?
@@ -46,6 +47,10 @@ class Request
       !repository.builds_only_with_travis_yml?
     end
 
+    def compare_url_too_long?
+      commit.compare_url.length > 255
+    end
+
     def approved?
       accepted? && request.config.present? && branch_approved? && request.creates_jobs?
     end
@@ -65,8 +70,6 @@ class Request
         request.pull_request? ? 'pull requests disabled' : 'pushes disabled'
       elsif github_pages?
         'github pages branch'
-      elsif request.config.blank?
-        'missing config'
       elsif !branch_approved? || !branch_accepted?
         'branch not included or excluded'
       elsif !config_accepted?
@@ -75,6 +78,10 @@ class Request
         'private repository'
       elsif !request.creates_jobs?
         'matrix created no jobs'
+      elsif compare_url_too_long?
+        'compare URL too long; branch/tag names may be too long'
+      elsif request.config.blank?
+        'config is missing or contains YAML syntax error'
       end
     end
 

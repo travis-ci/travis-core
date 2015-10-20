@@ -61,7 +61,8 @@ module Travis
           builds_only_with_travis_yml?: false,
           settings: stub_settings,
           users_with_permission: [],
-          default_branch: 'master'
+          default_branch: 'master',
+          current_build_id: nil
         )
       end
       alias stub_repository stub_repo
@@ -91,6 +92,7 @@ module Travis
           head_commit: 'head-commit',
           base_commit: 'base-commit',
           token: 'token',
+          api_request?: false,
           pull_request?: false,
           comments_url: 'http://github.com/path/to/comments',
           config_url: 'https://api.github.com/repos/svenfuchs/minimal/contents/.travis.yml?ref=62aae5f70ceee39123ef',
@@ -288,7 +290,7 @@ module Travis
           is_syncing: false,
           synced_at: Time.now.utc - 3600,
           tokens: [stub('token', token: 'token')],
-          github_scopes: Travis.config.oauth2.try(:scopes).to_s.split(','),
+          github_scopes: Travis.config.oauth2.to_h[:scopes].to_s.split(','),
           correct_scopes?: true,
           created_at: Time.now.utc - 7200
         )

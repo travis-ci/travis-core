@@ -8,6 +8,23 @@ describe Travis::Services::FindRepos do
 
   attr_reader :params
 
+  it 'limits the repositories list' do
+    Factory(:repository)
+    @params = { :limit => 1 }
+    service.run.length.should == 1
+  end
+
+  it 'ignores the limit if it is not a number' do
+    Factory(:repository)
+    @params = { :limit => 'a' }
+    service.run.length.should == 2
+  end
+
+  it 'does not allow for limit higher than 50' do
+    @params = { :limit => 60 }
+    service.send(:limit).should == 50
+  end
+
   it 'finds repositories by a given list of ids' do
     @params = { :ids => [repo.id] }
     service.run.should == [repo]
