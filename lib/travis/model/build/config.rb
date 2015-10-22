@@ -38,6 +38,7 @@ class Build
       :rust,
       :rvm,
       :scala,
+      :smalltalk,
       :visualbasic,
       :xcode_scheme,
       :xcode_sdk
@@ -72,6 +73,7 @@ class Build
       'ruby'        => [:rvm, :gemfile, :jdk, :ruby],
       'rust'        => [:rust],
       'scala'       => [:scala, :jdk],
+      'smalltalk'   => [:smalltalk],
       'visualbasic' => [:visualbasic, :mono]
     }
 
