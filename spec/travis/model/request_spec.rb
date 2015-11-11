@@ -27,6 +27,30 @@ describe Request do
     end
   end
 
+  describe 'api_request?' do
+    it 'returns true if the event_type is api' do
+      request.event_type = 'api'
+      request.api_request?.should == true
+    end
+
+    it 'returns false if the event_type is not api' do
+      request.event_type = 'push'
+      request.api_request?.should == false
+    end
+  end
+
+  describe 'pull_request?' do
+    it 'returns true if the event_type is pull_request' do
+      request.event_type = 'pull_request'
+      request.pull_request?.should == true
+    end
+
+    it 'returns false if the event_type is not pull_request' do
+      request.event_type = 'push'
+      request.pull_request?.should == false
+    end
+  end
+
   describe 'pull_request_title' do
     it 'returns the title of the pull request from payload' do
       request.event_type = 'pull_request'

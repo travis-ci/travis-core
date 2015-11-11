@@ -23,7 +23,7 @@ class Request
     end
 
     def enabled_in_settings?
-      request.pull_request? ? build_pull_requests? : build_pushes?
+      request.api_request? || (request.pull_request? ? build_pull_requests? : build_pushes?)
     end
 
     def disabled_in_settings?
