@@ -67,7 +67,11 @@ class Job
 
       known_matchers = @attrs.keys & matchers.keys
 
-      known_matchers.length > 0 && known_matchers.all? { |key| matchers[key.to_sym] === @attrs[key] }
+      all_match = known_matchers.all? do |key|
+        matchers[key.to_sym] === @attrs[key]
+      end
+
+      known_matchers.length > 0 && all_match
     end
 
     private
@@ -80,9 +84,10 @@ class Job
         language: Array(job.config[:language]).flatten.compact.first,
         sudo: job.config.fetch(:sudo) { !repo_is_default_docker?(job) },
         dist: job.config[:dist],
+        group: job.config[:group],
         osx_image: job.config[:osx_image],
         percentage: lambda { |percentage| rand(100) < percentage },
-        services: PresenceDetectionArray.new(job.config[:services]),
+        services: lambda { |other| !(Array(job.config[:services]) & other).empty? },
       }
     end
 
@@ -95,16 +100,6 @@ class Job
     def repo_created_after_docker_cutoff?(repository)
       return true if repository.created_at.nil?
       repository.created_at > Time.parse(Travis.config.docker_default_queue_cutoff)
-    end
-
-    class PresenceDetectionArray
-      def initialize(arr)
-        @arr = Array(arr)
-      end
-
-      def ===(other)
-        !(@arr & other).empty?
-      end
     end
   end
 end

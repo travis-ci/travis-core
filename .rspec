@@ -1,3 +1,6 @@
 --colour
 --tty
 --format documentation
+
+# TODO: figure out why this breaks on ruby 2.0
+# --order rand

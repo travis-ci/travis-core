@@ -7,7 +7,7 @@ defaults: &defaults
   pool: 5
   min_messages: warning
   username: <%= ENV['USER'] %>
-  host: localhost
+  host: <%= ENV.fetch('PGHOST', 'localhost') %>
 
 development:
   <<: *defaults
