@@ -91,6 +91,7 @@ module Travis
           head_commit: 'head-commit',
           base_commit: 'base-commit',
           token: 'token',
+          api_request?: false,
           pull_request?: false,
           comments_url: 'http://github.com/path/to/comments',
           config_url: 'https://api.github.com/repos/svenfuchs/minimal/contents/.travis.yml?ref=62aae5f70ceee39123ef',

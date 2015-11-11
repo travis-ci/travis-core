@@ -227,6 +227,11 @@ describe Request::Approval do
   end
 
   describe 'enabled_in_settings?' do
+    it 'returns true if a request is an api request' do
+      request.stubs(:api_request?).returns(true)
+      approval.enabled_in_settings?.should be_true
+    end
+
     it 'returns true if pull requests are enabled and a request is a pull request' do
       request.stubs(:pull_request?).returns(true)
       approval.stubs(:build_pull_requests?).returns(true)
