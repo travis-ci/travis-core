@@ -58,6 +58,10 @@ class Request < Travis::Model
     ref.scan(%r{refs/tags/(.*?)$}).flatten.first if ref
   end
 
+  def api_request?
+    event_type == 'api'
+  end
+
   def pull_request?
     event_type == 'pull_request'
   end
