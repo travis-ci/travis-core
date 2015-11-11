@@ -32,7 +32,8 @@ module Travis
     end
 
     describe 'integration' do
-      let(:client) { Dalli::Client.new('localhost:11211') }
+      let(:memcached_addr) { ENV['MEMCACHED_ADDR'] || 'localhost:11211' }
+      let(:client) { Dalli::Client.new(memcached_addr) }
       let(:adapter) { StatesCache::MemcachedAdapter.new(client: client) }
 
       before do
