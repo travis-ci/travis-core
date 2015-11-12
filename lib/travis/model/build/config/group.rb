@@ -5,12 +5,12 @@ class Build
 
       attr_reader :config
 
-      def initialize(config, _)
+      def initialize(config, *)
         @config = config
       end
 
       def run
-        return config if config.key?(:group) || config.key?('dist')
+        return config if config.key?(:group) || config.key?('group')
         config.merge(group: DEFAULT_GROUP)
       end
     end

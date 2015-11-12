@@ -2,7 +2,7 @@ class Build
   class Config
     class Dist
       DIST_LANGUAGE_MAP = {
-        'objective-c' => 'osx',
+        'objective-c' => 'osx'
       }
       DIST_OS_MAP = {
         'osx' => 'osx'
@@ -27,7 +27,7 @@ class Build
         return DIST_LANGUAGE_MAP[config[:language]] if
           DIST_LANGUAGE_MAP.key?(config[:language])
         return DEFAULT_DIST if options[:multi_os]
-        return DIST_OS_MAP.fetch(Array(config[:os]).first, DEFAULT_DIST)
+        DIST_OS_MAP.fetch(Array(config[:os]).first, DEFAULT_DIST)
       end
     end
   end
