@@ -5,7 +5,7 @@ class Build
 
       attr_reader :config
 
-      def initialize(config, _)
+      def initialize(config, *)
         @config = config
       end
 
