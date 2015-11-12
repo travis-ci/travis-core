@@ -10,7 +10,7 @@ class Build
       end
 
       def run
-        return config if config.key?(:group) || config.key?('dist')
+        return config if config.key?(:group) || config.key?('group')
         config.merge(group: DEFAULT_GROUP)
       end
     end
