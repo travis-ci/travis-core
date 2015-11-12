@@ -3,8 +3,6 @@ class CreateStarredRepositories < ActiveRecord::Migration
     create_table :starred_repositories do |t|
       t.integer   :repo_id
       t.integer   :user_id
-      t.datetime  :created_at
-      t.datetime  :updated_at
       t.timestamps
     end
 
