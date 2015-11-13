@@ -96,4 +96,12 @@ describe Build::Config::Dist do
       subject.run[:dist].should eql(described_class::DEFAULT_DIST)
     end
   end
+
+  context 'with docker in services' do
+    let(:config) { { services: %w(docker) } }
+
+    it 'sets the dist to trusty' do
+      subject.run[:dist].should eql('trusty')
+    end
+  end
 end
