@@ -6,6 +6,6 @@ class StarredRepositoriesAddIndexUserIdAndRepoId < ActiveRecord::Migration
   end
 
   def down
-    execute "DELETE INDEX index_starred_repositories_on_user_id_and_repo_id"
+    execute "DROP INDEX index_starred_repositories_on_user_id_and_repo_id"
   end
 end
