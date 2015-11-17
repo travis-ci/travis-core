@@ -104,4 +104,21 @@ describe Build::Config::Dist do
       subject.run[:dist].should eql('trusty')
     end
   end
+
+  context 'with docker in matrix include services' do
+    let(:config) do
+      {
+        matrix: { include: [{ services: %w(docker postgresql) }] },
+        services: %w(postgresql)
+      }
+    end
+
+    it 'sets the dist to trusty in the include hash' do
+      subject.run[:matrix][:include].first[:dist].should eql('trusty')
+    end
+
+    it 'sets the dist to the default at the top level' do
+      subject.run[:dist].should eql(described_class::DEFAULT_DIST)
+    end
+  end
 end
