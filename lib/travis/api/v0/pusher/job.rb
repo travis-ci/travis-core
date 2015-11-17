@@ -35,7 +35,7 @@ module Travis
                 'repository_private' => job.repository.private,
                 'build_id' => job.source_id,
                 'commit_id' => job.commit_id,
-                'log_id' => job.log_id,
+                # 'log_id' => job.log_id,
                 'number' => job.number,
                 'state' => job.state.to_s,
                 'started_at' => format_date(job.started_at),

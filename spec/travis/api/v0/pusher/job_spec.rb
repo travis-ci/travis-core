@@ -19,7 +19,6 @@ describe Travis::Api::V0::Pusher::Job::Started do
       'annotation_ids' => [1],
       'state' => 'started',
       'queue' => 'builds.linux',
-      'log_id' => 1,
       'commit_id' => 1,
       'allow_failure' => false
     }

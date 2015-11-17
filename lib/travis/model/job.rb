@@ -81,13 +81,14 @@ class Job < Travis::Model
   end
 
   before_create do
-    build_log
+    build_log unless defined?(::Travis::Gatekeeper)
     self.state = :created if self.state.nil?
     self.queue = Queue.for(self).name
   end
 
   after_commit on: :create do
     notify(:create)
+    store_empty_log_part if defined?(::Travis::Gatekeeper)
   end
 
   def propagate(name, *args)
@@ -227,5 +228,14 @@ class Job < Travis::Model
 
     def decrypt(v, &block)
       repository.key.secure.decrypt(v, &block)
+    end
+
+    # This is a hack that will trigger the creation of a log record via
+    # travis-logs.  Should be replaced by a proper API on travis-logs, or more
+    # robust lazy creation of missing log records.
+    def store_empty_log_part
+      data = { id: id, log: '', number: 0 }
+      publisher = Travis::Amqp::Publisher.jobs('logs')
+      publisher.publish(data, type: 'build:log') # is the message type correct? is it used at all?
     end
 end

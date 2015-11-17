@@ -55,9 +55,9 @@ class Build
         attributes.merge!(
           owner: owner,
           number: "#{number}.#{ix + 1}",
-          config: row,
-          log: Log.new
+          config: row
         )
+        attributes.merge!(log: Log.new) unless defined?(::Travis::Gatekeeper)
         matrix.build(attributes)
       end
       matrix_allow_failures # TODO should be able to join this with the loop above

@@ -1,5 +1,6 @@
 require 'active_support/concern'
 require 'simple_states'
+require 'travis/support/amqp'
 
 class Request
   module States
@@ -58,6 +59,10 @@ class Request
 
     def add_build_and_notify
       add_build.tap do |build|
+        # This is a hack that will trigger the creation of a log record via
+        # travis-logs.  Should be replaced by a proper API on travis-logs, or more
+        # robust lazy creation of missing log records.
+        build.matrix.each { |job| store_log(job.id, :empty_part) }
         build.notify(:created) if Travis.config.notify_on_build_created
       end
     end
@@ -74,46 +79,50 @@ class Request
         Travis.run_service(:github_fetch_config, request: self) # TODO move to a service, have it pass the config to configure
       end
 
+      def parse_error?
+        config[".result"] == "parse_error"
+      end
+
+      def server_error?
+        config[".result"] == "server_error"
+      end
+
       def add_parse_error_build
         Build.transaction do
           build = add_build
           job = build.matrix.first
+          store_log(job.id, :parse_error, config[".result_message"])
           job.start!(started_at: Time.now.utc)
-          job.log_content = <<ERROR
-\033[31;1mERROR\033[0m: An error occured while trying to parse your .travis.yml file.
-
-Please make sure that the file is valid YAML.
-
-http://lint.travis-ci.org can check your .travis.yml.
-
-The error was "#{config[".result_message"]}".
-ERROR
           job.finish!(state: "errored",   finished_at: Time.now.utc)
           build.finish!(state: "errored", finished_at: Time.now.utc)
         end
-      end
-
-      def parse_error?
-        config[".result"] == "parse_error"
       end
 
       def add_server_error_build
         Build.transaction do
           build = add_build
           job = build.matrix.first
+          store_log(job.id, :server_error)
           job.start!(started_at: Time.now.utc)
-          job.log_content = <<ERROR
-\033[31;1mERROR\033[0m: An error occured while trying to fetch your .travis.yml file.
-
-Is GitHub down? Please contact support@travis-ci.com if this persists.
-ERROR
           job.finish!(state: "errored",   finished_at: Time.now.utc)
           build.finish!(state: "errored", finished_at: Time.now.utc)
         end
       end
 
-      def server_error?
-        config[".result"] == "server_error"
+      LOGS = {
+        parse_error:  "\033[31;1mERROR\033[0m: An error occured while trying to parse your .travis.yml file.\n\n" +
+                      "Please make sure that the file is valid YAML." +
+                      "http://lint.travis-ci.org can check your .travis.yml." +
+                      "The error was: %s.",
+        server_error: "\033[31;1mERROR\033[0m: An error occured while trying to fetch your .travis.yml file.\n\n" +
+                      "Is GitHub down? Please contact support@travis-ci.com if this persists.",
+        empty_part:   ''
+      }
+
+      def store_log(job_id, msg, *args)
+        data = { id: job_id, log: LOGS[msg] % args, number: 0, final: true }
+        publisher = Travis::Amqp::Publisher.jobs('logs')
+        publisher.publish(data, type: 'build:log') # confirm the event name with the Go worker
       end
   end
 end
