@@ -124,6 +124,8 @@ class Request
         data = { id: job_id, log: LOGS[msg] % args, number: 0, final: true }
         publisher = Travis::Amqp::Publisher.jobs('logs')
         publisher.publish(data, type: 'build:log') # confirm the event name with the Go worker
+      rescue => e
+        Travis.logger.error("Error trying to publish a log message: #{e.message}\n" + e.backtrace.join("\n"))
       end
   end
 end
