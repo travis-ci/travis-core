@@ -27,7 +27,7 @@ class Build
           c.merge!(dist: dist_for_config)
 
           matrix = c.fetch(:matrix, {})
-          return c unless matrix.respond_to?(:fetch)
+          return c unless config_hashy?(matrix)
 
           matrix.fetch(:include, []).each do |inc|
             next unless inc.respond_to?(:key)
@@ -39,8 +39,8 @@ class Build
 
       private
 
-      def config_hashy?
-        %w(key? dup merge! fetch).all? { |m| config.respond_to?(m) }
+      def config_hashy?(h = config)
+        %w(key? dup merge! fetch).all? { |m| h.respond_to?(m) }
       end
 
       def dist_for_config(h = config)
