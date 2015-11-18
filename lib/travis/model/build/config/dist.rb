@@ -30,7 +30,7 @@ class Build
           return c unless config_hashy?(matrix)
 
           matrix.fetch(:include, []).each do |inc|
-            next unless inc.respond_to?(:key)
+            next unless config_hashy?(inc)
             next if inc.key?(:dist) || inc.key?('dist')
             inc.merge!(dist: dist_for_config(inc))
           end
