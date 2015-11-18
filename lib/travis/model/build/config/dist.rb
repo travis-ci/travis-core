@@ -20,10 +20,17 @@ class Build
       end
 
       def run
+        return config unless config_hashy?
+        return config if config.key?(:dist) || config.key?('dist')
+
         config.dup.tap do |c|
-          return c if c.key?(:dist) || c.key?('dist')
           c.merge!(dist: dist_for_config)
-          c.fetch(:matrix, {}).fetch(:include, []).each do |inc|
+
+          matrix = c.fetch(:matrix, {})
+          return c unless matrix.respond_to?(:fetch)
+
+          matrix.fetch(:include, []).each do |inc|
+            next unless inc.respond_to?(:key)
             next if inc.key?(:dist) || inc.key?('dist')
             inc.merge!(dist: dist_for_config(inc))
           end
@@ -31,6 +38,10 @@ class Build
       end
 
       private
+
+      def config_hashy?
+        %w(key? dup merge! fetch).all? { |m| config.respond_to?(m) }
+      end
 
       def dist_for_config(h = config)
         return DIST_LANGUAGE_MAP[h[:language]] if
