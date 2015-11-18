@@ -120,6 +120,7 @@ class Request
       }
 
       def store_log(job_id, msg, *args)
+        # puts "storing log part #{msg.inspect} on #{job_id}"
         data = { id: job_id, log: LOGS[msg] % args, number: 0, final: true }
         publisher = Travis::Amqp::Publisher.jobs('logs')
         publisher.publish(data, type: 'build:log') # confirm the event name with the Go worker
