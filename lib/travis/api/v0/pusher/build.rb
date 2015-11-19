@@ -44,6 +44,7 @@ module Travis
                 'duration' => build.duration,
                 'job_ids' => build.matrix_ids,
                 'event_type' => build.event_type,
+                'is_on_default_branch' => on_default_branch?(build),
 
                 # this is a legacy thing, we should think about removing it
                 'commit' => commit.commit,
@@ -87,10 +88,27 @@ module Travis
                 'last_build_language' => nil,
                 'last_build_started_at' => format_date(repository.last_build_started_at),
                 'last_build_finished_at' => format_date(repository.last_build_finished_at),
-                'github_language' => repository.github_language
+                'github_language' => repository.github_language,
+                'default_branch' => {
+                  'name' => repository.default_branch,
+                  'last_build_id' => last_build_on_default_branch_id(repository)
+                }
               }
             end
 
+            def on_default_branch?(build)
+              build.repository.default_branch == build.commit.branch
+            end
+
+            def last_build_on_default_branch_id(repository)
+              last_build = ::Build.where(
+                repository_id: repository.id,
+                event_type: ['push', 'api'],
+                branch: repository.default_branch
+              ).first
+
+              last_build ? last_build.id : nil
+            end
         end
       end
     end
