@@ -20,20 +20,37 @@ class Build
       end
 
       def run
+        return config unless config_hashy?
         return config if config.key?(:dist) || config.key?('dist')
-        config.merge(dist: dist_for_language)
+
+        config.dup.tap do |c|
+          c.merge!(dist: dist_for_config)
+
+          matrix = c.fetch(:matrix, {})
+          return c unless config_hashy?(matrix)
+
+          matrix.fetch(:include, []).each do |inc|
+            next unless config_hashy?(inc)
+            next if inc.key?(:dist) || inc.key?('dist')
+            inc.merge!(dist: dist_for_config(inc))
+          end
+        end
       end
 
       private
 
-      def dist_for_language
-        return DIST_LANGUAGE_MAP[config[:language]] if
-          DIST_LANGUAGE_MAP.key?(config[:language])
-        (Array(config[:services]) || []).each do |service|
+      def config_hashy?(h = config)
+        %w(key? dup merge! fetch).all? { |m| h.respond_to?(m) }
+      end
+
+      def dist_for_config(h = config)
+        return DIST_LANGUAGE_MAP[h[:language]] if
+          DIST_LANGUAGE_MAP.key?(h[:language])
+        (Array(h[:services]) || []).each do |service|
           return DIST_SERVICES_MAP[service] if DIST_SERVICES_MAP.key?(service)
         end
         return DEFAULT_DIST if options[:multi_os]
-        DIST_OS_MAP.fetch(Array(config[:os]).first, DEFAULT_DIST)
+        DIST_OS_MAP.fetch(Array(h[:os]).first, DEFAULT_DIST)
       end
     end
   end
