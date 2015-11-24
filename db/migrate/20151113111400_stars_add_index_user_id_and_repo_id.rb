@@ -6,6 +6,6 @@ class StarsAddIndexUserIdAndRepoId < ActiveRecord::Migration
   end
 
   def down
-    execute "DROP INDEX index_stars_on_user_id_and_repo_id"
+    execute "DROP INDEX index_stars_on_user_id_and_repository_id"
   end
 end
