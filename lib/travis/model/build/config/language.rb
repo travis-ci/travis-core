@@ -5,22 +5,22 @@ class Build
     class Language < Struct.new(:config, :options)
       def run
         config[:language] = Array.wrap(config[:language]).first || DEFAULT_LANG
-        config.select { |key, value| include_key?(key) }
+        config.select { |key, _| include_key?(key) }
       end
 
       private
 
-        def include_key?(key)
-          matrix_keys.include?(key) || !known_env_key?(key)
-        end
+      def include_key?(key)
+        matrix_keys.include?(key) || !known_env_key?(key)
+      end
 
-        def matrix_keys
-          Config.matrix_keys(config, options)
-        end
+      def matrix_keys
+        Config.matrix_keys(config, options)
+      end
 
-        def known_env_key?(key)
-          (ENV_KEYS | EXPANSION_KEYS_FEATURE).include?(key)
-        end
+      def known_env_key?(key)
+        (ENV_KEYS | EXPANSION_KEYS_FEATURE).include?(key)
+      end
     end
   end
 end
