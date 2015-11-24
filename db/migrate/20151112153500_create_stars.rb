@@ -6,11 +6,11 @@ class CreateStars < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :starred_repositories, :user_id
+    add_index :stars, :user_id
   end
 
 
   def self.down
-    drop_table :starred_repositories
+    drop_table :stars
   end
 end
