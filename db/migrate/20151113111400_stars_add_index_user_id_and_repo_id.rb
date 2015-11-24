@@ -1,0 +1,11 @@
+class StarsAddIndexUserIdAndRepoId < ActiveRecord::Migration
+  self.disable_ddl_transaction!
+
+  def up
+    execute "CREATE UNIQUE INDEX index_stars_on_user_id_and_repo_id ON stars (user_id, repo_id)"
+  end
+
+  def down
+    execute "DROP INDEX index_stars_on_user_id_and_repo_id"
+  end
+end

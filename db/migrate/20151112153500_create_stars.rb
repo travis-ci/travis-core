@@ -1,6 +1,6 @@
-class CreateStarredRepositories < ActiveRecord::Migration
+class CreateStars < ActiveRecord::Migration
   def self.up
-    create_table :starred_repositories do |t|
+    create_table :stars do |t|
       t.integer   :repo_id
       t.integer   :user_id
       t.timestamps
