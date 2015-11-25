@@ -6,12 +6,7 @@ describe Travis::Api::V0::Pusher::Build do
   let(:repo)  { stub_repo(last_build_state: :started, last_build_duration: nil, last_build_finished_at: nil) }
   let(:job)   { stub_test(state: :started, finished_at: nil, finished?: false) }
   let(:build) { stub_build(repository: repo, event_type: 'pull_request',  state: :started, finished_at: nil, matrix: [job], finished?: false) }
-  let(:serializer) {
-    serializer = Travis::Api::V0::Pusher::Build.new(build)
-    serializer.stubs(:last_build_on_default_branch_id).returns(1)
-    serializer
-  }
-  let(:data)  { serializer.data }
+  let(:data)  { Travis::Api::V0::Pusher::Build.new(build).data }
 
   it 'build' do
     data['build'].except('matrix').should == {
@@ -37,8 +32,7 @@ describe Travis::Api::V0::Pusher::Build do
       'pull_request' => false,
       'pull_request_title' => nil,
       'pull_request_number' => nil,
-      'job_ids' => [1, 2],
-      'is_on_default_branch' => true
+      'job_ids' => [1, 2]
     }
   end
 
@@ -55,11 +49,7 @@ describe Travis::Api::V0::Pusher::Build do
       'last_build_duration' => nil,
       'last_build_state' => 'started',
       'last_build_language' => nil,
-      'github_language' => 'ruby',
-      'default_branch' => {
-        'name' => 'master',
-        'last_build_id' => 1
-      }
+      'github_language' => 'ruby'
     }
   end
 end
