@@ -80,7 +80,7 @@ class Build < Travis::Model
     end
 
     def on_branch(branch)
-      pushes.where(branch.present? ? ['branch IN (?)', normalize_to_array(branch)] : [])
+      api_and_pushes.where(branch.present? ? ['branch IN (?)', normalize_to_array(branch)] : [])
     end
 
     def by_event_type(event_types)
@@ -95,6 +95,10 @@ class Build < Travis::Model
 
     def pull_requests
       where(event_type: 'pull_request')
+    end
+
+    def api_and_pushes
+      by_event_type(['api', 'push'])
     end
 
     def previous(build)
