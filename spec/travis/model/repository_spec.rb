@@ -250,6 +250,17 @@ describe Repository do
     repo.last_build.id.should == build.id
   end
 
+  it "last_build_on returns the most recent build when last build is API build" do
+    repo = Factory(:repository)
+    attributes = { repository: repo, state: 'finished' }
+    api_req = Factory(:request, {event_type: 'api'})
+    Factory(:build, attributes)
+    Factory(:build, attributes)
+    build = Factory(:build, attributes.merge({request: api_req}))
+
+    repo.last_build_on('master').id.should == build.id
+  end
+
   describe "keys" do
     let(:repo) { Factory(:repository) }
 
