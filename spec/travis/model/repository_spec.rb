@@ -240,14 +240,20 @@ describe Repository do
     end
   end
 
-  it "last_build returns the most recent build" do
-    repo = Factory(:repository)
-    attributes = { repository: repo, state: 'finished' }
-    Factory(:build, attributes)
-    Factory(:build, attributes)
-    build = Factory(:build, attributes)
+  describe "#last_build" do
+    let(:repo) { Factory(:repository) }
+    let(:attributes) { { repository: repo, state: 'finished' } }
+    let(:api_req)    { Factory(:request, {event_type: 'api'}) }
 
-    repo.last_build.id.should == build.id
+    before :each do
+      Factory(:build, attributes)
+      Factory(:build, attributes)
+    end
+
+    it "returns the most recent build" do
+      build = Factory(:build, attributes)
+      repo.last_build.id.should == build.id
+    end
   end
 
   describe '#last_build_on' do
