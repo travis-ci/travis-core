@@ -250,9 +250,24 @@ describe Repository do
       Factory(:build, attributes)
     end
 
-    it "returns the most recent build" do
-      build = Factory(:build, attributes)
-      repo.last_build.id.should == build.id
+    context 'when last build is a push build' do
+      before :each do
+        @build = Factory(:build, attributes)
+      end
+
+      it 'returns the most recent build' do
+        repo.last_build('master').id.should == @build.id
+      end
+    end
+
+    context 'when last build is an API build' do
+      before :each do
+        @build = Factory(:build, attributes.merge({request: api_req}))
+      end
+
+      it 'returns the most recent build' do
+        repo.last_build('master').id.should == @build.id
+      end
     end
   end
 
@@ -266,16 +281,22 @@ describe Repository do
     end
 
     context 'when last build is a push build' do
+      before :each do
+        @build = Factory(:build, attributes)
+      end
+
       it 'returns the most recent build' do
-        build = Factory(:build, attributes)
-        repo.last_build_on('master').id.should == build.id
+        repo.last_build_on('master').id.should == @build.id
       end
     end
 
     context 'when last build is an API build' do
+      before :each do
+        @build = Factory(:build, attributes.merge({request: api_req}))
+      end
+
       it 'returns the most recent build' do
-        build = Factory(:build, attributes.merge({request: api_req}))
-        repo.last_build_on('master').id.should == build.id
+        repo.last_build_on('master').id.should == @build.id
       end
     end
   end
