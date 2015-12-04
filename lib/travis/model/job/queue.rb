@@ -72,7 +72,7 @@ class Job
       end
 
       if known_matchers.length > 0 && all_match
-        logger.info("job #{job.id} matches queue #{name} via matchers #{matchers.inspect}")
+        logger.info("job matches queue #{name} via matchers #{matchers.inspect}")
         return true
       end
 
