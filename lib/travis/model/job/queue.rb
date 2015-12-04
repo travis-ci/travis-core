@@ -71,7 +71,12 @@ class Job
         matchers[key.to_sym] === @attrs[key]
       end
 
-      known_matchers.length > 0 && all_match
+      if known_matchers.length > 0 && all_match
+        logger.info("job matches queue #{name} via matchers #{matchers.inspect}")
+        return true
+      end
+
+      false
     end
 
     private
@@ -100,6 +105,10 @@ class Job
     def repo_created_after_docker_cutoff?(repository)
       return true if repository.created_at.nil?
       repository.created_at > Time.parse(Travis.config.docker_default_queue_cutoff)
+    end
+
+    def logger
+      Travis.logger
     end
   end
 end
