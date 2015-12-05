@@ -30,7 +30,7 @@ class Job
 
     class << self
       def for(job)
-        queues.detect(lambda { default }) { |queue| queue.matches?(job) }
+        queues.find(-> { ifnone }) { |queue| queue.matches?(job) }
       end
 
       def queues
@@ -47,6 +47,13 @@ class Job
         config.values_at(*CUSTOM_STAGES).compact.flatten.any? do |s|
           SUDO_DETECTION_REGEXP =~ s.to_s
         end
+      end
+
+      private
+
+      def ifnone
+        Travis.logger.info("job matches queue #{default.name} via ifnone proc")
+        default
       end
     end
 
