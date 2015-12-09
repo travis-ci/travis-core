@@ -26,9 +26,22 @@ module Travis
           scope = scope.by_owner_name(params[:owner_name]) if params[:owner_name]
           scope = scope.by_slug(params[:slug])             if params[:slug]
           if params[:search].present?
-            scope = scope.search(params[:search]).order('last_build_started_at DESC NULLS LAST').limit(25)
+            scope = scope.search(params[:search]).order('last_build_started_at DESC NULLS LAST')
           end
+          scope = scope.limit(limit) if limit
           scope
+        end
+
+        def limit
+          limit = params[:limit].to_i
+
+          return 25 if limit == 0
+
+          if limit > 50
+            50
+          else
+            limit
+          end
         end
 
         def timeline?
