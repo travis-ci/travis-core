@@ -9,13 +9,13 @@ module Travis
       register :reset_model
 
       def run
-        reset if target && accept?
+        reset if current_user && target && accept?
         true
       end
       instrument :run
 
       def accept?
-        permission? && resetable?
+        current_user && permission? && resetable?
       end
 
       def messages
@@ -72,4 +72,3 @@ module Travis
     end
   end
 end
-
