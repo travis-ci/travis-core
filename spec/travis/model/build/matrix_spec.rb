@@ -294,6 +294,14 @@ describe Build, 'matrix' do
     yml
     }
 
+    let(:matrix_with_empty_include) {
+      YAML.load <<-yml
+      language: ruby
+      matrix:
+        include:
+    yml
+    }
+
     let(:multiple_tests_config_with_allow_failures) {
       YAML.load <<-yml
       language: objective-c
@@ -581,6 +589,16 @@ describe Build, 'matrix' do
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '2.1.0', env: 'BAR=true' },
           { os: 'linux', language: 'ruby', group: 'stable', dist: 'precise', rvm: '1.9.3', env: 'BAZ=true' }
         ]
+      end
+
+      it 'includes "empty" matrix config when matrix.include is null' do
+        build = Factory(:build, config: matrix_with_empty_include)
+
+        matrix_inclusion = {
+          include: nil
+        }
+
+        build.matrix.map(&:config).should == []
       end
     end
 
