@@ -29,7 +29,9 @@ class Build
           matrix = c.fetch(:matrix, {})
           return c unless config_hashy?(matrix)
 
-          matrix.fetch(:include, []).each do |inc|
+          included = matrix.fetch(:include, []) || []
+
+          included.each do |inc|
             next unless config_hashy?(inc)
             next if inc.key?(:dist) || inc.key?('dist')
             inc.merge!(dist: dist_for_config(inc))
