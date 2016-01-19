@@ -90,6 +90,11 @@ describe Request::Approval do
       approval.stubs(:enabled_in_settings?).returns(false)
       approval.should_not be_accepted
     end
+
+    it 'does not accept a request when compare URL is too long' do
+      request.commit.stubs(:compare_url).returns('a'*256)
+      approval.should_not be_accepted
+    end
   end
 
   describe 'approved?' do
@@ -145,6 +150,12 @@ describe Request::Approval do
       request.commit.stubs(:branch).returns('feature')
       request.stubs(:config).returns('branches' => { 'only' => 'master' })
       approval.message.should == 'branch not included or excluded'
+    end
+
+    it 'returns "compare URL too long; branch/tag names may be too long" if the compare URL is too long' do
+      request.stubs(:config).returns({key: 'value'})
+      request.commit.stubs(:compare_url).returns('a'*256)
+      approval.message.should == 'compare URL too long; branch/tag names may be too long'
     end
   end
 
