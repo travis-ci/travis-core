@@ -19,6 +19,7 @@ class Request
         !repository.private? &&
         (!excluded_repository? || included_repository?) &&
         !skipped? &&
+        !compare_url_too_long? &&
         enabled_in_settings?
     end
 
@@ -44,6 +45,10 @@ class Request
 
     def allow_builds_without_travis_yml?
       !repository.builds_only_with_travis_yml?
+    end
+
+    def compare_url_too_long?
+      commit.compare_url.length > 255
     end
 
     def approved?
@@ -75,6 +80,8 @@ class Request
         'private repository'
       elsif !request.creates_jobs?
         'matrix created no jobs'
+      elsif compare_url_too_long?
+        'compare URL too long; branch/tag names may be too long'
       end
     end
 
