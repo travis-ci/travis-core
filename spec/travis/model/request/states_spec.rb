@@ -5,7 +5,7 @@ describe Request::States do
 
   let(:owner)      { User.new(:login => 'joshk') }
   let(:repository) { Repository.new(:name => 'travis-ci', :owner => owner, :owner_name => 'travis-ci') }
-  let(:commit)     { Commit.new(:repository => repository, :commit => '12345', :branch => 'master', :message => 'message', :committed_at => Time.now) }
+  let(:commit)     { Commit.new(:repository => repository, :commit => '12345', :branch => 'master', :message => 'message', :committed_at => Time.now, :compare_url => 'https://github.com/svenfuchs/minimal/compare/master...develop') }
   let(:request)    { Request.new(:repository => repository, :commit => commit) }
 
   let(:approval)   { Request::Approval.any_instance }
