@@ -1,51 +1,25 @@
 require 'spec_helper'
 
-describe Build, 'update_branch' do
+describe Build::UpdateBranch do
   include Support::ActiveRecord
 
-  let(:build) { Factory(:build, state: :started, duration: 30, branch: 'master') }
+  let(:build)  { Factory.build(:build, state: :started, duration: 30, branch: 'master') }
+  let(:branch) { Branch.where(repository_id: build.repository_id, name: build.branch).first }
 
-  describe 'on build:started' do
-    it 'creates branch if branch is missing' do
-      Branch.fetch(build.repository, 'master').destroy
-      Branch.where(repository_id: build.repository_id, name: build.branch).should_not be_any
+  subject { described_class.new(build) }
 
-      build.update_branch
-
-      branch = Branch.where(repository_id: build.repository_id, name: build.branch).first
-      branch.should_not be_nil
-      branch.last_build.should be == build
+  describe 'on build creation' do
+    describe 'creates branch if missing' do
+      before { build.save }
+      it { branch.should_not be_nil }
+      it { branch.last_build_id.should be == build.id }
     end
 
-    it 'updates branch if branch is exists' do
-      Branch.fetch(build.repository, 'master')
-
-      build.update_branch
-
-      branch = Branch.fetch(build.repository, 'master')
-      branch.last_build.should be == build
-    end
-  end
-
-  describe 'on build:finished' do
-    it 'creates branch if branch is missing' do
-      Branch.fetch(build.repository, 'master').destroy
-      Branch.where(repository_id: build.repository_id, name: build.branch).should_not be_any
-
-      build.update_branch
-
-      branch = Branch.where(repository_id: build.repository_id, name: build.branch).first
-      branch.should_not be_nil
-      branch.last_build.should be == build
-    end
-
-    it 'updates branch if branch is exists' do
-      Branch.fetch(build.repository, 'master')
-
-      build.update_branch
-
-      branch = Branch.fetch(build.repository, 'master')
-      branch.last_build.should be == build
+    describe 'updates an existing branch' do
+      before { Branch.create!(repository_id: build.repository_id, name: 'master') }
+      before { build.save }
+      it { branch.should_not be_nil }
+      it { branch.last_build_id.should be == build.id }
     end
   end
 end
