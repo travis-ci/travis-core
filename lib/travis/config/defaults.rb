@@ -2,6 +2,9 @@ require 'travis/config'
 
 module Travis
   class Config < Hashr
+    require 'travis/config/database'
+    require 'travis/config/url'
+
     HOSTS = {
       production:  'travis-ci.org',
       staging:     'staging.travis-ci.org',
@@ -47,5 +50,22 @@ module Travis
             endpoints:     { }
 
     default :_access => [:key]
+
+    def initialize(*)
+      super
+      load_urls
+    end
+
+    # Wild monkeypatch to backport travis-config v1.0.x resource url loading.
+    # Needed for enterprise.
+    class Docker
+      def load
+        config = compact(
+          database: Database.new.config,
+          amqp: Url.parse(ENV['RABBITMQ_URL']).to_h.compact,
+          redis: { url: ENV['REDIS_URL'] }.compact
+        )
+      end
+    end
   end
 end
