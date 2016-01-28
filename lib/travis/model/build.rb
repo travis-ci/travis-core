@@ -155,7 +155,7 @@ class Build < Travis::Model
   end
 
   after_create do
-    UpdateBranch.new(self).update_last_build
+    UpdateBranch.new(self).update_last_build unless pull_request?
   end
 
   after_save do
