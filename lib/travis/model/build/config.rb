@@ -39,6 +39,7 @@ class Build
       :ruby,
       :rust,
       :rvm,
+      :r,
       :scala,
       :smalltalk,
       :visualbasic,
@@ -74,6 +75,7 @@ class Build
       'python'      => [:python],
       'ruby'        => [:rvm, :gemfile, :jdk, :ruby],
       'rust'        => [:rust],
+      'r'           => [:r],
       'scala'       => [:scala, :jdk],
       'smalltalk'   => [:smalltalk],
       'visualbasic' => [:visualbasic, :mono]
