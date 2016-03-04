@@ -76,6 +76,18 @@ describe Travis::Config do
   end
 
   describe 'resource urls' do
+    describe 'with a TRAVIS_DATABASE_URL set' do
+      before { ENV['TRAVIS_DATABASE_URL'] = 'postgres://username:password@host:1234/database' }
+      after  { ENV.delete('TRAVIS_DATABASE_URL') }
+
+      it { config.database.username.should == 'username' }
+      it { config.database.password.should == 'password' }
+      it { config.database.host.should == 'host' }
+      it { config.database.port.should == 1234 }
+      it { config.database.database.should == 'database' }
+      it { config.database.encoding.should == 'unicode' }
+    end
+
     describe 'with a DATABASE_URL set' do
       before { ENV['DATABASE_URL'] = 'postgres://username:password@host:1234/database' }
       after  { ENV.delete('DATABASE_URL') }
@@ -88,6 +100,17 @@ describe Travis::Config do
       it { config.database.encoding.should == 'unicode' }
     end
 
+    describe 'with a TRAVIS_RABBITMQ_URL set' do
+      before { ENV['TRAVIS_RABBITMQ_URL'] = 'amqp://username:password@host:1234/vhost' }
+      after  { ENV.delete('TRAVIS_RABBITMQ_URL') }
+
+      it { config.amqp.username.should == 'username' }
+      it { config.amqp.password.should == 'password' }
+      it { config.amqp.host.should == 'host' }
+      it { config.amqp.port.should == 1234 }
+      it { config.amqp.vhost.should == 'vhost' }
+    end
+
     describe 'with a RABBITMQ_URL set' do
       before { ENV['RABBITMQ_URL'] = 'amqp://username:password@host:1234/vhost' }
       after  { ENV.delete('RABBITMQ_URL') }
@@ -97,6 +120,13 @@ describe Travis::Config do
       it { config.amqp.host.should == 'host' }
       it { config.amqp.port.should == 1234 }
       it { config.amqp.vhost.should == 'vhost' }
+    end
+
+    describe 'with a TRAVIS_REDIS_URL set' do
+      before { ENV['TRAVIS_REDIS_URL'] = 'redis://username:password@host:1234' }
+      after  { ENV.delete('TRAVIS_REDIS_URL') }
+
+      it { config.redis.url.should == 'redis://username:password@host:1234' }
     end
 
     describe 'with a REDIS_URL set' do
