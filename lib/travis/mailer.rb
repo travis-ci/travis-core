@@ -5,14 +5,15 @@ module Travis
   module Mailer
     class << self
       def config
-        Travis.config.smtp
+        config = Travis.config.smtp
+        config ? config.to_h : {}
       end
 
       def setup
         if config.present?
           mailer = ActionMailer::Base
-          mailer.delivery_method = :smtp
-          mailer.smtp_settings = config
+          mailer[:delivery_method] = :smtp
+          mailer[:smtp_settings] = config
           @setup = true
         end
       end
