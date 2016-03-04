@@ -7,7 +7,7 @@ module Travis
       DEFAULTS  = { adapter: 'postgresql', encoding: 'unicode', variables: VARIABLES }
 
       def config
-        config = parse_url
+        config = compact(Url.parse(url).to_h)
         config = deep_merge(DEFAULTS, config) unless config.empty?
         config[:pool] = pool.to_i if pool
         config
@@ -15,24 +15,21 @@ module Travis
 
       private
 
-        def parse_url
-          Url.parse(url).to_h.compact
-        end
-
-        def pool
-          env('DB_POOL', 'DATABASE_POOL_SIZE').compact.first
-        end
-
         def url
           env('DATABASE_URL').compact.first
         end
 
+        def pool
+          env('DATABASE_POOL_SIZE', 'DB_POOL').compact.first
+        end
+
         def env(*keys)
-          ENV.values_at(*keys.map { |key| prefix(key) })
+          ENV.values_at(*keys.map { |key| prefix(key) }.flatten)
         end
 
         def prefix(key)
-          [options[:prefix], key].compact.join('_').upcase
+          key = [options[:prefix], key].compact.join('_').upcase
+          ["TRAVIS_#{key}", key]
         end
 
         def options
