@@ -100,6 +100,30 @@ describe Travis::Config do
       it { config.database.encoding.should == 'unicode' }
     end
 
+    describe 'with a TRAVIS_LOGS_DATABASE_URL set' do
+      before { ENV['TRAVIS_LOGS_DATABASE_URL'] = 'postgres://username:password@host:1234/database' }
+      after  { ENV.delete('TRAVIS_LOGS_DATABASE_URL') }
+
+      it { config.logs_database.username.should == 'username' }
+      it { config.logs_database.password.should == 'password' }
+      it { config.logs_database.host.should == 'host' }
+      it { config.logs_database.port.should == 1234 }
+      it { config.logs_database.database.should == 'database' }
+      it { config.logs_database.encoding.should == 'unicode' }
+    end
+
+    describe 'with a LOGS_DATABASE_URL set' do
+      before { ENV['LOGS_DATABASE_URL'] = 'postgres://username:password@host:1234/database' }
+      after  { ENV.delete('LOGS_DATABASE_URL') }
+
+      it { config.logs_database.username.should == 'username' }
+      it { config.logs_database.password.should == 'password' }
+      it { config.logs_database.host.should == 'host' }
+      it { config.logs_database.port.should == 1234 }
+      it { config.logs_database.database.should == 'database' }
+      it { config.logs_database.encoding.should == 'unicode' }
+    end
+
     describe 'with a TRAVIS_RABBITMQ_URL set' do
       before { ENV['TRAVIS_RABBITMQ_URL'] = 'amqp://username:password@host:1234/vhost' }
       after  { ENV.delete('TRAVIS_RABBITMQ_URL') }

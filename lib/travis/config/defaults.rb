@@ -62,6 +62,7 @@ module Travis
       def load
         config = compact(
           database: Database.new.config,
+          logs_database: Database.new(prefix: :logs).config,
           amqp: Url.parse(ENV['TRAVIS_RABBITMQ_URL'] || ENV['RABBITMQ_URL']).to_h.compact,
           redis: { url: ENV['TRAVIS_REDIS_URL'] || ENV['REDIS_URL'] }.compact
         )
