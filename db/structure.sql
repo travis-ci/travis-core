@@ -249,7 +249,8 @@ CREATE TABLE broadcasts (
     message character varying(255),
     expired boolean,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    category character varying(255)
 );
 
 
@@ -375,6 +376,39 @@ ALTER SEQUENCE commits_id_seq OWNED BY commits.id;
 
 
 --
+-- Name: crons; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE crons (
+    id integer NOT NULL,
+    branch_id integer,
+    "interval" character varying(255) NOT NULL,
+    disable_by_build boolean DEFAULT true NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: crons_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE crons_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: crons_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE crons_id_seq OWNED BY crons.id;
+
+
+--
 -- Name: emails; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -433,7 +467,8 @@ CREATE TABLE jobs (
     result integer,
     queued_at timestamp without time zone,
     canceled_at timestamp without time zone,
-    received_at timestamp without time zone
+    received_at timestamp without time zone,
+    debug_options text
 );
 
 
@@ -770,43 +805,23 @@ ALTER SEQUENCE ssl_keys_id_seq OWNED BY ssl_keys.id;
 
 
 --
--- Name: subscriptions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: stars; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE subscriptions (
+CREATE TABLE stars (
     id integer NOT NULL,
-    cc_token character varying(255),
-    valid_to timestamp without time zone,
-    owner_id integer,
-    owner_type character varying(255),
-    first_name character varying(255),
-    last_name character varying(255),
-    company character varying(255),
-    zip_code character varying(255),
-    address character varying(255),
-    address2 character varying(255),
-    city character varying(255),
-    state character varying(255),
-    country character varying(255),
-    vat_id character varying(255),
-    customer_id character varying(255),
+    repository_id integer,
+    user_id integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    cc_owner character varying(255),
-    cc_last_digits character varying(255),
-    cc_expiration_date character varying(255),
-    billing_email character varying(255),
-    selected_plan character varying(255),
-    coupon character varying(255),
-    contact_id integer
+    updated_at timestamp without time zone NOT NULL
 );
 
 
 --
--- Name: subscriptions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: stars_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE subscriptions_id_seq
+CREATE SEQUENCE stars_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -815,10 +830,10 @@ CREATE SEQUENCE subscriptions_id_seq
 
 
 --
--- Name: subscriptions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: stars_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE subscriptions_id_seq OWNED BY subscriptions.id;
+ALTER SEQUENCE stars_id_seq OWNED BY stars.id;
 
 
 --
@@ -904,7 +919,8 @@ CREATE TABLE users (
     is_syncing boolean,
     synced_at timestamp without time zone,
     github_scopes text,
-    education boolean
+    education boolean,
+    first_logged_in_at timestamp without time zone
 );
 
 
@@ -960,6 +976,13 @@ ALTER TABLE ONLY broadcasts ALTER COLUMN id SET DEFAULT nextval('broadcasts_id_s
 --
 
 ALTER TABLE ONLY commits ALTER COLUMN id SET DEFAULT nextval('commits_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY crons ALTER COLUMN id SET DEFAULT nextval('crons_id_seq'::regclass);
 
 
 --
@@ -1029,7 +1052,7 @@ ALTER TABLE ONLY ssl_keys ALTER COLUMN id SET DEFAULT nextval('ssl_keys_id_seq':
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY subscriptions ALTER COLUMN id SET DEFAULT nextval('subscriptions_id_seq'::regclass);
+ALTER TABLE ONLY stars ALTER COLUMN id SET DEFAULT nextval('stars_id_seq'::regclass);
 
 
 --
@@ -1099,6 +1122,14 @@ ALTER TABLE ONLY builds
 
 ALTER TABLE ONLY commits
     ADD CONSTRAINT commits_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: crons_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY crons
+    ADD CONSTRAINT crons_pkey PRIMARY KEY (id);
 
 
 --
@@ -1174,11 +1205,11 @@ ALTER TABLE ONLY ssl_keys
 
 
 --
--- Name: subscriptions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: stars_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY subscriptions
-    ADD CONSTRAINT subscriptions_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY stars
+    ADD CONSTRAINT stars_pkey PRIMARY KEY (id);
 
 
 --
@@ -1214,10 +1245,24 @@ ALTER TABLE ONLY users
 
 
 --
+-- Name: index_annotations_on_job_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_annotations_on_job_id ON annotations USING btree (job_id);
+
+
+--
 -- Name: index_branches_on_repository_id_and_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE UNIQUE INDEX index_branches_on_repository_id_and_name ON branches USING btree (repository_id, name);
+
+
+--
+-- Name: index_broadcasts_on_recipient_id_and_recipient_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_broadcasts_on_recipient_id_and_recipient_type ON broadcasts USING btree (recipient_id, recipient_type);
 
 
 --
@@ -1522,6 +1567,20 @@ CREATE INDEX index_ssl_key_on_repository_id ON ssl_keys USING btree (repository_
 
 
 --
+-- Name: index_stars_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_stars_on_user_id ON stars USING btree (user_id);
+
+
+--
+-- Name: index_stars_on_user_id_and_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_stars_on_user_id_and_repository_id ON stars USING btree (user_id, repository_id);
+
+
+--
 -- Name: index_tokens_on_token; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1540,6 +1599,13 @@ CREATE INDEX index_tokens_on_user_id ON tokens USING btree (user_id);
 --
 
 CREATE UNIQUE INDEX index_users_on_github_id ON users USING btree (github_id);
+
+
+--
+-- Name: index_users_on_github_oauth_token; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_users_on_github_oauth_token ON users USING btree (github_oauth_token);
 
 
 --
@@ -1914,3 +1980,21 @@ INSERT INTO schema_migrations (version) VALUES ('20150610143509');
 INSERT INTO schema_migrations (version) VALUES ('20150610143510');
 
 INSERT INTO schema_migrations (version) VALUES ('20150629231300');
+
+INSERT INTO schema_migrations (version) VALUES ('20150923131400');
+
+INSERT INTO schema_migrations (version) VALUES ('20151112153500');
+
+INSERT INTO schema_migrations (version) VALUES ('20151113111400');
+
+INSERT INTO schema_migrations (version) VALUES ('20151127153500');
+
+INSERT INTO schema_migrations (version) VALUES ('20151127154200');
+
+INSERT INTO schema_migrations (version) VALUES ('20151127154600');
+
+INSERT INTO schema_migrations (version) VALUES ('20151202122200');
+
+INSERT INTO schema_migrations (version) VALUES ('20160107120927');
+
+INSERT INTO schema_migrations (version) VALUES ('20160303165750');
