@@ -28,10 +28,16 @@ namespace :db do
   end
 end
 
-
 desc 'Run specs'
 RSpec::Core::RakeTask.new do |t|
   t.pattern = './spec/**/*_spec.rb'
+end
+begin
+  require 'rspec/core/rake_task'
+  RSpec::Core::RakeTask.new
+  task default: :spec
+rescue LoadError
+  warn "could not load rspec"
 end
 
 
