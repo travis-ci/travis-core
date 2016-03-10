@@ -5,6 +5,7 @@ require 'rspec/core/rake_task'
 require 'bundler/setup'
 require 'micro_migrations'
 require 'travis/migrations'
+require 'travis'
 
 ActiveRecord::Base.schema_format = :sql
 
