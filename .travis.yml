@@ -45,7 +45,7 @@ install:
 
 before_script:
   - redis-cli config set save ""
-  - 'RAILS_ENV=test bundle exec rake db:create db:migrate --trace'
+  - 'RAILS_ENV=test bundle exec rake db:create --trace'
 
 script:
   - ./build.sh

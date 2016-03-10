@@ -27,6 +27,7 @@ end
 
 group :development, :test do
   gem 'micro_migrations'
+  gem 'travis-migrations', github: 'travis-ci/travis-migrations'
 end
 
 group :test do
