@@ -31,6 +31,7 @@ group :development, :test do
 end
 
 group :test do
+  gem 'rake', '< 11.0'
   gem 'rspec',            '~> 2.8.0'
   gem 'factory_girl',     '~> 2.6.0'
   gem 'database_cleaner', '~> 0.8.0'
