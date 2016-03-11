@@ -27,9 +27,11 @@ end
 
 group :development, :test do
   gem 'micro_migrations'
+  gem 'travis-migrations', github: 'travis-ci/travis-migrations'
 end
 
 group :test do
+  gem 'rake', '< 11.0'
   gem 'rspec',            '~> 2.8.0'
   gem 'factory_girl',     '~> 2.6.0'
   gem 'database_cleaner', '~> 0.8.0'

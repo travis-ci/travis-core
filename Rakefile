@@ -1,16 +1,38 @@
 # need to add this path for stand-alone migrations that use models
 
+require 'rake'
 require 'rspec/core/rake_task'
 require 'bundler/setup'
 require 'micro_migrations'
+require 'travis/migrations'
 require 'travis'
+
+ActiveRecord::Base.schema_format = :sql
+
+task :default => :spec
+
+ActiveRecord::Base.schema_format = :sql
+
+namespace :db do
+  if ENV["RAILS_ENV"] == 'test'
+    desc 'Create and migrate the test database'
+    task :create do
+      sh 'createdb travis_test' rescue nil
+      sh "psql -q travis_test < #{Gem.loaded_specs['travis-migrations'].full_gem_path}/db/structure.sql"
+    end
+  else
+    desc 'Create and migrate the development database'
+    task :create do
+      sh 'createdb travis_development' rescue nil
+      sh "psql -q travis_development < #{Gem.loaded_specs['travis-migrations'].full_gem_path}/db/structure.sql"
+    end
+  end
+end
 
 desc 'Run specs'
 RSpec::Core::RakeTask.new do |t|
   t.pattern = './spec/**/*_spec.rb'
 end
-
-ActiveRecord::Base.schema_format = :sql
 
 module ActiveRecord
   class Migration
@@ -94,5 +116,3 @@ module ActiveRecord
     delegate :disable_ddl_transaction, to: :migration
   end
 end
-
-task :default => :spec
