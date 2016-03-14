@@ -14,7 +14,7 @@ module Travis
             auth:          { target_origin: nil },
             assets:        { host: HOSTS[Travis.env.to_sym] },
             amqp:          { username: 'guest', password: 'guest', host: 'localhost', prefetch: 1 },
-            database:      { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning' },
+            database:      { adapter: 'postgresql', database: "travis_#{Travis.env}", encoding: 'unicode', min_messages: 'warning', variables: { statement_timeout: 10_000 } },
             s3:            { access_key_id: '', secret_access_key: '' },
             pusher:        { app_id: 'app-id', key: 'key', secret: 'secret' },
             sidekiq:       { namespace: 'sidekiq', pool_size: 1 },
