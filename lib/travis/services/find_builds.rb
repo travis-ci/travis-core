@@ -33,6 +33,8 @@ module Travis
             else
               builds.older_than(params[:after_number])
             end
+          elsif params[:running]
+            scope(:build).running.limit(25)
           elsif params.nil? || params == {}
             scope(:build).recent
           else

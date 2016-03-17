@@ -67,6 +67,10 @@ class Build < Travis::Model
       where(state: ['failed', 'passed']).order('id DESC').limit(25)
     end
 
+    def running
+      where(state: ['started']).order('started_at DESC')
+    end
+
     def was_started
       where('state <> ?', :created)
     end

@@ -15,6 +15,12 @@ describe Travis::Services::FindBuilds do
       service.run.should == [push]
     end
 
+    it 'finds running builds when running param is passed' do
+      running = Factory(:build, repository: repo, event_type: 'push', state: 'started', number: 2)
+      @params = { :running => true }
+      service.run.should == [running]
+    end
+
     it 'finds recent builds when no repo given' do
       @params = nil
       service.run.should == [push]
