@@ -17,7 +17,7 @@ Travis Core requires PostgreSQL 9.3 or higher, as well as a recent version of Re
 
 ### Database setup
 
-NB detail for how `rake` sets up the database can be found in the `Rakefile`. In the `namespace :db` block you will see the database name is configured using the RAILS_ENV. If you are using a different configuration you will have to make your own adjustments.
+NB detail for how `rake` sets up the database can be found in the `Rakefile`. In the `namespace :db` block you will see the database name is configured using the environment variable RAILS_ENV. If you are using a different configuration you will have to make your own adjustments.
 
 1. `bundle exec rake db:create`
 2. for testing 'RAILS_ENV=test bundle exec rake db:create --trace'
