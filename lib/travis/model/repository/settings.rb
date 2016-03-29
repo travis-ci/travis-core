@@ -91,7 +91,7 @@ class Repository::Settings < Travis::Settings
   validates :maximum_number_of_builds, numericality: true
   validates :rate_limit, numericality: true
 
-  validate :restricts_rate_limit
+  validate :rate_limit_restriction
 
 
   validates_with TimeoutsValidator
@@ -116,7 +116,7 @@ class Repository::Settings < Travis::Settings
     value == 0 ? nil : value
   end
 
-  def restricts_rate_limit?
+  def rate_limit_restriction
     if rate_limit > 200
       errors.add(:rate_limit, "can't be more than 200")
     end
