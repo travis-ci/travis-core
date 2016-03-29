@@ -87,7 +87,6 @@ class Repository::Settings < Travis::Settings
   attribute :timeout_hard_limit
   attribute :timeout_log_silence
   attribute :rate_limit, Integer
-  attribute :errors
 
   validates :maximum_number_of_builds, numericality: true
   validates :rate_limit, numericality: true
