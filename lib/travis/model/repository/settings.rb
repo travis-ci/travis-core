@@ -86,8 +86,13 @@ class Repository::Settings < Travis::Settings
   attribute :ssh_key, SshKey
   attribute :timeout_hard_limit
   attribute :timeout_log_silence
+  attribute :rate_limit, Integer
 
   validates :maximum_number_of_builds, numericality: true
+  validates :rate_limit, numericality: true
+
+  validate :rate_limit_restriction
+
 
   validates_with TimeoutsValidator
 
@@ -110,6 +115,17 @@ class Repository::Settings < Travis::Settings
     value = super
     value == 0 ? nil : value
   end
+
+  def rate_limit
+    super || 0
+  end
+
+  def rate_limit_restriction
+    if rate_limit > 200
+      errors.add(:rate_limit, "can't be more than 200")
+    end
+  end
+
 
   def repository_id
     additional_attributes[:repository_id]
