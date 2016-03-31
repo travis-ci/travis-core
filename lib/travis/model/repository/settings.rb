@@ -117,11 +117,11 @@ class Repository::Settings < Travis::Settings
   end
 
   def api_builds_rate_limit
-    super || 0
+    super || Travis.config.settings.api_builds.defaults.rate_limit
   end
 
   def api_builds_rate_limit_restriction
-    if api_builds_rate_limit > 200
+    if api_builds_rate_limit > Travis.config.settings.api_builds.maximums.rate_limit
       errors.add(:api_builds_rate_limit, "can't be more than 200")
     end
   end
