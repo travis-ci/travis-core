@@ -116,6 +116,10 @@ class Repository::Settings < Travis::Settings
     value == 0 ? nil : value
   end
 
+  def rate_limit
+    super || 0
+  end
+
   def rate_limit_restriction
     if rate_limit > 200
       errors.add(:rate_limit, "can't be more than 200")
