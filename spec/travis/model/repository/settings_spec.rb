@@ -46,15 +46,21 @@ describe Repository::Settings do
     settings.should be_valid
   end
 
-  describe '#rate_limit' do
-    it 'saves new rate_limit if rate is under 200' do
-      settings = Repository::Settings.new(rate_limit: 2)
+  describe '#api_builds_rate_limit' do
+    it 'saves new api_builds_rate_limit if rate is under 200' do
+      settings = Repository::Settings.new(api_builds_rate_limit: 2)
       settings.should be_valid
     end
 
-    it 'does not save new rate_limit if rate is over 200' do
-      settings = Repository::Settings.new(rate_limit: 201)
+    it 'does not save new api_builds_rate_limit if rate is over 200' do
+      settings = Repository::Settings.new(api_builds_rate_limit: 201)
       settings.should_not be_valid
+    end
+
+    it 'sets default api_builds_rate_limit if value is nil' do
+      settings = Repository::Settings.new(api_builds_rate_limit: nil)
+      settings.api_builds_rate_limit.should eq(10)
+      settings.should be_valid
     end
   end
 
