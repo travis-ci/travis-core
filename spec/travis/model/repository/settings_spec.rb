@@ -56,6 +56,12 @@ describe Repository::Settings do
       settings = Repository::Settings.new(api_builds_rate_limit: 201)
       settings.should_not be_valid
     end
+
+    it 'sets default api_builds_rate_limit if value is nil' do
+      settings = Repository::Settings.new(api_builds_rate_limit: nil)
+      settings.api_builds_rate_limit.should eq(10)
+      settings.should be_valid
+    end
   end
 
   describe 'timeouts' do

@@ -43,7 +43,7 @@ module Travis
             sentry:        { },
             services:      { find_requests: { max_limit: 100, default_limit: 25 } },
             settings:      { timeouts: { defaults: { hard_limit: 50, log_silence: 10 }, maximums: { hard_limit: 180, log_silence: 60 } },
-                             api_builds: { defaults: { rate_limit: 10 }, maximums: { rate_limit: 200 } } },
+                             rate_limit: { defaults: { api_builds: 10 }, maximums: { api_builds: 200 } } },
             endpoints:     { }
 
     default :_access => [:key]
