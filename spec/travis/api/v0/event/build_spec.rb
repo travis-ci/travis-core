@@ -47,7 +47,6 @@ describe Travis::Api::V0::Event::Build do
       'committer_name' => 'Sven Fuchs',
       'author_name' => 'Sven Fuchs',
       'author_email' => 'svenfuchs@artweb-design.de',
-      'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
     }
   end
 
