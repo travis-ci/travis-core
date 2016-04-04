@@ -74,7 +74,7 @@ module Travis
 
         def buckets
           @buckets ||= begin
-            entries = Travis.config.to_hash.fetch(:cache_options) { [] }
+            entries = Travis.config.to_h.fetch(:cache_options) { [] }
             entries = [entries] unless entries.is_a? Array
             entries.map do |entry|
               next unless config = entry[:s3]

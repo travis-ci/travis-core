@@ -47,7 +47,6 @@ module Travis
 
                 # this is a legacy thing, we should think about removing it
                 'commit' => commit.commit,
-                'commit_id' => commit.id,
                 'branch' => commit.branch,
                 'message' => commit.message,
                 'compare_url' => commit.compare_url,
