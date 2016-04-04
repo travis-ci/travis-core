@@ -46,7 +46,7 @@ describe Travis::Api::V0::Event::Build do
       'committer_email' => 'svenfuchs@artweb-design.de',
       'committer_name' => 'Sven Fuchs',
       'author_name' => 'Sven Fuchs',
-      'author_email' => 'svenfuchs@artweb-design.de',
+      'author_email' => 'svenfuchs@artweb-design.de'
     }
   end
 
