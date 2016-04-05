@@ -57,10 +57,9 @@ describe Repository::Settings do
       settings.should_not be_valid
     end
 
-    it 'sets default api_builds_rate_limit if value is nil' do
-      settings = Repository::Settings.new(api_builds_rate_limit: nil)
-      settings.api_builds_rate_limit.should eq(10)
-      settings.should be_valid
+    it 'returns nil if no api_builds_rate_limit is set on settings' do
+      settings = Repository::Settings.new()
+      settings.api_builds_rate_limit.should eq(nil)
     end
   end
 
