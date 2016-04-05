@@ -4,6 +4,7 @@ require 'travis/settings'
 require 'travis/overwritable_method_definitions'
 require 'travis/settings/encrypted_value'
 require 'openssl'
+require 'pry'
 
 class Repository::Settings < Travis::Settings
   class EnvVar < Travis::Settings::Model
@@ -89,10 +90,8 @@ class Repository::Settings < Travis::Settings
   attribute :api_builds_rate_limit, Integer
 
   validates :maximum_number_of_builds, numericality: true
-  validates :api_builds_rate_limit, numericality: true
 
   validate :api_builds_rate_limit_restriction
-
 
   validates_with TimeoutsValidator
 
@@ -117,11 +116,11 @@ class Repository::Settings < Travis::Settings
   end
 
   def api_builds_rate_limit
-    super || Travis.config.settings.rate_limit.defaults.api_builds
+    super || nil
   end
 
   def api_builds_rate_limit_restriction
-    if api_builds_rate_limit > Travis.config.settings.rate_limit.maximums.api_builds
+    if api_builds_rate_limit.to_i > Travis.config.settings.rate_limit.maximums.api_builds
       errors.add(:api_builds_rate_limit, "can't be more than 200")
     end
   end
