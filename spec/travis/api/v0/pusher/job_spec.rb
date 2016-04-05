@@ -36,8 +36,7 @@ describe Travis::Api::V0::Pusher::Job::Started do
       'committer_email' => 'svenfuchs@artweb-design.de',
       'committer_name' => 'Sven Fuchs',
       'author_name' => 'Sven Fuchs',
-      'author_email' => 'svenfuchs@artweb-design.de',
-      'compare_url' => 'https://github.com/svenfuchs/minimal/compare/master...develop',
+      'author_email' => 'svenfuchs@artweb-design.de'
     }
   end
 end
