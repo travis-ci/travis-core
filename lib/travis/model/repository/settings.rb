@@ -4,7 +4,6 @@ require 'travis/settings'
 require 'travis/overwritable_method_definitions'
 require 'travis/settings/encrypted_value'
 require 'openssl'
-require 'pry'
 
 class Repository::Settings < Travis::Settings
   class EnvVar < Travis::Settings::Model
