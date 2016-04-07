@@ -57,7 +57,8 @@ describe Travis::Api::V0::Pusher::Build do
       'default_branch' => {
         'name' => 'master',
         'last_build_id' => 1
-      }
+      },
+      'active' => true
     }
   end
 end
