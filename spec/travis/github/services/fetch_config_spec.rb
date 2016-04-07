@@ -1,127 +1,163 @@
 require 'spec_helper'
+require 'active_support/core_ext/hash/slice'
 
-describe Travis::Github::Services::FetchConfig do
-  include Travis::Testing::Stubs, Support::Redis
+describe Travis::Config do
+  let(:config) { Travis::Config.load(:files, :env, :heroku, :docker) }
 
-  let(:body)      { { 'content' => ['foo: Foo'].pack('m') } }
-  let(:service)   { described_class.new(nil, request: request) }
-  let(:result)    { service.run }
-  let(:exception) { GH::Error.new }
-
-  before :each do
-    GH.stubs(:[]).with(request.config_url).returns(body)
-  end
-
-  describe 'config' do
-    it 'returns a hash' do
-      result.should be_a(Hash)
+  describe 'endpoints' do
+    it 'returns an object even without endpoints entry' do
+      config.endpoints.foo.should be_nil
     end
 
-    it 'yaml parses the response body if the response is successful' do
-      result['foo'].should == 'Foo'
+    it 'returns endpoints if it is set' do
+      ENV['travis_config'] = YAML.dump('endpoints' => { 'ssh_key' => true })
+      config.endpoints.ssh_key.should be_true
     end
 
-    it "merges { '.result' => 'configured' } to the actual configuration" do
-      result['.result'].should == 'configured'
-    end
+    it 'allows to set keys on enpoints when it is nil' do
+      config.endpoints.foo.should be_nil
 
-    it "returns { '.result' => 'not_found' } if a 404 is returned" do
-      exception.stubs(info: { response_status: 404 })
-      GH.stubs(:[]).raises(exception)
-      result['.result'].should == 'not_found'
-    end
+      config.endpoints.foo = true
 
-    it "returns { '.result' => 'server_error' } if a 500 is returned" do
-      exception.stubs(info: { response_status: 500 })
-      GH.stubs(:[]).raises(exception)
-      result['.result'].should == 'server_error'
-    end
-
-    it "returns { '.result' => 'parse_error' } if the .travis.yml is invalid" do
-      GH.stubs(:[]).returns({ "content" => ["\tfoo: Foo"].pack("m") })
-      result['.result'].should == 'parse_error'
-    end
-
-    it "returns the error message for an invalid .travis.yml file" do
-      GH.stubs(:[]).returns({ "content" => ["\tfoo: Foo"].pack("m") })
-      result[".result_message"].should match(/line 1 column 1/)
-    end
-
-    it "converts non-breaking spaces to normal spaces" do
-      GH.stubs(:[]).returns({ "content" => ["foo:\n\xC2\xA0\xC2\xA0bar: Foobar"].pack("m") })
-      result["foo"].should eql({ "bar" => "Foobar" })
-    end
-
-    context "when the repository has the template_selection feature enabled" do
-      before do
-        Travis::Features.activate_repository(:template_selection, request.repository)
-      end
-
-      it "passes the 'group' config key through" do
-        GH.stubs(:[]).returns({ "content" => ["group: latest"].pack("m") })
-        result["group"].should eql("latest")
-      end
-
-      it "passes the 'dist' config key through" do
-        GH.stubs(:[]).returns({ "content" => ["dist: latest"].pack("m") })
-        result["dist"].should eql("latest")
-      end
-    end
-
-    context "when the repository doesn't have the template_selection feature enabled" do
-      it "doesn't pass the 'group' config key through" do
-        GH.stubs(:[]).returns({ "content" => ["group: latest"].pack("m") })
-        result.has_key?("group").should be false
-      end
-
-      it "doesn't pass the 'dist' config key through" do
-        GH.stubs(:[]).returns({ "content" => ["dist: latest"].pack("m") })
-        result.has_key?("dist").should be false
-      end
+      config.endpoints.foo.should be_true
     end
   end
-end
 
-describe Travis::Github::Services::FetchConfig::Instrument do
-  include Travis::Testing::Stubs
+  describe 'defaults' do
+    it 'notifications defaults to []' do
+      config.notifications.should == []
+    end
 
-  let(:body)      { { 'content' => ['foo: Foo'].pack('m') } }
-  let(:service)   { Travis::Github::Services::FetchConfig.new(nil, request: request) }
-  let(:publisher) { Travis::Notification::Publisher::Memory.new }
-  let(:event)     { publisher.events[1] }
+    it 'notifications.email defaults to {}' do
+      config.email.should == {}
+    end
 
-  before :each do
-    GH.stubs(:[]).returns(body)
-    Travis::Notification.publishers.replace([publisher])
-  end
+    it 'queues defaults to []' do
+      config.queues.should == []
+    end
 
-  it 'publishes a payload' do
-    service.run
-    event.should publish_instrumentation_event(
-      event: 'travis.github.services.fetch_config.run:completed',
-      message: 'Travis::Github::Services::FetchConfig#run:completed https://api.github.com/repos/svenfuchs/minimal/contents/.travis.yml?ref=62aae5f70ceee39123ef',
-      result: { 'foo' => 'Foo', '.result' => 'configured' },
-      data: {
-        url: 'https://api.github.com/repos/svenfuchs/minimal/contents/.travis.yml?ref=62aae5f70ceee39123ef'
+    it 'ampq.host defaults to "localhost"' do
+      config.amqp.host.should == 'localhost'
+    end
+
+    it 'ampq.prefetch defaults to 1' do
+      config.amqp.prefetch.should == 1
+    end
+
+    it 'queue.limit.by_owner defaults to {}' do
+      config.queue.limit.by_owner.should == {}
+    end
+
+    it 'queue.limit.default defaults to 5' do
+      config.queue.limit.default.should == 5
+    end
+
+    it 'queue.interval defaults to 3' do
+      config.queue.interval.should == 3
+    end
+
+    it 'queue.interval defaults to 3' do
+      config.queue.interval.should == 3
+    end
+
+    it 'logs.shards defaults to 1' do
+      config.logs.shards.should == 1
+    end
+
+    it 'database' do
+      config.database.should == {
+        :adapter => 'postgresql',
+        :database => 'travis_test',
+        :encoding => 'unicode',
+        :min_messages => 'warning',
+        :variables => { :statement_timeout => 10000 }
       }
-    )
+    end
   end
 
-  it 'strips an access_token if present (1)' do
-    service.stubs(:config_url).returns('/foo/bar?access_token=123456')
-    service.run
-    event[:data][:url].should == '/foo/bar?access_token=[secure]'
-  end
+  describe 'resource urls' do
+    describe 'with a TRAVIS_DATABASE_URL set' do
+      before { ENV['TRAVIS_DATABASE_URL'] = 'postgres://username:password@host:1234/database' }
+      after  { ENV.delete('TRAVIS_DATABASE_URL') }
 
-  it 'strips an access_token if present (2)' do
-    service.stubs(:config_url).returns('/foo/bar?ref=abcd&access_token=123456')
-    service.run
-    event[:data][:url].should == '/foo/bar?ref=abcd&access_token=[secure]'
-  end
+      it { config.database.username.should == 'username' }
+      it { config.database.password.should == 'password' }
+      it { config.database.host.should == 'host' }
+      it { config.database.port.should == 1234 }
+      it { config.database.database.should == 'database' }
+      it { config.database.encoding.should == 'unicode' }
+    end
 
-  it 'strips a secret if present (2)' do
-    service.stubs(:config_url).returns('/foo/bar?ref=abcd&client_secret=123456')
-    service.run
-    event[:data][:url].should == '/foo/bar?ref=abcd&client_secret=[secure]'
+    describe 'with a DATABASE_URL set' do
+      before { ENV['DATABASE_URL'] = 'postgres://username:password@host:1234/database' }
+      after  { ENV.delete('DATABASE_URL') }
+
+      it { config.database.username.should == 'username' }
+      it { config.database.password.should == 'password' }
+      it { config.database.host.should == 'host' }
+      it { config.database.port.should == 1234 }
+      it { config.database.database.should == 'database' }
+      it { config.database.encoding.should == 'unicode' }
+    end
+
+    describe 'with a TRAVIS_LOGS_DATABASE_URL set' do
+      before { ENV['TRAVIS_LOGS_DATABASE_URL'] = 'postgres://username:password@host:1234/database' }
+      after  { ENV.delete('TRAVIS_LOGS_DATABASE_URL') }
+
+      it { config.logs_database.username.should == 'username' }
+      it { config.logs_database.password.should == 'password' }
+      it { config.logs_database.host.should == 'host' }
+      it { config.logs_database.port.should == 1234 }
+      it { config.logs_database.database.should == 'database' }
+      it { config.logs_database.encoding.should == 'unicode' }
+    end
+
+    describe 'with a LOGS_DATABASE_URL set' do
+      before { ENV['LOGS_DATABASE_URL'] = 'postgres://username:password@host:1234/database' }
+      after  { ENV.delete('LOGS_DATABASE_URL') }
+
+      it { config.logs_database.username.should == 'username' }
+      it { config.logs_database.password.should == 'password' }
+      it { config.logs_database.host.should == 'host' }
+      it { config.logs_database.port.should == 1234 }
+      it { config.logs_database.database.should == 'database' }
+      it { config.logs_database.encoding.should == 'unicode' }
+    end
+
+    describe 'with a TRAVIS_RABBITMQ_URL set' do
+      before { ENV['TRAVIS_RABBITMQ_URL'] = 'amqp://username:password@host:1234/vhost' }
+      after  { ENV.delete('TRAVIS_RABBITMQ_URL') }
+
+      it { config.amqp.username.should == 'username' }
+      it { config.amqp.password.should == 'password' }
+      it { config.amqp.host.should == 'host' }
+      it { config.amqp.port.should == 1234 }
+      it { config.amqp.vhost.should == 'vhost' }
+    end
+
+    describe 'with a RABBITMQ_URL set' do
+      before { ENV['RABBITMQ_URL'] = 'amqp://username:password@host:1234/vhost' }
+      after  { ENV.delete('RABBITMQ_URL') }
+
+      it { config.amqp.username.should == 'username' }
+      it { config.amqp.password.should == 'password' }
+      it { config.amqp.host.should == 'host' }
+      it { config.amqp.port.should == 1234 }
+      it { config.amqp.vhost.should == 'vhost' }
+    end
+
+    describe 'with a TRAVIS_REDIS_URL set' do
+      before { ENV['TRAVIS_REDIS_URL'] = 'redis://username:password@host:1234' }
+      after  { ENV.delete('TRAVIS_REDIS_URL') }
+
+      it { config.redis.url.should == 'redis://username:password@host:1234' }
+    end
+
+    describe 'with a REDIS_URL set' do
+      before { ENV['REDIS_URL'] = 'redis://username:password@host:1234' }
+      after  { ENV.delete('REDIS_URL') }
+
+      it { config.redis.url.should == 'redis://username:password@host:1234' }
+    end
   end
 end

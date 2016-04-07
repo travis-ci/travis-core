@@ -102,7 +102,7 @@ class Request < Travis::Model
     begin
       head_repo && base_repo && head_repo == base_repo
     rescue => e
-      Travis.config.error "[request:#{id}] Couldn't determine whether pull request is from the same repository: #{e.message}"
+      Travis.logger.error("[request:#{id}] Couldn't determine whether pull request is from the same repository: #{e.message}")
       false
     end
   end

@@ -5,7 +5,7 @@ module Travis
     module Services
       class SyncUser < Travis::Services::Base
         class ResetToken
-          def initialize(user, config = Travis.config.oauth2, gh = nil)
+          def initialize(user, config = Travis.config.oauth2.to_h, gh = nil)
             @user = user
             @config = config
             @gh = gh || GH.with(username: @config.client_id, password: @config.client_secret)

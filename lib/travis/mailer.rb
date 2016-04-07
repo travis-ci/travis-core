@@ -11,8 +11,8 @@ module Travis
       def setup
         if config.present?
           mailer = ActionMailer::Base
-          mailer.delivery_method = :smtp
-          mailer.smtp_settings = config
+          mailer[:delivery_method] = :smtp
+          mailer[:smtp_settings] = config
           @setup = true
         end
       end
