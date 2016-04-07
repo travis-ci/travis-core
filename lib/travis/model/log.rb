@@ -2,7 +2,7 @@ require 'metriks'
 require 'active_support/core_ext/string/filters'
 require 'travis/model'
 
-class Log < Travis::Model
+class Log < Travis::LogsModel
   require 'travis/model/log/part'
 
   AGGREGATE_PARTS_SELECT_SQL = <<-sql.squish
