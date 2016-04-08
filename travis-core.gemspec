@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
 
 
   # structures
-  s.add_dependency 'hashr',             '~> 0.0.19'
+  s.add_dependency 'hashr'
   s.add_dependency 'metriks',           '~> 0.9.7'
 
   # app

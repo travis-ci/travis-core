@@ -47,7 +47,6 @@ module Travis
 
                 # this is a legacy thing, we should think about removing it
                 'commit' => commit.commit,
-                'commit_id' => commit.id,
                 'branch' => commit.branch,
                 'message' => commit.message,
                 'compare_url' => commit.compare_url,
@@ -91,7 +90,8 @@ module Travis
                 'default_branch' => {
                   'name' => repository.default_branch,
                   'last_build_id' => last_build_on_default_branch_id(repository)
-                }
+                },
+                'active' => repository.active
               }
             end
 

@@ -74,11 +74,11 @@ module Travis
 
         def buckets
           @buckets ||= begin
-            entries = Travis.config.to_hash.fetch(:cache_options) { [] }
+            entries = Travis.config.to_h.fetch(:cache_options) { [] }
             entries = [entries] unless entries.is_a? Array
             entries.map do |entry|
               next unless config = entry[:s3]
-              service = ::S3::Service.new(config.slice(:secret_access_key, :access_key_id))
+              service = ::S3::Service.new(config.to_h.slice(:secret_access_key, :access_key_id))
               service.buckets.find(config.fetch(:bucket_name))
             end.compact
           end

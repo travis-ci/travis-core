@@ -25,7 +25,6 @@ describe Travis::Api::V0::Pusher::Build do
       'commit' => '62aae5f70ceee39123ef',
       'commit_id' => 1,
       'branch' => 'master',
-      'job_ids' => [1],
       'message' => 'the commit message',
       'author_name' => 'Sven Fuchs',
       'author_email' => 'svenfuchs@artweb-design.de',
@@ -58,7 +57,8 @@ describe Travis::Api::V0::Pusher::Build do
       'default_branch' => {
         'name' => 'master',
         'last_build_id' => 1
-      }
+      },
+      'active' => true
     }
   end
 end

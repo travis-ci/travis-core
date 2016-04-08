@@ -60,7 +60,7 @@ module Travis
 
           def filter(config)
             unless Travis::Features.active?(:template_selection, request.repository)
-              config = config.except('dist').except('group')
+              config = config.to_h.except('dist').except('group')
             end
 
             config
