@@ -250,19 +250,5 @@ describe Request::States do
       Travis::Event.expects(:dispatch).with { |e, *| e.should == "build:created" }.never
       request.add_build_and_notify
     end
-
-    it "should downcase the language on the configuration" do
-      request.config = { language: "Java" }
-      request.save
-      request.add_build_and_notify.should be_a(Build)
-      Build.last.config[:language].should eq "java"
-    end
-
-    it "should return the default language on the configuration" do
-      request.config = { env: 'FOO=foo' }
-      request.save
-      request.add_build_and_notify.should be_a(Build)
-      Build.last.config[:language].should eq "ruby"
-    end
   end
 end

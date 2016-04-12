@@ -53,9 +53,6 @@ class Request
     end
 
     def add_build
-      if config && config[:language]
-        config[:language] = config[:language].to_s.downcase
-      end
       builds.create!(:repository => repository, :commit => commit, :config => config, :owner => owner)
     end
 
