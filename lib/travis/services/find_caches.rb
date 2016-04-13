@@ -121,19 +121,21 @@ module Travis
             if config = entry[:s3]
               svc = ::S3::Service.new(config.to_h.slice(:secret_access_key, :access_key_id))
               bucket = svc.buckets.find(config.fetch(:bucket_name))
+
               next unless bucket
 
               c += bucket.objects(options).map { |object| S3Wrapper.new(repo, object) }
             elsif config = entry[:gcs]
-              storage = ::Google::Apis::StorageV1::StorageService.new
+              storage     = ::Google::Apis::StorageV1::StorageService.new
               json_key_io = StringIO.new(config.to_h[:json_key])
+              bucket_name = config[:bucket_name]
+
               storage.authorization = ::Google::Auth::ServiceAccountCredentials.make_creds(
                 json_key_io: json_key_io,
                 scope: [
                   'https://www.googleapis.com/auth/devstorage.read_write'
                 ]
               )
-              bucket_name = config[:bucket_name]
 
               next unless items = storage.list_objects(bucket_name, prefix: prefix).items
 
