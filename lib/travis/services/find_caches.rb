@@ -33,8 +33,7 @@ module Travis
 
       def run
         return [] unless setup? and permission?
-        caches = objects(prefix: prefix).map { |object| Wrapper.new(repo, object) }
-        caches.select! { |o| o.slug.include?(params[:match]) } if params[:match]
+        caches(prefix: prefix).select! { |o| o.slug.include?(params[:match]) } if params[:match]
         caches
       end
 
@@ -66,6 +65,10 @@ module Travis
           prefix = "#{repo.github_id}/"
           prefix << branch << '/' if branch
           prefix
+        end
+
+        def caches(options)
+          objects(prefix: prefix).map { |object| Wrapper.new(repo, object) }
         end
 
         def objects(options)
