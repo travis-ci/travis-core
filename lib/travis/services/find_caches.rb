@@ -112,6 +112,7 @@ module Travis
             if config = entry[:s3]
               svc = ::S3::Service.new(config.to_h.slice(:secret_access_key, :access_key_id))
               bucket = svc.buckets.find(config.fetch(:bucket_name))
+              next unless bucket
               c += bucket.objects(options).map { |object| S3Wrapper.new(repo, object) }
             elsif config = entry[:gcs]
               storage = Google::Apis::StorageV1::StorageService.new
