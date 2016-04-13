@@ -80,6 +80,7 @@ module Travis
         def content
           io = StringIO.new
           storage.get_object(bucket_name, cache_object.name, download_dest: io)
+          io.rewind
           io.read
         end
       end
