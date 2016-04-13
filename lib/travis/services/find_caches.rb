@@ -32,6 +32,7 @@ module Travis
         end
 
         def destroy
+          Travis.logger.info "action=delete backend=s3 s3_object=#{s3_object.key}"
           s3_object.destroy
         end
       end
@@ -63,15 +64,17 @@ module Travis
         end
 
         def destroy
+          Travis.logger.info "action=delete backend=gcs bucket_name=#{bucket_name} cache_name=#{cache_object.name}"
           storage.delete_object(bucket_name, cache_object.name)
+        rescue Google::Apis::ClientError
         end
       end
 
       def run
         return [] unless permission?
-        c = caches(prefix: prefix).tap {|x| Travis.logger.info "caches_before=#{x}"}
+        c = caches(prefix: prefix)
         c.select! { |o| o.slug.include?(params[:match]) } if params[:match]
-        c.tap {|x| Travis.logger.info "caches_after=#{x}"}
+        c
       end
 
       private
@@ -105,7 +108,10 @@ module Travis
         end
 
         def caches(options = {})
-          Travis.logger.info("options=#{options}")
+          if @caches
+            return @caches
+          end
+
           c = []
 
           entries = Travis.config.to_h.fetch(:cache_options) { [] }
@@ -115,12 +121,12 @@ module Travis
             if config = entry[:s3]
               svc = ::S3::Service.new(config.to_h.slice(:secret_access_key, :access_key_id))
               bucket = svc.buckets.find(config.fetch(:bucket_name))
-              Travis.logger.info("bucket=#{bucket}")
               next unless bucket
+
               c += bucket.objects(options).map { |object| S3Wrapper.new(repo, object) }
             elsif config = entry[:gcs]
               storage = ::Google::Apis::StorageV1::StorageService.new
-              json_key_io = StringIO.new(config.to_h[:json_key].tap {|k| Travis.logger.info("json_key=#{k}")})
+              json_key_io = StringIO.new(config.to_h[:json_key])
               storage.authorization = ::Google::Auth::ServiceAccountCredentials.make_creds(
                 json_key_io: json_key_io,
                 scope: [
@@ -129,15 +135,13 @@ module Travis
               )
               bucket_name = config[:bucket_name]
 
-              Travis.logger.info("storage=#{storage}")
               storage.list_objects(bucket_name, prefix: prefix).items.map do |object|
-                Travis.logger.info("item=#{object}")
                 c << GcsWrapper.new(storage, bucket_name, repo, object)
               end
             end
           end
 
-          c.compact
+          @caches = c.compact
         end
 
     end
