@@ -86,7 +86,7 @@ module Travis
       end
 
       def run
-        return [] unless permission?
+        return [] unless setup? && permission?
         c = caches(prefix: prefix)
         c.select! { |o| o.slug.include?(params[:match]) } if params[:match]
         c
@@ -94,11 +94,15 @@ module Travis
 
       private
 
-        # def setup?
-        #   return true if caches.any?
-        #   logger.warn "[services:find-caches] S3 credentials missing"
-        #   false
-        # end
+        def setup?
+          return true if entries.any? do |entry|
+            (s3_config  = entry[:s3])  && s3_config[:access_key_id] && s3_config[:secret_access_key] && s3_config[:bucket_name] or
+            (gcs_config = entry[:gcs]) && gcs_config[:json_key] && gcs_config[:bucket_name]
+          end
+
+          logger.warn "[services:find-caches] cache settings incomplete"
+          false
+        end
 
         def permission?
           current_user.permission?(required_role, repository_id: repo.id)
@@ -129,9 +133,6 @@ module Travis
 
           c = []
 
-          entries = Travis.config.to_h.fetch(:cache_options) { [] }
-          entries = [entries] unless entries.is_a? Array
-
           entries.map do |entry|
             if config = entry[:s3]
               svc = ::S3::Service.new(config.to_h.slice(:secret_access_key, :access_key_id))
@@ -161,6 +162,12 @@ module Travis
           end
 
           @caches = c.compact
+        end
+
+        def entries
+          collection = Travis.config.to_h.fetch(:cache_options) { [] }
+          collection = [collection] unless collection.is_a? Array
+          collection
         end
 
     end

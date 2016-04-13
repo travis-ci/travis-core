@@ -6,7 +6,7 @@ describe Travis::Services::FindCaches do
   let(:user) { User.first || Factory(:user) }
   let(:service) { described_class.new(user, params) }
   let(:repo) { Factory(:repository, :owner_name => 'travis-ci', :name => 'travis-core') }
-  let(:cache_options) {{ s3: { bucket_name: '' } }}
+  let(:cache_options) {{ s3: { bucket_name: '' , access_key_id: '', secret_access_key: ''} }}
   let(:has_access) { true }
   let(:result) { service.run }
   subject { result }
@@ -56,14 +56,14 @@ describe Travis::Services::FindCaches do
         its(:size) { should be == 0 }
       end
 
-      # describe 'without s3 credentials' do
-      #   let(:cache_options) {{ }}
-      #   before { service.logger.expects(:warn).with("[services:find-caches] S3 credentials missing") }
-      #   it { should be == [] }
-      # end
+      describe 'without s3 credentials' do
+        let(:cache_options) {{ }}
+        before { service.logger.expects(:warn).with("[services:find-caches] cache settings incomplete") }
+        it { should be == [] }
+      end
 
       describe 'with multiple buckets' do
-        let(:cache_options) {[{ s3: { bucket_name: '' } }, { s3: { bucket_name: '' } }]}
+        let(:cache_options) {[{ s3: { bucket_name: '', access_key_id: '', secret_access_key: '' } }, { s3: { bucket_name: '', access_key_id: '', secret_access_key: '' } }]}
         its(:size) { should be == 4 }
       end
     end
