@@ -34,11 +34,6 @@ describe Build do
     build.should_not be_cancelable
   end
 
-  it 'downcases the language on config' do
-    build = Factory.create(:build, config: { language: "PYTHON" })
-    build.config[:language].should == "python"
-  end
-
   describe '#secure_env_enabled?' do
     it 'returns true if we\'re not dealing with pull request' do
       build = Factory.build(:build)
@@ -232,6 +227,16 @@ describe Build do
       it 'deep_symbolizes keys on write' do
         build = Factory(:build, config: { 'foo' => { 'bar' => 'bar' } })
         build.read_attribute(:config)[:foo].should == { bar: 'bar' }
+      end
+
+      it 'downcases the language on config' do
+        build = Factory.create(:build, config: { language: "PYTHON" })
+        Build.last.config[:language].should == "python"
+      end
+
+      it 'sets ruby as default language' do
+        build = Factory.create(:build, config: { 'foo' => { 'bar' => 'bar' } })
+        Build.last.config[:language].should == "ruby"
       end
     end
 
