@@ -37,11 +37,12 @@ module Travis
       end
 
       class GcsWrapper
-        attr_reader :storage, :bucket_name, :cache_object
+        attr_reader :storage, :bucket_name, :repository, :cache_object
 
-        def initialize(storage, bucket_name, cache_object)
-          @storage = storage
-          @bucket_name = bucket_name
+        def initialize(storage, bucket_name, repository, cache_object)
+          @storage      = storage
+          @bucket_name  = bucket_name
+          @repository   = repository
           @cache_object = cache_object
         end
 
@@ -58,7 +59,7 @@ module Travis
         end
 
         def branch
-          s3_object.name[%r{^\d+/(.*)/[^/]+$}, 1]
+          cache_object.name[%r{^\d+/(.*)/[^/]+$}, 1]
         end
 
         def destroy
@@ -131,7 +132,7 @@ module Travis
               Travis.logger.info("storage=#{storage}")
               storage.list_objects(bucket_name, prefix: prefix).items.map do |object|
                 Travis.logger.info("item=#{object}")
-                c << GcsWrapper.new(storage, bucket_name, object)
+                c << GcsWrapper.new(storage, bucket_name, repo, object)
               end
             end
           end
