@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::Services::FindCaches do
-  include Support::ActiveRecord, Support::S3
+  include Support::ActiveRecord, Support::S3, Support::GCS
 
   let(:user) { User.first || Factory(:user) }
   let(:service) { described_class.new(user, params) }
@@ -66,6 +66,11 @@ describe Travis::Services::FindCaches do
         let(:cache_options) {[{ s3: { bucket_name: '', access_key_id: '', secret_access_key: '' } }, { s3: { bucket_name: '', access_key_id: '', secret_access_key: '' } }]}
         its(:size) { should be == 4 }
       end
+    end
+
+    context 'with GCS configuration' do
+      let(:cache_options) { { gcs: { bucket_name: '', json_key: '' } } }
+      its(:size) { should be == 0 }
     end
   end
 end
