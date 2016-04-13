@@ -155,8 +155,8 @@ class Build < Travis::Model
     self.pull_request_title = request.pull_request_title
     self.pull_request_number = request.pull_request_number
     self.branch = commit.branch
-    expand_matrix
     self.config[:language] = self.config[:language].to_s.downcase
+    expand_matrix
   end
 
   after_create do
