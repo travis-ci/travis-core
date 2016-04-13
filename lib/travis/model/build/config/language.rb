@@ -4,7 +4,8 @@ class Build
   class Config
     class Language < Struct.new(:config, :options)
       def run
-        config[:language] = Array.wrap(config[:language]).first || DEFAULT_LANG
+        config[:language] = Array.wrap(config[:language]).first.to_s.downcase
+        config[:language] = DEFAULT_LANG if config[:language].empty?
         config.select { |key, _| include_key?(key) }
       end
 
@@ -24,4 +25,3 @@ class Build
     end
   end
 end
-
