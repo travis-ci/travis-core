@@ -15,6 +15,10 @@ module Travis
           @s3_object  = s3_object
         end
 
+        def source
+          'S3'
+        end
+
         def last_modified
           s3_object.last_modified
         end
@@ -53,6 +57,10 @@ module Travis
           @bucket_name  = bucket_name
           @repository   = repository
           @cache_object = cache_object
+        end
+
+        def source
+          'GCS'
         end
 
         def last_modified
