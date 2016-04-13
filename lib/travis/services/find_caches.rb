@@ -135,7 +135,9 @@ module Travis
               )
               bucket_name = config[:bucket_name]
 
-              storage.list_objects(bucket_name, prefix: prefix).items.map do |object|
+              next unless items = storage.list_objects(bucket_name, prefix: prefix).items
+
+              items.map do |object|
                 c << GcsWrapper.new(storage, bucket_name, repo, object)
               end
             end
