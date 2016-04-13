@@ -78,7 +78,9 @@ module Travis
         end
 
         def content
-          storage.get_object(bucket_name, cache_object.name, download_dest: $stdout)
+          io = StringIO.new
+          storage.get_object(bucket_name, cache_object.name, download_dest: io)
+          io.read
         end
       end
 
