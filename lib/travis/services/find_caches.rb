@@ -35,6 +35,14 @@ module Travis
           Travis.logger.info "action=delete backend=s3 s3_object=#{s3_object.key}"
           s3_object.destroy
         end
+
+        def temporary_url
+          s3_object.temporary_url
+        end
+
+        def content
+          s3_object.content
+        end
       end
 
       class GcsWrapper
@@ -67,6 +75,10 @@ module Travis
           Travis.logger.info "action=delete backend=gcs bucket_name=#{bucket_name} cache_name=#{cache_object.name}"
           storage.delete_object(bucket_name, cache_object.name)
         rescue Google::Apis::ClientError
+        end
+
+        def content
+          storage.get_object(bucket_name, cache_object.name, download_dest: $stdout)
         end
       end
 
