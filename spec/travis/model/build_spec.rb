@@ -34,6 +34,11 @@ describe Build do
     build.should_not be_cancelable
   end
 
+  it 'downcases the language on config' do
+    build = Factory.create(:build, config: { language: "PYTHON" })
+    build.config[:language].should == "python"
+  end
+
   describe '#secure_env_enabled?' do
     it 'returns true if we\'re not dealing with pull request' do
       build = Factory.build(:build)

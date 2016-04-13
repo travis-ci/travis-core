@@ -42,6 +42,7 @@ class Build
       :r,
       :scala,
       :smalltalk,
+      :smalltalk_config,
       :visualbasic,
       :xcode_scheme,
       :xcode_sdk
@@ -77,7 +78,7 @@ class Build
       'rust'        => [:rust],
       'r'           => [:r],
       'scala'       => [:scala, :jdk],
-      'smalltalk'   => [:smalltalk],
+      'smalltalk'   => [:smalltalk, :smalltalk_config],
       'visualbasic' => [:visualbasic, :mono]
     }
 
