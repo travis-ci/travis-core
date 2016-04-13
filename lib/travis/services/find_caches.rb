@@ -95,10 +95,7 @@ module Travis
       private
 
         def setup?
-          return true if entries.any? do |entry|
-            (s3_config  = entry[:s3])  && s3_config[:access_key_id] && s3_config[:secret_access_key] && s3_config[:bucket_name] or
-            (gcs_config = entry[:gcs]) && gcs_config[:json_key] && gcs_config[:bucket_name]
-          end
+          return true if entries.any? { |entry| valid?(entry) }
 
           logger.warn "[services:find-caches] cache settings incomplete"
           false
@@ -170,6 +167,17 @@ module Travis
           collection
         end
 
+        def valid?(entry)
+          valid_s3?(entry) or valid_gcs?(entry)
+        end
+
+        def valid_s3?(entry)
+          (s3_config  = entry[:s3]) && s3_config[:access_key_id] && s3_config[:secret_access_key] && s3_config[:bucket_name]
+        end
+
+        def valid_gcs?(entry)
+          (gcs_config = entry[:gcs]) && gcs_config[:json_key] && gcs_config[:bucket_name]
+        end
     end
   end
 end
