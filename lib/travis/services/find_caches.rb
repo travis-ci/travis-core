@@ -32,18 +32,19 @@ module Travis
       end
 
       def run
-        return [] unless setup? and permission?
-        caches(prefix: prefix).select! { |o| o.slug.include?(params[:match]) } if params[:match]
-        caches
+        return [] unless permission?
+        c = caches(prefix: prefix)
+        c.select! { |o| o.slug.include?(params[:match]) } if params[:match]
+        c
       end
 
       private
 
-        def setup?
-          return true if buckets.any?
-          logger.warn "[services:find-caches] S3 credentials missing"
-          false
-        end
+        # def setup?
+        #   return true if caches.any?
+        #   logger.warn "[services:find-caches] S3 credentials missing"
+        #   false
+        # end
 
         def permission?
           current_user.permission?(required_role, repository_id: repo.id)
@@ -67,25 +68,23 @@ module Travis
           prefix
         end
 
-        def caches(options)
-          objects(prefix: prefix).map { |object| Wrapper.new(repo, object) }
-        end
+        def caches(options = {})
+          c = []
 
-        def objects(options)
-          buckets.flat_map { |b| b.objects(options) }
-        end
+          entries = Travis.config.to_h.fetch(:cache_options) { [] }
+          entries = [entries] unless entries.is_a? Array
 
-        def buckets
-          @buckets ||= begin
-            entries = Travis.config.to_h.fetch(:cache_options) { [] }
-            entries = [entries] unless entries.is_a? Array
-            entries.map do |entry|
-              next unless config = entry[:s3]
-              service = ::S3::Service.new(config.to_h.slice(:secret_access_key, :access_key_id))
-              service.buckets.find(config.fetch(:bucket_name))
-            end.compact
+          entries.map do |entry|
+            if config = entry[:s3]
+              svc = ::S3::Service.new(config.to_h.slice(:secret_access_key, :access_key_id))
+              bucket = svc.buckets.find(config.fetch(:bucket_name))
+              c += bucket.objects(options).map { |object| Wrapper.new(repo, object) }
+            end
           end
+
+          c.compact
         end
+
     end
   end
 end
