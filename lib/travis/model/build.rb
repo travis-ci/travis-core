@@ -146,7 +146,7 @@ class Build < Travis::Model
       end
   end
 
-  # set the build number and expand the matrix
+  # set the build number and expand the matrix; downcase language
   before_create do
     next_build_number = Travis::Services::NextBuildNumber.new(repository_id: repository.id).run
     self.number = next_build_number
@@ -156,6 +156,7 @@ class Build < Travis::Model
     self.pull_request_number = request.pull_request_number
     self.branch = commit.branch
     expand_matrix
+    self.config[:language] = self.config[:language].to_s.downcase
   end
 
   after_create do
