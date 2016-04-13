@@ -56,11 +56,11 @@ describe Travis::Services::FindCaches do
         its(:size) { should be == 0 }
       end
 
-      describe 'without s3 credentials' do
-        let(:cache_options) {{ }}
-        before { service.logger.expects(:warn).with("[services:find-caches] S3 credentials missing") }
-        it { should be == [] }
-      end
+      # describe 'without s3 credentials' do
+      #   let(:cache_options) {{ }}
+      #   before { service.logger.expects(:warn).with("[services:find-caches] S3 credentials missing") }
+      #   it { should be == [] }
+      # end
 
       describe 'with multiple buckets' do
         let(:cache_options) {[{ s3: { bucket_name: '' } }, { s3: { bucket_name: '' } }]}
