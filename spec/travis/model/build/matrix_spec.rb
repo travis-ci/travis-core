@@ -336,6 +336,20 @@ describe Build, 'matrix' do
     yml
     }
 
+    let(:scalar_allow_failures) {
+      YAML.load <<-yml
+      env:
+        global:
+          - "GLOBAL=global NEXT_GLOBAL=next"
+        matrix:
+          - "FOO=bar"
+          - "FOO=baz"
+      matrix:
+        allow_failures:
+          "FOO=bar"
+    yml
+    }
+
     let(:matrix_with_unwanted_expansion_ruby) {
       YAML.load <<-yml
       language: ruby
@@ -454,6 +468,16 @@ describe Build, 'matrix' do
         end
 
         it 'excludes matrices correctly' do
+          @build.matrix.map(&:allow_failure).should == [false, false]
+        end
+      end
+
+      context 'when matrix specifies scalar allow_failures' do
+        before :each do
+          @build = Factory(:build, config: scalar_allow_failures)
+        end
+
+        it 'ignores allow_failures silently' do
           @build.matrix.map(&:allow_failure).should == [false, false]
         end
       end
