@@ -156,6 +156,7 @@ describe Job do
         rvm: '1.8.7',
       }
     end
+
     context 'when job has secure env disabled' do
       let :job do
         job = Job.new(repository: Factory(:repository))
@@ -434,6 +435,22 @@ describe Job do
           }
         }
       end
+
+      it 'removes addons config if it is an array and deploy is present' do
+        config = { rvm: '1.8.7',
+                   addons: ["foo"],
+                   deploy: { foo: 'bar'}
+                 }
+        job.config = config
+
+        job.decrypted_config.should == {
+          rvm: '1.8.7',
+          addons: {
+            deploy: { foo: 'bar' }
+          }
+        }
+      end
+
     end
   end
 

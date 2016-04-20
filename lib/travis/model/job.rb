@@ -178,7 +178,12 @@ class Job < Travis::Model
 
       if config[:deploy]
         config[:addons] ||= {}
-        config[:addons][:deploy] = config.delete(:deploy)
+        if config[:addons].is_a? Hash
+          config[:addons][:deploy] = config.delete(:deploy)
+        else
+          config.delete(:addons)
+          config[:addons] = { deploy: config.delete(:deploy) }
+        end
       end
 
       config
