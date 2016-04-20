@@ -34,7 +34,7 @@ class Request
 
     def finish
       if config.blank?
-        Travis.logger.warn("[request:finish] Request not creating a build: config is blank, config=#{config.inspect} commit=#{commit.try(:commit).inspect}")
+        Travis.logger.warn("[request:finish] Request not creating a build: config is blank or contains YAML syntax error, config=#{config.inspect} commit=#{commit.try(:commit).inspect}")
       elsif !approved?
         Travis.logger.warn("[request:finish] Request not creating a build: not approved commit=#{commit.try(:commit).inspect} message=#{approval.message.inspect}")
       elsif parse_error?

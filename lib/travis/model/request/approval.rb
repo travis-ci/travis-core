@@ -69,7 +69,7 @@ class Request
       elsif disabled_in_settings?
         request.pull_request? ? 'pull requests disabled' : 'pushes disabled'
       elsif request.config.blank?
-        'missing config'
+        'config is missing or contains YAML syntax error'
       elsif github_pages?
         'github pages branch'
       elsif !branch_approved? || !branch_accepted?

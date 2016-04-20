@@ -142,9 +142,9 @@ describe Request::Approval do
       approval.message.should == 'github pages branch'
     end
 
-    it 'returns "missing config" if the config is not present' do
+    it 'returns "config is missing or contains YAML syntax error" if the config is not present' do
       request.stubs(:config).returns(nil)
-      approval.message.should == 'missing config'
+      approval.message.should == 'config is missing or contains YAML syntax error'
     end
 
     it 'returns "branch not included or excluded" if the branch was not approved' do
