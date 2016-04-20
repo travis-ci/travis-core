@@ -177,7 +177,6 @@ class Job < Travis::Model
       config = config ? config.deep_symbolize_keys : {}
 
       if config[:deploy]
-        config[:addons] ||= {}
         if config[:addons].is_a? Hash
           config[:addons][:deploy] = config.delete(:deploy)
         else
