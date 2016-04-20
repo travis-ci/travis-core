@@ -138,6 +138,7 @@ describe Request::Approval do
 
     it 'returns "github pages branch" if the branch is a github pages branch' do
       request.commit.stubs(:branch).returns('gh-pages')
+      request.stubs(:config).returns('branches' => { 'only' => 'master' })
       approval.message.should == 'github pages branch'
     end
 
