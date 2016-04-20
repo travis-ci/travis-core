@@ -68,10 +68,10 @@ class Request
         'skipped through commit message'
       elsif disabled_in_settings?
         request.pull_request? ? 'pull requests disabled' : 'pushes disabled'
-      elsif github_pages?
-        'github pages branch'
       elsif request.config.blank?
         'missing config'
+      elsif github_pages?
+        'github pages branch'
       elsif !branch_approved? || !branch_accepted?
         'branch not included or excluded'
       elsif !config_accepted?
