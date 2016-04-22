@@ -130,7 +130,7 @@ class Build < Travis::Model
     end
 
     def older_than(build = nil)
-      scope = order(number: :desc).paged({}) # TODO in which case we'd call older_than without an argument?
+      scope = order('number::integer DESC').paged({}) # TODO in which case we'd call older_than without an argument?
       scope = scope.where('number::integer < ?', (build.is_a?(Build) ? build.number : build).to_i) if build
       scope
     end
