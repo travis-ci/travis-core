@@ -39,6 +39,7 @@ group :test do
   gem 'webmock',          '~> 1.8.0'
   gem 'guard'
   gem 'guard-rspec'
+  gem 'listen',           '< 3.1.0'
   gem 'rb-fsevent'
   gem 'simplecov', require: false
 end
