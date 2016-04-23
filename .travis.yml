@@ -4,6 +4,7 @@ sudo: false
 
 services:
   - redis
+  - memcached
 
 addons:
   postgresql: 9.3
