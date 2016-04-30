@@ -9,6 +9,10 @@ module Travis
       backwards_skip or command == 'skip'
     end
 
+    def build?
+      backwards_skip or command == 'build'
+    end
+
     private
     attr_reader :message
 

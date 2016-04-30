@@ -266,6 +266,26 @@ describe Request::Approval do
       request.stubs(:pull_request?).returns(false)
       approval.stubs(:build_pushes?).returns(false)
       approval.enabled_in_settings?.should be_false
+      approval.should_not be_accepted
+    end
+  end
+
+  context 'when disabled in settings' do
+    before :each do
+      request.stubs(:pull_request?).returns(false)
+      approval.stubs(:build_pushes?).returns(false)
+    end
+
+    context 'when comment includes [ci build]' do
+      before :each do
+        request.commit.stubs(:message).returns 'lets party like its 1999 [ci build]'
+      end
+
+      describe 'request' do
+        it 'is accepted' do
+          approval.should be_accepted
+        end
+      end
     end
   end
 end

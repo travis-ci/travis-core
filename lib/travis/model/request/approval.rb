@@ -20,7 +20,7 @@ class Request
         (!excluded_repository? || included_repository?) &&
         !skipped? &&
         !compare_url_too_long? &&
-        enabled_in_settings?
+        (enabled_in_settings? || force_build?)
     end
 
     def enabled_in_settings?
@@ -89,6 +89,10 @@ class Request
 
       def skipped?
         Travis::CommitCommand.new(commit.message).skip?
+      end
+
+      def force_build?
+        Travis::CommitCommand.new(commit.message).build?
       end
 
       def github_pages_explicitly_enabled?

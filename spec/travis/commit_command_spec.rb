@@ -12,6 +12,11 @@ describe Travis::CommitCommand do
       Travis::CommitCommand.new(message).skip?.should eq true
     end
 
+    it 'is invoked by a commit message containing [ci build]' do
+      message = "foo [ci build] bar"
+      Travis::CommitCommand.new(message).build?.should eq true
+    end
+
     it 'is invoked by a commit message containing [CI skip]' do
       message = "foo [CI skip] bar"
       Travis::CommitCommand.new(message).skip?.should eq true
