@@ -25,6 +25,7 @@ module Travis
 
       def subscriptions
         @subscriptions ||= subscribers.map do |name|
+          p "subscriber name #{name}"
           name = 'github_status' if name == 'github_commit_status' # TODO compat, remove once configs have been updated
           subscription = Subscription.new(name)
           subscription if subscription.subscriber
@@ -32,12 +33,14 @@ module Travis
       end
 
       def dispatch(event, *args)
+        p "subscriptions #{subscriptions}"
         subscriptions.each do |subscription|
           subscription.notify(event, *args)
         end
       end
 
       def subscribers
+        p "subscribers #{Travis.config.notifications}"
         (SUBSCRIBERS + Travis.config.notifications).uniq
       end
     end
@@ -55,4 +58,3 @@ module Travis
       end
   end
 end
-

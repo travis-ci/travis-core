@@ -17,6 +17,7 @@ module Travis
         end
 
         def handle
+          p "-------- sends build email through Travis::Addons::Email::Task"
           Travis::Addons::Email::Task.run(:email, payload, recipients: recipients, broadcasts: broadcasts)
         end
 

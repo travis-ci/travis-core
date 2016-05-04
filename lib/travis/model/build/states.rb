@@ -72,7 +72,6 @@ class Build
       if matrix_finished?
         finalize_cancel
         denormalize(:cancel)
-        notify(:cancel)
       end
     end
 
@@ -103,6 +102,7 @@ class Build
     end
 
     def notify(event, *args)
+      p "notify #{event}"
       event = :create if event == :reset
       super
     end
