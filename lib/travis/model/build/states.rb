@@ -102,7 +102,6 @@ class Build
     end
 
     def notify(event, *args)
-      p "notify #{event}"
       event = :create if event == :reset
       super
     end

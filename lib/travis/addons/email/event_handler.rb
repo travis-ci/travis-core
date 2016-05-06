@@ -10,14 +10,13 @@ module Travis
       class EventHandler < Event::Handler
         API_VERSION = 'v2'
 
-        EVENTS = 'build:finished'
+        EVENTS = ['build:finished', 'build:canceled']
 
         def handle?
           !pull_request? && config.enabled?(:email) && config.send_on_finished_for?(:email) && recipients.present?
         end
 
         def handle
-          p "-------- sends build email through Travis::Addons::Email::Task"
           Travis::Addons::Email::Task.run(:email, payload, recipients: recipients, broadcasts: broadcasts)
         end
 
