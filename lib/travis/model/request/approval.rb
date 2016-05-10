@@ -68,8 +68,6 @@ class Request
         'skipped through commit message'
       elsif disabled_in_settings?
         request.pull_request? ? 'pull requests disabled' : 'pushes disabled'
-      elsif request.config.blank?
-        'config is missing or contains YAML syntax error'
       elsif github_pages?
         'github pages branch'
       elsif !branch_approved? || !branch_accepted?
@@ -82,6 +80,8 @@ class Request
         'matrix created no jobs'
       elsif compare_url_too_long?
         'compare URL too long; branch/tag names may be too long'
+      elsif request.config.blank?
+        'config is missing or contains YAML syntax error'
       end
     end
 
