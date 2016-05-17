@@ -61,7 +61,8 @@ module Travis
           builds_only_with_travis_yml?: false,
           settings: stub_settings,
           users_with_permission: [],
-          default_branch: 'master'
+          default_branch: 'master',
+          current_build_id: nil
         )
       end
       alias stub_repository stub_repo

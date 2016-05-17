@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Travis::Api::V0::Pusher::Build do
   include Travis::Testing::Stubs, Support::Formats
 
-  let(:repo)  { stub_repo(last_build_state: :started, last_build_duration: nil, last_build_finished_at: nil) }
+  let(:repo)  { stub_repo(last_build_state: :started, last_build_duration: nil, last_build_finished_at: nil, current_build_id: 10) }
   let(:job)   { stub_test(state: :started, finished_at: nil, finished?: false) }
   let(:build) { stub_build(repository: repo, event_type: 'pull_request',  state: :started, finished_at: nil, matrix: [job], finished?: false) }
   let(:serializer) {
@@ -58,7 +58,8 @@ describe Travis::Api::V0::Pusher::Build do
         'name' => 'master',
         'last_build_id' => 1
       },
-      'active' => true
+      'active' => true,
+      'current_build_id' => 10
     }
   end
 end
