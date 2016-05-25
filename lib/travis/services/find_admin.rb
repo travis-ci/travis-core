@@ -10,11 +10,11 @@ module Travis
       include Travis::Logging
 
       register :find_admin
-      NUM_CANDIDATES = 15
 
       def run
         if repository
-          admin
+          admin = candidates.first
+          admin || raise_admin_missing
         else
           error "[github-admin] repository is nil: #{params.inspect}"
           raise Travis::RepositoryMissing, "no repository given"
@@ -29,31 +29,25 @@ module Travis
       private
 
         def candidates
-          User.with_github_token.with_permissions(:repository_id => repository.id, :admin => true).first(NUM_CANDIDATES)
+          User.with_github_token.with_permissions(:repository_id => repository.id, :admin => true)
         end
 
-        def admin
-          admin = candidates.detect do |candidate|
-            is_valid? candidate
-          end
-          admin || raise_admin_missing
-        end
-
-        def is_valid?(admin)
+        def validate(user)
           Timeout.timeout(2) do
-            data = Github.authenticated(admin) { repository_data }
+            data = Github.authenticated(user) { repository_data }
             if data['permissions'] && data['permissions']['admin']
-              true
+              user
             else
-              revoke_admin_rights admin
+              info "[github-admin] #{user.login} no longer has admin access to #{repository.slug}"
+              update(user, data['permissions'])
               false
             end
           end
         rescue Timeout::Error => error
-          handle_error(admin, error)
+          handle_error(user, error)
           false
         rescue GH::Error => error
-          handle_error(admin, error)
+          handle_error(user, error)
           false
         end
 
@@ -64,7 +58,8 @@ module Travis
             error "[github-admin] token for #{user.login} no longer valid"
             user.update_attributes!(:github_oauth_token => "")
           when 404
-            revoke_admin_rights user
+            info "[github-admin] #{user.login} no longer has any access to #{repository.slug}"
+            update(user, {})
           else
             error "[github-admin] error retrieving repository info for #{repository.slug} for #{user.login}: #{error.message}"
           end
@@ -77,14 +72,12 @@ module Travis
           data || { 'permissions' => {} }
         end
 
-        def raise_admin_missing
-          raise Travis::AdminMissing.new("no admin available for #{repository.slug}")
+        def update(user, permissions)
+          user.update_attributes!(:permissions => permissions)
         end
 
-        def revoke_admin_rights(user)
-          info "[github-admin] #{user.login} no longer has admin access to #{repository.slug}"
-
-          Permission.where(user_id: user.id, repository_id: repository.id).update_all(admin: false)
+        def raise_admin_missing
+          raise Travis::AdminMissing.new("no admin available for #{repository.slug}")
         end
 
         class Instrument < Notification::Instrument

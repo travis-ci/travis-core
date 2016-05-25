@@ -27,17 +27,8 @@ module Travis
             let(:broadcast)           { stub_broadcast           }
             let(:travis_token)        { stub_travis_token        }
             let(:cache)               { stub_cache               }
-            let(:permission)          { stub_permission          }
           end
         end
-      end
-
-      def stub_permission(attributes = {})
-        Stubs.stub 'permission', attributes.reverse_merge(
-          id: 1,
-          user_id: stub_user,
-          repository_id: stub_repo
-        )
       end
 
       def stub_repo(attributes = {})
@@ -69,7 +60,7 @@ module Travis
           github_id: 549743,
           builds_only_with_travis_yml?: false,
           settings: stub_settings,
-          users_with_permission: stub_user,
+          users_with_permission: [],
           default_branch: 'master',
           current_build_id: nil
         )
