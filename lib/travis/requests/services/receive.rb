@@ -20,10 +20,11 @@ module Travis
 
         register :receive_request
 
+        NUM_RETRIES_FOR_REPO_ADMIN = 2
+
         class << self
           def payload_for(type, data)
-            data = GH.load(data)
-            const_get(type.camelize).new(data)
+            payload_for(type, data)
           end
         end
 
@@ -48,12 +49,26 @@ module Travis
           payload.validate!
           validate!
           @accepted = payload.accept?
+        rescue GH::Error => e
+          handle_invalid_permission if e.is_a?(404)
         rescue PayloadValidationError => e
           Travis.logger.error "#{e.message}, github-guid=#{github_guid}, event-type=#{event_type}"
           @accepted = false
         end
 
         private
+
+          def handle_invalid_permission
+            revoke_admin_permission
+            @payload = nil
+            @admin = nil
+            # @candidates_tried += 1
+            # @candidates_tried < NUM_RETRIES_FOR_REPO_ADMIN
+          end
+
+          def revoke_admin_permission
+            Permission.where(user_id: admin.id, repository_id: repo.id).update_all(admin: false)
+          end
 
           def with_transactional_advisory_lock
             return yield unless payload.repository
@@ -155,7 +170,24 @@ module Travis
           end
 
           def payload
-            @payload ||= self.class.payload_for(event_type, params[:payload])
+            @payload ||= payload_for(event_type, params[:payload])
+          end
+
+          def payload_for(type, data)
+            data = token ? GH.with(token: token).load(data) : GH.load(data)
+            const_get(type.camelize).new(data)
+          end
+
+          def token
+            admin.github_oauth_token if repo.private? && admin
+          end
+
+          def admin
+            @admin ||= admin_candiates.first
+          end
+
+          def admin_candiates
+            User.with_github_token.with_permissions(repository_id: repo.id, admin: true)
           end
 
           def github_guid

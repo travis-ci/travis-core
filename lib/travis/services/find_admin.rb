@@ -12,6 +12,7 @@ module Travis
       register :find_admin
 
       def run
+        puts "travis::services::find_admin::run"
         if repository
           admin = candidates.first
           admin || raise_admin_missing
