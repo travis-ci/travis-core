@@ -22,8 +22,23 @@ module Travis
 
         class << self
           def payload_for(type, data)
-            data = GH.load(data)
-            const_get(type.camelize).new(data)
+            processed = GH.load(data)
+            begin
+              # this is a hack that fixes things if GitHub returns wrong
+              # set of links for an organisation (like users/org-name instead of
+              # orgs/org-name). The next line tries to trigger the error and
+              # then if the problem occurs it checks if we're dealing with
+              # organization and then fixes the link
+              # TODO: remove when GitHub fixes it on their side
+              processed && processed['repository'] && processed['repository']['owner'] && processed['repository']['owner']['id']
+            rescue GH::Error
+              if data['organization']['login'] == data['repository']['full_name'].split('/').first
+                data['repository']['owner']['_links'] ||= {}
+                data['repository']['owner']['_links']['self'] = { 'href' => "orgs/#{data['organization']['login']}" }
+              end
+              processed = GH.load(data)
+            end
+            const_get(type.camelize).new(processed)
           end
         end
 
