@@ -21,9 +21,6 @@ cache:
 sudo: false
 
 rvm:
-  - jruby-1.7.16
-  - jruby-head
-  - jruby-9.0.0.0
   - "2.0"
   - "2.1"
 
