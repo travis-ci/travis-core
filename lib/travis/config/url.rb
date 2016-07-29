@@ -18,6 +18,7 @@ module Travis
           super.reject { |key, value| key == :database }.merge(vhost: vhost)
         end
       end
+      Amqps = Amqp
 
       class << self
         def parse(url)
@@ -31,6 +32,7 @@ module Travis
           string.to_s.split('_').collect(&:capitalize).join
         end
       end
+
     end
   end
 end
