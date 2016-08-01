@@ -18,6 +18,7 @@ module Travis
           super.reject { |key, value| key == :database }.merge(vhost: vhost)
         end
       end
+      Amqps = Amqp
 
       class << self
         def parse(url)

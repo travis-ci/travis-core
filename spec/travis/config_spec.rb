@@ -146,6 +146,17 @@ describe Travis::Config do
       it { config.amqp.vhost.should == 'vhost' }
     end
 
+    describe 'with a AMQPS RABBITMQ_URL set' do
+      before { ENV['RABBITMQ_URL'] = 'amqps://username:password@host:1234/vhost' }
+      after  { ENV.delete('RABBITMQ_URL') }
+
+      it { config.amqp.username.should == 'username' }
+      it { config.amqp.password.should == 'password' }
+      it { config.amqp.host.should == 'host' }
+      it { config.amqp.port.should == 1234 }
+      it { config.amqp.vhost.should == 'vhost' }
+    end
+
     describe 'with a TRAVIS_REDIS_URL set' do
       before { ENV['TRAVIS_REDIS_URL'] = 'redis://username:password@host:1234' }
       after  { ENV.delete('TRAVIS_REDIS_URL') }
