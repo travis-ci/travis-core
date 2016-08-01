@@ -32,7 +32,6 @@ module Travis
           string.to_s.split('_').collect(&:capitalize).join
         end
       end
-
     end
   end
 end
