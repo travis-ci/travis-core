@@ -34,12 +34,7 @@ module Travis
           end
 
           def queue
-            if Travis::Features.enabled_for_all?(:"pusher-live") ||
-               Travis::Features.repository_active?(:"pusher-live", repository_id)
-              :"pusher-live"
-            else
-              :pusher
-            end
+            :"pusher-live"
           end
 
           def repository_id
