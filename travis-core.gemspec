@@ -45,4 +45,7 @@ Gem::Specification.new do |s|
   s.add_dependency 's3',                '~> 0.3'
   s.add_dependency 'gh'
   s.add_dependency 'multi_json'
+
+  # fix building in 2.0
+  s.add_dependency "net-http-persistent",   "~> 2.9" if RUBY_VERSION < "2.1"
 end
