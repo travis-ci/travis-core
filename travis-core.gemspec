@@ -46,4 +46,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'gh'
   s.add_dependency 'multi_json'
   s.add_dependency 'google-api-client', '~> 0.9.4'
+
+  # Needed for Ruby 2.0 builds
+  s.add_dependency "net-http-persistent",   "~> 2.9" if RUBY_VERSION < "2.1"
 end
