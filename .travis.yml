@@ -16,9 +16,7 @@ cache: bundler
 
 sudo: false
 
-rvm:
-  - "2.0"
-  - "2.1"
+rvm: 2.3.6
 
 matrix:
   fast_finish: true
