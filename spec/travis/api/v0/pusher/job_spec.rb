@@ -16,7 +16,6 @@ describe Travis::Api::V0::Pusher::Job::Started do
       'number' => '2.1',
       'started_at' => json_format_time(Time.now.utc - 1.minute),
       'finished_at' => nil,
-      'annotation_ids' => [1],
       'state' => 'started',
       'queue' => 'builds.linux',
       'log_id' => 1,
@@ -40,4 +39,3 @@ describe Travis::Api::V0::Pusher::Job::Started do
     }
   end
 end
-

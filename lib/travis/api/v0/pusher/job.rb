@@ -42,7 +42,6 @@ module Travis
                 'finished_at' => format_date(job.finished_at),
                 'queue' => job.queue,
                 'allow_failure' => job.allow_failure,
-                'annotation_ids' => job.annotation_ids
               }
             end
 

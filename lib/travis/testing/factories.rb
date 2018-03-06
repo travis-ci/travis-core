@@ -118,18 +118,4 @@ FactoryGirl.define do
     started_at  { Time.now.utc }
     finished_at { Time.now.utc }
   end
-
-  factory :annotation do
-    url "https://travis-ci.org/travis-ci/travis-ci/jobs/12345"
-    description "Job passed"
-    job { Factory(:test) }
-    annotation_provider { Factory(:annotation_provider) }
-  end
-
-  factory :annotation_provider do
-    name "Travis CI"
-    api_username "travis-ci"
-    api_key "0123456789abcdef"
-  end
 end
-
